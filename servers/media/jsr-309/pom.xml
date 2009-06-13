@@ -59,18 +59,18 @@
 			<groupId>org.mobicents.jain</groupId>
 			<artifactId>mobicents-mgcp-impl</artifactId>
 			<version>${mobicents.mgcp.impl.version}</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
 
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1
+			scm:svn:https://mobicents.googlecode.com/svn/servers/media/jsr-309
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1
+			scm:svn:https://mobicents.googlecode.com/svn/servers/media/jsr-309
 		</developerConnection>
 		<url>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1
+			scm:svn:https://mobicents.googlecode.com/svn/servers/media/jsr-309
 		</url>
 	</scm>
 
@@ -88,7 +88,7 @@
 								true
 							</autoVersionSubmodules>
 							<tagBase>
-								https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp
+								https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jsr-309/
 							</tagBase>
 						</configuration>
 					</plugin>
