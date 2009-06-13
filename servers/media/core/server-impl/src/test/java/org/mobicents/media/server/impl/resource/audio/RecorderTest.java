@@ -39,8 +39,7 @@ public class RecorderTest {
 	private EndpointImpl endpointRecorder;
 	private RecorderImpl recorder;
 
-	private final static Format[] formats = new Format[] { AVProfile.PCMA, AVProfile.PCMU, AVProfile.GSM,
-			Codec.LINEAR_AUDIO };
+	private final static Format[] formats = new Format[] { AVProfile.PCMA, AVProfile.PCMU, Codec.LINEAR_AUDIO };
 
 	private boolean stopped = false;
 	private boolean completed = false;
