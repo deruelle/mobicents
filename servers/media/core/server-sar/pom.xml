@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mms-core</artifactId>
-		<version>2.0.0.BETA1-SNAPSHOT</version>
+		<version>2.0.0.BETA1</version>
 	</parent>
 
 	<artifactId>mms-sar</artifactId>
@@ -79,27 +77,20 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<condition property="jboss.dir"
-									value="${jboss.home}" else="${env.JBOSS_HOME}">
+								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
 									<isset property="jboss.home" />
 								</condition>
-								<copy
-									todir="${jboss.home}/server/${node}/deploy/mobicents-media-server">
-									<fileset
-										dir="target/${build.finalName}.dir">
-										<include
-											name="${build.finalName}/**" />
+								<copy todir="${jboss.home}/server/${node}/deploy/mobicents-media-server">
+									<fileset dir="target/${build.finalName}.dir">
+										<include name="${build.finalName}/**" />
 									</fileset>
 								</copy>
-								<copy
-									todir="${jboss.home}/server/${node}/deploy/mobicents-media-server">
+								<copy todir="${jboss.home}/server/${node}/deploy/mobicents-media-server">
 									<fileset dir="src/main/config">
 									</fileset>
 								</copy>
-								<copy
-									todir="${jboss.home}/server/${node}/deploy/mobicents-media-server/mgcp-controller-service.sar">
-									<fileset
-										dir="../controllers/mgcp/target/mgcp-controller-service.dir/mgcp-controller-service">
+								<copy todir="${jboss.home}/server/${node}/deploy/mobicents-media-server/mgcp-controller-service.sar">
+									<fileset dir="../controllers/mgcp/target/mgcp-controller-service.dir/mgcp-controller-service">
 									</fileset>
 								</copy>
 							</tasks>
@@ -113,8 +104,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete
-									dir="${env.JBOSS_HOME}/server/${node}/deploy/mobicents-media-server" />
+								<delete dir="${env.JBOSS_HOME}/server/${node}/deploy/mobicents-media-server" />
 							</tasks>
 						</configuration>
 					</execution>
