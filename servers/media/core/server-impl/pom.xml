@@ -15,9 +15,9 @@
 
 	<name>Mobicents Media Server Impl</name>
 
-	<!-- properties>
+	<properties>
 		<maven.test.skip>true</maven.test.skip>
-	</properties -->
+	</properties>
 
 	<dependencies>
 		<dependency>
