@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 
@@ -10,7 +12,7 @@
 
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mms-core</artifactId>
-	<version>2.0.0.BETA1</version>
+	<version>2.0.0.BETA1-SNAPSHOT</version>
 
 	<name>Mobicents Media Server</name>
 
@@ -126,9 +128,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/core/mms-core-2.0.0.BETA1</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/core/mms-core-2.0.0.BETA1</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/core/mms-core-2.0.0.BETA1</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/core</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/core</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/servers/media/core</url>
 	</scm>
 
 	<!--  -->
