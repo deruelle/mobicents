@@ -38,8 +38,8 @@ public class SipPhoneView extends ViewPart {
 		upperRowLayout.justify = false;
 		upper.setLayout(upperRowLayout);
 		
-		outVisualization = new VisualizationCanvas(upper, SWT.NO_REDRAW_RESIZE, 250, 80, 90);
-		inVisualization = new VisualizationCanvas(upper, SWT.NO_REDRAW_RESIZE, 250, 80, 90);
+		outVisualization = new VisualizationCanvas(upper, SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED, 250, 80, 90);
+		inVisualization = new VisualizationCanvas(upper, SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED, 250, 80, 90);
 		
 		RowLayout lowerRowLayout = new RowLayout();
 		lowerRowLayout.justify = true;

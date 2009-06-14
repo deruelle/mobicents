@@ -2,7 +2,7 @@
 <feature
       id="sip_phone_feature"
       label="Sip Phone"
-      version="1.0.1">
+      version="1.0.2">
 
    <description url="http://www.mobicents.org">
       Sip Phone plugin based on SIP communicator
@@ -25,7 +25,7 @@
          id="sip_phone_plugin"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.0.2"
          unpack="false"/>
 
 </feature>
