@@ -5,11 +5,11 @@
 
 	<parent>
 		<groupId>org.mobicents.testsuite</groupId>
-		<artifactId>mobicents-mms-testsuite</artifactId>
+		<artifactId>mms-testsuite</artifactId>
 		<version>2.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-media-server-test-suite-gui</artifactId>
+	<artifactId>mms-testsuite-gui</artifactId>
 	<packaging>jar</packaging>
 
 	<name>Mobicents Media Server Test Suite:: ${pom.artifactId}</name>
