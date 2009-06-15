@@ -10,7 +10,7 @@
 
 	<groupId>org.mobicents.testsuite</groupId>
 	<artifactId>mms-testsuite</artifactId>
-	<version>2.0.0.BETA1</version>
+	<version>2.0.0.BETA2-SNAPSHOT</version>
 	<name>Mobicents TestSuite Impl</name>
 	<url>http://www.mobicents.org/products_media_server.html</url>
 	<packaging>pom</packaging>
@@ -132,9 +132,9 @@
 		</profile>
 	</profiles>
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/test-suite/mms-testsuite-2.0.0.BETA1</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/test-suite/mms-testsuite-2.0.0.BETA1</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/test-suite/mms-testsuite-2.0.0.BETA1</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/test-suite</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/test-suite</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/servers/media/test-suite</url>
 	</scm>
 
 	<build>
