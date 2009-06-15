@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents</artifactId>
-		<version>12-SNAPSHOT</version>
+		<version>11</version>
 	</parent>
 
 	<groupId>org.mobicents.testsuite</groupId>
@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<mgcp-stack.version>2.0.0.RC2</mgcp-stack.version>
+		<mgcp-stack.version>2.0.0.RC3</mgcp-stack.version>
 		<jfree-chart.version>1.0.0</jfree-chart.version>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
@@ -100,6 +100,46 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<!-- RELEASE STUFF -->
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>server-spi</module>
+				<module>server-impl</module>
+				<module>server-sar</module>
+				<module>server-standalone</module>
+				<module>controllers</module>
+			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.0-beta-9</version>
+						<configuration>
+							<remoteTagging>true</remoteTagging>
+							<autoVersionSubmodules>
+								true
+							</autoVersionSubmodules>
+
+							<tagBase>
+								https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/test-suite
+							</tagBase>
+							<resume>false</resume>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/test-suite</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/test-suite</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/servers/media/test-suite</url>
+	</scm>
+
 	<build>
 
 		<plugins>
@@ -135,7 +175,7 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<resume>false</resume>
 					<tagBase>
-						https://mobicents.googlecode.com/svn/tags/servers/media/core
+						https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/test-suite
 					</tagBase>
 				</configuration>
 			</plugin>
