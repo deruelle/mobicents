@@ -4,11 +4,11 @@
 
 	<parent>
 		<groupId>org.mobicents.testsuite</groupId>
-		<artifactId>mobicents-mms-testsuite</artifactId>
+		<artifactId>mms-testsuite</artifactId>
 		<version>2.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mms-load-test-web</artifactId>
+	<artifactId>mms-testsuite-web</artifactId>
 
 	<packaging>war</packaging>
 	<name>Mobicents Media Server Test Suite Audio:: ${pom.artifactId}</name>
