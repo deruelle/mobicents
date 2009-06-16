@@ -19,7 +19,7 @@ Mobicents Media Server is open source media server aimed to:
 
 Mobicents Media Server Home Page: http://www.mobicents.org/products_media_server.html
 Mobicents documentation page: http://hudson.jboss.org/hudson/job/MobicentsBooks/lastSuccessfulBuild/artifact/media/index.html
-Version information: mobicents-media-server-standalone-2.0.0.BETA1
+Version information: mms-jboss-5.1.0.GA-2.0.0.BETA1
 
 
 To install media server
