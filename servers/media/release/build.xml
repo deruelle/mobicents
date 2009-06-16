@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="media.server.release" default="release" basedir=".">
 
-	<property name="release.version" value="2.0.0.BETA1-SNAPSHOT" />
+	<property name="release.version" value="2.0.0.BETA1" />
 
 	<property name="release.dir" location="${ant.file.media.server.release}/../target/release" />
 	<property name="release.dir.standalone" location="${ant.file.media.server.release}/../standalone" />
@@ -11,12 +11,13 @@
 
 	<property name="jboss.version" value="5.1.0.GA" />
 	<property name="jboss.config" value="default" />
+	<property name="jboss.name" value="jboss-${jboss.version}" />
 	<property name="jboss.home.relative.path" value="jboss-${jboss.version}/" />
 	<property name="jboss.home" value="${release.dir.all}/${jboss.home.relative.path}/" />
 	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip" />
 	<property name="jboss.download.url" value="http://downloads.sourceforge.net/jboss/jboss-${jboss.version}.zip" />
 
-	<property name="mobicents.jainslee.version" value="1.2.4.GA" />
+	<property name="mobicents.jainslee.version" value="1.2.5.GA" />
 	<property name="mobicents.jainslee.zip.path" value="mobicents-jainslee-server-${mobicents.jainslee.version}.zip" />
 	<property name="mobicents.jainslee.download.url" value="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-${mobicents.jainslee.version}-jboss-${jboss.version}.zip" />
 
@@ -276,7 +277,7 @@
 			<param name="zip.filename" value="mms-standalone-${release.version}-${time.stamp}.zip" />
 		</antcall>
 		<antcall target="release-all">
-			<param name="zip.filename" value="mms-${jboss.home.relative.path}-${release.version}-${time.stamp}.zip" />
+			<param name="zip.filename" value="mms-${jboss.name}-${release.version}-${time.stamp}.zip" />
 		</antcall>
 		<antcall target="release-src">
 			<param name="zip.filename" value="mms-${release.version}-${time.stamp}-src.zip" />
@@ -292,10 +293,10 @@
 		<tstamp>
 			<format property="time.stamp" pattern="yyMMddHHmm" />
 		</tstamp>
-		<delete dir="." includes="mobicents-media-server-*${release.version}-*.zip" />
+		<delete dir="." includes="mms-*${release.version}-*.zip" />
 
 		<antcall target="release-standalone">
-			<param name="zip.filename" value="mobicents-media-server-standalone-${release.version}-${time.stamp}.zip" />
+			<param name="zip.filename" value="mms-standalone-${release.version}-${time.stamp}.zip" />
 			<param name="core.location" location="${ant.file.media.server.release}/../target/servers/media/core" />
 			<param name="test.suite.location" location="${ant.file.media.server.release}/../target/servers/media/test-suite" />
 
@@ -304,7 +305,7 @@
 		</antcall>
 
 		<antcall target="release-all">
-			<param name="zip.filename" value="mobicents-media-server-all-${release.version}-${time.stamp}.zip" />
+			<param name="zip.filename" value="mms-${jboss.name}-${release.version}-${time.stamp}.zip" />
 			<param name="core.location" location="${ant.file.media.server.release}/../target/servers/media/core" />
 			<param name="test.suite.location" location="${ant.file.media.server.release}/../target/servers/media/test-suite" />
 
@@ -314,7 +315,7 @@
 		</antcall>
 
 		<antcall target="release-src">
-			<param name="zip.filename" value="mobicents-media-server-${release.version}-${time.stamp}-src.zip" />
+			<param name="zip.filename" value="mms-${release.version}-${time.stamp}-src.zip" />
 			<param name="src.location" location="${ant.file.media.server.release}/../target/servers/media/" />
 		</antcall>
 
