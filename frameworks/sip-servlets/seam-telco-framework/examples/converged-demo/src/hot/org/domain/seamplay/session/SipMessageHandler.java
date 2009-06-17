@@ -1,6 +1,7 @@
 package org.domain.seamplay.session;
 
 import javax.servlet.sip.SipServletRequest;
+import javax.servlet.sip.SipServletResponse;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
@@ -44,4 +45,12 @@ public class SipMessageHandler {
 		request.createResponse(200).send();
 	}
 	
+	@Observer("RESPONSE")
+	public void doRegister(SipServletResponse response) throws Exception {
+		if(response.getMethod().equalsIgnoreCase("INVITE")) {
+			if(response.getStatus()>=200 && response.getStatus()<300) {
+				response.createAck().send();
+			}
+		}
+	}
 }

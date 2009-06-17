@@ -4,14 +4,22 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:a="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich">
     <rich:toolBarGroup>
         <h:outputText value="Seam Telco Framework Test Application"/>
         <s:link view="/home.xhtml" value="Home" propagation="none"/>
+        <rich:spacer width="60"/>
+        <h:outputText value="Call URI" />
+        <a:form>
+        <h:inputText value="#{callURI.uri}" />
+        <a:commandButton action="#{clickToCallAction.call}" value="Call" />
+        </a:form>
     </rich:toolBarGroup>
     <!-- @newMenuItem@ -->
     <rich:toolBarGroup location="right">
         <h:outputText value="logging SIP activity..." rendered="#{identity.loggedIn}"/>
         <s:link view="/home.xhtml" action="#{sharedStore.reset()}" value="Reset" propagation="none"/>
+        
     </rich:toolBarGroup>
 </rich:toolBar>
