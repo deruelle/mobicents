@@ -1,6 +1,7 @@
 package org.mobicents.slee.resource.xcapclient;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.slee.resource.ActivityAlreadyExistsException;
@@ -10,6 +11,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.mobicents.slee.resource.xcapclient.AsyncActivity;
 import org.mobicents.slee.resource.xcapclient.XCAPClientResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.xcapclient.XCAPResourceAdaptorActivityHandle;
+import org.openxdm.xcap.client.RequestHeader;
 import org.openxdm.xcap.client.Response;
 import org.openxdm.xcap.common.key.XcapUriKey;
 
@@ -35,52 +37,52 @@ public class XCAPClientResourceAdaptorSbbInterfaceImpl implements XCAPClientReso
 			return activity;
 	}
 
-	public Response delete(XcapUriKey key) throws HttpException, IOException {
-		return ra.getClient().delete(key);
+	public Response delete(XcapUriKey key, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
+		return ra.getClient().delete(key, additionalRequestHeaders);
 	}
 
-	public Response deleteIfMatch(XcapUriKey key, String eTag)
+	public Response deleteIfMatch(XcapUriKey key, String eTag, List<RequestHeader> additionalRequestHeaders)
 			throws HttpException, IOException {
-		return ra.getClient().deleteIfMatch(key, eTag);
+		return ra.getClient().deleteIfMatch(key, eTag, additionalRequestHeaders);
 	}
 
-	public Response deleteIfNoneMatch(XcapUriKey key, String eTag)
+	public Response deleteIfNoneMatch(XcapUriKey key, String eTag, List<RequestHeader> additionalRequestHeaders)
 			throws HttpException, IOException {
-		return ra.getClient().deleteIfNoneMatch(key, eTag);
+		return ra.getClient().deleteIfNoneMatch(key, eTag, additionalRequestHeaders);
 	}
 
-	public Response get(XcapUriKey key) throws HttpException, IOException {
-		return ra.getClient().get(key);
+	public Response get(XcapUriKey key, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
+		return ra.getClient().get(key, additionalRequestHeaders);
 	}
 
-	public Response put(XcapUriKey key, String mimetype, String content)
+	public Response put(XcapUriKey key, String mimetype, String content, List<RequestHeader> additionalRequestHeaders)
 			throws HttpException, IOException {
-		return ra.getClient().put(key, mimetype, content);
+		return ra.getClient().put(key, mimetype, content, additionalRequestHeaders);
 	}
 
-	public Response put(XcapUriKey key, String mimetype, byte[] content)
+	public Response put(XcapUriKey key, String mimetype, byte[] content, List<RequestHeader> additionalRequestHeaders)
 			throws HttpException, IOException {
-		return ra.getClient().put(key, mimetype, content);
+		return ra.getClient().put(key, mimetype, content, additionalRequestHeaders);
 	}
 
 	public Response putIfMatch(XcapUriKey key, String eTag, String mimetype,
-			String content) throws HttpException, IOException {
-		return ra.getClient().putIfMatch(key, eTag, mimetype, content);
+			String content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
+		return ra.getClient().putIfMatch(key, eTag, mimetype, content, additionalRequestHeaders);
 	}
 
 	public Response putIfMatch(XcapUriKey key, String eTag, String mimetype,
-			byte[] content) throws HttpException, IOException {
-		return ra.getClient().putIfMatch(key, eTag, mimetype, content);
+			byte[] content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
+		return ra.getClient().putIfMatch(key, eTag, mimetype, content, additionalRequestHeaders);
 	}
 
 	public Response putIfNoneMatch(XcapUriKey key, String eTag, String mimetype,
-			String content) throws HttpException, IOException {
-		return ra.getClient().putIfNoneMatch(key, eTag, mimetype, content);
+			String content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
+		return ra.getClient().putIfNoneMatch(key, eTag, mimetype, content, additionalRequestHeaders);
 	}
 
 	public Response putIfNoneMatch(XcapUriKey key, String eTag, String mimetype,
-			byte[] content) throws HttpException, IOException {
-		return ra.getClient().putIfNoneMatch(key, eTag, mimetype, content);
+			byte[] content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
+		return ra.getClient().putIfNoneMatch(key, eTag, mimetype, content, additionalRequestHeaders);
 	}
 
 	public void shutdown() {

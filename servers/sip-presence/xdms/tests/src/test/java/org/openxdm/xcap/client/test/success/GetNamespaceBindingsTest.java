@@ -41,7 +41,7 @@ public class GetNamespaceBindingsTest extends AbstractXDMJunitTest {
 			"</resource-lists>";			
 		
 		// send put request and get response
-		Response initialPutResponse = client.put(key,appUsage.getMimetype(),documentContent);
+		Response initialPutResponse = client.put(key,appUsage.getMimetype(),documentContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",initialPutResponse != null);
@@ -58,7 +58,7 @@ public class GetNamespaceBindingsTest extends AbstractXDMJunitTest {
 		XcapUriKey namespacesKey = new UserNamespaceBindingsUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),namespaces);
 		
 		// send get request and get response
-		Response namespacesGetResponse = client.get(namespacesKey);
+		Response namespacesGetResponse = client.get(namespacesKey,null);
 		
 		String expectedResponseContent = "<list xmlns=\"urn:ietf:params:xml:ns:resource-lists\"/>";
 		
@@ -67,7 +67,7 @@ public class GetNamespaceBindingsTest extends AbstractXDMJunitTest {
 		assertTrue("Get response code should be 200 and the content must be the expected",namespacesGetResponse.getCode() == 200 && XMLValidator.weaklyEquals((String)namespacesGetResponse.getContent(),expectedResponseContent));
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

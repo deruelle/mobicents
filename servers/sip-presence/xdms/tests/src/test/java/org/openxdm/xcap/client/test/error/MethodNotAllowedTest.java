@@ -39,7 +39,7 @@ public class MethodNotAllowedTest extends AbstractXDMJunitTest {
 			"</resource-lists>";
 		
 		// send put request and get response
-		Response putResponse = client.put(key,appUsage.getMimetype(),content);
+		Response putResponse = client.put(key,appUsage.getMimetype(),content,null);
 		
 		// check put response
 		assertTrue("Put response must exists",putResponse != null);
@@ -58,21 +58,21 @@ public class MethodNotAllowedTest extends AbstractXDMJunitTest {
 		MethodNotAllowedTestFakeUserDocumentUriKey nsKey = new MethodNotAllowedTestFakeUserDocumentUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),namespaces);
 				
 		// send put request and get response
-		Response nsPutResponse = client.put(nsKey,appUsage.getMimetype(),content);
+		Response nsPutResponse = client.put(nsKey,appUsage.getMimetype(),content,null);
 		
 		// check put response, must be method not allowed
 		assertTrue("Put response must exists",nsPutResponse != null);
 		assertTrue("Put response code should be "+MethodNotAllowedException.RESPONSE_STATUS,nsPutResponse.getCode() == MethodNotAllowedException.RESPONSE_STATUS);
 
 		// send delete request and get response
-		Response nsDeleteResponse = client.delete(nsKey);
+		Response nsDeleteResponse = client.delete(nsKey,null);
 		
 		// check delete response, must be method not allowed
 		assertTrue("Put response must exists",nsDeleteResponse != null);
 		assertTrue("Put response code should be "+MethodNotAllowedException.RESPONSE_STATUS,nsDeleteResponse.getCode() == MethodNotAllowedException.RESPONSE_STATUS);
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 		
 }

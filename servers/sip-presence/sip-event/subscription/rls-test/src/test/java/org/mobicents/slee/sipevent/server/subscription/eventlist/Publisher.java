@@ -67,7 +67,7 @@ public class Publisher implements SipListener {
 
 	private int expires = 60;
 	private String etag;
-	private final String tupleId = Utils.generateTag();
+	private final String tupleId = Utils.getInstance().generateTag();
 	
 	private final String publisher;
 	private final int listeningPort;
@@ -138,7 +138,7 @@ public class Publisher implements SipListener {
 
 		// create From Header
 		Address address = addressFactory.createAddress(publisher);
-		FromHeader fromHeader = headerFactory.createFromHeader(address, Utils
+		FromHeader fromHeader = headerFactory.createFromHeader(address, Utils.getInstance()
 				.generateTag());
 
 		// create To Header

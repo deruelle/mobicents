@@ -144,7 +144,7 @@ public class Subscriber implements SipListener {
 		// create From Header
 		Address fromAddress = addressFactory.createAddress(subscriber);
 		FromHeader fromHeader = headerFactory.createFromHeader(
-				fromAddress, Utils.generateTag());
+				fromAddress, Utils.getInstance().generateTag());
 
 		// create To Header
 		Address toAddress = addressFactory.createAddress(notifier);

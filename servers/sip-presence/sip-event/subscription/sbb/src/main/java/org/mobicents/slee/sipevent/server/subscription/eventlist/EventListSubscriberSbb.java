@@ -70,7 +70,7 @@ public abstract class EventListSubscriberSbb implements Sbb,
 		// object exists the notification data will be added, otherwise a new
 		// NotificationData object for a single entry is created and the parent
 		// is notified with the resulting multipart
-		setNotificationData(new NotificationData(subscription.getNotifier(),subscription.getVersion(),flatList,Utils.generateTag(),Utils.generateTag()));
+		setNotificationData(new NotificationData(subscription.getNotifier(),subscription.getVersion(),flatList,Utils.getInstance().generateTag(),Utils.getInstance().generateTag()));
 		// get subscription client child
 		SubscriptionClientControlSbbLocalObject subscriptionClient = getSubscriptionClientControlSbb();
 		// create "virtual" subscriptions
@@ -87,7 +87,7 @@ public abstract class EventListSubscriberSbb implements Sbb,
 		// version is incremented
 		subscription.incrementVersion();
 		// prepare for a full state notification
-		setNotificationData(new NotificationData(subscription.getNotifier(),subscription.getVersion(),flatList,Utils.generateTag(),Utils.generateTag()));
+		setNotificationData(new NotificationData(subscription.getNotifier(),subscription.getVersion(),flatList,Utils.getInstance().generateTag(),Utils.getInstance().generateTag()));
 		// get subscription client child
 		SubscriptionClientControlSbbLocalObject subscriptionClient = getSubscriptionClientControlSbb();
 		// create "virtual" subscriptions
@@ -144,7 +144,7 @@ public abstract class EventListSubscriberSbb implements Sbb,
 				return null;
 			}
 			// create notification data for a single resource
-			return new NotificationData(subscription.getNotifier(),subscription.getVersion(),getFlatList().getEntries().get(notifier),Utils.generateTag(), Utils.generateTag());
+			return new NotificationData(subscription.getNotifier(),subscription.getVersion(),getFlatList().getEntries().get(notifier),Utils.getInstance().generateTag(), Utils.getInstance().generateTag());
 		}			
 		else {
 			return null;

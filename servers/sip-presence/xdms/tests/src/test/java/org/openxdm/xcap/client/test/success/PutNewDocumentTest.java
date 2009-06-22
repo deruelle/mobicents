@@ -34,14 +34,14 @@ public class PutNewDocumentTest extends AbstractXDMJunitTest {
 			"</resource-lists>";
 		
 		// send put request and get response
-		Response putResponse = client.put(key,appUsage.getMimetype(),content);
+		Response putResponse = client.put(key,appUsage.getMimetype(),content,null);
 		
 		// check put response
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response code should be 201",putResponse.getCode() == 201);
 				
 		// send get request and get response
-		Response getResponse = client.get(key);
+		Response getResponse = client.get(key,null);
 		
 		// check get response
 		assertTrue("Get response must exists",getResponse != null);
@@ -49,7 +49,7 @@ public class PutNewDocumentTest extends AbstractXDMJunitTest {
 		assertTrue("Get response content must equals the one sent in put",XMLValidator.weaklyEquals(content,(String)getResponse.getContent()));
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 		
 }

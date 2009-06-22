@@ -1,5 +1,7 @@
 package org.mobicents.slee.resource.xcapclient;
 
+import java.util.List;
+
 import org.mobicents.slee.resource.xcapclient.AsyncActivity;
 import org.mobicents.slee.resource.xcapclient.XCAPResourceAdaptorActivityHandle;
 import org.mobicents.slee.resource.xcapclient.handler.AsyncDeleteHandler;
@@ -12,6 +14,7 @@ import org.mobicents.slee.resource.xcapclient.handler.AsyncPutIfMatchStringConte
 import org.mobicents.slee.resource.xcapclient.handler.AsyncPutIfNoneMatchByteArrayContentHandler;
 import org.mobicents.slee.resource.xcapclient.handler.AsyncPutIfNoneMatchStringContentHandler;
 import org.mobicents.slee.resource.xcapclient.handler.AsyncPutStringContentHandler;
+import org.openxdm.xcap.client.RequestHeader;
 import org.openxdm.xcap.common.key.XcapUriKey;
 
 public class AsyncActivityImpl implements AsyncActivity {
@@ -54,48 +57,48 @@ public class AsyncActivityImpl implements AsyncActivity {
 		return handle.hashCode();
 	}
 
-	public void delete(XcapUriKey key) {
-		ra.getExecutorService().execute(new AsyncDeleteHandler(ra,handle,key));
+	public void delete(XcapUriKey key, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncDeleteHandler(ra,handle,key,additionalRequestHeaders));
 	}
 
-	public void deleteIfMatch(XcapUriKey key, String eTag) {
-		ra.getExecutorService().execute(new AsyncDeleteIfMatchHandler(ra,handle,key,eTag));
+	public void deleteIfMatch(XcapUriKey key, String eTag, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncDeleteIfMatchHandler(ra,handle,key,eTag,additionalRequestHeaders));
 	}
 
-	public void deleteIfNoneMatch(XcapUriKey key, String eTag) {
-		ra.getExecutorService().execute(new AsyncDeleteIfNoneMatchHandler(ra,handle,key,eTag));
+	public void deleteIfNoneMatch(XcapUriKey key, String eTag, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncDeleteIfNoneMatchHandler(ra,handle,key,eTag,additionalRequestHeaders));
 	}
 
-	public void get(XcapUriKey key) {
-		ra.getExecutorService().execute(new AsyncGetHandler(ra,handle,key));
+	public void get(XcapUriKey key, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncGetHandler(ra,handle,key,additionalRequestHeaders));
 	}
 
-	public void put(XcapUriKey key, String mimetype, String content) {
-		ra.getExecutorService().execute(new AsyncPutStringContentHandler(ra,handle,key,mimetype,content));
+	public void put(XcapUriKey key, String mimetype, String content, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncPutStringContentHandler(ra,handle,key,mimetype,content,additionalRequestHeaders));
 	}
 
-	public void put(XcapUriKey key, String mimetype, byte[] content) {
-		ra.getExecutorService().execute(new AsyncPutByteArrayContentHandler(ra,handle,key,mimetype,content));
-	}
-
-	public void putIfMatch(XcapUriKey key, String eTag, String mimetype,
-			String content) {
-		ra.getExecutorService().execute(new AsyncPutIfMatchStringContentHandler(ra,handle,key,eTag,mimetype,content));
+	public void put(XcapUriKey key, String mimetype, byte[] content, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncPutByteArrayContentHandler(ra,handle,key,mimetype,content,additionalRequestHeaders));
 	}
 
 	public void putIfMatch(XcapUriKey key, String eTag, String mimetype,
-			byte[] content) {
-		ra.getExecutorService().execute(new AsyncPutIfMatchByteArrayContentHandler(ra,handle,key,eTag,mimetype,content));
+			String content, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncPutIfMatchStringContentHandler(ra,handle,key,eTag,mimetype,content,additionalRequestHeaders));
+	}
+
+	public void putIfMatch(XcapUriKey key, String eTag, String mimetype,
+			byte[] content, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncPutIfMatchByteArrayContentHandler(ra,handle,key,eTag,mimetype,content,additionalRequestHeaders));
 	}
 
 	public void putIfNoneMatch(XcapUriKey key, String eTag, String mimetype,
-			String content) {
-		ra.getExecutorService().execute(new AsyncPutIfNoneMatchStringContentHandler(ra,handle,key,eTag,mimetype,content));
+			String content, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncPutIfNoneMatchStringContentHandler(ra,handle,key,eTag,mimetype,content,additionalRequestHeaders));
 	}
 
 	public void putIfNoneMatch(XcapUriKey key, String eTag, String mimetype,
-			byte[] content) {
-		ra.getExecutorService().execute(new AsyncPutIfNoneMatchByteArrayContentHandler(ra,handle,key,eTag,mimetype,content));
+			byte[] content, List<RequestHeader> additionalRequestHeaders) {
+		ra.getExecutorService().execute(new AsyncPutIfNoneMatchByteArrayContentHandler(ra,handle,key,eTag,mimetype,content,additionalRequestHeaders));
 	}
 
 	

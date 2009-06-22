@@ -44,7 +44,7 @@ public class BadRequestTest extends AbstractXDMJunitTest {
 			"</resource-lists>";
 		
 		// send put request and get response
-		Response response = client.put(key,appUsage.getMimetype(),content);
+		Response response = client.put(key,appUsage.getMimetype(),content,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
@@ -63,7 +63,7 @@ public class BadRequestTest extends AbstractXDMJunitTest {
 		// create attr put uri
 		UserAttributeUriKey attrKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),new AttributeSelector("name"),namespaces);
 		// send put request and get response
-		Response putResponse = client.put(attrKey,AttributeResource.MIMETYPE,"friends");
+		Response putResponse = client.put(attrKey,AttributeResource.MIMETYPE,"friends",null);
 		// check put response, must be bad request
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response code should be "+BadRequestException.RESPONSE_STATUS,putResponse.getCode() == BadRequestException.RESPONSE_STATUS);
@@ -75,19 +75,19 @@ public class BadRequestTest extends AbstractXDMJunitTest {
 		UserAttributeUriKey anotherAttrKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),new AttributeSelector("name"),null);
 				
 		// send get request and get response
-		Response getResponse = client.get(anotherAttrKey);
+		Response getResponse = client.get(anotherAttrKey,null);
 		// check get response, must be bad request
 		assertTrue("Delete response must exists",getResponse != null);
 		assertTrue("Delete response code should be "+BadRequestException.RESPONSE_STATUS,getResponse.getCode() == BadRequestException.RESPONSE_STATUS);
 		
 		// send delete request and get response
-		Response deleteResponse = client.delete(anotherAttrKey);
+		Response deleteResponse = client.delete(anotherAttrKey,null);
 		// check put response, must be bad request
 		assertTrue("Delete response must exists",deleteResponse != null);
 		assertTrue("Delete response code should be "+BadRequestException.RESPONSE_STATUS,deleteResponse.getCode() == BadRequestException.RESPONSE_STATUS);
 		
 		// cleanup
-		client.delete(key);
+		client.delete(key,null);
 	}	
 	
 }

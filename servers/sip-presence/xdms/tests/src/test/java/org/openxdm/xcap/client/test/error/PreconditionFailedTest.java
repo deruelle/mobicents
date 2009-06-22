@@ -54,7 +54,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		UserDocumentUriKey documentKey = new UserDocumentUriKey(appUsage.getAUID(),user,documentName);		
 		
 		// send put request and get response
-		Response response = client.put(documentKey,appUsage.getMimetype(),documentContent);		
+		Response response = client.put(documentKey,appUsage.getMimetype(),documentContent,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
@@ -62,7 +62,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		String eTag = response.getETag();
 		
 		// send put request and get response
-		response = client.putIfMatch(documentKey,eTag+"z",appUsage.getMimetype(),documentContent);		
+		response = client.putIfMatch(documentKey,eTag+"z",appUsage.getMimetype(),documentContent,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -70,7 +70,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 2. replace document if none match
 		
 		// send put request and get response
-		response = client.putIfNoneMatch(documentKey,eTag,appUsage.getMimetype(),documentContent);		
+		response = client.putIfNoneMatch(documentKey,eTag,appUsage.getMimetype(),documentContent,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -78,7 +78,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 3. delete document if match
 
 		// send delete request and get response
-		response = client.deleteIfMatch(documentKey,eTag+"z");		
+		response = client.deleteIfMatch(documentKey,eTag+"z",null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -86,7 +86,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 4. delete document if none match
 
 		// send delete request and get response
-		response = client.deleteIfNoneMatch(documentKey,eTag);		
+		response = client.deleteIfNoneMatch(documentKey,eTag,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -103,7 +103,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		UserElementUriKey elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,null);
 		
 		// send put request and get response
-		response = client.putIfMatch(elementKey,eTag+"z",ElementResource.MIMETYPE,elementContent);				
+		response = client.putIfMatch(elementKey,eTag+"z",ElementResource.MIMETYPE,elementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -111,7 +111,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 6. put new element if none match
 
 		// send put request and get response
-		response = client.putIfNoneMatch(elementKey,eTag,ElementResource.MIMETYPE,elementContent);				
+		response = client.putIfNoneMatch(elementKey,eTag,ElementResource.MIMETYPE,elementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -119,7 +119,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 7. replace element if match
 
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,elementContent);				
+		response = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
@@ -127,7 +127,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		eTag = response.getETag();
 		
 		// send put request and get response
-		response = client.putIfMatch(elementKey,eTag+"z",ElementResource.MIMETYPE,elementContent);				
+		response = client.putIfMatch(elementKey,eTag+"z",ElementResource.MIMETYPE,elementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -135,7 +135,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 8. replace element if none match
 
 		// send put request and get response
-		response = client.putIfNoneMatch(elementKey,eTag,ElementResource.MIMETYPE,elementContent);				
+		response = client.putIfNoneMatch(elementKey,eTag,ElementResource.MIMETYPE,elementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -143,7 +143,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 9. delete element if match
 
 		// send delete request and get response
-		response = client.deleteIfMatch(elementKey,eTag+"z");		
+		response = client.deleteIfMatch(elementKey,eTag+"z",null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -151,7 +151,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 10. delete element if none match
 
 		// send delete request and get response
-		response = client.deleteIfNoneMatch(elementKey,eTag);		
+		response = client.deleteIfNoneMatch(elementKey,eTag,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -161,7 +161,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		UserAttributeUriKey attrKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),new AttributeSelector("name"),null);
 				
 		// send put request and get response
-		response = client.putIfMatch(attrKey,eTag+"z",AttributeResource.MIMETYPE,attrContent);				
+		response = client.putIfMatch(attrKey,eTag+"z",AttributeResource.MIMETYPE,attrContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -169,7 +169,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 12. put new attr if none match
 
 		// send put request and get response
-		response = client.putIfNoneMatch(attrKey,eTag,AttributeResource.MIMETYPE,attrContent);				
+		response = client.putIfNoneMatch(attrKey,eTag,AttributeResource.MIMETYPE,attrContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -177,7 +177,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 13. replace attr if match
 
 		// send put request and get response
-		response = client.put(attrKey,AttributeResource.MIMETYPE,attrContent);				
+		response = client.put(attrKey,AttributeResource.MIMETYPE,attrContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 200",response.getCode() == 200);
@@ -185,7 +185,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		eTag = response.getETag();
 		
 		// send put request and get response
-		response = client.putIfMatch(attrKey,eTag+"z",AttributeResource.MIMETYPE,attrContent);				
+		response = client.putIfMatch(attrKey,eTag+"z",AttributeResource.MIMETYPE,attrContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -193,7 +193,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 14. replace attr if none match
 
 		// send put request and get response
-		response = client.putIfNoneMatch(attrKey,eTag,AttributeResource.MIMETYPE,attrContent);				
+		response = client.putIfNoneMatch(attrKey,eTag,AttributeResource.MIMETYPE,attrContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -201,7 +201,7 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 15. delete attr if match
 
 		// send delete request and get response
-		response = client.deleteIfMatch(attrKey,eTag+"z");		
+		response = client.deleteIfMatch(attrKey,eTag+"z",null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -209,13 +209,13 @@ public class PreconditionFailedTest extends AbstractXDMJunitTest {
 		// 16. delete attr if none match
 		
 		// send delete request and get response
-		response = client.deleteIfNoneMatch(attrKey,eTag);		
+		response = client.deleteIfNoneMatch(attrKey,eTag,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
 		
 		// clean up
-		client.delete(documentKey);
+		client.delete(documentKey,null);
 	}
 	
 }

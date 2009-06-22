@@ -42,12 +42,12 @@ public class ConstraintFailureTest extends AbstractXDMJunitTest {
 			"<?xml version='1.0' encoding='UTF-8'?><xcap-error xmlns='urn:ietf:params:xml:ns:xcap-error'><constraint-failure phrase='Bad URI in resource-list element >> http://badref.example.com' /></xcap-error>";
 		
 		// send put request and get response
-		Response response = client.put(key,appUsage.getMimetype(),content);
+		Response response = client.put(key,appUsage.getMimetype(),content,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		if (response.getCode() == 201) {
-			client.delete(key);
+			client.delete(key,null);
 		}
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(expectedContent));
 		

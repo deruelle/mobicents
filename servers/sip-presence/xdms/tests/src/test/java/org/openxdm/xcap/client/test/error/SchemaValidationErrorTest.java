@@ -40,7 +40,7 @@ public class SchemaValidationErrorTest extends AbstractXDMJunitTest {
 			"</resource-lists>";
 		
 		// send put request and get response
-		Response response = client.put(key,appUsage.getMimetype(),content);
+		Response response = client.put(key,appUsage.getMimetype(),content,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);

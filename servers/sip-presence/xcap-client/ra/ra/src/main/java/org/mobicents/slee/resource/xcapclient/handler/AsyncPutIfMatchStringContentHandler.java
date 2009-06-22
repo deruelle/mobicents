@@ -1,7 +1,10 @@
 package org.mobicents.slee.resource.xcapclient.handler;
 
+import java.util.List;
+
 import org.mobicents.slee.resource.xcapclient.XCAPClientResourceAdaptor;
 import org.mobicents.slee.resource.xcapclient.XCAPResourceAdaptorActivityHandle;
+import org.openxdm.xcap.client.RequestHeader;
 import org.openxdm.xcap.client.Response;
 import org.openxdm.xcap.common.key.XcapUriKey;
 
@@ -19,8 +22,8 @@ public class AsyncPutIfMatchStringContentHandler extends AbstractAsyncHandler {
 
 	public AsyncPutIfMatchStringContentHandler(XCAPClientResourceAdaptor ra,
 			XCAPResourceAdaptorActivityHandle handle, XcapUriKey key,
-			String eTag, String mimetype, String content) {
-		super(ra, handle, key);
+			String eTag, String mimetype, String content, List<RequestHeader> additionalRequestHeaders) {
+		super(ra, handle, key, additionalRequestHeaders);
 		this.mimetype = mimetype;
 		this.content = content;
 		this.eTag = eTag;
@@ -28,7 +31,7 @@ public class AsyncPutIfMatchStringContentHandler extends AbstractAsyncHandler {
 
 	@Override
 	protected Response doRequest() throws Exception {
-		return ra.getClient().putIfMatch(key, eTag, mimetype, content);
+		return ra.getClient().putIfMatch(key, eTag, mimetype, content, additionalRequestHeaders);
 	}
 
 }

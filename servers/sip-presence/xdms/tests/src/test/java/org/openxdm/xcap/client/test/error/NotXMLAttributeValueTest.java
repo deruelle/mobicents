@@ -40,7 +40,7 @@ public class NotXMLAttributeValueTest extends AbstractXDMJunitTest {
 			"</resource-lists>";			
 		
 		// send put request and get response
-		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent);
+		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",initialPutResponse != null);
@@ -60,19 +60,19 @@ public class NotXMLAttributeValueTest extends AbstractXDMJunitTest {
 		// 2. put new attr
 		
 		// send put request and get response
-		Response attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"<badattvalue");				
+		Response attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"<badattvalue",null);				
 		// check put response
 		assertTrue("Put response must exists",attrPutResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),attrPutResponse.getCode() == exception.getResponseStatus() && attrPutResponse.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"'badattvalue");				
+		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"'badattvalue",null);				
 		// check put response
 		assertTrue("Put response must exists",attrPutResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),attrPutResponse.getCode() == exception.getResponseStatus() && attrPutResponse.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"\"badattvalue");				
+		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"\"badattvalue",null);				
 		// check put response
 		assertTrue("Put response must exists",attrPutResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),attrPutResponse.getCode() == exception.getResponseStatus() && attrPutResponse.getContent().equals(exception.getResponseContent()));
@@ -80,26 +80,26 @@ public class NotXMLAttributeValueTest extends AbstractXDMJunitTest {
 		// 2. replace attr
 		
 		// send put request and get response
-		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"enemies");				
+		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"enemies",null);				
 		
 		// check put response
 		assertTrue("Put response must exists",attrPutResponse != null);
 		assertTrue("Put response code should be 201",attrPutResponse.getCode() == 201);
 		
 		// send put request and get response
-		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"<badattvalue");				
+		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"<badattvalue",null);				
 		// check put response
 		assertTrue("Put response must exists",attrPutResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),attrPutResponse.getCode() == exception.getResponseStatus() && attrPutResponse.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"'badattvalue");				
+		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"'badattvalue",null);				
 		// check put response
 		assertTrue("Put response must exists",attrPutResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),attrPutResponse.getCode() == exception.getResponseStatus() && attrPutResponse.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"\"badattvalue");				
+		attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"\"badattvalue",null);				
 		// check put response
 		assertTrue("Put response must exists",attrPutResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),attrPutResponse.getCode() == exception.getResponseStatus() && attrPutResponse.getContent().equals(exception.getResponseContent()));
@@ -107,7 +107,7 @@ public class NotXMLAttributeValueTest extends AbstractXDMJunitTest {
 		//TODO bad char and entity refs puts
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

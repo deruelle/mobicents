@@ -1,6 +1,7 @@
 package org.openxdm.xcap.client;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.httpclient.HttpException;
 import org.openxdm.xcap.common.key.XcapUriKey;
@@ -9,16 +10,20 @@ import org.openxdm.xcap.common.resource.ElementResource;
 
 public interface XCAPClient {
 
-	// CLIENT MANAGEMENT
-
+	/**
+	 * Shutdown the client.
+	 */
 	public void shutdown();
-
-	// CLIENT OPERATIONS
 
 	/**
 	 * Retrieves the XML resource from the XCAP server, for the specified key.
+	 * @param key
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
+	 * @return
+	 * @throws HttpException
+	 * @throws IOException
 	 */
-	public Response get(XcapUriKey key) throws HttpException, IOException;
+	public Response get(XcapUriKey key, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException;
 
 	/**
 	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
@@ -31,11 +36,12 @@ public interface XCAPClient {
 	 *            you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	public Response put(XcapUriKey key, String mimetype, String content)
+	public Response put(XcapUriKey key, String mimetype, String content, List<RequestHeader> additionalRequestHeaders)
 			throws HttpException, IOException;
 
 	/**
@@ -49,11 +55,12 @@ public interface XCAPClient {
 	 *            you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	public Response put(XcapUriKey key, String mimetype, byte[] content)
+	public Response put(XcapUriKey key, String mimetype, byte[] content, List<RequestHeader> additionalRequestHeaders)
 			throws HttpException, IOException;
 
 	/**
@@ -68,12 +75,13 @@ public interface XCAPClient {
 	 *            you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
 	public Response putIfMatch(XcapUriKey key, String eTag, String mimetype,
-			String content) throws HttpException, IOException;
+			String content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException;
 
 	/**
 	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
@@ -87,12 +95,13 @@ public interface XCAPClient {
 	 *            you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
 	public Response putIfMatch(XcapUriKey key, String eTag, String mimetype,
-			byte[] content) throws HttpException, IOException;
+			byte[] content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException;
 
 	/**
 	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
@@ -107,12 +116,13 @@ public interface XCAPClient {
 	 *            you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
 	public Response putIfNoneMatch(XcapUriKey key, String eTag,
-			String mimetype, String content) throws HttpException, IOException;
+			String mimetype, String content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException;
 
 	/**
 	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
@@ -127,22 +137,24 @@ public interface XCAPClient {
 	 *            you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
 	public Response putIfNoneMatch(XcapUriKey key, String eTag,
-			String mimetype, byte[] content) throws HttpException, IOException;
+			String mimetype, byte[] content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException;
 
 	/**
 	 * Deletes the content related the specified XCAP URI key.
 	 * 
 	 * @param key
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	public Response delete(XcapUriKey key) throws HttpException, IOException;
+	public Response delete(XcapUriKey key, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException;
 
 	/**
 	 * Deletes the content related the specified XCAP URI key, if the specified
@@ -150,11 +162,12 @@ public interface XCAPClient {
 	 * 
 	 * @param key
 	 * @param eTag
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	public Response deleteIfMatch(XcapUriKey key, String eTag)
+	public Response deleteIfMatch(XcapUriKey key, String eTag, List<RequestHeader> additionalRequestHeaders)
 			throws HttpException, IOException;
 
 	/**
@@ -163,11 +176,12 @@ public interface XCAPClient {
 	 * 
 	 * @param key
 	 * @param eTag
+	 * @param additionalRequestHeaders a list containing {@link RequestHeader}s to add in the XCAP request
 	 * @return
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	public Response deleteIfNoneMatch(XcapUriKey key, String eTag)
+	public Response deleteIfNoneMatch(XcapUriKey key, String eTag, List<RequestHeader> additionalRequestHeaders)
 			throws HttpException, IOException;
 
 }

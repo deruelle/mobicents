@@ -33,35 +33,35 @@ public class IfMatchDeleteDocumentTest extends AbstractXDMJunitTest {
 			"</resource-lists>";
 				
 		// send put request and get response
-		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent);
+		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",initialPutResponse != null);
 		assertTrue("Put response code should be 201",initialPutResponse.getCode() == 201);
 				
 		// send get request and get response
-		Response initialGetResponse = client.get(key);
+		Response initialGetResponse = client.get(key,null);
 		
 		// check get response
 		assertTrue("Get response must exists",initialGetResponse != null);
 		assertTrue("Get response code should be 200",initialGetResponse.getCode() == 200); 
 				
 		// send delete request and get response
-		Response deleteResponse = client.deleteIfMatch(key,initialGetResponse.getETag());
+		Response deleteResponse = client.deleteIfMatch(key,initialGetResponse.getETag(),null);
 		
 		// check delete response
 		assertTrue("Delete response must exists",deleteResponse != null);
 		assertTrue("Delete response code should be 200",deleteResponse.getCode() == 200);
 				
 		// send get request and get response
-		Response deleteGetResponse = client.get(key);
+		Response deleteGetResponse = client.get(key,null);
 		
 		// check get response
 		assertTrue("Delete response must exists",deleteGetResponse != null);
 		assertTrue("Delete response code should be 404",deleteGetResponse.getCode() == 404);
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

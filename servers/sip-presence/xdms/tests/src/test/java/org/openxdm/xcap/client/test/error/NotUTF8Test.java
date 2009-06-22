@@ -89,19 +89,19 @@ public class NotUTF8Test extends AbstractXDMJunitTest {
 		UserDocumentUriKey documentKey = new UserDocumentUriKey(appUsage.getAUID(),user,documentName);		
 		
 		// send put request and get response
-		Response response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent1);		
+		Response response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent1,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent2);		
+		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent2,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent3Bytes);		
+		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent3Bytes,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -109,25 +109,25 @@ public class NotUTF8Test extends AbstractXDMJunitTest {
 		// 2. replace document
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),goodDocumentContent);		
+		response = client.put(documentKey,appUsage.getMimetype(),goodDocumentContent,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent1);		
+		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent1,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent2);		
+		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent2,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent3Bytes);		
+		response = client.put(documentKey,appUsage.getMimetype(),badDocumentContent3Bytes,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -144,7 +144,7 @@ public class NotUTF8Test extends AbstractXDMJunitTest {
 		UserElementUriKey elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,null);
 		
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,badElementContent);				
+		response = client.put(elementKey,ElementResource.MIMETYPE,badElementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -152,13 +152,13 @@ public class NotUTF8Test extends AbstractXDMJunitTest {
 		// 4. replace element
 		
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,goodElementContent);				
+		response = client.put(elementKey,ElementResource.MIMETYPE,goodElementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
 		
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,badElementContent);				
+		response = client.put(elementKey,ElementResource.MIMETYPE,badElementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -168,7 +168,7 @@ public class NotUTF8Test extends AbstractXDMJunitTest {
 		UserAttributeUriKey attrKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),new AttributeSelector("name"),null);
 				
 		// send put request and get response
-		response = client.put(attrKey,AttributeResource.MIMETYPE,badAttrContent);				
+		response = client.put(attrKey,AttributeResource.MIMETYPE,badAttrContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -176,19 +176,19 @@ public class NotUTF8Test extends AbstractXDMJunitTest {
 		// 6. replace attr
 
 		// send put request and get response
-		response = client.put(attrKey,AttributeResource.MIMETYPE,goodAttrContent);				
+		response = client.put(attrKey,AttributeResource.MIMETYPE,goodAttrContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
 		
 		// send put request and get response
-		response = client.put(attrKey,AttributeResource.MIMETYPE,badAttrContent);				
+		response = client.put(attrKey,AttributeResource.MIMETYPE,badAttrContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// clean up
-		client.delete(documentKey);
+		client.delete(documentKey,null);
 				
 	}
 	

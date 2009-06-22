@@ -48,13 +48,13 @@ public class EncodedResourceListsXUITest {
 		is.close();
 		
 		// send put request and get response
-		Response response = client.put(key,RLSServicesAppUsage.MIMETYPE,content);
+		Response response = client.put(key,RLSServicesAppUsage.MIMETYPE,content,null);
 		
 		// check put response
 		System.out.println("Response got:\n"+response);
 		assertTrue("Put response must exists and status code must be 200 or 201",response != null && (response.getCode() == 200 || response.getCode() == 201));
 		
-		client.delete(key);
+		client.delete(key,null);
 		client.shutdown();
 	}
 		

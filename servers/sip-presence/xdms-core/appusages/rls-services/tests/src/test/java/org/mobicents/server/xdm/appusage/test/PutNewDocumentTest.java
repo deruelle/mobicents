@@ -48,7 +48,7 @@ public class PutNewDocumentTest {
 		is.close();
 		
 		// send put request and get response
-		Response putResponse = client.put(key,RLSServicesAppUsage.MIMETYPE,content);
+		Response putResponse = client.put(key,RLSServicesAppUsage.MIMETYPE,content,null);
 		
 		// check put response
 		System.out.println("Response got:\n"+putResponse);
@@ -56,7 +56,7 @@ public class PutNewDocumentTest {
 		assertTrue("Put response code should be 201",putResponse.getCode() == 201);
 				
 		// send get request and get response
-		Response getResponse = client.get(key);
+		Response getResponse = client.get(key,null);
 		
 		// check get response
 		assertTrue("Get response must exists",getResponse != null);
@@ -66,10 +66,10 @@ public class PutNewDocumentTest {
 		bais.close();
 		assertTrue("Get response content must equals the one sent in put",content.equals(getResponseContent));
 		
-		System.out.println("Global document after put:\n"+client.get(new GlobalDocumentUriKey(RLSServicesAppUsage.ID,documentName)).getContent());
+		System.out.println("Global document after put:\n"+client.get(new GlobalDocumentUriKey(RLSServicesAppUsage.ID,documentName),null).getContent());
 		// clean
-		client.delete(key);
-		System.out.println("Global document after delete:\n"+client.get(new GlobalDocumentUriKey(RLSServicesAppUsage.ID,documentName)).getContent());
+		client.delete(key,null);
+		System.out.println("Global document after delete:\n"+client.get(new GlobalDocumentUriKey(RLSServicesAppUsage.ID,documentName),null).getContent());
 		client.shutdown();
 	}
 		

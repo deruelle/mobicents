@@ -40,28 +40,28 @@ public class IfMatchReplaceExistingDocumentTest extends AbstractXDMJunitTest {
 			"</resource-lists>";		
 		
 		// send put request and get response
-		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent);
+		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",initialPutResponse != null);
 		assertTrue("Put response code should be 201",initialPutResponse.getCode() == 201);
 				
 		// send get request and get response
-		Response initialGetResponse = client.get(key);
+		Response initialGetResponse = client.get(key,null);
 		
 		// check get response
 		assertTrue("Get response must exists",initialGetResponse != null);
 		assertTrue("Get response code should be 200",initialGetResponse.getCode() == 200); 
 		
 		// send put request and get response
-		Response replacePutResponse = client.putIfMatch(key,initialGetResponse.getETag(),appUsage.getMimetype(),replaceContent);
+		Response replacePutResponse = client.putIfMatch(key,initialGetResponse.getETag(),appUsage.getMimetype(),replaceContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",replacePutResponse != null);
 		assertTrue("Put response code should be 200",replacePutResponse.getCode() == 200);
 				
 		// send get request and get response
-		Response replaceGetResponse = client.get(key);
+		Response replaceGetResponse = client.get(key,null);
 		
 		// check get response
 		assertTrue("Get response must exists",replaceGetResponse != null);
@@ -69,7 +69,7 @@ public class IfMatchReplaceExistingDocumentTest extends AbstractXDMJunitTest {
 		assertTrue("Get response content must equals the one sent in put",XMLValidator.weaklyEquals(replaceContent,(String)replaceGetResponse.getContent()));
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

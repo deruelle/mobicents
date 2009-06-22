@@ -46,7 +46,7 @@ public class NotValidXMLFragmentTest extends AbstractXDMJunitTest {
 		String badElementContent = "not valid xml fragment";
 			
 		// send put request and get response
-		Response response = client.put(key,appUsage.getMimetype(),documentContent);
+		Response response = client.put(key,appUsage.getMimetype(),documentContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
@@ -62,28 +62,28 @@ public class NotValidXMLFragmentTest extends AbstractXDMJunitTest {
 		UserElementUriKey elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,null);
 		
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,badElementContent);
+		response = client.put(elementKey,ElementResource.MIMETYPE,badElementContent,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,goodElementContent);
+		response = client.put(elementKey,ElementResource.MIMETYPE,goodElementContent,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
 		
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,badElementContent);
+		response = client.put(elementKey,ElementResource.MIMETYPE,badElementContent,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

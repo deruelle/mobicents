@@ -51,7 +51,7 @@ public class ResourceInterdependenciesTest {
         String content1 = TextWriter.toString(document1);
 		is1.close();
 		// send put request and get response
-		Response putResponse1 = client.put(key1,RLSServicesAppUsage.MIMETYPE,content1);
+		Response putResponse1 = client.put(key1,RLSServicesAppUsage.MIMETYPE,content1,null);
 		// check put response
 		System.out.println("Response got:\n"+putResponse1);
 		assertTrue("Put response must exists",putResponse1 != null);
@@ -66,7 +66,7 @@ public class ResourceInterdependenciesTest {
         String content2 = TextWriter.toString(document2);
 		is2.close();
 		// send put request and get response
-		Response putResponse2 = client.put(key2,RLSServicesAppUsage.MIMETYPE,content2);
+		Response putResponse2 = client.put(key2,RLSServicesAppUsage.MIMETYPE,content2,null);
 		// check put response
 		System.out.println("Response got:\n"+putResponse2);
 		assertTrue("Put response must exists",putResponse2 != null);
@@ -79,7 +79,7 @@ public class ResourceInterdependenciesTest {
 		Document document3 = XMLValidator.getWellFormedDocument(XMLValidator.getUTF8Reader(is3));
         String content3 = TextWriter.toString(document3);
 		is3.close();
-		Response getResponse = client.get(key3);
+		Response getResponse = client.get(key3,null);
 		// check get response
 		System.out.println("Response got:\n"+getResponse);
 		assertTrue("Get response must exists",getResponse != null);
@@ -90,8 +90,8 @@ public class ResourceInterdependenciesTest {
 		assertTrue("Get response content must equals the one sent in put. \n-------- Content --------\n"+getResponseContent+"\n--------\n-------- Expected --------\n"+content3+"\n--------",XMLValidator.weaklyEquals(content3,getResponseContent));
 		
 		// REMOVE USER1 DOC AND CHECK GLOBAL AGAIN
-		client.delete(key1);
-		getResponse = client.get(key3);
+		client.delete(key1,null);
+		getResponse = client.get(key3,null);
 		// check get response
 		System.out.println("Response got:\n"+getResponse);
 		assertTrue("Get response must exists",getResponse != null);
@@ -102,7 +102,7 @@ public class ResourceInterdependenciesTest {
 		assertTrue("Get response content must equals the one sent in put. \n-------- Content --------\n"+getResponseContent+"\n--------\n-------- Expected --------\n"+content2+"\n--------",XMLValidator.weaklyEquals(content2,getResponseContent));
 		
 		// clean
-		client.delete(key2);
+		client.delete(key2,null);
 		client.shutdown();
 	}
 		

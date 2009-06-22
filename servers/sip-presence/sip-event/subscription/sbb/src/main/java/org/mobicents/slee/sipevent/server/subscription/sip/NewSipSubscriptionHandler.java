@@ -208,7 +208,7 @@ public class NewSipSubscriptionHandler {
 					|| responseCode == Response.OK) {
 				ToHeader responseToHeader = (ToHeader) response
 						.getHeader(ToHeader.NAME);
-				responseToHeader.setTag(Utils.generateTag());
+				responseToHeader.setTag(Utils.getInstance().generateTag());
 				// attach to dialog
 				SbbLocalObject sbbLocalObject = sipSubscriptionHandler.sbb
 						.getSbbContext().getSbbLocalObject();

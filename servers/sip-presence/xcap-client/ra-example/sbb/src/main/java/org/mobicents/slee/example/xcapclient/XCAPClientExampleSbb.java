@@ -46,10 +46,10 @@ import org.openxdm.xcap.common.xml.XMLValidator;
 
 public abstract class XCAPClientExampleSbb implements javax.slee.Sbb {
 
-	private SbbContext sbbContext = null; // This SBB's SbbContext		
+	private SbbContext sbbContext = null; 	
 	
 	/**
-	 * jaxb context for example pojos
+	 * static jaxb context for example pojos
 	 */
 	private static JAXBContext jAXBContext = initJAXBContext();
 	private static JAXBContext initJAXBContext() {
@@ -149,7 +149,7 @@ public abstract class XCAPClientExampleSbb implements javax.slee.Sbb {
 			"</resource-lists>";	
 		
 		// put the document and get sync response
-		Response response = ra.put(docKey,"application/resource-lists+xml",initialDocument);
+		Response response = ra.put(docKey,"application/resource-lists+xml",initialDocument,null);
 		
 		// check put response
 		if (response != null) {
@@ -173,7 +173,7 @@ public abstract class XCAPClientExampleSbb implements javax.slee.Sbb {
 		UserElementUriKey elemKey = new UserElementUriKey("resource-lists",userName,documentName,new ElementSelector(elementSelectorSteps),null);		
 		
 		// put the element and get sync response
-		response = ra.put(elemKey,ElementResource.MIMETYPE,element);
+		response = ra.put(elemKey,ElementResource.MIMETYPE,element,null);
 		
 		// check put response
 		if (response != null) {
@@ -187,7 +187,7 @@ public abstract class XCAPClientExampleSbb implements javax.slee.Sbb {
 		}
 				
 		// get the document and check content is ok
-		response = ra.get(docKey);
+		response = ra.get(docKey,null);
 		
 		// check get response		
 		if (response != null) {
@@ -228,7 +228,7 @@ public abstract class XCAPClientExampleSbb implements javax.slee.Sbb {
 		jAXBContext.createMarshaller().marshal(listType, baos);
 		
 		// lets put the element using the sync interface
-		Response response = ra.put(key,ElementResource.MIMETYPE,baos.toByteArray());
+		Response response = ra.put(key,ElementResource.MIMETYPE,baos.toByteArray(),null);
 		// check put response
 		if (response != null) {
 			if(response.getCode() == 201) {
@@ -250,7 +250,7 @@ public abstract class XCAPClientExampleSbb implements javax.slee.Sbb {
 		aci.attach(sbbContext.getSbbLocalObject());
 		
 		// send request
-		activity.get(key);
+		activity.get(key,null);
 		
 		// the response will be asyncronous
 	}
@@ -279,9 +279,9 @@ public abstract class XCAPClientExampleSbb implements javax.slee.Sbb {
 				stringReader.close();
 				if(listType != null && listType.getName().equals("enemies")) {
 					// check if it's winnie inside
-					List list = listType.getListOrExternalOrEntry();		
+					List<?> list = listType.getListOrExternalOrEntry();		
 					if(list.size() == 1) {
-						EntryType entry = (EntryType)((JAXBElement)list.get(0)).getValue();
+						EntryType entry = (EntryType)((JAXBElement<?>)list.get(0)).getValue();
 						if(entry.getUri().equals("sip:winniethepooh@disney.com")) {
 							log.info("async test suceed :)");
 						}
@@ -305,7 +305,7 @@ public abstract class XCAPClientExampleSbb implements javax.slee.Sbb {
 		
 		try {
 			// delete the document
-			ra.delete(new UserDocumentUriKey("resource-lists",userName,documentName));	
+			ra.delete(new UserDocumentUriKey("resource-lists",userName,documentName),null);	
 		}
 		catch (Exception e) {
 			log.error("failed to delete document",e);

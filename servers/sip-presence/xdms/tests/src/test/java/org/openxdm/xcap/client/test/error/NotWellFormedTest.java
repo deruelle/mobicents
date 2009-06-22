@@ -41,28 +41,28 @@ public class NotWellFormedTest extends AbstractXDMJunitTest {
 			"not well formed";			
 			
 		// send put request and get response
-		Response response = client.put(key,appUsage.getMimetype(),badDocumentContent);
+		Response response = client.put(key,appUsage.getMimetype(),badDocumentContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));		
 		
 		// send put request and get response
-		response = client.put(key,appUsage.getMimetype(),goodDocumentContent);
+		response = client.put(key,appUsage.getMimetype(),goodDocumentContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
 		
 		// send put request and get response
-		response = client.put(key,appUsage.getMimetype(),badDocumentContent);
+		response = client.put(key,appUsage.getMimetype(),badDocumentContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

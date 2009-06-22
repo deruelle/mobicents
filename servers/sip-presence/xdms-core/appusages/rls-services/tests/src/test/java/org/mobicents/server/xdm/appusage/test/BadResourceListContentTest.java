@@ -53,7 +53,7 @@ public class BadResourceListContentTest {
 		is.close();
 		
 		// send put request and get response
-		Response response = client.put(key,RLSServicesAppUsage.MIMETYPE,content);
+		Response response = client.put(key,RLSServicesAppUsage.MIMETYPE,content,null);
 		
 		// check put response
 		System.out.println("Response got:\n"+response);

@@ -47,14 +47,14 @@ public class UnsupportedMediaTypeTest extends AbstractXDMJunitTest {
 		// CREATES
 		
 		// send put request and get response
-		Response response = client.put(documentKey,"badmimetype",documentContent);
+		Response response = client.put(documentKey,"badmimetype",documentContent,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),documentContent);
+		response = client.put(documentKey,appUsage.getMimetype(),documentContent,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
@@ -75,7 +75,7 @@ public class UnsupportedMediaTypeTest extends AbstractXDMJunitTest {
 		UnsupportedMediaTypeFakeDocumentUriKey evilKey = new UnsupportedMediaTypeFakeDocumentUriKey(elementKey);
 		
 		// send put request and get response		
-		response = client.put(evilKey,"badmimetype",elementContent);
+		response = client.put(evilKey,"badmimetype",elementContent,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
@@ -92,7 +92,7 @@ public class UnsupportedMediaTypeTest extends AbstractXDMJunitTest {
 		UserAttributeUriKey attributeKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,elementSelector,attributeSelector,null);
 		AnotherUnsupportedMediaTypeFakeDocumentUriKey anotherEvilKey = new AnotherUnsupportedMediaTypeFakeDocumentUriKey(attributeKey);
 		// send put request and get response
-		response = client.put(anotherEvilKey,"badmimetype","friends");
+		response = client.put(anotherEvilKey,"badmimetype","friends",null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
@@ -101,7 +101,7 @@ public class UnsupportedMediaTypeTest extends AbstractXDMJunitTest {
 		// REPLACES
 		
 		// send put request and get response
-		response = client.put(documentKey,"badmimetype",documentContent);
+		response = client.put(documentKey,"badmimetype",documentContent,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
@@ -111,28 +111,28 @@ public class UnsupportedMediaTypeTest extends AbstractXDMJunitTest {
 		elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,null);
 		
 		// send put request and get response
-		response = client.put(evilKey,"badmimetype",elementContent);
+		response = client.put(evilKey,"badmimetype",elementContent,null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
 		
 		// send put request and get response
-		response = client.put(attributeKey,AttributeResource.MIMETYPE,"friends");
+		response = client.put(attributeKey,AttributeResource.MIMETYPE,"friends",null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
 		
 		// send put request and get response
-		response = client.put(anotherEvilKey,"badmimetype","friends");
+		response = client.put(anotherEvilKey,"badmimetype","friends",null);
 				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
 		
 		// clean up
-		client.delete(documentKey);
+		client.delete(documentKey,null);
 	}
 		
 }

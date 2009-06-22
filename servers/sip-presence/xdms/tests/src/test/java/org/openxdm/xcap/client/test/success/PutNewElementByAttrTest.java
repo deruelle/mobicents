@@ -41,7 +41,7 @@ public class PutNewElementByAttrTest extends AbstractXDMJunitTest {
 			"</resource-lists>";			
 		
 		// send put request and get response
-		Response initialPutResponse = client.put(key,appUsage.getMimetype(),document);
+		Response initialPutResponse = client.put(key,appUsage.getMimetype(),document,null);
 		
 		// check put response
 		assertTrue("Put response must exists",initialPutResponse != null);
@@ -62,21 +62,21 @@ public class PutNewElementByAttrTest extends AbstractXDMJunitTest {
 		String element2 = "<entry uri=\"sip:alice@example.com\" xmlns=\"urn:ietf:params:xml:ns:resource-lists\"/>";
 		
 		// send put request and get response
-		Response elemPutResponse = client.put(elemKey,ElementResource.MIMETYPE,element);
+		Response elemPutResponse = client.put(elemKey,ElementResource.MIMETYPE,element,null);
 		
 		// check put response
 		assertTrue("Put response must exists",elemPutResponse != null);
 		assertTrue("Put response code should be 201",elemPutResponse.getCode() == 201);
 				
 		// send get request and get response
-		Response elemGetResponse = client.get(elemKey);
+		Response elemGetResponse = client.get(elemKey,null);
 		
 		// check get response
 		assertTrue("Get response must exists",elemGetResponse != null);
 		assertTrue("Get response code should be 200 and the elem value must equals the one sent in put",elemGetResponse.getCode() == 200 && (XMLValidator.weaklyEquals((String)elemGetResponse.getContent(),element) || XMLValidator.weaklyEquals((String)elemGetResponse.getContent(),element2)));
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

@@ -39,7 +39,7 @@ public class PresenceCompositionPolicy {
 		List<Object> presenceAny = presence.getAny();
 		List<Device> presenceDevices = new ArrayList<Device>();
 		List<Person> presencePersons = new ArrayList<Person>();
-		for (Iterator it = presenceAny.iterator(); it.hasNext();) {
+		for (Iterator<?> it = presenceAny.iterator(); it.hasNext();) {
 			Object obj = it.next();
 			if (obj instanceof Device) {
 				presenceDevices.add((Device)obj);
@@ -53,7 +53,7 @@ public class PresenceCompositionPolicy {
 		List<Object> otherPresenceAny = otherPresence.getAny();
 		List<Device> otherPresenceDevices = new ArrayList<Device>();
 		List<Person> otherPresencePersons = new ArrayList<Person>();
-		for (Iterator it = otherPresenceAny.iterator(); it.hasNext();) {
+		for (Iterator<?> it = otherPresenceAny.iterator(); it.hasNext();) {
 			Object obj = it.next();
 			if (obj instanceof Device) {
 				otherPresenceDevices.add((Device)obj);
@@ -99,11 +99,11 @@ public class PresenceCompositionPolicy {
 		}
 		// now add the ones left but replacing the ids
 		for (Tuple tuple : tuples) {
-			tuple.setId(Utils.generateTag());
+			tuple.setId(Utils.getInstance().generateTag());
 			result.add(tuple);
 		}
 		for (Tuple tuple : otherTuples) {
-			tuple.setId(Utils.generateTag());
+			tuple.setId(Utils.getInstance().generateTag());
 			result.add(tuple);
 		}
 		return result;
@@ -112,7 +112,7 @@ public class PresenceCompositionPolicy {
 	private Tuple compose(Tuple tuple, Tuple otherTuple) {
 		
 		Tuple result = new Tuple();
-		result.setId(Utils.generateTag());
+		result.setId(Utils.getInstance().generateTag());
 
 		/*
 		 * 
@@ -293,14 +293,14 @@ public class PresenceCompositionPolicy {
 	private List<Object> compose(List<Object> anys, List<Object> otherAnys, boolean allowConflicts, boolean keepRecentInConflict, boolean anysIsOlder) {
 		
 		ArrayList<Object> result = new ArrayList<Object>();
-		for (Iterator anysIt = anys.iterator(); anysIt.hasNext(); ) {
+		for (Iterator<?> anysIt = anys.iterator(); anysIt.hasNext(); ) {
 			Object anysObject = anysIt.next();
-			for (Iterator otherAnysIt = otherAnys.iterator(); otherAnysIt.hasNext(); ) {
+			for (Iterator<?> otherAnysIt = otherAnys.iterator(); otherAnysIt.hasNext(); ) {
 				Object otherAnysObject = otherAnysIt.next();
 				if (anysObject instanceof JAXBElement) {
-					JAXBElement anysElement = (JAXBElement) anysObject;
+					JAXBElement<?> anysElement = (JAXBElement<?>) anysObject;
 					if (otherAnysObject instanceof JAXBElement) {
-						JAXBElement otherAnysElement = (JAXBElement) otherAnysObject;
+						JAXBElement<?> otherAnysElement = (JAXBElement<?>) otherAnysObject;
 						if (anysElement.getName().equals(otherAnysElement.getName())) {
 							// same element type, check for conflict
 							if (isConflict(anysElement.getValue(), otherAnysElement.getValue())) {
@@ -492,11 +492,11 @@ public class PresenceCompositionPolicy {
 		}
 		// now add the ones left but replacing the ids
 		for (Device device : devices) {
-			device.setId(Utils.generateTag());
+			device.setId(Utils.getInstance().generateTag());
 			result.add(device);
 		}
 		for (Device device : otherDevices) {
-			device.setId(Utils.generateTag());
+			device.setId(Utils.getInstance().generateTag());
 			result.add(device);
 		}
 		return result;
@@ -553,7 +553,7 @@ public class PresenceCompositionPolicy {
 			// process notes
 			result.getNote().addAll(composeNotesT(device.getNote(), otherDevice.getNote()));
 			result.setDeviceID(device.getDeviceID());
-			result.setId(Utils.generateTag());
+			result.setId(Utils.getInstance().generateTag());
 			return result;
 		}
 		else {
@@ -584,11 +584,11 @@ public class PresenceCompositionPolicy {
 		}
 		// now add the ones left but replacing the ids
 		for (Person person : persons) {
-			person.setId(Utils.generateTag());
+			person.setId(Utils.getInstance().generateTag());
 			result.add(person);
 		}
 		for (Person person : otherPersons) {
-			person.setId(Utils.generateTag());
+			person.setId(Utils.getInstance().generateTag());
 			result.add(person);
 		}
 		return result;
@@ -652,7 +652,7 @@ public class PresenceCompositionPolicy {
 		// process notes
 		result.getNote().addAll(composeNotesT(person.getNote(), otherPerson.getNote()));
 		
-		result.setId(Utils.generateTag());
+		result.setId(Utils.getInstance().generateTag());
 		return result;
 	}
 	

@@ -114,7 +114,7 @@
   <classpathentry kind="var" path="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-api/1.2/jain-sip-api-1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.89/jain-sip-ri-1.2.89.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.100/jain-sip-ri-1.2.100.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/slee/jain-slee/1.1.draft/jain-slee-1.1.draft.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1.jar"/>
@@ -139,12 +139,12 @@
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-entitymanager/3.3.1.ga/hibernate-entitymanager-3.3.1.ga.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/3.0.0.ga/hibernate-validator-3.0.0.ga.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.4.ga/hibernate-3.2.4.ga.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.3.GA/mobicents-core-jar-1.2.3.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-events/1.2.3.GA/http-servlet-events-1.2.3.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-ratype/1.2.3.GA/http-servlet-ratype-1.2.3.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-events/1.2.3.GA/sip11-events-1.2.3.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-ra/1.2.3.GA/sip11-ra-1.2.3.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-ratype/1.2.3.GA/sip11-ratype-1.2.3.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.5.GA/mobicents-core-jar-1.2.5.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-events/1.2.5.GA/http-servlet-events-1.2.5.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-ratype/1.2.5.GA/http-servlet-ratype-1.2.5.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-events/1.2.5.GA/sip11-events-1.2.5.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-ra/1.2.5.GA/sip11-ra-1.2.5.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-ratype/1.2.5.GA/sip11-ratype-1.2.5.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.6.0/xercesImpl-2.6.0.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="target/classes"/>

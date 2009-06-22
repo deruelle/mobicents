@@ -37,7 +37,7 @@ public class RlsServicesManager {
 	
 	public void putRlsServices() {
 		try {
-			xCAPClient.put(new UserDocumentUriKey(RLSServicesAppUsage.ID,serviceUri,"index"), RLSServicesAppUsage.MIMETYPE, getRlsServices(entryURIs).getBytes("UTF-8"));
+			xCAPClient.put(new UserDocumentUriKey(RLSServicesAppUsage.ID,serviceUri,"index"), RLSServicesAppUsage.MIMETYPE, getRlsServices(entryURIs).getBytes("UTF-8"),null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			test.failTest(e.getMessage());
@@ -46,7 +46,7 @@ public class RlsServicesManager {
 	
 	public void deleteRlsServices() {
 		try {
-			xCAPClient.delete(new UserDocumentUriKey(RLSServicesAppUsage.ID,serviceUri,"index"));
+			xCAPClient.delete(new UserDocumentUriKey(RLSServicesAppUsage.ID,serviceUri,"index"),null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			test.failTest(e.getMessage());

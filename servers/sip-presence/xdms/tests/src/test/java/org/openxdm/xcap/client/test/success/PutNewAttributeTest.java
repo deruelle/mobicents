@@ -40,7 +40,7 @@ public class PutNewAttributeTest extends AbstractXDMJunitTest {
 			"</resource-lists>";			
 		
 		// send put request and get response
-		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent);
+		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",initialPutResponse != null);
@@ -55,21 +55,21 @@ public class PutNewAttributeTest extends AbstractXDMJunitTest {
 		UserAttributeUriKey attrKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),new AttributeSelector("name"),null);
 		
 		// send put request and get response
-		Response attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"friends");
+		Response attrPutResponse = client.put(attrKey,AttributeResource.MIMETYPE,"friends",null);
 		
 		// check put response
 		assertTrue("Put response must exists",attrPutResponse != null);
 		assertTrue("Put response code should be 201",attrPutResponse.getCode() == 201);
 				
 		// send get request and get response
-		Response attrGetResponse = client.get(attrKey);
+		Response attrGetResponse = client.get(attrKey,null);
 		
 		// check get response
 		assertTrue("Get response must exists",attrGetResponse != null);
 		assertTrue("Get response code should be 200 and the attr value must equals the one sent in put",attrGetResponse.getCode() == 200 && XMLValidator.weaklyEquals((String)attrGetResponse.getContent(),"friends"));
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

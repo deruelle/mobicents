@@ -261,7 +261,7 @@ public class SipSubscriberNotificationHandler {
 		HeaderFactoryExt extensions = new HeaderFactoryImpl();
 		
 		// Ideally,there should also be an ICID generator in Utils, that generates a unique ICID.
-		PChargingVectorHeader pcv = extensions.createChargingVectorHeader(Utils.generateBranchId()+System.currentTimeMillis());
+		PChargingVectorHeader pcv = extensions.createChargingVectorHeader(Utils.getInstance().generateBranchId()+System.currentTimeMillis());
 		pcv.setOriginatingIOI(sipSubscriptionHandler.sbb.getConfiguration().getPChargingVectorHeaderTerminatingIOI());
 		
 		return pcv;

@@ -38,7 +38,7 @@ public class DeleteAttributeTest extends AbstractXDMJunitTest {
 			"</resource-lists>";			
 		
 		// send put request and get response
-		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent);
+		Response initialPutResponse = client.put(key,appUsage.getMimetype(),newContent,null);
 		
 		// check put response
 		assertTrue("Put response must exists",initialPutResponse != null);
@@ -53,21 +53,21 @@ public class DeleteAttributeTest extends AbstractXDMJunitTest {
 		UserAttributeUriKey attrKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),new AttributeSelector("name"),null);
 		
 		// send delete request and get response
-		Response attrDeleteResponse = client.delete(attrKey);
+		Response attrDeleteResponse = client.delete(attrKey,null);
 		
 		// check delete response
 		assertTrue("Delete response must exists",attrDeleteResponse != null);
 		assertTrue("Delete response code should be 200",attrDeleteResponse.getCode() == 200);
 		
 		// send get request and get response
-		Response attrGetResponse = client.get(attrKey);
+		Response attrGetResponse = client.get(attrKey,null);
 		
 		// check get response
 		assertTrue("Get response must exists",attrGetResponse != null);
 		assertTrue("Get response code should be 404",attrGetResponse.getCode() == 404);
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 		
 	}
 

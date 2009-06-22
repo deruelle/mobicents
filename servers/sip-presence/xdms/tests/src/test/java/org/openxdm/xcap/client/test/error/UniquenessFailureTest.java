@@ -38,13 +38,13 @@ public class UniquenessFailureTest extends AbstractXDMJunitTest {
 			"</resource-lists>";
 		
 		// send put request and get response
-		Response response = client.put(key,appUsage.getMimetype(),content);
+		Response response = client.put(key,appUsage.getMimetype(),content,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		
 		if (response.getCode() == 201) {
-			client.delete(key);
+			client.delete(key,null);
 		}
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		

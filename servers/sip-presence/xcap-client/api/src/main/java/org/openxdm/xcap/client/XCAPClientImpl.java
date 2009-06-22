@@ -1,11 +1,13 @@
 package org.openxdm.xcap.client;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
@@ -83,15 +85,26 @@ public class XCAPClientImpl implements XCAPClient {
 		
 	}
 
-	public Response get(XcapUriKey key) throws HttpException, IOException {		
+	private void addAdditionalRequestHeaders(HttpMethodBase request, List<RequestHeader> additionalRequestHeaders) {
+		if (additionalRequestHeaders != null) {
+			for(RequestHeader header : additionalRequestHeaders) {
+				request.addRequestHeader(header.getName(),header.getValue());
+			}
+		}
+	}
+	
+	public Response get(XcapUriKey key, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {		
 		if (log.isDebugEnabled()) {
-			log.debug("get(key="+key+")");
+			log.debug("get(key="+key+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
 		
 		Response response = null;
 		
 		// create method with key uri
 		GetMethod get = new GetMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(get, additionalRequestHeaders);
 		
 		try {
         	// execute method
@@ -107,16 +120,20 @@ public class XCAPClientImpl implements XCAPClient {
 		return response;
 	}
 	
-	public Response put(XcapUriKey key, String mimetype, String content) throws HttpException, IOException {
+	public Response put(XcapUriKey key, String mimetype, String content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("put(key="+key+", mimetype="+mimetype+", content="+content+")");
+			log.debug("put(key="+key+", mimetype="+mimetype+", content="+content+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
 		
 		Response response = null;
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(put, additionalRequestHeaders);
+		
 		// set mimetype
 		put.setRequestHeader(HttpConstant.HEADER_CONTENT_TYPE,mimetype);
 		// set content
@@ -136,16 +153,20 @@ public class XCAPClientImpl implements XCAPClient {
 								
 	}
 	
-	public Response putIfMatch(XcapUriKey key, String eTag, String mimetype, String content)  throws HttpException, IOException {
+	public Response putIfMatch(XcapUriKey key, String eTag, String mimetype, String content, List<RequestHeader> additionalRequestHeaders)  throws HttpException, IOException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("putIfMatch(key="+key+", eTag="+eTag+", mimetype="+mimetype+", content="+content+")");
+			log.debug("putIfMatch(key="+key+", eTag="+eTag+", mimetype="+mimetype+", content="+content+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
 		
 		Response response = null;
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(put, additionalRequestHeaders);
+		
 		// set mimetype
 		put.setRequestHeader(HttpConstant.HEADER_CONTENT_TYPE,mimetype);
 		// set if match
@@ -166,16 +187,20 @@ public class XCAPClientImpl implements XCAPClient {
 		return response;
 	}
 	
-	public Response putIfNoneMatch(XcapUriKey key, String eTag, String mimetype, String content) throws HttpException, IOException {
+	public Response putIfNoneMatch(XcapUriKey key, String eTag, String mimetype, String content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("putIfNoneMatch(key="+key+", eTag="+eTag+", mimetype="+mimetype+", content="+content+")");
+			log.debug("putIfNoneMatch(key="+key+", eTag="+eTag+", mimetype="+mimetype+", content="+content+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
 		
 		Response response = null;
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(put, additionalRequestHeaders);
+		
 		// set mimetype
 		put.setRequestHeader(HttpConstant.HEADER_CONTENT_TYPE,mimetype);
 		// set if match
@@ -196,16 +221,20 @@ public class XCAPClientImpl implements XCAPClient {
 		return response;
 	}		
 	
-	public Response put(XcapUriKey key, String mimetype, byte[] content) throws HttpException, IOException {
+	public Response put(XcapUriKey key, String mimetype, byte[] content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("put(key="+key+", mimetype="+mimetype+", content="+content+")");
+			log.debug("put(key="+key+", mimetype="+mimetype+", content="+content+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
 		
 		Response response = null;
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(put, additionalRequestHeaders);
+		
 		// set mimetype
 		put.setRequestHeader(HttpConstant.HEADER_CONTENT_TYPE,mimetype);		
 		// set content
@@ -225,15 +254,19 @@ public class XCAPClientImpl implements XCAPClient {
 		
 	}
 	
-	public Response putIfMatch(XcapUriKey key, String eTag, String mimetype, byte[] content) throws HttpException, IOException {
+	public Response putIfMatch(XcapUriKey key, String eTag, String mimetype, byte[] content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("putIfMatch(key="+key+", eTag="+eTag+", mimetype="+mimetype+", content="+content+")");			
+			log.debug("putIfMatch(key="+key+", eTag="+eTag+", mimetype="+mimetype+", content="+content+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");			
 		}
 		Response response = null;
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(put, additionalRequestHeaders);
+		
 		// set mimetype
 		put.setRequestHeader(HttpConstant.HEADER_CONTENT_TYPE,mimetype);
 		// set if match
@@ -254,15 +287,19 @@ public class XCAPClientImpl implements XCAPClient {
 		return response;
 	}
 	
-	public Response putIfNoneMatch(XcapUriKey key, String eTag, String mimetype, byte[] content) throws HttpException, IOException {
+	public Response putIfNoneMatch(XcapUriKey key, String eTag, String mimetype, byte[] content, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("putIfNoneMatch(key="+key+", eTag="+eTag+", mimetype="+mimetype+", content="+content+")");
+			log.debug("putIfNoneMatch(key="+key+", eTag="+eTag+", mimetype="+mimetype+", content="+content+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
 		Response response = null;
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(put, additionalRequestHeaders);
+		
 		// set mimetype
 		put.setRequestHeader(HttpConstant.HEADER_CONTENT_TYPE,mimetype);
 		// set if match
@@ -283,15 +320,18 @@ public class XCAPClientImpl implements XCAPClient {
 		return response;
 	}
 	
-	public Response delete(XcapUriKey key) throws HttpException, IOException {
+	public Response delete(XcapUriKey key, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("delete(key="+key+")");
+			log.debug("delete(key="+key+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
 		Response response = null;
 		
 		// create method with key uri
 		DeleteMethod delete = new DeleteMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(delete, additionalRequestHeaders);
 		
         try {        	
         	// execute method
@@ -308,15 +348,18 @@ public class XCAPClientImpl implements XCAPClient {
 		
 	}
 	
-	public Response deleteIfMatch(XcapUriKey key, String eTag) throws HttpException, IOException {
+	public Response deleteIfMatch(XcapUriKey key, String eTag, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
 
 		if (log.isDebugEnabled()) {
-			log.debug("deleteIfMatch(key="+key+", eTag="+eTag+")");
+			log.debug("deleteIfMatch(key="+key+", eTag="+eTag+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
 		Response response = null;
 		
 		// create method with key uri
 		DeleteMethod delete = new DeleteMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(delete, additionalRequestHeaders);
 		
         try {
         	// set if match
@@ -334,15 +377,19 @@ public class XCAPClientImpl implements XCAPClient {
 		return response;
 	}
 	
-	public Response deleteIfNoneMatch(XcapUriKey key, String eTag) throws HttpException, IOException {
+	public Response deleteIfNoneMatch(XcapUriKey key, String eTag, List<RequestHeader> additionalRequestHeaders) throws HttpException, IOException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("deleteIfNoneMatch(key="+key+", eTag="+eTag+")");
+			log.debug("deleteIfNoneMatch( key = "+key+" , eTag = "+eTag+" , additionalRequestHeaders = ( "+additionalRequestHeaders+" ) )");
 		}
+		
 		Response response = null;
 		
 		// create method with key uri
 		DeleteMethod delete = new DeleteMethod(addXcapRoot(key.toString()));
+		
+		// add additional headers
+		addAdditionalRequestHeaders(delete, additionalRequestHeaders);
 		
         try {
         	// set if match

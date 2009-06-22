@@ -73,13 +73,13 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		
 		// DOCUMENT PARENT NOT FOUND
 		
-		client.put(documentKey, appUsage.getMimetype(),documentContent);
-		client.delete(documentKey);
+		client.put(documentKey, appUsage.getMimetype(),documentContent,null);
+		client.delete(documentKey,null);
 		
 		// 1. get document and document parent not found
 		
 		// send get request and get response
-		Response response = client.get(fakeAppUsageDocumentKey);		
+		Response response = client.get(fakeAppUsageDocumentKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -87,7 +87,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 2. delete document and document parent not found
 		
 		// send delete request and get response
-		response = client.delete(fakeAppUsageDocumentKey);		
+		response = client.delete(fakeAppUsageDocumentKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -95,7 +95,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 3. get element and document parent not found
 		
 		// send get request and get response
-		response = client.get(fakeAppUsageElementKey);		
+		response = client.get(fakeAppUsageElementKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -103,7 +103,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 4. delete element and document parent not found
 		
 		// send delete request and get response
-		response = client.delete(fakeAppUsageElementKey);		
+		response = client.delete(fakeAppUsageElementKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -111,7 +111,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 5. get attribute and document parent not found
 
 		// send get request and get response
-		response = client.get(fakeAppUsageAttrWithElementKey);		
+		response = client.get(fakeAppUsageAttrWithElementKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -119,7 +119,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 6. delete attribute and document parent not found
 		
 		// send delete request and get response
-		response = client.delete(fakeAppUsageAttrWithElementKey);		
+		response = client.delete(fakeAppUsageAttrWithElementKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -129,7 +129,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 7. get document and document not found
 		
 		// send get request and get response
-		response = client.get(documentKey);		
+		response = client.get(documentKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -137,7 +137,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 8. delete document and document not found
 		
 		// send delete request and get response
-		response = client.delete(documentKey);		
+		response = client.delete(documentKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -145,7 +145,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 9. get element and document not found
 
 		// send get request and get response
-		response = client.get(elementKey);		
+		response = client.get(elementKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -153,7 +153,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 10. delete element and document not found
 		
 		// send delete request and get response
-		response = client.delete(elementKey);		
+		response = client.delete(elementKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -161,7 +161,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 11. get attribute and document not found
 
 		// send get request and get response
-		response = client.get(attrWithElementKey);		
+		response = client.get(attrWithElementKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -169,7 +169,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 12. delete attribute and document not found
 
 		// send delete request and get response
-		response = client.delete(attrWithElementKey);		
+		response = client.delete(attrWithElementKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -177,7 +177,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// ELEMENT PARENT NOT FOUND
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),documentContent);		
+		response = client.put(documentKey,appUsage.getMimetype(),documentContent,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
@@ -185,7 +185,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 13. get element and element parent not found
 
 		// send get request and get response
-		response = client.get(elementParentKey);		
+		response = client.get(elementParentKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -193,7 +193,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 14. get attribute and element parent not found
 		
 		// send get request and get response
-		response = client.get(attrWithoutElementKey);		
+		response = client.get(attrWithoutElementKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -201,7 +201,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 15. delete element and element parent not found
 		
 		// send delete request and get response
-		response = client.delete(elementParentKey);		
+		response = client.delete(elementParentKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -209,7 +209,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 16. delete attribute and element parent not found
 		
 		// send delete request and get response
-		response = client.delete(attrWithoutElementKey);		
+		response = client.delete(attrWithoutElementKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -217,7 +217,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// ELEMENT NOT FOUND
 		
 		// send put request and get response
-		response = client.put(elementParentKey,ElementResource.MIMETYPE,elementContent);				
+		response = client.put(elementParentKey,ElementResource.MIMETYPE,elementContent,null);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
@@ -225,7 +225,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 17. get element and element not found
 		
 		// send get request and get response
-		response = client.get(elementKey);		
+		response = client.get(elementKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -233,7 +233,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 18. delete element and element not found
 		
 		// send delete request and get response
-		response = client.delete(elementKey);		
+		response = client.delete(elementKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -241,7 +241,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 19. get attribute and element not found
 		
 		// send get request and get response
-		response = client.get(attrWithoutElementKey);		
+		response = client.get(attrWithoutElementKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -249,7 +249,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 20. delete attribute and element not found
 		
 		// send delete request and get response
-		response = client.delete(attrWithoutElementKey);		
+		response = client.delete(attrWithoutElementKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -259,7 +259,7 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 21. get attribute and attribute not found
 
 		// send get request and get response
-		response = client.get(attrWithElementKey);		
+		response = client.get(attrWithElementKey,null);		
 		// check get response
 		assertTrue("Get response must exists",response != null);
 		assertTrue("Get response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -267,13 +267,13 @@ public class NotFoundTest extends AbstractXDMJunitTest {
 		// 22. delete attribute and attribute not found
 
 		// send delete request and get response
-		response = client.delete(attrWithElementKey);		
+		response = client.delete(attrWithElementKey,null);		
 		// check delete response
 		assertTrue("Delete response must exists",response != null);
 		assertTrue("Delete response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
 		
 		// clean up
-		client.delete(documentKey);
+		client.delete(documentKey,null);
 	}
 	
 }

@@ -1,10 +1,12 @@
 package org.mobicents.slee.resource.xcapclient.handler;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.mobicents.slee.resource.xcapclient.ResponseEvent;
 import org.mobicents.slee.resource.xcapclient.XCAPClientResourceAdaptor;
 import org.mobicents.slee.resource.xcapclient.XCAPResourceAdaptorActivityHandle;
+import org.openxdm.xcap.client.RequestHeader;
 import org.openxdm.xcap.client.Response;
 import org.openxdm.xcap.common.key.XcapUriKey;
 
@@ -18,12 +20,14 @@ public abstract class AbstractAsyncHandler implements Runnable {
 	protected XcapUriKey key;
 	protected XCAPClientResourceAdaptor ra;
 	protected XCAPResourceAdaptorActivityHandle handle;
+	protected List<RequestHeader> additionalRequestHeaders;
 	
-	protected AbstractAsyncHandler(XCAPClientResourceAdaptor ra,XCAPResourceAdaptorActivityHandle handle,XcapUriKey key) {
+	protected AbstractAsyncHandler(XCAPClientResourceAdaptor ra,XCAPResourceAdaptorActivityHandle handle,XcapUriKey key, List<RequestHeader> additionalRequestHeaders) {
 		super();
 		this.key = key;
 		this.ra = ra;
 		this.handle = handle;
+		this.additionalRequestHeaders = additionalRequestHeaders;
 	}
 	
 	/**

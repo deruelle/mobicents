@@ -53,7 +53,7 @@ public class NotUniqueListTest {
 		is.close();
 		
 		// send put request and get response
-		Response response = client.put(key1,RLSServicesAppUsage.MIMETYPE,content);
+		Response response = client.put(key1,RLSServicesAppUsage.MIMETYPE,content,null);
 		
 		// check put response
 		System.out.println("Response got:\n"+response);
@@ -61,7 +61,7 @@ public class NotUniqueListTest {
 		assertTrue("Put response code should be 201",response.getCode() == 201);
 		
 		// now try to put same document for another user
-		response = client.put(key2,RLSServicesAppUsage.MIMETYPE,content);
+		response = client.put(key2,RLSServicesAppUsage.MIMETYPE,content,null);
 		
 		// check put response
 		System.out.println("Response got:\n"+response);
@@ -69,7 +69,7 @@ public class NotUniqueListTest {
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
 		
 		// cleanup
-		client.delete(key1);
+		client.delete(key1,null);
 		client.shutdown();
 	}
 		

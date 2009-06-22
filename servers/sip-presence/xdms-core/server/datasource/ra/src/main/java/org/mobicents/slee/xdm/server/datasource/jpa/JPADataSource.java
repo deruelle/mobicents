@@ -298,7 +298,7 @@ public class JPADataSource implements DataSource {
 					// remove docs through xcap so app usages process
 					// interdependencies
 					client.delete(new DocumentUriKey(new DocumentSelector(auid,
-							collectionName, documentName)));
+							collectionName, documentName)),null);
 				}
 				// remove collection
 				entityManager.createNamedQuery("deleteCollectionFromKey")

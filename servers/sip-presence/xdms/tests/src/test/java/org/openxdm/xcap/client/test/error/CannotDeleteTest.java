@@ -51,7 +51,7 @@ public class CannotDeleteTest extends AbstractXDMJunitTest {
 			"</resource-lists>";
 		
 		// send put request and get response
-		Response response = client.put(key,appUsage.getMimetype(),content);
+		Response response = client.put(key,appUsage.getMimetype(),content,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
@@ -77,7 +77,7 @@ public class CannotDeleteTest extends AbstractXDMJunitTest {
 		elementSelectorSteps.addLast(step3);				
 		UserElementUriKey elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,nsBindings);
 		// send delete and get response
-		Response deleteResponse = client.delete(elementKey);
+		Response deleteResponse = client.delete(elementKey,null);
 		assertTrue("Delete response must exists",deleteResponse != null);
 		assertTrue("Delete response content must be the expected and the response code should be "+exception.getResponseStatus(),deleteResponse.getCode() == exception.getResponseStatus() && deleteResponse.getContent().equals(exception.getResponseContent()));
 
@@ -87,7 +87,7 @@ public class CannotDeleteTest extends AbstractXDMJunitTest {
 		elementSelectorSteps.addLast(step3);
 		elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,nsBindings);
 		// send delete request and get response
-		deleteResponse = client.delete(elementKey);
+		deleteResponse = client.delete(elementKey,null);
 		assertTrue("Delete response must exists",deleteResponse != null);
 		assertTrue("Delete response content must be the expected and the response code should be "+exception.getResponseStatus(),deleteResponse.getCode() == exception.getResponseStatus() && deleteResponse.getContent().equals(exception.getResponseContent()));
 
@@ -97,7 +97,7 @@ public class CannotDeleteTest extends AbstractXDMJunitTest {
 		elementSelectorSteps.addLast(step3);		
 		elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,nsBindings);
 		// send delete request and get response
-		deleteResponse = client.delete(elementKey);
+		deleteResponse = client.delete(elementKey,null);
 		assertTrue("Delete response must exists",deleteResponse != null);
 		assertTrue("Delete response content must be the expected and the response code should be "+exception.getResponseStatus(),deleteResponse.getCode() == exception.getResponseStatus() && deleteResponse.getContent().equals(exception.getResponseContent()));		
 		
@@ -106,12 +106,12 @@ public class CannotDeleteTest extends AbstractXDMJunitTest {
 		elementSelectorSteps.removeLast();
 		elementSelectorSteps.addLast(step3);
 		elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,nsBindings);
-		deleteResponse = client.delete(elementKey);
+		deleteResponse = client.delete(elementKey,null);
 		assertTrue("Delete response must exists",deleteResponse != null);
 		assertTrue("Delete response content must be the expected and the response code should be "+exception.getResponseStatus(),deleteResponse.getCode() == exception.getResponseStatus() && deleteResponse.getContent().equals(exception.getResponseContent()));		
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 		
 }

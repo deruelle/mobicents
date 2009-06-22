@@ -40,7 +40,7 @@ public class DeleteElementByPosTest extends AbstractXDMJunitTest {
 			"</resource-lists>";			
 		
 		// send put request and get response
-		Response initialPutResponse = client.put(key,appUsage.getMimetype(),document);
+		Response initialPutResponse = client.put(key,appUsage.getMimetype(),document,null);
 		
 		// check put response
 		assertTrue("Put response must exists",initialPutResponse != null);
@@ -55,21 +55,21 @@ public class DeleteElementByPosTest extends AbstractXDMJunitTest {
 		UserElementUriKey elemKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),null);
 		
 		// send delete request and get response
-		Response elemDeleteResponse = client.delete(elemKey);
+		Response elemDeleteResponse = client.delete(elemKey,null);
 		
 		// check delete response
 		assertTrue("Delete response must exists",elemDeleteResponse != null);
 		assertTrue("Delete response code should be 200",elemDeleteResponse.getCode() == 200);
 				
 		// send get request and get response
-		Response elemGetResponse = client.get(elemKey);
+		Response elemGetResponse = client.get(elemKey,null);
 		
 		// check get response
 		assertTrue("Get response must exists",elemGetResponse != null);
 		assertTrue("Get response code should be 404",elemGetResponse.getCode() == 404);
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 			
 }

@@ -136,7 +136,7 @@ public class SubscribeDocumentTest extends AbstractXDMJunitTest implements SipLi
 		testRunning = Tests.test1;
 		
 		// send put request and get response
-		Response putResponse = client.put(getDocumentUriKey(),appUsage.getMimetype(),getContent());
+		Response putResponse = client.put(getDocumentUriKey(),appUsage.getMimetype(),getContent(),null);
 		
 		// check put response
 		assertTrue("Put response must exists",putResponse != null);
@@ -163,7 +163,7 @@ public class SubscribeDocumentTest extends AbstractXDMJunitTest implements SipLi
 			// create >From Header
 			Address address = addressFactory.createAddress(subscriberSipUri);
 			FromHeader fromHeader = headerFactory.createFromHeader(
-					address, Utils.generateTag());
+					address, Utils.getInstance().generateTag());
 
 			// create To Header
 			ToHeader toHeader = headerFactory.createToHeader(address,
@@ -274,7 +274,7 @@ public class SubscribeDocumentTest extends AbstractXDMJunitTest implements SipLi
 			"</resource-lists>";
 		
 		// send put request and get response
-		Response putResponse = client.put(getDocumentUriKey(),appUsage.getMimetype(),content);
+		Response putResponse = client.put(getDocumentUriKey(),appUsage.getMimetype(),content,null);
 		
 		// check put response
 		assertTrue("Put response must exists",putResponse != null);
@@ -300,7 +300,7 @@ public class SubscribeDocumentTest extends AbstractXDMJunitTest implements SipLi
 		testRunning = Tests.test3;
 		
 		// send put request and get response
-		Response deleteResponse = client.delete(getDocumentUriKey());
+		Response deleteResponse = client.delete(getDocumentUriKey(),null);
 		
 		// set previous etag
 		previousEtag = newEtag;

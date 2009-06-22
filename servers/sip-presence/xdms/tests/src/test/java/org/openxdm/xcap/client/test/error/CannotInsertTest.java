@@ -45,7 +45,7 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 			"</resource-lists>";
 		
 		// send put request and get response
-		Response response = client.put(key,appUsage.getMimetype(),content);
+		Response response = client.put(key,appUsage.getMimetype(),content,null);
 		
 		// check put response
 		assertTrue("Put response must exists",response != null);
@@ -68,7 +68,7 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 		AttributeSelector attributeSelector = new AttributeSelector("name"); 
 		UserAttributeUriKey attrKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,elementSelector,attributeSelector,null);
 		// send put and get response
-		Response putResponse = client.put(attrKey,AttributeResource.MIMETYPE,"enemies");
+		Response putResponse = client.put(attrKey,AttributeResource.MIMETYPE,"enemies",null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 
@@ -80,14 +80,14 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 		// element content to put
 		String elementContent =	"<list name=\"enemies\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
 		// element content to put
 		elementContent = "<cannot-insert name=\"friends\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 
@@ -102,14 +102,14 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 		// element content to put		
 		elementContent = "<list name=\"enemies\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
 		// element content to put
 		elementContent =	"<cannot-insert name=\"3n3m13s\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
@@ -121,7 +121,7 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 		// element content to put		
 		elementContent = "<list name=\"3n3m13s\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
@@ -136,7 +136,7 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 		// element content to put
 		elementContent = "<cannot-insert name=\"3n3m13s\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
@@ -148,7 +148,7 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 		// element content to put		
 		elementContent = "<list name=\"3n3m13s\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
@@ -163,14 +163,14 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 		// element content to put		
 		elementContent = "<list name=\"enemies\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
 		// element content to put
 		elementContent =	"<cannot-insert name=\"3n3m13s\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
@@ -187,12 +187,12 @@ public class CannotInsertTest extends AbstractXDMJunitTest {
 		// element content to put
 		elementContent =	"<cannot-insert name=\"3n3m13s\" />";								
 		// send put request and get response
-		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent);
+		putResponse = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);
 		assertTrue("Put response must exists",putResponse != null);
 		assertTrue("Put response content must be the expected and the response code should be "+exception.getResponseStatus(),putResponse.getCode() == exception.getResponseStatus() && putResponse.getContent().equals(exception.getResponseContent()));
 		
 		// clean up
-		client.delete(key);
+		client.delete(key,null);
 	}
 		
 }

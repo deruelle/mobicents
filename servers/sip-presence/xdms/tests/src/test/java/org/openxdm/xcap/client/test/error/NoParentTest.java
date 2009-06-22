@@ -72,7 +72,7 @@ public class NoParentTest extends AbstractXDMJunitTest {
 		// 1. put new document and document parent not found
 		
 		// send put request and get response
-		Response response = client.put(fakeAppUsageDocumentKey,appUsage.getMimetype(),documentContent);		
+		Response response = client.put(fakeAppUsageDocumentKey,appUsage.getMimetype(),documentContent,null);		
 		// check response
 		assertTrue("Response must exists",response != null);
 		assertTrue("Response content must be the expected one and response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -80,7 +80,7 @@ public class NoParentTest extends AbstractXDMJunitTest {
 		// 2. put new element and document parent not found
 		
 		// send put request and get response
-		response = client.put(fakeAppUsageElementKey,ElementResource.MIMETYPE,elementContent);		
+		response = client.put(fakeAppUsageElementKey,ElementResource.MIMETYPE,elementContent,null);		
 		// check response
 		assertTrue("Response must exists",response != null);
 		assertTrue("Response content must be the expected one and response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -88,7 +88,7 @@ public class NoParentTest extends AbstractXDMJunitTest {
 		// 3. put new attribute and document parent not found
 		
 		// send put request and get response
-		response = client.put(fakeAttrKey,AttributeResource.MIMETYPE,"");		
+		response = client.put(fakeAttrKey,AttributeResource.MIMETYPE,"",null);		
 		// check response
 		assertTrue("Response must exists",response != null);
 		assertTrue("Response content must be the expected one and response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -103,7 +103,7 @@ public class NoParentTest extends AbstractXDMJunitTest {
 		// 4. put new element and document not found
 
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,elementContent);		
+		response = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);		
 		// check response
 		assertTrue("Response must exists",response != null);
 		assertTrue("Response content must be the expected one and response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -111,7 +111,7 @@ public class NoParentTest extends AbstractXDMJunitTest {
 		// 5. put new attribute and document not found
 
 		// send put request and get response
-		response = client.put(attrKey,AttributeResource.MIMETYPE,"");		
+		response = client.put(attrKey,AttributeResource.MIMETYPE,"",null);		
 		// check response
 		assertTrue("Response must exists",response != null);
 		assertTrue("Response content must be the expected one and response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -119,7 +119,7 @@ public class NoParentTest extends AbstractXDMJunitTest {
 		// ELEMENT PARENT NOT FOUND
 		
 		// send put request and get response
-		response = client.put(documentKey,appUsage.getMimetype(),documentContent);		
+		response = client.put(documentKey,appUsage.getMimetype(),documentContent,null);		
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be 201",response.getCode() == 201);
@@ -130,7 +130,7 @@ public class NoParentTest extends AbstractXDMJunitTest {
 		// 6. put new element and element parent not found
 
 		// send put request and get response
-		response = client.put(elementKey,ElementResource.MIMETYPE,elementContent);		
+		response = client.put(elementKey,ElementResource.MIMETYPE,elementContent,null);		
 		// check response
 		assertTrue("Response must exists",response != null);
 		assertTrue("Response content must be the expected one and response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
@@ -138,13 +138,13 @@ public class NoParentTest extends AbstractXDMJunitTest {
 		// 7. put new attribute and element parent not found
 
 		// send put request and get response
-		response = client.put(attrKey,AttributeResource.MIMETYPE,"");		
+		response = client.put(attrKey,AttributeResource.MIMETYPE,"",null);		
 		// check response
 		assertTrue("Response must exists",response != null);
 		assertTrue("Response content must be the expected one and response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus() && response.getContent().equals(exception.getResponseContent()));
 		
 		// clean up
-		client.delete(documentKey);
+		client.delete(documentKey,null);
 	}
 	
 }
