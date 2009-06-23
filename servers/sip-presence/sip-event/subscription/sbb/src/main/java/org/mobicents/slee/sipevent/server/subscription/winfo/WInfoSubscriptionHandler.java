@@ -46,8 +46,7 @@ public class WInfoSubscriptionHandler {
 
 		if (!subscription.getKey().getEventPackage().endsWith(".winfo")) {
 			// lookup persistent data fr subscriptions
-			List winfoSubscriptions = entityManager.createNamedQuery(
-					"selectSubscriptionsFromNotifierAndEventPackage")
+			List winfoSubscriptions = entityManager.createNamedQuery(Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE)
 					.setParameter("notifier", subscription.getNotifier())
 					.setParameter("eventPackage",
 							subscription.getKey().getEventPackage() + ".winfo")
@@ -244,8 +243,7 @@ public class WInfoSubscriptionHandler {
 				.indexOf(".winfo"));
 		watcherList.setPackage(eventPackage);
 		// get watcher subscriptions
-		List resultList = entityManager.createNamedQuery(
-				"selectSubscriptionsFromNotifierAndEventPackage").setParameter(
+		List resultList = entityManager.createNamedQuery(Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE).setParameter(
 				"eventPackage", eventPackage).setParameter("notifier",
 				winfoSubscription.getNotifier()).getResultList();
 		// add a watcher element for each

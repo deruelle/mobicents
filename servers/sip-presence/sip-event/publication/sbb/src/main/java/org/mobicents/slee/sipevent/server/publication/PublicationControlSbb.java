@@ -700,7 +700,7 @@ public abstract class PublicationControlSbb implements Sbb,
 		composedPublication.setContentSubType(null);
 		// process existing publications
 		List resultList = entityManager.createNamedQuery(
-				"selectPublicationFromEntityAndEventPackage").setParameter(
+				Publication.JPA_NAMED_QUERY_SELECT_PUBLICATION_FROM_ENTITY_AND_EVENTPACKAGE).setParameter(
 				"entity", publication.getPublicationKey().getEntity())
 				.setParameter("eventPackage",
 						publication.getPublicationKey().getEventPackage())
@@ -743,7 +743,7 @@ public abstract class PublicationControlSbb implements Sbb,
 	private Publication getPublication(EntityManager entityManager,
 			TimerID timerID) {
 		List resultList = entityManager.createNamedQuery(
-		"selectPublicationFromTimerID").setParameter("timerID",
+				Publication.JPA_NAMED_QUERY_SELECT_PUBLICATION_FROM_TIMER_ID).setParameter("timerID",
 				timerID).getResultList();
 		if (resultList.size() == 1) {
 			return (Publication) resultList.get(0);
@@ -760,7 +760,7 @@ public abstract class PublicationControlSbb implements Sbb,
 			EntityManager entityManager, String entity, String eventPackage) {
 		
 		List resultList = entityManager.createNamedQuery(
-		"selectComposedPublicationFromEntityAndEventPackage")
+		ComposedPublication.JPA_NAMED_QUERY_SELECT_COMPOSEDPUBLICATION_FROM_ENTITY_AND_EVENTPACKAGE)
 		.setParameter("entity", entity).setParameter(
 				"eventPackage", eventPackage).getResultList();
 		if (resultList.size() == 1) {

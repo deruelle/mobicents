@@ -345,7 +345,7 @@ public abstract class SubscriptionControlSbb implements Sbb,
 
 		// get subscription
 		for (Object object : entityManager.createNamedQuery(
-				"selectSubscriptionFromTimerID").setParameter("timerID",
+				Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTION_FROM_TIMERID).setParameter("timerID",
 				event.getTimerID()).getResultList()) {
 
 			Subscription subscription = (Subscription) object;
@@ -488,7 +488,7 @@ public abstract class SubscriptionControlSbb implements Sbb,
 
 		// process subscriptions
 		for (Object object : entityManager.createNamedQuery(
-				"selectSubscriptionsFromNotifierAndEventPackage").setParameter(
+				Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE).setParameter(
 				"notifier", notifier)
 				.setParameter("eventPackage", eventPackage).getResultList()) {
 			Subscription subscription = (Subscription) object;
@@ -771,7 +771,7 @@ public abstract class SubscriptionControlSbb implements Sbb,
 
 			// process subscriptions
 			for (Object object : entityManager.createNamedQuery(
-			"selectSubscriptionsFromNotifier").setParameter(
+			Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER).setParameter(
 					"notifier", uri).getResultList()) {
 				Subscription subscription = (Subscription) object;
 				if (!subscription.getResourceList()) {

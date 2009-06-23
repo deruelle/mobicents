@@ -48,7 +48,7 @@ public class NotificationDataTest {
 		subscription.setNotifier(notifier);
 		subscription.setStatus(Status.active);
 		
-		NotificationData notificationData = new NotificationData(subscription.getNotifier(),subscription.getVersion(),flatList,"rlmiCid","50UBfW7LSCVLtggUPe5z");
+		NotificationData notificationData = new NotificationData(subscription.getNotifierWithParams(),subscription.getVersion(),flatList,"rlmiCid","50UBfW7LSCVLtggUPe5z");
 		MultiPart multiPart = null;
 		for (int i=0;i<2;i++) {
 			multiPart = notificationData.addNotificationData("sip:entry"+i+"@example.com", "cid"+i, "id"+i, "body"+i, "contentType"+i, "contentSubtype"+i, "active", null);			

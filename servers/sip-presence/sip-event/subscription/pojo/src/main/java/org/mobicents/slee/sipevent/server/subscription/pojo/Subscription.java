@@ -29,10 +29,10 @@ import javax.slee.facilities.TimerID;
 @Entity
 @Table(name = "MOBICENTS_SIPEVENT_SUBSCRIPTIONS")
 @NamedQueries({
-	@NamedQuery(name="selectSubscriptionFromTimerID",query="SELECT s FROM Subscription s WHERE s.timerID = :timerID"),
-	@NamedQuery(name="selectSubscriptionsFromNotifierAndEventPackage",query="SELECT s FROM Subscription s WHERE s.notifier = :notifier AND s.key.eventPackage = :eventPackage"),
-	@NamedQuery(name="selectSubscriptionsFromNotifier",query="SELECT s FROM Subscription s WHERE s.notifier = :notifier"),
-	@NamedQuery(name="selectDialogSubscriptions",query="SELECT s FROM Subscription s WHERE s.key.callId = :callId AND s.key.remoteTag = :remoteTag")
+	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTION_FROM_TIMERID,query="SELECT s FROM Subscription s WHERE s.timerID = :timerID"),
+	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier AND s.key.eventPackage = :eventPackage"),
+	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier"),
+	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_DIALOG_SUBSCRIPTIONS,query="SELECT s FROM Subscription s WHERE s.key.callId = :callId AND s.key.remoteTag = :remoteTag")
 	})
 public class Subscription implements Serializable {
 
@@ -40,7 +40,13 @@ public class Subscription implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 8020033417766370446L;
-
+	
+	private static final String JPA_NAMED_QUERY_PREFIX = "MSPS_NQUERY_";
+	public static final String JPA_NAMED_QUERY_SELECT_SUBSCRIPTION_FROM_TIMERID = JPA_NAMED_QUERY_PREFIX + "selectSubscriptionFromTimerID";
+	public static final String JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE = JPA_NAMED_QUERY_PREFIX + "selectSubscriptionsFromNotifierAndEventPackage";
+	public static final String JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER = JPA_NAMED_QUERY_PREFIX + "selectSubscriptionsFromNotifier";
+	public static final String JPA_NAMED_QUERY_SELECT_DIALOG_SUBSCRIPTIONS = JPA_NAMED_QUERY_PREFIX + "selectDialogSubscriptions";
+	
 	/**
 	 * the subscription key
 	 */   
@@ -58,7 +64,13 @@ public class Subscription implements Serializable {
 	 */
 	@Column(name = "NOTIFER",nullable=false)
 	private String notifier;
-		
+	
+	/**
+	 * the notifier uri params
+	 */
+	@Column(name = "NOTIFER_PARAMS",nullable=true)
+	private String notifierParams;
+	
 	/**
 	 * the current status of the subscription
 	 */
@@ -136,14 +148,40 @@ public class Subscription implements Serializable {
 	@Transient
 	private EntityManager entityManager; 
 	
-	public Subscription() {
-		// TODO Auto-generated constructor stub
-	}
+	/**
+	 * notifier uri with params
+	 */
+	@Transient
+	private String notifierWithParams;
 	
+	/**
+	 * 
+	 */
+	public Subscription() {	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param subscriber
+	 * @param notifier
+	 * @param status
+	 * @param subscriberDisplayName
+	 * @param expires
+	 * @param resourceList
+	 */
 	public Subscription(SubscriptionKey key, String subscriber, String notifier, Status status, String subscriberDisplayName, int expires, boolean resourceList) {
 		this.key = key;
 		this.subscriber = subscriber;
-		this.notifier = notifier;
+		int index = notifier.indexOf(';');
+		this.notifierWithParams = notifier;
+		if (index > 0) {
+			this.notifier = notifier.substring(0,index);
+			this.notifierParams = notifier.substring(index);			
+		}
+		else {
+			this.notifier = notifier;
+			this.notifierParams = null;
+		}
 		this.status = status;
 		if (status.equals(Status.active)){
 			this.lastEvent = Event.approved;
@@ -256,6 +294,26 @@ public class Subscription implements Serializable {
 		this.notifier = notifier;
 	}
 
+	public String getNotifierParams() {
+		return notifierParams;
+	}
+	
+	public void setNotifierParams(String notifierParams) {
+		this.notifierParams = notifierParams;
+	}
+	
+	public String getNotifierWithParams() {
+		if (notifierWithParams == null) {
+			if (notifierParams == null) {
+				notifierWithParams = notifier;
+			}
+			else {
+				notifierWithParams = notifier + notifierParams;
+			}
+		}
+		return notifierWithParams;
+	}
+	
 	public Status getStatus() {
 		return status;
 	}
@@ -353,7 +411,7 @@ public class Subscription implements Serializable {
 	 * @return
 	 */
 	public static List getDialogSubscriptions(EntityManager entityManager, String callId, String remoteTag) {
-		return entityManager.createNamedQuery("selectDialogSubscriptions")
+		return entityManager.createNamedQuery(JPA_NAMED_QUERY_SELECT_DIALOG_SUBSCRIPTIONS)
 		.setParameter("callId",callId)
 		.setParameter("remoteTag",remoteTag)
 		.getResultList();

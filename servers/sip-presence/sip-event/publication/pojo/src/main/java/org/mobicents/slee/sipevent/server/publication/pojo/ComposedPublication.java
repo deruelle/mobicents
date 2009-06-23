@@ -20,7 +20,7 @@ import javax.xml.bind.JAXBElement;
 @Entity
 @Table(name = "MOBICENTS_SIPEVENT_COMPOSEDPUBLICATIONS")
 @NamedQueries({
-	@NamedQuery(name="selectComposedPublicationFromEntityAndEventPackage",query="SELECT p FROM ComposedPublication p WHERE p.composedPublicationKey.entity = :entity AND  p.composedPublicationKey.eventPackage = :eventPackage")
+	@NamedQuery(name=ComposedPublication.JPA_NAMED_QUERY_SELECT_COMPOSEDPUBLICATION_FROM_ENTITY_AND_EVENTPACKAGE,query="SELECT p FROM ComposedPublication p WHERE p.composedPublicationKey.entity = :entity AND  p.composedPublicationKey.eventPackage = :eventPackage")
 	})
 public class ComposedPublication implements Serializable {
 
@@ -29,6 +29,9 @@ public class ComposedPublication implements Serializable {
 	 */
 	private static final long serialVersionUID = 8020033417766370446L;
 
+	private static final String JPA_NAMED_QUERY_PREFIX = "MSPS_NQUERY_";
+	public static final String JPA_NAMED_QUERY_SELECT_COMPOSEDPUBLICATION_FROM_ENTITY_AND_EVENTPACKAGE = JPA_NAMED_QUERY_PREFIX + "selectComposedPublicationFromEntityAndEventPackage";
+	
 	/**
 	 * the publication key
 	 */   

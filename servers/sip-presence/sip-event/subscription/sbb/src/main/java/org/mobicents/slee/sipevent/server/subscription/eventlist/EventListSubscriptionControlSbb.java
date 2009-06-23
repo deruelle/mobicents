@@ -244,8 +244,10 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 	}
 	
 	public boolean createSubscription(Subscription subscription) {
+	
+		
 		// get flat list
-		FlatList flatList = rlsServicesCache.getFlatList(subscription.getNotifier());
+		FlatList flatList = rlsServicesCache.getFlatList(subscription.getNotifierWithParams());
 		if (flatList == null) {
 			return false;
 		}

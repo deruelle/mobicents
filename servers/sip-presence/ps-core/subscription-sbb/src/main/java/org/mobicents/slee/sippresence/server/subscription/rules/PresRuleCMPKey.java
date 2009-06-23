@@ -14,10 +14,22 @@ public class PresRuleCMPKey implements Serializable {
 	private final String eventPackage;
 	private final String eventId;
 	
+	private final String notifierWithoutParams;
+	private final String notifierParams;
+	
 	public PresRuleCMPKey(String subscriber, String notifier, String eventPackage,String eventId) {
 		super();
 		this.subscriber = subscriber;
 		this.notifier = notifier;
+		int index = notifier.indexOf(';');
+		if (index > 0) {
+			notifierWithoutParams = notifier.substring(0,index);
+			notifierParams = notifier.substring(index);
+		}
+		else {
+			notifierWithoutParams = notifier;
+			notifierParams = null;
+		}
 		this.eventPackage = eventPackage;
 		if (eventId != null) {
 			this.eventId = eventId;
@@ -48,16 +60,24 @@ public class PresRuleCMPKey implements Serializable {
 		return notifier;
 	}
 	
+	public String getNotifierWithoutParams() {
+		return notifierWithoutParams;
+	}	
+	
+	public String getNotifierParams() {		
+		return notifierParams;
+	}
+	
 	@Override
 	public int hashCode() {
-		return ((subscriber.hashCode()*31+notifier.hashCode())*31 + eventPackage.hashCode())*31+eventId.hashCode();
+		return ((subscriber.hashCode()*31+notifierWithoutParams.hashCode())*31 + eventPackage.hashCode())*31+eventId.hashCode();
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj != null && obj.getClass() == this.getClass()) {
 			PresRuleCMPKey other = (PresRuleCMPKey)obj;
-			return this.subscriber.equals(other.subscriber) && this.notifier.equals(other.notifier) && this.eventPackage.equals(other.eventPackage) && this.eventId.equals(other.eventId);
+			return this.subscriber.equals(other.subscriber) && this.notifierWithoutParams.equals(other.notifierWithoutParams) && this.eventPackage.equals(other.eventPackage) && this.eventId.equals(other.eventId);
 		}
 		else {
 			return false;
@@ -66,7 +86,6 @@ public class PresRuleCMPKey implements Serializable {
 	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return "PresRuleCMPKey: subscriber="+subscriber+",notifier="+notifier+",eventPackage="+eventPackage+",eventId="+eventId;
+		return "PresRuleCMPKey{ subscriber = "+subscriber+" , notifier = "+notifier+" , eventPackage = "+eventPackage+" , eventId = "+eventId+" }";
 	}
 }

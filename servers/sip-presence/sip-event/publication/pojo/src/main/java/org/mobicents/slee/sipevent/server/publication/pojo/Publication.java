@@ -21,8 +21,8 @@ import javax.xml.bind.JAXBElement;
 @Entity
 @Table(name = "MOBICENTS_SIPEVENT_PUBLICATIONS")
 @NamedQueries({
-	@NamedQuery(name="selectPublicationFromEntityAndEventPackage",query="SELECT p FROM Publication p WHERE p.publicationKey.entity = :entity AND p.publicationKey.eventPackage = :eventPackage"),
-	@NamedQuery(name="selectPublicationFromTimerID",query="SELECT p FROM Publication p WHERE p.timerID = :timerID")
+	@NamedQuery(name=Publication.JPA_NAMED_QUERY_SELECT_PUBLICATION_FROM_ENTITY_AND_EVENTPACKAGE,query="SELECT p FROM Publication p WHERE p.publicationKey.entity = :entity AND p.publicationKey.eventPackage = :eventPackage"),
+	@NamedQuery(name=Publication.JPA_NAMED_QUERY_SELECT_PUBLICATION_FROM_TIMER_ID,query="SELECT p FROM Publication p WHERE p.timerID = :timerID")
 	})
 public class Publication implements Serializable {
 
@@ -31,6 +31,10 @@ public class Publication implements Serializable {
 	 */
 	private static final long serialVersionUID = 8020033417766370446L;
 
+	private static final String JPA_NAMED_QUERY_PREFIX = "MSPS_NQUERY_";
+	public static final String JPA_NAMED_QUERY_SELECT_PUBLICATION_FROM_ENTITY_AND_EVENTPACKAGE = JPA_NAMED_QUERY_PREFIX + "selectPublicationFromEntityAndEventPackage";
+	public static final String JPA_NAMED_QUERY_SELECT_PUBLICATION_FROM_TIMER_ID = JPA_NAMED_QUERY_PREFIX + "selectPublicationFromTimerID";
+	
 	/**
 	 * the publication key
 	 */   

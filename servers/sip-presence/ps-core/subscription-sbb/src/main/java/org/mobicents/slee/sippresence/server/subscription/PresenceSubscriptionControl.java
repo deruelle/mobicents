@@ -74,8 +74,8 @@ public class PresenceSubscriptionControl {
 			for (Object keyObject : combinedRules.keySet()) {
 				PresRuleCMPKey k = (PresRuleCMPKey) keyObject;
 				if (k.getSubscriber().equals(subscriber)
-						&& k.getNotifier().equals(notifier)) {
-					// found compatible key, get rule and assing to this key
+						&& k.getNotifierWithoutParams().equals(cmpKey.getNotifierWithoutParams())) {
+					// found compatible key, get rule and assign to this key
 					// also
 					combinedRule = (OMAPresRule) combinedRules.get(k);
 					combinedRules.put(cmpKey, combinedRule);
@@ -86,7 +86,7 @@ public class PresenceSubscriptionControl {
 		}
 		if (combinedRule == null) {
 			// get pres-rules doc on xdm
-			DocumentSelector documentSelector = getDocumentSelector(notifier,
+			DocumentSelector documentSelector = getDocumentSelector(cmpKey.getNotifierWithoutParams(),
 					presRulesAUID, presRulesDocumentName);
 			if (documentSelector == null) {
 				sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
@@ -127,10 +127,11 @@ public class PresenceSubscriptionControl {
 			if (logger.isDebugEnabled()) {
 				logger.debug("combined rules: " + combinedRules.keySet());
 			}
-			if (combinedRules.remove(new PresRuleCMPKey(subscription
+			PresRuleCMPKey cmpKey = new PresRuleCMPKey(subscription
 					.getSubscriber(), subscription.getNotifier(), subscription
 					.getKey().getEventPackage(), subscription.getKey()
-					.getRealEventId())) != null) {
+					.getRealEventId());
+			if (combinedRules.remove(cmpKey) != null) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("removed rule from combined rules map ("
 							+ subscription + ")");
@@ -139,8 +140,8 @@ public class PresenceSubscriptionControl {
 				boolean subscriptionNeeded = false;
 				for (Object k : combinedRules.keySet()) {
 					PresRuleCMPKey presRuleCMPKey = (PresRuleCMPKey) k;
-					if (presRuleCMPKey.getNotifier().equals(
-							subscription.getNotifier())
+					if (presRuleCMPKey.getNotifierWithoutParams().equals(
+							cmpKey.getNotifierWithoutParams())
 							&& presRuleCMPKey.getEventPackage().equals(
 									subscription.getKey().getEventPackage())) {
 						if (logger.isDebugEnabled()) {
@@ -156,7 +157,7 @@ public class PresenceSubscriptionControl {
 						logger.debug("subscription not needed");
 					}
 					DocumentSelector documentSelector = getDocumentSelector(
-							subscription.getNotifier(), presRulesAUID,
+							cmpKey.getNotifierWithoutParams(), presRulesAUID,
 							presRulesDocumentName);
 					sbb.getXDMClientControlSbb().unsubscribeDocument(
 							documentSelector);
@@ -196,15 +197,15 @@ public class PresenceSubscriptionControl {
 			documentUpdated(documentSelector, null, null, content);
 		} else {
 			// let's be friendly with clients without xcap, allow subscription
-			String notifier = getUser(documentSelector);
+			String notifierWithoutParams = getUser(documentSelector);
 			if (logger.isInfoEnabled()) {
-				logger.info(notifier+ " pres-rules not found, allowing subscription");
+				logger.info(notifierWithoutParams+ " pres-rules not found, allowing subscription");
 			}
 			Map combinedRules = sbb.getCombinedRules();
 			if (combinedRules != null) {
 				for (Object object : combinedRules.keySet()) {
 					PresRuleCMPKey cmpKey = (PresRuleCMPKey) object;
-					if (cmpKey.getNotifier().equals(notifier)) {
+					if (cmpKey.getNotifierWithoutParams().equals(notifierWithoutParams)) {
 						OMAPresRule combinedRule = (OMAPresRule) combinedRules
 								.get(cmpKey);
 						combinedRule.setProvideAllDevices(true);
@@ -216,7 +217,7 @@ public class PresenceSubscriptionControl {
 						sbb.getParentSbbCMP()
 								.authorizationChanged(
 										cmpKey.getSubscriber(),
-										notifier,
+										cmpKey.getNotifier(),
 										"presence",
 										cmpKey.getEventId(),
 										combinedRule.getSubHandling()
@@ -243,7 +244,7 @@ public class PresenceSubscriptionControl {
 			return;
 		}
 
-		String notifier = getUser(documentSelector);
+		String notifierWithoutParams = getUser(documentSelector);
 
 		// unmarshall doc
 		Ruleset ruleset = unmarshallRuleset(documentAsString);
@@ -262,11 +263,11 @@ public class PresenceSubscriptionControl {
 		// notifier reprocess the rules
 		for (Object key : combinedRules.keySet()) {
 			PresRuleCMPKey cmpKey = (PresRuleCMPKey) key;
-			if (cmpKey.getNotifier().equals(notifier)) {
+			if (cmpKey.getNotifierWithoutParams().equals(notifierWithoutParams)) {
 				OMAPresRule oldCombinedRule = (OMAPresRule) combinedRules
 						.get(cmpKey);
 				RulesetProcessor rulesetProcessor = new RulesetProcessor(cmpKey
-						.getSubscriber(), notifier, ruleset, sbb);
+						.getSubscriber(), notifierWithoutParams, ruleset, sbb);
 				OMAPresRule newCombinedRule = rulesetProcessor
 						.getCombinedRule();
 				combinedRules.put(cmpKey, newCombinedRule);
@@ -274,7 +275,7 @@ public class PresenceSubscriptionControl {
 				if (oldCombinedRule.getSubHandling().getResponseCode() != newCombinedRule
 						.getSubHandling().getResponseCode()) {
 					sbb.getParentSbbCMP().authorizationChanged(
-							cmpKey.getSubscriber(), notifier, "presence",
+							cmpKey.getSubscriber(), cmpKey.getNotifier(), "presence",
 							cmpKey.getEventId(),
 							newCombinedRule.getSubHandling().getResponseCode());
 				}
@@ -290,8 +291,11 @@ public class PresenceSubscriptionControl {
 	 */
 	public String getSphere(String notifier) {
 
+		// get ridden of notifier uri params, if any
+		String notifierWithoutParams = notifier.split(";")[0];
+		
 		ComposedPublication composedPublication = sbb.getPublicationChildSbb()
-				.getComposedPublication(notifier, "presence");
+				.getComposedPublication(notifierWithoutParams, "presence");
 		if (composedPublication != null
 				&& composedPublication.getUnmarshalledContent().getValue() instanceof Presence) {
 			Presence presence = (Presence) composedPublication
@@ -336,6 +340,7 @@ public class PresenceSubscriptionControl {
 
 	public NotifyContent getNotifyContent(Subscription subscription) {
 		try {
+			
 			ComposedPublication composedPublication = sbb
 					.getPublicationChildSbb().getComposedPublication(
 							subscription.getNotifier(),
@@ -355,6 +360,10 @@ public class PresenceSubscriptionControl {
 
 	public Object filterContentPerSubscriber(String subscriber,
 			String notifier, String eventPackage, Object unmarshalledContent) {
+		
+		// get ridden of notifier uri params, if any
+		//String notifier = subscription.getNotifier().split(";")[0];
+		
 		// TODO apply transformations, including polite-block (see pres-rules
 		// specs)
 		return unmarshalledContent;
