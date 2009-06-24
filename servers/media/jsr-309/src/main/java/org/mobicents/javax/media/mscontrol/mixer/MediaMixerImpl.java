@@ -38,7 +38,7 @@ public class MediaMixerImpl extends AbstractJoinableContainer implements MediaMi
 
 	public static Logger logger = Logger.getLogger(MediaMixerImpl.class);
 
-	private static final String CONF_ENDPOINT_NAME = "media/test/trunk/Conference/$";
+	private static final String CONF_ENDPOINT_NAME = "/mobicents/media/cnf/$";
 	protected static final int MAX_CONNECTION = 5;
 
 	private URI uri = null;
