@@ -2,33 +2,41 @@ package org.mobicents.javax.media.mscontrol;
 
 import java.io.Serializable;
 
-import javax.media.mscontrol.JoinEvent;
-import javax.media.mscontrol.Joinable;
+import javax.media.mscontrol.join.JoinEvent;
+import javax.media.mscontrol.join.Joinable;
 import javax.media.mscontrol.MediaObject;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.EventType;
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.EventType;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class JoinEventImpl implements JoinEvent {
 
 	private Serializable context = null;
 	private Joinable other = null;
 	private Joinable current = null;
 	private EventType eventType = null;
-	private Error error = Error.e_OK;
+	private MediaErr error = MediaErr.NO_ERROR;
 	private String errorText = null;
 	private MediaObject source = null;
+	private boolean isSuccessful = false;
 
-	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, EventType eventId) {
+	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, EventType eventId,
+			boolean isSuccessful) {
 		this.source = source;
 		this.context = context;
 		this.other = other;
 		this.current = current;
 		this.eventType = eventId;
+		this.isSuccessful = isSuccessful;
 	}
 
 	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, EventType eventID,
-			Error error, String errorText) {
-		this(source, context, other, current, eventID);
+			boolean isSuccessful, MediaErr error, String errorText) {
+		this(source, context, other, current, eventID, isSuccessful);
 		this.error = error;
 		this.errorText = errorText;
 	}
@@ -37,7 +45,7 @@ public class JoinEventImpl implements JoinEvent {
 		return this.context;
 	}
 
-	public Error getError() {
+	public MediaErr getError() {
 		return this.error;
 	}
 
@@ -53,8 +61,8 @@ public class JoinEventImpl implements JoinEvent {
 		return this.other;
 	}
 
-	public MediaObject getSource() {
-		return this.source;
+	public Joinable getSource() {
+		return this.current;
 	}
 
 	public Joinable getThisJoinable() {
@@ -65,6 +73,10 @@ public class JoinEventImpl implements JoinEvent {
 	public String toString() {
 		return "Source = " + this.source + " Other = " + this.other + " Current = " + this.current + " EventId = "
 				+ this.eventType + " Error = " + this.error + " ErrorText = " + this.errorText;
+	}
+
+	public boolean isSuccessful() {
+		return this.isSuccessful;
 	}
 
 }

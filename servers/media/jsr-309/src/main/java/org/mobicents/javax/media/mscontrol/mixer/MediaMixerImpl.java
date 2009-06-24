@@ -4,29 +4,36 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.media.mscontrol.Joinable;
+import javax.media.mscontrol.Configuration;
+import javax.media.mscontrol.MediaConfig;
+import javax.media.mscontrol.MediaEvent;
+import javax.media.mscontrol.MediaEventListener;
+import javax.media.mscontrol.MediaObject;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.Parameter;
+import javax.media.mscontrol.Parameters;
+import javax.media.mscontrol.join.Joinable;
 import javax.media.mscontrol.mixer.MediaMixer;
 import javax.media.mscontrol.mixer.MixerAdapter;
-import javax.media.mscontrol.mixer.MixerAdapterConfig;
-import javax.media.mscontrol.mixer.MixerConfig;
 import javax.media.mscontrol.mixer.MixerEvent;
 import javax.media.mscontrol.resource.Action;
-import javax.media.mscontrol.resource.Configuration;
-import javax.media.mscontrol.resource.MediaEvent;
-import javax.media.mscontrol.resource.MediaEventListener;
-import javax.media.mscontrol.resource.Parameter;
-import javax.media.mscontrol.resource.Parameters;
+import javax.media.mscontrol.resource.AllocationEventListener;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
-import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
+import org.mobicents.javax.media.mscontrol.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class MediaMixerImpl extends AbstractJoinableContainer implements MediaMixer {
 
 	public static Logger logger = Logger.getLogger(MediaMixerImpl.class);
@@ -35,18 +42,42 @@ public class MediaMixerImpl extends AbstractJoinableContainer implements MediaMi
 	protected static final int MAX_CONNECTION = 5;
 
 	private URI uri = null;
+	private Configuration<MediaMixer> config = null;
+	private Parameters params = null;
 
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
-	public MediaMixerImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) {
+	public MediaMixerImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, Configuration<MediaMixer> config) {
 		super(mediaSession, mgcpWrapper, MAX_CONNECTION, CONF_ENDPOINT_NAME);
-
+		this.config = config;
 		try {
 			this.uri = new URI(mediaSession.getURI().toString() + "/MediaMixer." + this.id);
 		} catch (URISyntaxException e) {
 			// Ignore
 		}
 
+	}
+	
+	public MediaMixerImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, Configuration<MediaMixer> config, Parameters params) {
+		this(mediaSession, mgcpWrapper, config);
+		this.params = params;
+	}
+
+	public MixerAdapter createMixerAdapter(Configuration<MixerAdapter> paramConfiguration) throws MsControlException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public MixerAdapter createMixerAdapter(Configuration<MixerAdapter> paramConfiguration, Parameters paramParameters)
+			throws MsControlException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public MixerAdapter createMixerAdapter(MediaConfig paramMediaConfig, Parameters paramParameters)
+			throws MsControlException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -83,28 +114,12 @@ public class MediaMixerImpl extends AbstractJoinableContainer implements MediaMi
 
 	}
 
-	public MixerAdapter createMixerAdapter(Configuration<MixerAdapterConfig> predefinedConfig)
-			throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public MixerAdapter createMixerAdapter(Parameters params) throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public MixerAdapter createMixerAdapter(MixerAdapterConfig config, String containerId) throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void confirm() throws MsControlException {
 		// TODO Auto-generated method stub
 
 	}
 
-	public MixerConfig getConfig() {
+	public MediaConfig getConfig() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -154,6 +169,26 @@ public class MediaMixerImpl extends AbstractJoinableContainer implements MediaMi
 
 	public void removeListener(MediaEventListener<MixerEvent> listener) {
 		this.mediaEventListenerList.remove(listener);
+	}
+
+	public Iterator<MediaObject> getMediaObjects() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends MediaObject> Iterator<T> getMediaObjects(Class<T> paramClass) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void addListener(AllocationEventListener paramAllocationEventListener) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void removeListener(AllocationEventListener paramAllocationEventListener) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

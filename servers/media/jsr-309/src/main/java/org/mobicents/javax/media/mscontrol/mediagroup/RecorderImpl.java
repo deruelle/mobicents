@@ -20,15 +20,15 @@ import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import java.net.URI;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.MediaEvent;
+import javax.media.mscontrol.MediaEventListener;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.Parameters;
 import javax.media.mscontrol.mediagroup.MediaGroup;
 import javax.media.mscontrol.mediagroup.Recorder;
 import javax.media.mscontrol.mediagroup.RecorderEvent;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.MediaEvent;
-import javax.media.mscontrol.resource.MediaEventListener;
-import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.RTC;
 
 import org.apache.log4j.Logger;
@@ -134,8 +134,8 @@ public class RecorderImpl implements Recorder {
 
 			} catch (Exception e) {
 				logger.error(e);
-				RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
-						"Error while sending RQNt " + e.getMessage());
+				RecorderEventImpl event = new RecorderEventImpl(this.recorder, RecorderEvent.COMPLETED, false,
+						MediaErr.UNKNOWN_ERROR, "Error while sending RQNt " + e.getMessage());
 				update(event);
 			}
 		}
@@ -151,8 +151,8 @@ public class RecorderImpl implements Recorder {
 			mgcpWrapper.removeListener(cmdEvent.getTransactionHandle());
 			mgcpWrapper.removeListener(reqId);
 
-			RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
-					"No response from MGW for RQNT");
+			RecorderEventImpl event = new RecorderEventImpl(this.recorder, RecorderEvent.COMPLETED, false,
+					MediaErr.UNKNOWN_ERROR, "No response from MGW for RQNT");
 			update(event);
 		}
 
@@ -176,8 +176,8 @@ public class RecorderImpl implements Recorder {
 				mgcpWrapper.removeListener(reqId);
 				logger.warn(" This RESPONSE is unexpected " + respEvent);
 
-				RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
-						"RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
+				RecorderEventImpl event = new RecorderEventImpl(this.recorder, RecorderEvent.COMPLETED, false,
+						MediaErr.UNKNOWN_ERROR, "RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
 				update(event);
 				break;
 
@@ -199,7 +199,7 @@ public class RecorderImpl implements Recorder {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 				state = RecorderState.IDLE;
-				event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Recorder.q_Stop, null, -1);
+				event = new RecorderEventImpl(this.recorder, RecorderEvent.COMPLETED, true);
 				update(event);
 
 				break;
@@ -208,7 +208,7 @@ public class RecorderImpl implements Recorder {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
+				event = new RecorderEventImpl(this.recorder, RecorderEvent.COMPLETED, false, MediaErr.UNKNOWN_ERROR,
 						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
 				update(event);
 				break;
@@ -255,16 +255,16 @@ public class RecorderImpl implements Recorder {
 						new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auoc, connId), actions),
 						new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auof, connId), actions) };
 
-				//TODO : These are not supported yet on MMS 
-				//notificationRequest.setRequestedEvents(requestedEvents);
+				// TODO : These are not supported yet on MMS
+				// notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);
 
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
 
 			} catch (Exception e) {
 				logger.error(e);
-				RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
-						"Error while sending RQNt " + e.getMessage());
+				RecorderEventImpl event = new RecorderEventImpl(this.recorder, RecorderEvent.STARTED, false,
+						MediaErr.UNKNOWN_ERROR, "Error while sending RQNt " + e.getMessage());
 				update(event);
 			}
 
@@ -288,8 +288,8 @@ public class RecorderImpl implements Recorder {
 			mgcpWrapper.removeListener(cmdEvent.getTransactionHandle());
 			mgcpWrapper.removeListener(reqId);
 
-			RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
-					"No response from MGW for RQNT");
+			RecorderEventImpl event = new RecorderEventImpl(this.recorder, RecorderEvent.STARTED, false,
+					MediaErr.UNKNOWN_ERROR, "No response from MGW for RQNT");
 			update(event);
 		}
 
@@ -307,16 +307,16 @@ public class RecorderImpl implements Recorder {
 					MgcpEvent mgcpEvent = observedEvent.getEventIdentifier();
 					String params = mgcpEvent.getParms();
 
-					event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Recorder.q_Standard, null,
-							getInterval(params));
+					event = new RecorderEventImpl(this.recorder, RecorderEvent.COMPLETED, true,
+							RecorderEvent.DURATION_EXCEEDED, null, getInterval(params));
 
 					update(event);
 					break;
 
 				case AUMgcpEvent.OPERATION_FAIL:
 					mgcpWrapper.removeListener(notify.getRequestIdentifier());
-					event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
-							"Recorder failed on server ");
+					event = new RecorderEventImpl(this.recorder, RecorderEvent.COMPLETED, false,
+							MediaErr.UNKNOWN_ERROR, "Recorder failed on server ");
 					update(event);
 					break;
 				}
@@ -375,8 +375,8 @@ public class RecorderImpl implements Recorder {
 				mgcpWrapper.removeListener(reqId);
 				logger.warn(" This RESPONSE is unexpected " + respEvent);
 
-				RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
-						"RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
+				RecorderEventImpl event = new RecorderEventImpl(this.recorder, RecorderEvent.STARTED, false,
+						MediaErr.UNKNOWN_ERROR, "RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
 				update(event);
 				break;
 
@@ -402,8 +402,9 @@ public class RecorderImpl implements Recorder {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_ResourceUnavailable,
-						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
+				event = new RecorderEventImpl(this.recorder, RecorderEvent.STARTED, false,
+						MediaErr.RESOURCE_UNAVAILABLE, "RQNT Failed.  Look at logs "
+								+ responseEvent.getReturnCode().getComment());
 				update(event);
 				break;
 			default:
@@ -411,7 +412,7 @@ public class RecorderImpl implements Recorder {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
+				event = new RecorderEventImpl(this.recorder, RecorderEvent.STARTED, false, MediaErr.UNKNOWN_ERROR,
 						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
 
 				update(event);

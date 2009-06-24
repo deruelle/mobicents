@@ -1,17 +1,18 @@
 package org.mobicents.javax.media.mscontrol;
 
 import java.io.Reader;
+import java.net.URI;
 import java.util.Properties;
 
 import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaConfigException;
+import javax.media.mscontrol.MediaObject;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlFactory;
-import javax.media.mscontrol.resource.Configuration;
-import javax.media.mscontrol.resource.Parameters;
+import javax.media.mscontrol.Configuration;
+import javax.media.mscontrol.Parameters;
 import javax.media.mscontrol.resource.video.VideoLayout;
 
-import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpStackFactory;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
@@ -55,10 +56,6 @@ public class MsControlFactoryImpl implements MsControlFactory {
 		return null;
 	}
 
-	public <C extends MediaConfig> C getMediaConfig(Configuration<C> configSymbol) throws MediaConfigException {
-		return MediaConfigFactory.getMediaConfig(configSymbol);
-	}
-
 	public VideoLayout getPresetLayout(String type) throws MediaConfigException {
 		return null;
 	}
@@ -70,6 +67,21 @@ public class MsControlFactoryImpl implements MsControlFactory {
 
 	public Properties getProperties() {
 		return this.properties;
+	}
+
+	public MediaConfig getMediaConfig(Configuration<?> paramConfiguration) throws MediaConfigException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public MediaConfig getMediaConfig(Reader paramReader) throws MediaConfigException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public MediaObject getMediaObject(URI paramURI) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

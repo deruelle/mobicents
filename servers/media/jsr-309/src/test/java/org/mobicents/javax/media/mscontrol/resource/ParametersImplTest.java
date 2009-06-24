@@ -6,10 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
-import javax.media.mscontrol.mediagroup.CoderConstants;
+import javax.media.mscontrol.mediagroup.CodecConstants;
 import javax.media.mscontrol.mediagroup.Recorder;
-import javax.media.mscontrol.resource.Parameter;
-import javax.media.mscontrol.resource.Parameters;
+import javax.media.mscontrol.Parameter;
+import javax.media.mscontrol.Parameters;
 import javax.media.mscontrol.resource.Resource;
 
 import org.junit.After;
@@ -17,6 +17,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.javax.media.mscontrol.ParametersImpl;
 
 /**
  * 
@@ -42,7 +43,7 @@ public class ParametersImplTest {
 	@Before
 	public void setUp() {
 		parameters = new ParametersImpl();
-		parameters.put(Recorder.p_AudioCoder, CoderConstants.v_MuLawPCM_64k);
+		parameters.put(Recorder.AUDIO_CODEC, CodecConstants.MULAW_PCM_64K);
 	}
 
 	@After
@@ -53,19 +54,19 @@ public class ParametersImplTest {
 
 	@Test
 	public void testParameters() {
-		assertTrue(parameters.containsKey(Recorder.p_AudioCoder));
-		assertTrue(parameters.containsValue(CoderConstants.v_MuLawPCM_64k));
+		assertTrue(parameters.containsKey(Recorder.AUDIO_CODEC));
+		assertTrue(parameters.containsValue(CodecConstants.MULAW_PCM_64K));
 		
 		Set<java.util.Map.Entry<Parameter, Object>> set = parameters.entrySet();
 		assertNotNull(set);
 		assertEquals(1, set.size());
 		
-		Object objTemp = parameters.get(Recorder.p_AudioCoder);
-		assertEquals(CoderConstants.v_MuLawPCM_64k, objTemp);
+		Object objTemp = parameters.get(Recorder.AUDIO_CODEC);
+		assertEquals(CodecConstants.MULAW_PCM_64K, objTemp);
 		
 		assertEquals(false, parameters.isEmpty());
 		
-		assertNotNull(parameters.remove(Recorder.p_AudioCoder));
+		assertNotNull(parameters.remove(Recorder.AUDIO_CODEC));
 
 	}
 }

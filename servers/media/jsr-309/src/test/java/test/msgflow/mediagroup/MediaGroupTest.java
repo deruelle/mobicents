@@ -4,30 +4,30 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.media.mscontrol.JoinEvent;
-import javax.media.mscontrol.Joinable;
-import javax.media.mscontrol.JoinableStream;
-import javax.media.mscontrol.MediaResourceException;
+import javax.media.mscontrol.MediaEventListener;
 import javax.media.mscontrol.MsControlException;
-import javax.media.mscontrol.StatusEvent;
-import javax.media.mscontrol.StatusEventListener;
-import javax.media.mscontrol.Joinable.Direction;
-import javax.media.mscontrol.JoinableStream.StreamType;
+import javax.media.mscontrol.Parameters;
+import javax.media.mscontrol.join.JoinEvent;
+import javax.media.mscontrol.join.JoinEventListener;
+import javax.media.mscontrol.join.Joinable;
+import javax.media.mscontrol.join.JoinableStream;
+import javax.media.mscontrol.join.Joinable.Direction;
 import javax.media.mscontrol.mediagroup.MediaGroup;
-import javax.media.mscontrol.mediagroup.MediaGroupConfig;
 import javax.media.mscontrol.mediagroup.Player;
 import javax.media.mscontrol.mediagroup.PlayerEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
-import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.MediaEventListener;
-import javax.media.mscontrol.resource.Parameters;
+import javax.media.mscontrol.resource.ResourceEvent;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 
 import test.msgflow.MessageFlowHarness;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class MediaGroupTest extends MessageFlowHarness {
 	private MGW mgw;
 
@@ -64,17 +64,17 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testMediaGroupJoin() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.PLAYER);
 		final ContextImpl ser = new ContextImpl();
 		final String REMOTE_SDP = "v=0\n" + "m=audio 1234 RTP/AVP  0 \n" + "c=IN IP4 192.168.145.1\n"
 				+ "a=rtpmap:0 PCMU/8000\n";
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
+					if (JoinEvent.JOINED == event.getEventType()) {
 						logger.info("Join successful " + event);
 						testPassed = true;
 					} else {
@@ -117,9 +117,9 @@ public class MediaGroupTest extends MessageFlowHarness {
 		 * Test for Audio Stream
 		 */
 		// Joinable Stream is of type Audio only
-		JoinableStream stream = MG1.getJoinableStream(StreamType.audio);
+		JoinableStream stream = MG1.getJoinableStream(JoinableStream.StreamType.audio);
 		assertNotNull(stream);
-		assertNull(MG1.getJoinableStream(StreamType.video));
+		assertNull(MG1.getJoinableStream(JoinableStream.StreamType.video));
 
 		// Joined to one other NC
 		Joinable[] j = stream.getJoinees();
@@ -138,7 +138,7 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 		// MG1 is already joined to NC1. Trying to connect MG1 to NC3 should
 		// throw Exception
-		final NetworkConnection NC3 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final NetworkConnection NC3 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
 		try {
 			MG1.joinInitiate(Direction.DUPLEX, NC3, ser);
 			fail("MG1 already connected to NC1");
@@ -161,8 +161,8 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testPlayComplete() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.PLAYER);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
@@ -174,18 +174,18 @@ public class MediaGroupTest extends MessageFlowHarness {
 			// expected
 		}
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
+					if (JoinEvent.JOINED == event.getEventType()) {
 						logger.info("Join successful " + event);
 
 						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
 
 							public void onEvent(PlayerEvent anEvent) {
-								if (Error.e_OK.equals(anEvent.getError())) {
-									if (Player.ev_PlayComplete.equals(anEvent.getEventType())) {
+								if (anEvent.isSuccessful()) {
+									if (PlayerEvent.PLAY_COMPLETED == anEvent.getEventType()) {
 										logger.debug(" Play completed successfully " + anEvent.getEventType());
 										testPassed = true;
 									}
@@ -233,24 +233,24 @@ public class MediaGroupTest extends MessageFlowHarness {
 	// fix that
 	public void testPlayerStop() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.PLAYER);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
+					if (JoinEvent.JOINED == event.getEventType()) {
 						logger.info("Join successful " + event);
 
 						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
 
 							public void onEvent(PlayerEvent anEvent) {
-								if (Error.e_OK.equals(anEvent.getError())) {
-									if (Player.ev_PlayComplete.equals(anEvent.getEventType())
-											&& Player.q_Stop.equals(anEvent.getQualifier())) {
+								if (anEvent.isSuccessful()) {
+									if (PlayerEvent.PLAY_COMPLETED == anEvent.getEventType()
+											&& ResourceEvent.STOPPED == anEvent.getQualifier()) {
 										logger.debug(" Play Stopped successfully ");
 										testPassed = true;
 
@@ -308,21 +308,21 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testMediaGroupRelease() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.PLAYER);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
+					if (JoinEvent.JOINED == event.getEventType()) {
 						logger.info("Join successful " + event);
 
 						MG1.release();
 
-					} else if (JoinEvent.ev_Unjoined.equals(event.getEventType())) {
+					} else if (JoinEvent.UNJOINED == event.getEventType()) {
 						// Once MG is released, trying to call play should throw
 						// an exception that MG is not joined to any other MO
 						try {
@@ -356,23 +356,23 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testv_Fail() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.PLAYER);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
+					if (JoinEvent.JOINED == event.getEventType()) {
 						logger.info("Join successful " + event);
 
 						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
 
 							public void onEvent(PlayerEvent anEvent) {
-								if (Error.e_OK.equals(anEvent.getError())) {
-									if (Player.ev_PlayComplete.equals(anEvent.getEventType())) {
+								if (anEvent.isSuccessful()) {
+									if (PlayerEvent.PLAY_COMPLETED == anEvent.getEventType()) {
 										logger.debug(" Play completed successfully " + anEvent.getEventType());
 									}
 								} else {
@@ -395,14 +395,12 @@ public class MediaGroupTest extends MessageFlowHarness {
 							fail("Player failed");
 						}
 						Parameters p = MG1.createParameters();
-						p.put(Player.p_IfBusy, Player.v_Fail);
+						p.put(Player.BEHAVIOUR_IF_BUSY, Player.FAIL_IF_BUSY);
 						try {
 							player.play(new URI("file://home/abhayani/workarea/temp/test3.wav"), null, p);
-						} catch (MediaResourceException e) {
+						} catch (MsControlException e) {
 							logger.debug("Expected Error ", e);
 							testPassed = true;
-						} catch (MsControlException e) {
-							logger.error(e);
 						} catch (URISyntaxException e) {
 							logger.error(e);
 						}
@@ -430,24 +428,24 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testv_Queue() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.PLAYER);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
+					if (JoinEvent.JOINED == event.getEventType()) {
 						logger.info("Join successful " + event);
 
 						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
 							int noOfPlayCompleted = 0;
 
 							public void onEvent(PlayerEvent anEvent) {
-								if (Error.e_OK.equals(anEvent.getError())) {
-									if (Player.ev_PlayComplete.equals(anEvent.getEventType())) {
+								if (anEvent.isSuccessful()) {
+									if (PlayerEvent.PLAY_COMPLETED == anEvent.getEventType()) {
 										logger.debug(" Play completed successfully " + anEvent.getEventType());
 										noOfPlayCompleted++;
 										if (noOfPlayCompleted == 2) {
@@ -474,7 +472,7 @@ public class MediaGroupTest extends MessageFlowHarness {
 							}
 
 							Parameters p = MG1.createParameters();
-							p.put(Player.p_IfBusy, Player.v_Queue);
+							p.put(Player.BEHAVIOUR_IF_BUSY, Player.QUEUE_IF_BUSY);
 							player.play(new URI("file://home/abhayani/workarea/temp/test3.wav"), null, p);
 
 						} catch (MsControlException e) {
@@ -509,28 +507,28 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testv_Stop() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.PLAYER);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
+					if (JoinEvent.JOINED == event.getEventType()) {
 						logger.info("Join successful " + event);
 
 						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
 							int noOfPlayCompleted = 0;
 
 							public void onEvent(PlayerEvent anEvent) {
-								if (Error.e_OK.equals(anEvent.getError())) {
-									if (Player.ev_PlayComplete.equals(anEvent.getEventType())) {
-										if (Player.q_Stop.equals(anEvent.getQualifier())) {
+								if (anEvent.isSuccessful()) {
+									if (PlayerEvent.PLAY_COMPLETED == anEvent.getEventType()) {
+										if (ResourceEvent.STOPPED == anEvent.getQualifier()) {
 											logger.debug(" Play Stopped successfully " + anEvent.getEventType());
 											testPassed = true;
-										} else if (Player.q_EndOfData.equals(anEvent.getQualifier())) {
+										} else if (ResourceEvent.STANDARD_COMPLETION == anEvent.getQualifier()) {
 											logger.debug(" Play Completed successfully " + anEvent.getEventType());
 											testPassed = testPassed && true;
 										}
@@ -558,7 +556,7 @@ public class MediaGroupTest extends MessageFlowHarness {
 							}
 
 							Parameters p = MG1.createParameters();
-							p.put(Player.p_IfBusy, Player.v_Stop);
+							p.put(Player.BEHAVIOUR_IF_BUSY, Player.STOP_IF_BUSY);
 							player.play(new URI("file://home/abhayani/workarea/temp/test3.wav"), null, p);
 
 						} catch (MsControlException e) {

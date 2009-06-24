@@ -1,12 +1,17 @@
 package org.mobicents.javax.media.mscontrol.mediagroup;
 
+import javax.media.mscontrol.EventType;
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.Qualifier;
 import javax.media.mscontrol.mediagroup.Recorder;
 import javax.media.mscontrol.mediagroup.RecorderEvent;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.EventType;
-import javax.media.mscontrol.resource.Qualifier;
 import javax.media.mscontrol.resource.Trigger;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RecorderEventImpl implements RecorderEvent {
 	private Recorder recorder = null;
 	private EventType eventType = null;
@@ -15,21 +20,28 @@ public class RecorderEventImpl implements RecorderEvent {
 	private int duration = -1;
 
 	private String errorText = null;
-	private Error error = Error.e_OK;
+	private MediaErr error = MediaErr.NO_ERROR;
 
-	public RecorderEventImpl(Recorder recorder, EventType eventType, Error error, String errorText) {
-		super();
+	private boolean isSuccessful = false;
+
+	public RecorderEventImpl(Recorder recorder, EventType eventType, boolean isSuccessful) {
 		this.recorder = recorder;
 		this.eventType = eventType;
-		this.errorText = errorText;
-		this.error = error;
+		this.isSuccessful = isSuccessful;
 	}
 
-	public RecorderEventImpl(Recorder recorder, EventType eventType, Qualifier qualifier, Trigger rtcTrigger,
-			int duration) {
-		super();
-		this.recorder = recorder;
-		this.eventType = eventType;
+	public RecorderEventImpl(Recorder recorder, EventType eventType, boolean isSuccessful, MediaErr error,
+			String errorText) {
+		this(recorder, eventType, isSuccessful);
+		this.errorText = errorText;
+		this.error = error;
+
+	}
+
+	public RecorderEventImpl(Recorder recorder, EventType eventType, boolean isSuccessful, Qualifier qualifier,
+			Trigger rtcTrigger, int duration) {
+		this(recorder, eventType, isSuccessful);
+
 		this.qualifier = qualifier;
 		this.rtcTrigger = rtcTrigger;
 		this.duration = duration;
@@ -47,7 +59,7 @@ public class RecorderEventImpl implements RecorderEvent {
 		return this.rtcTrigger;
 	}
 
-	public Error getError() {
+	public MediaErr getError() {
 		return this.error;
 	}
 
@@ -61,6 +73,10 @@ public class RecorderEventImpl implements RecorderEvent {
 
 	public Recorder getSource() {
 		return this.recorder;
+	}
+
+	public boolean isSuccessful() {
+		return this.isSuccessful;
 	}
 
 }

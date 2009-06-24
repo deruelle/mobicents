@@ -4,8 +4,7 @@ import javax.media.mscontrol.MediaConfigException;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.MsControlFactory;
-import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
-import javax.media.mscontrol.resource.Parameters;
+import javax.media.mscontrol.Parameters;
 
 import junit.framework.TestCase;
 
@@ -20,7 +19,7 @@ public class MsControlFactoryImplTest extends TestCase {
 
 	private MsControlFactory msControlFactory = null;
 
-	public void setUp() {
+	public void setUp() throws Exception {
 
 		javax.media.mscontrol.spi.Driver driver = new org.mobicents.javax.media.mscontrol.spi.DriverImpl();
 		msControlFactory = driver.getFactory(null);
@@ -51,13 +50,8 @@ public class MsControlFactoryImplTest extends TestCase {
 		mediaSession.setAttribute("ATT1", o);
 
 		Object o1 = mediaSession.getAttribute("ATT1");
-		
-		assertEquals(o, o1);
-	}
 
-	public void testgetMediaConfig() throws MediaConfigException {
-		NetworkConnectionConfig conf = msControlFactory.getMediaConfig(NetworkConnectionConfig.c_Basic);
-		assertNotNull(conf);
+		assertEquals(o, o1);
 	}
 
 }

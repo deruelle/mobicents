@@ -1,7 +1,7 @@
 package org.mobicents.javax.media.mscontrol;
 
 import javax.media.mscontrol.MsControlException;
-import javax.media.mscontrol.Joinable.Direction;
+import javax.media.mscontrol.join.Joinable;
 
 import junit.framework.TestCase;
 
@@ -30,8 +30,8 @@ public class AbstractJoinableTest extends TestCase {
 
 		// J1 Sends to J2
 		try {
-			j1.join(Direction.SEND, j2);
-			assertEquals(Direction.RECV, j2.getDirection());
+			j1.join(Joinable.Direction.SEND, j2);
+			assertEquals(Joinable.Direction.RECV, j2.getDirection());
 		} catch (MsControlException e) {
 			// Un-expected
 			e.printStackTrace();
@@ -40,7 +40,7 @@ public class AbstractJoinableTest extends TestCase {
 
 		// J2 SEND_RECV from J3 which should fail
 		try {
-			j2.join(Direction.DUPLEX, j3);
+			j2.join(Joinable.Direction.DUPLEX, j3);
 			fail("J2 already conneted to J1 hance fails");
 		} catch (MsControlException e) {
 			// Expected
@@ -56,8 +56,8 @@ public class AbstractJoinableTest extends TestCase {
 
 		// Now J2 can join J3
 		try {
-			j2.join(Direction.DUPLEX, j3);
-			assertEquals(Direction.DUPLEX, j3.getDirection());
+			j2.join(Joinable.Direction.DUPLEX, j3);
+			assertEquals(Joinable.Direction.DUPLEX, j3.getDirection());
 		} catch (MsControlException e) {
 			// Un-expected
 			e.printStackTrace();

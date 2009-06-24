@@ -2,17 +2,13 @@ package test.msgflow.mediamixer;
 
 import java.io.Serializable;
 
-import javax.media.mscontrol.Joinable;
-import javax.media.mscontrol.JoinableStream;
-import javax.media.mscontrol.JoinableStream.StreamType;
 import javax.media.mscontrol.MsControlException;
-import javax.media.mscontrol.StatusEvent;
-import javax.media.mscontrol.StatusEventListener;
-import javax.media.mscontrol.Joinable.Direction;
+import javax.media.mscontrol.join.JoinEvent;
+import javax.media.mscontrol.join.JoinEventListener;
+import javax.media.mscontrol.join.Joinable;
+import javax.media.mscontrol.join.JoinableStream;
 import javax.media.mscontrol.mixer.MediaMixer;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
-import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
-import javax.media.mscontrol.resource.Error;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
@@ -53,18 +49,18 @@ public class MediaMixerTest extends MessageFlowHarness implements Serializable {
 
 	public void testMediaMixerJoin() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
 
-		final NetworkConnection NC2 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final NetworkConnection NC3 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final NetworkConnection NC2 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final NetworkConnection NC3 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
 
-		final MediaMixer MX1 = myMediaSession.createMediaMixer();
+		final MediaMixer MX1 = myMediaSession.createMediaMixer(MediaMixer.AUDIO);
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 			int noOfJoins = 0;
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
 					logger.info("testMediaMixerJoin successful ");
 					noOfJoins++;
 					if (noOfJoins == 3) {
@@ -80,9 +76,9 @@ public class MediaMixerTest extends MessageFlowHarness implements Serializable {
 		};
 
 		MX1.addListener(statusEvtList);
-		MX1.joinInitiate(Direction.DUPLEX, NC1, this);
-		MX1.joinInitiate(Direction.DUPLEX, NC2, this);
-		MX1.joinInitiate(Direction.DUPLEX, NC3, this);
+		MX1.joinInitiate(Joinable.Direction.DUPLEX, NC1, this);
+		MX1.joinInitiate(Joinable.Direction.DUPLEX, NC2, this);
+		MX1.joinInitiate(Joinable.Direction.DUPLEX, NC3, this);
 		waitForMessage();
 
 		/*
@@ -93,21 +89,21 @@ public class MediaMixerTest extends MessageFlowHarness implements Serializable {
 		assertEquals(3, otherContainer.length);
 
 		// MX1 <---> Send / Recv <---> NC1
-		otherContainer = MX1.getJoinees(Direction.SEND);
+		otherContainer = MX1.getJoinees(Joinable.Direction.SEND);
 		assertEquals(3, otherContainer.length);
 
 		// MX1 is joined to NC1 Container with direction SEND / RECV and NC1
 		// joinees is
 		// equal to MX1
-		assertEquals(MX1, (otherContainer[0].getJoinees(Direction.RECV))[0]);
+		assertEquals(MX1, (otherContainer[0].getJoinees(Joinable.Direction.RECV))[0]);
 
 		/*
 		 * Test for Audio Stream
 		 */
 		// Joinable Stream is of type Audio only
-		JoinableStream stream = MX1.getJoinableStream(StreamType.audio);
+		JoinableStream stream = MX1.getJoinableStream(JoinableStream.StreamType.audio);
 		assertNotNull(stream);
-		assertNull(MX1.getJoinableStream(StreamType.video));
+		assertNull(MX1.getJoinableStream(JoinableStream.StreamType.video));
 
 		// Joined to 3 other NC AudioStream
 		Joinable[] j = stream.getJoinees();
@@ -118,9 +114,9 @@ public class MediaMixerTest extends MessageFlowHarness implements Serializable {
 		Joinable[] j1 = streamOther.getJoinees();
 
 		assertEquals(j1[0], stream);
-		assertNotNull(streamOther.getJoinees(Direction.RECV)[0]);
+		assertNotNull(streamOther.getJoinees(Joinable.Direction.RECV)[0]);
 
-		NetworkConnection NC4 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		NetworkConnection NC4 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
 		// NC1 is not joined to NC3. Trying to unjoin NC3 should raise exception
 		try {
 			MX1.unjoinInitiate(NC4, this);

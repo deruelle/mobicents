@@ -22,17 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.MediaEventListener;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.Parameter;
+import javax.media.mscontrol.Parameters;
 import javax.media.mscontrol.mediagroup.MediaGroup;
 import javax.media.mscontrol.mediagroup.signals.SignalDetector;
 import javax.media.mscontrol.mediagroup.signals.SignalDetectorEvent;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.MediaEventListener;
-import javax.media.mscontrol.resource.Parameter;
-import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.RTC;
-import javax.media.mscontrol.resource.symbols.ParameterEnum;
+import javax.media.mscontrol.resource.enums.ParameterEnum;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
@@ -474,7 +474,7 @@ public class SignalDetectorImpl implements SignalDetector {
 				ConnectionIdentifier connId = mediaGroup.thisConnId;
 
 				RequestedAction[] dtmfActions = new RequestedAction[] { RequestedAction.NotifyImmediately };
-				//notificationRequest.setDigitMap(new DigitMap(digitMap));
+				// notificationRequest.setDigitMap(new DigitMap(digitMap));
 
 				RequestedEvent dtmf0 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf0, connId),
 						dtmfActions);
@@ -542,7 +542,7 @@ public class SignalDetectorImpl implements SignalDetector {
 			mgcpWrapper.removeListener(cmdEvent.getTransactionHandle());
 			mgcpWrapper.removeListener(reqId);
 			SignalDetectorEventImpl event = new SignalDetectorEventImpl(this.detector,
-					SignalDetector.ev_ReceiveSignals, Error.e_Unknown, "No response from MGW for RQNT");
+					SignalDetectorEvent.SIGNAL_DETECTED, false, MediaErr.UNKNOWN_ERROR, "No response from MGW for RQNT");
 			update(event);
 		}
 
@@ -636,7 +636,7 @@ public class SignalDetectorImpl implements SignalDetector {
 			// SignalDetector.ev_Pattern[count], digitDetected,
 			// count, SignalDetector.q_Pattern[count], null);
 			// } else {
-			event = new SignalDetectorEventImpl(this.detector, SignalDetector.ev_SignalDetected, digitDetected);
+			event = new SignalDetectorEventImpl(this.detector, SignalDetectorEvent.SIGNAL_DETECTED, true, digitDetected);
 			// }
 
 			update(event);
@@ -654,8 +654,8 @@ public class SignalDetectorImpl implements SignalDetector {
 				logger.warn(" This RESPONSE is unexpected " + respEvent);
 
 				SignalDetectorEventImpl event = new SignalDetectorEventImpl(this.detector,
-						SignalDetector.ev_ReceiveSignals, Error.e_Unknown, "RQNT Failed.  Look at logs "
-								+ respEvent.getReturnCode().getComment());
+						SignalDetectorEvent.SIGNAL_DETECTED, false, MediaErr.UNKNOWN_ERROR,
+						"RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
 				update(event);
 				break;
 			}
@@ -680,8 +680,9 @@ public class SignalDetectorImpl implements SignalDetector {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new SignalDetectorEventImpl(this.detector, SignalDetector.ev_ReceiveSignals, Error.e_Unknown,
-						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
+				event = new SignalDetectorEventImpl(this.detector, SignalDetectorEvent.SIGNAL_DETECTED, false,
+						MediaErr.RESOURCE_UNAVAILABLE, "RQNT Failed.  Look at logs "
+								+ responseEvent.getReturnCode().getComment());
 
 				update(event);
 				break;
@@ -690,8 +691,9 @@ public class SignalDetectorImpl implements SignalDetector {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new SignalDetectorEventImpl(this.detector, SignalDetector.ev_ReceiveSignals, Error.e_Unknown,
-						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
+				event = new SignalDetectorEventImpl(this.detector, SignalDetectorEvent.SIGNAL_DETECTED, false,
+						MediaErr.UNKNOWN_ERROR, "RQNT Failed.  Look at logs "
+								+ responseEvent.getReturnCode().getComment());
 
 				update(event);
 				break;

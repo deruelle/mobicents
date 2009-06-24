@@ -1,11 +1,11 @@
 package org.mobicents.javax.media.mscontrol.mixer;
 
-import javax.media.mscontrol.Joinable;
+import javax.media.mscontrol.EventType;
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.Qualifier;
+import javax.media.mscontrol.join.Joinable;
 import javax.media.mscontrol.mixer.MediaMixer;
 import javax.media.mscontrol.mixer.MixerEvent;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.EventType;
-import javax.media.mscontrol.resource.Qualifier;
 import javax.media.mscontrol.resource.Trigger;
 
 public class MixerEventImpl implements MixerEvent {
@@ -25,7 +25,7 @@ public class MixerEventImpl implements MixerEvent {
 		return null;
 	}
 
-	public Error getError() {
+	public MediaErr getError() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -43,6 +43,11 @@ public class MixerEventImpl implements MixerEvent {
 	public MediaMixer getSource() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public boolean isSuccessful() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

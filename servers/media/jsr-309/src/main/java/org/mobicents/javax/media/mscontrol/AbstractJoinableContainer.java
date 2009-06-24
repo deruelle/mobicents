@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.media.mscontrol.Joinable;
-import javax.media.mscontrol.JoinableContainer;
-import javax.media.mscontrol.JoinableStream;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
-import javax.media.mscontrol.StatusEvent;
-import javax.media.mscontrol.StatusEventListener;
-import javax.media.mscontrol.JoinableStream.StreamType;
+import javax.media.mscontrol.join.JoinEvent;
+import javax.media.mscontrol.join.JoinEventListener;
+import javax.media.mscontrol.join.Joinable;
+import javax.media.mscontrol.join.JoinableContainer;
+import javax.media.mscontrol.join.JoinableStream;
+import javax.media.mscontrol.join.JoinableStream.StreamType;
 
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
@@ -29,7 +29,7 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 
 	protected final String id = (new UID()).toString();
 	protected MediaSessionImpl mediaSession = null;
-	protected CopyOnWriteArrayList<StatusEventListener> statusEventListenerList = new CopyOnWriteArrayList<StatusEventListener>();
+	protected CopyOnWriteArrayList<JoinEventListener> jointEventListenerList = new CopyOnWriteArrayList<JoinEventListener>();
 
 	protected AudioJoinableStream audioJoinableStream = null;
 	protected String endpoint = null;
@@ -160,29 +160,29 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 
 	}
 
-	public void addListener(StatusEventListener listener) {
-		statusEventListenerList.add(listener);
+	public void addListener(JoinEventListener listener) {
+		jointEventListenerList.add(listener);
 	}
 
 	public MediaSession getMediaSession() {
 		return this.mediaSession;
 	}
 
-	public void removeListener(StatusEventListener listener) {
-		statusEventListenerList.remove(listener);
+	public void removeListener(JoinEventListener listener) {
+		jointEventListenerList.remove(listener);
 	}
 
-	public CopyOnWriteArrayList<StatusEventListener> getStatusEventListenerList() {
-		return this.statusEventListenerList;
+	public CopyOnWriteArrayList<JoinEventListener> getStatusEventListenerList() {
+		return this.jointEventListenerList;
 	}
 
-	private void update(StatusEvent anEvent) {
-		for (StatusEventListener s : this.statusEventListenerList) {
+	private void update(JoinEvent anEvent) {
+		for (JoinEventListener s : this.jointEventListenerList) {
 			s.onEvent(anEvent);
 		}
 	}
 
-	protected void updateJoined(StatusEvent anEvent, ConnectionIdentifier thisConnId, ConnectionIdentifier otherConnId,
+	protected void updateJoined(JoinEvent anEvent, ConnectionIdentifier thisConnId, ConnectionIdentifier otherConnId,
 			AbstractJoinableContainer otheContainer, boolean error) {
 		if (!error) {
 			this.state = MediaObjectState.JOINED;
@@ -194,8 +194,8 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 
 	}
 
-	protected void updateUnjoined(StatusEvent anEvent, ConnectionIdentifier thisConnId,
-			ConnectionIdentifier otherConnId, AbstractJoinableContainer otheContainer, boolean error) {
+	protected void updateUnjoined(JoinEvent anEvent, ConnectionIdentifier thisConnId, ConnectionIdentifier otherConnId,
+			AbstractJoinableContainer otheContainer, boolean error) {
 		if (!error) {
 			if (this.audioJoinableStream.audJoinStrVsDirMap.size() == 0) {
 				if (!(this.state.equals(MediaObjectState.RELEASED))) {

@@ -3,40 +3,48 @@ package org.mobicents.javax.media.mscontrol.mediagroup;
 import javax.media.mscontrol.mediagroup.Player;
 import javax.media.mscontrol.mediagroup.PlayerEvent;
 import javax.media.mscontrol.resource.Action;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.EventType;
-import javax.media.mscontrol.resource.Qualifier;
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.EventType;
+import javax.media.mscontrol.Qualifier;
 import javax.media.mscontrol.resource.Trigger;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class PlayerEventImpl implements PlayerEvent {
 	private Player player = null;
 	private EventType eventType = null;
 	private Qualifier qualifier = null;
 	private Trigger rtcTrigger = null;
+	private boolean isSuccessful = false;
 
 	private String errorText = null;
-	private Error error = Error.e_OK;
+	private MediaErr error = MediaErr.NO_ERROR;
 
-	public PlayerEventImpl(Player player, EventType eventType) {
+	public PlayerEventImpl(Player player, EventType eventType, boolean isSuccessful) {
 		this.player = player;
 		this.eventType = eventType;
+		this.isSuccessful = isSuccessful;
 	}
 
-	public PlayerEventImpl(Player player, EventType eventType, Qualifier qualifier, Trigger rtcTrigger) {
-		this(player, eventType);
+	public PlayerEventImpl(Player player, EventType eventType, boolean isSuccessful, Qualifier qualifier,
+			Trigger rtcTrigger) {
+		this(player, eventType, isSuccessful);
 		this.qualifier = qualifier;
 		this.rtcTrigger = rtcTrigger;
 	}
 
-	public PlayerEventImpl(Player player, EventType eventType, Error error, String errorText) {
-		this(player, eventType);
+	public PlayerEventImpl(Player player, EventType eventType, boolean isSuccessful, MediaErr error, String errorText) {
+		this(player, eventType, isSuccessful);
 		this.error = error;
 		this.errorText = errorText;
 	}
 
-	public PlayerEventImpl(Player player, EventType eventType, Qualifier qualifier, Trigger rtcTrigger, Error error,
-			String errorText) {
-		this(player, eventType, qualifier, rtcTrigger);
+	public PlayerEventImpl(Player player, EventType eventType, boolean isSuccessful, Qualifier qualifier,
+			Trigger rtcTrigger, MediaErr error, String errorText) {
+		this(player, eventType, isSuccessful, qualifier, rtcTrigger);
 
 		this.error = error;
 		this.errorText = errorText;
@@ -62,7 +70,7 @@ public class PlayerEventImpl implements PlayerEvent {
 		return this.rtcTrigger;
 	}
 
-	public Error getError() {
+	public MediaErr getError() {
 		return this.error;
 	}
 
@@ -76,6 +84,10 @@ public class PlayerEventImpl implements PlayerEvent {
 
 	public Player getSource() {
 		return this.player;
+	}
+
+	public boolean isSuccessful() {
+		return this.isSuccessful;
 	}
 
 }

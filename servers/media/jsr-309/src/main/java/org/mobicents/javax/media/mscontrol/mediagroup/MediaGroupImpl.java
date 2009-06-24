@@ -4,25 +4,29 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 
-import javax.media.mscontrol.Joinable;
+import javax.media.mscontrol.Configuration;
+import javax.media.mscontrol.MediaConfig;
+import javax.media.mscontrol.MediaObject;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.Parameter;
+import javax.media.mscontrol.Parameters;
+import javax.media.mscontrol.join.Joinable;
 import javax.media.mscontrol.mediagroup.MediaGroup;
-import javax.media.mscontrol.mediagroup.MediaGroupConfig;
 import javax.media.mscontrol.mediagroup.Player;
 import javax.media.mscontrol.mediagroup.Recorder;
 import javax.media.mscontrol.mediagroup.signals.SignalDetector;
 import javax.media.mscontrol.mediagroup.signals.SignalGenerator;
 import javax.media.mscontrol.resource.Action;
-import javax.media.mscontrol.resource.Parameter;
-import javax.media.mscontrol.resource.Parameters;
+import javax.media.mscontrol.resource.AllocationEventListener;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
+import org.mobicents.javax.media.mscontrol.ParametersImpl;
 import org.mobicents.javax.media.mscontrol.mediagroup.signals.SignalDetectorImpl;
-import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
 /**
@@ -42,10 +46,10 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	protected SignalGenerator generator = null;
 	public ConnectionIdentifier thisConnId = null;
 
-	private MediaGroupConfig config = null;
+	private Configuration<MediaGroup> config = null;
 	private Parameters parameters = null;
 
-	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, MediaGroupConfig config)
+	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, Configuration<MediaGroup> config)
 			throws MsControlException {
 		super(mediaSession, mgcpWrapper, 1, IVR_ENDPOINT_NAME);
 		this.player = new PlayerImpl(this, mgcpWrapper);
@@ -58,38 +62,60 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 			logger.warn(e);
 		}
 	}
+	
+	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, Configuration<MediaGroup> config, Parameters params)
+	throws MsControlException {
+		this(mediaSession, mgcpWrapper, config);
+		this.parameters = params;
+	}
 
 	// MediaGroup Methods
 	public Player getPlayer() throws MsControlException {
-		if (!(this.config.getSupportedSymbols().contains(MediaGroupParameterEnum.PLAYER_SUPPORTED))) {
+		if (this.config == MediaGroup.PLAYER || this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR
+				|| this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR_SIGNALGENERATOR
+				|| this.config == MediaGroup.PLAYER_SIGNALDETECTOR) {
+			checkState();
+			return player;
+
+		} else {
 			throw new MsControlException(this.uri + " This MediaGroup contains no Player");
 		}
-		checkState();
-		return player;
+
 	}
 
 	public Recorder getRecorder() throws MsControlException {
-		if (!(this.config.getSupportedSymbols().contains(MediaGroupParameterEnum.RECORDER_SUPPORTED))) {
+		if (this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR
+				|| this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR_SIGNALGENERATOR) {
+			checkState();
+			return this.recorder;
+
+		} else {
 			throw new MsControlException(this.uri + " This MediaGroup contains no Recorder");
 		}
-		checkState();
-		return this.recorder;
+
 	}
 
 	public SignalDetector getSignalDetector() throws MsControlException {
-		if (!(this.config.getSupportedSymbols().contains(MediaGroupParameterEnum.SD_SUPPORTED))) {
+		if (this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR
+				|| this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR_SIGNALGENERATOR
+				|| this.config == MediaGroup.PLAYER_SIGNALDETECTOR || this.config == MediaGroup.SIGNALDETECTOR) {
+			checkState();
+			return this.detector;
+
+		} else {
 			throw new MsControlException(this.uri + " This MediaGroup contains no Signal Detector");
 		}
-		checkState();
-		return this.detector;
+
 	}
 
 	public SignalGenerator getSignalGenerator() throws MsControlException {
-		if (!(this.config.getSupportedSymbols().contains(MediaGroupParameterEnum.SG_SUPPORTED))) {
+		if (this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR_SIGNALGENERATOR) {
+			checkState();
+			return this.generator;
+		} else {
 			throw new MsControlException(this.uri + " This MediaGroup contains no Signal Generator");
 		}
-		checkState();
-		return this.generator;
+
 	}
 
 	public boolean stop() {
@@ -104,8 +130,8 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 
 	}
 
-	public MediaGroupConfig getConfig() {
-		return this.config;
+	public MediaConfig getConfig() {
+		return null;
 	}
 
 	public <R> R getResource(Class<R> arg0) throws MsControlException {
@@ -193,6 +219,26 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	@Override
 	protected MediaObjectState getState() {
 		return this.state;
+	}
+
+	public Iterator<MediaObject> getMediaObjects() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends MediaObject> Iterator<T> getMediaObjects(Class<T> paramClass) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void addListener(AllocationEventListener paramAllocationEventListener) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void removeListener(AllocationEventListener paramAllocationEventListener) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

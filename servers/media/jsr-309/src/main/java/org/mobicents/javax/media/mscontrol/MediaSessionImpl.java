@@ -5,31 +5,27 @@ import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.media.mscontrol.Configuration;
 import javax.media.mscontrol.MediaConfig;
+import javax.media.mscontrol.MediaObject;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.Parameter;
+import javax.media.mscontrol.Parameters;
 import javax.media.mscontrol.mediagroup.MediaGroup;
-import javax.media.mscontrol.mediagroup.MediaGroupConfig;
 import javax.media.mscontrol.mixer.MediaMixer;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
-import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
-import javax.media.mscontrol.resource.Configuration;
-import javax.media.mscontrol.resource.Parameter;
-import javax.media.mscontrol.resource.Parameters;
-import javax.media.mscontrol.resource.ResourceContainer;
 import javax.media.mscontrol.vxml.VxmlDialog;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.mediagroup.MediaGroupImpl;
 import org.mobicents.javax.media.mscontrol.mixer.MediaMixerImpl;
 import org.mobicents.javax.media.mscontrol.networkconnection.NetworkConnectionImpl;
-import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
 /**
@@ -39,10 +35,11 @@ import org.mobicents.jsr309.mgcp.MgcpWrapper;
  */
 public class MediaSessionImpl implements MediaSession {
 	private static final Logger logger = Logger.getLogger(MediaSessionImpl.class);
-	private URI uri = null;
-	private MgcpWrapper mgcpWrapper;
 
+	private MgcpWrapper mgcpWrapper;
 	private CallIdentifier callIdentifier = null;
+
+	private URI uri = null;
 
 	List<NetworkConnection> netConnList = new ArrayList<NetworkConnection>();
 	List<MediaGroup> medGrpList = new ArrayList<MediaGroup>();
@@ -60,14 +57,106 @@ public class MediaSessionImpl implements MediaSession {
 		} catch (URISyntaxException e) {
 			logger.error(e);
 		}
+
 	}
 
-	// MediaObject Methods
+	public MediaGroup createMediaGroup(Configuration<MediaGroup> paramConfiguration) throws MsControlException {
+		MediaGroup mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, paramConfiguration);
+		medGrpList.add(mediaGroupImpl);
+		return mediaGroupImpl;
+	}
+
+	public MediaGroup createMediaGroup(Configuration<MediaGroup> paramConfiguration, Parameters paramParameters)
+			throws MsControlException {
+		MediaGroup mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, paramConfiguration, paramParameters);
+		medGrpList.add(mediaGroupImpl);
+		return mediaGroupImpl;
+	}
+
+	public MediaGroup createMediaGroup(MediaConfig paramMediaConfig, Parameters paramParameters)
+			throws MsControlException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public MediaMixer createMediaMixer(Configuration<MediaMixer> paramConfiguration) throws MsControlException {
+		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper, paramConfiguration);
+		medMxrList.add(mediaMixerImpl);
+		return mediaMixerImpl;
+	}
+
+	public MediaMixer createMediaMixer(Configuration<MediaMixer> paramConfiguration, Parameters paramParameters)
+			throws MsControlException {
+		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper, paramConfiguration, paramParameters);
+		medMxrList.add(mediaMixerImpl);
+		return mediaMixerImpl;
+	}
+
+	public MediaMixer createMediaMixer(MediaConfig paramMediaConfig, Parameters paramParameters)
+			throws MsControlException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public NetworkConnection createNetworkConnection(Configuration<NetworkConnection> paramConfiguration)
+			throws MsControlException {
+		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper, paramConfiguration);
+		netConnList.add(networkConnectionImpl);
+		return networkConnectionImpl;
+	}
+
+	public NetworkConnection createNetworkConnection(Configuration<NetworkConnection> paramConfiguration,
+			Parameters paramParameters) throws MsControlException {
+		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper, paramConfiguration,
+				paramParameters);
+		netConnList.add(networkConnectionImpl);
+		return networkConnectionImpl;
+	}
+
+	public NetworkConnection createNetworkConnection(MediaConfig paramMediaConfig, Parameters paramParameters)
+			throws MsControlException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public VxmlDialog createVxmlDialog(Parameters paramParameters) throws MsControlException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object getAttribute(String paramString) {
+		return attributeMap.get(paramString);
+	}
+
+	public Iterator<String> getAttributeNames() {
+		return attributeMap.keySet().iterator();
+	}
+
+	public void removeAttribute(String paramString) {
+		attributeMap.remove(paramString);
+
+	}
+
+	public void setAttribute(String paramString, Object paramObject) {
+		attributeMap.put(paramString, paramObject);
+
+	}
+
 	public Parameters createParameters() {
 		return new ParametersImpl();
 	}
 
-	public Parameters getParameters(Parameter[] params) {
+	public Iterator<MediaObject> getMediaObjects() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public <T extends MediaObject> Iterator<T> getMediaObjects(Class<T> paramClass) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Parameters getParameters(Parameter[] paramArrayOfParameter) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -77,7 +166,6 @@ public class MediaSessionImpl implements MediaSession {
 	}
 
 	public void release() {
-
 		for (MediaGroup mg : medGrpList) {
 			mg.release();
 		}
@@ -90,75 +178,12 @@ public class MediaSessionImpl implements MediaSession {
 			nc.release();
 		}
 		this.attributeMap.clear();
+
 	}
 
-	public void setParameters(Parameters arg0) {
+	public void setParameters(Parameters paramParameters) {
 		// TODO Auto-generated method stub
 
-	}
-
-	// MediaSession Methods
-	public <T extends ResourceContainer<? extends MediaConfig>> T createContainer(Class<T> aClass, Parameters params)
-			throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(
-			Configuration<C> predefinedConfig) throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(C config,
-			String containerId) throws MsControlException {
-		// TODO Auto-generated method stub
-
-		return null;
-	}
-
-	public VxmlDialog createVxmlDialog(Parameters parameters) throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getAttribute(String key) {
-		return attributeMap.get(key);
-	}
-
-	public Enumeration<String> getAttributeNames() {
-		return Collections.enumeration(attributeMap.keySet());
-	}
-
-	public void removeAttribute(String key) {
-		attributeMap.remove(key);
-	}
-
-	public void setAttribute(String key, Object arg1) {
-		attributeMap.put(key, arg1);
-	}
-
-	// Custom Methods
-	public <C extends MediaConfig> NetworkConnection createNetworkConnection(Configuration<C> predefinedConfig)
-			throws MsControlException {
-		NetworkConnectionConfig config = (NetworkConnectionConfig) MediaConfigFactory.getMediaConfig(predefinedConfig);
-		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper, config);
-		netConnList.add(networkConnectionImpl);
-		return networkConnectionImpl;
-	}
-
-	public <C extends MediaConfig> MediaGroup createMediaGroup(Configuration<C> predefinedConfig)
-			throws MsControlException {
-		MediaGroupConfig config = (MediaGroupConfig) MediaConfigFactory.getMediaConfig(predefinedConfig);
-		MediaGroupImpl mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, config);
-		medGrpList.add(mediaGroupImpl);
-		return mediaGroupImpl;
-	}
-
-	public MediaMixer createMediaMixer() throws MsControlException {
-		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper);
-		medMxrList.add(mediaMixerImpl);
-		return mediaMixerImpl;
 	}
 
 	public CallIdentifier getCallIdentifier() {

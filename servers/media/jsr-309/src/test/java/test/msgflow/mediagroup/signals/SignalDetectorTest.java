@@ -2,19 +2,15 @@ package test.msgflow.mediagroup.signals;
 
 import java.io.Serializable;
 
-import javax.media.mscontrol.JoinEvent;
+import javax.media.mscontrol.MediaEventListener;
 import javax.media.mscontrol.MsControlException;
-import javax.media.mscontrol.StatusEvent;
-import javax.media.mscontrol.StatusEventListener;
-import javax.media.mscontrol.Joinable.Direction;
+import javax.media.mscontrol.join.JoinEvent;
+import javax.media.mscontrol.join.JoinEventListener;
+import javax.media.mscontrol.join.Joinable;
 import javax.media.mscontrol.mediagroup.MediaGroup;
-import javax.media.mscontrol.mediagroup.MediaGroupConfig;
 import javax.media.mscontrol.mediagroup.signals.SignalDetector;
 import javax.media.mscontrol.mediagroup.signals.SignalDetectorEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
-import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.MediaEventListener;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
@@ -58,25 +54,25 @@ public class SignalDetectorTest extends MessageFlowHarness {
 	
 	public void testSignalDetect() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
-		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_SignalDetector);
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.SIGNALDETECTOR);
 		final SignalDetector detector = MG1.getSignalDetector();
 		final ContextImpl ser = new ContextImpl();
 
 		
 
-		StatusEventListener statusEvtList = new StatusEventListener() {
+		JoinEventListener statusEvtList = new JoinEventListener() {
 
-			public void onEvent(StatusEvent event) {
-				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+			public void onEvent(JoinEvent event) {
+				if (event.isSuccessful()) {
+					if (JoinEvent.JOINED == event.getEventType()) {
 						logger.info("Join successful " + event);
 
 						MediaEventListener<SignalDetectorEvent> sigDetectorListener = new MediaEventListener<SignalDetectorEvent>() {
 
 							public void onEvent(SignalDetectorEvent anEvent) {
-								if (Error.e_OK.equals(anEvent.getError())) {
-									if (SignalDetector.ev_SignalDetected.equals(anEvent.getEventType())) {
+								if (anEvent.isSuccessful()) {
+									if (SignalDetectorEvent.SIGNAL_DETECTED == anEvent.getEventType()) {
 										logger.debug(" SignalDetection successfully. received DTMF =  " + anEvent.getSignalString());
 										testPassed = true;
 									} else{
@@ -108,7 +104,7 @@ public class SignalDetectorTest extends MessageFlowHarness {
 		};
 
 		MG1.addListener(statusEvtList);
-		MG1.joinInitiate(Direction.DUPLEX, NC1, ser);
+		MG1.joinInitiate(Joinable.Direction.DUPLEX, NC1, ser);
 
 		waitForMessage();
 		waitForMessage();

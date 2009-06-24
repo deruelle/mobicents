@@ -2,7 +2,7 @@ package org.mobicents.javax.media.mscontrol;
 
 import java.io.Serializable;
 
-import javax.media.mscontrol.Joinable;
+import javax.media.mscontrol.join.Joinable;
 import javax.media.mscontrol.MsControlException;
 
 /**

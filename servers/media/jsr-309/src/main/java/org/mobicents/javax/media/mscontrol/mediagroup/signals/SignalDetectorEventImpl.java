@@ -1,13 +1,18 @@
 package org.mobicents.javax.media.mscontrol.mediagroup.signals;
 
+import javax.media.mscontrol.EventType;
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.Qualifier;
+import javax.media.mscontrol.Value;
 import javax.media.mscontrol.mediagroup.signals.SignalDetector;
 import javax.media.mscontrol.mediagroup.signals.SignalDetectorEvent;
-import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.EventType;
-import javax.media.mscontrol.resource.Qualifier;
 import javax.media.mscontrol.resource.Trigger;
-import javax.media.mscontrol.resource.Value;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class SignalDetectorEventImpl implements SignalDetectorEvent {
 
 	private SignalDetector detector = null;
@@ -16,28 +21,35 @@ public class SignalDetectorEventImpl implements SignalDetectorEvent {
 	private Trigger rtcTrigger = null;
 
 	private String errorText = null;
-	private Error error = Error.e_OK;
+	private MediaErr error = MediaErr.NO_ERROR;
 
 	private int patterIndex = -1;
 
 	private String signal = null;
 
-	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, Error error, String errorText) {
+	private boolean isSuccessful = false;
+
+	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, boolean isSuccessful) {
 		this.detector = detector;
 		this.eventType = eventType;
+		this.isSuccessful = isSuccessful;
+	}
+
+	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, boolean isSuccessful, MediaErr error,
+			String errorText) {
+		this(detector, eventType, isSuccessful);
 		this.errorText = errorText;
 		this.error = error;
 	}
 
-	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, String signal) {
-		this.detector = detector;
-		this.eventType = eventType;
-		this.signal = signal;
+	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, boolean isSuccessful, String signal) {
+		this(detector, eventType, isSuccessful);
+		this.isSuccessful = isSuccessful;
 	}
 
-	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, String signal, int patterIndex,
-			Qualifier qualifier, Trigger rtcTrigger) {
-		this(detector, eventType, signal);
+	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, boolean isSuccessful, String signal,
+			int patterIndex, Qualifier qualifier, Trigger rtcTrigger) {
+		this(detector, eventType, isSuccessful, signal);
 		this.patterIndex = patterIndex;
 		this.qualifier = qualifier;
 		this.rtcTrigger = rtcTrigger;
@@ -63,7 +75,7 @@ public class SignalDetectorEventImpl implements SignalDetectorEvent {
 		return this.rtcTrigger;
 	}
 
-	public Error getError() {
+	public MediaErr getError() {
 		return this.error;
 	}
 
@@ -77,6 +89,10 @@ public class SignalDetectorEventImpl implements SignalDetectorEvent {
 
 	public SignalDetector getSource() {
 		return this.detector;
+	}
+
+	public boolean isSuccessful() {
+		return this.isSuccessful;
 	}
 
 }

@@ -1,12 +1,12 @@
-package org.mobicents.javax.media.mscontrol.resource;
+package org.mobicents.javax.media.mscontrol;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.media.mscontrol.resource.Parameter;
-import javax.media.mscontrol.resource.Parameters;
+import javax.media.mscontrol.Parameter;
+import javax.media.mscontrol.Parameters;
 
 /**
  * 
