@@ -9,7 +9,7 @@
         <service-version>1.0</service-version>
         <root-sbb>
             <description/>
-            <sbb-name>InternalUserProfileControlSbb</sbb-name>
+            <sbb-name>UserProfileControlSbb</sbb-name>
         	<sbb-vendor>org.mobicents</sbb-vendor>
         	<sbb-version>1.0</sbb-version>
         </root-sbb>

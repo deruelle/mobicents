@@ -67,7 +67,7 @@ public class Document implements org.openxdm.xcap.common.datasource.Document, Se
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass() == this.getClass()) {
-			Collection other = (Collection) obj;
+			Document other = (Document) obj;
 			return other.key.equals(this.key);
 		}
 		else {

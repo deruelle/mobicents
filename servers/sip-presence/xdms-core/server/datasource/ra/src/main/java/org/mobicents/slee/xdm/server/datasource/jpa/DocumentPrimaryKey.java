@@ -77,8 +77,8 @@ public class DocumentPrimaryKey implements Serializable {
 	}
 
 	public String toString() {
-		return "DcoumentPrimaryKey:documentName=" + documentName
-				+ ",collection=" + collection;
+		return "DocumentPrimaryKey : documentName = " + documentName
+				+ " , collection = " + collection;
 	}
 
 }

@@ -11,6 +11,10 @@ public class InternalServerErrorException extends RequestException {
 		super(msg);
 	}
 	
+	public InternalServerErrorException(String msg, Throwable e) {
+		super(msg,e);
+	}
+	
 	public int getResponseStatus() {
 		return 500;
 	}

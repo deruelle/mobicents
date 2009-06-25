@@ -16,7 +16,7 @@ public class ServerConfiguration {
 	public static int SERVER_PORT;
 	public static String SCHEME_AND_AUTHORITY_URI;
 	public static String XCAP_ROOT;
-	
+	public static boolean DO_AUTHENTICATION;
 	static {
 		ServerConfiguration serverConfiguration = new ServerConfiguration();
 		Properties properties = new Properties();
@@ -54,6 +54,8 @@ public class ServerConfiguration {
 		SCHEME_AND_AUTHORITY_URI = "http://"+SERVER_HOST+":"+SERVER_PORT;
 		
 		XCAP_ROOT = properties.getProperty("XCAP_ROOT", "/mobicents");
+		
+		DO_AUTHENTICATION = Boolean.valueOf(properties.getProperty("DO_AUTHENTICATION", "false"));
 	}
 	
 }

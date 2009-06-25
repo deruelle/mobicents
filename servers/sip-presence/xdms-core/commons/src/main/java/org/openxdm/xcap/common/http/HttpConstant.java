@@ -12,5 +12,8 @@ public class HttpConstant {
 	public static final String REQUEST_METHOD_GET = "GET";
 	public static final String REQUEST_METHOD_PUT = "PUT";
 	public static final String REQUEST_METHOD_DELETE = "DELETE";
+	public static final String HEADER_AUTHORIZATION = "Authorization";
+	public static final String HEADER_X_3GPP_Asserted_Identity = "X-3GPP-Asserted-Identity";
+	public static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
 	
 }

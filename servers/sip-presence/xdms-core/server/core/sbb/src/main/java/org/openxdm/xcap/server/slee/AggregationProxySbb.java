@@ -13,7 +13,6 @@ import javax.slee.RolledBackContext;
 import javax.slee.SbbContext;
 
 import net.java.slee.resource.http.events.HttpServletRequestEvent;
-
 import org.apache.log4j.Logger;
 import org.mobicents.slee.xdm.server.ServerConfiguration;
 import org.openxdm.xcap.common.error.BadRequestException;
@@ -35,23 +34,24 @@ import org.openxdm.xcap.server.etag.IfNoneMatchETagValidator;
 import org.openxdm.xcap.server.result.ReadResult;
 import org.openxdm.xcap.server.result.WriteResult;
 
+/**
+ * 
+ * @author martins
+ * @author aayush.bhatnagar
+ * 
+ */
 public abstract class AggregationProxySbb implements javax.slee.Sbb {
 
-	private SbbContext sbbContext = null; // This SBB's context
+	private SbbContext sbbContext = null;
 
-	private static Logger logger = Logger.getLogger(AggregationProxySbb.class);
+	private static final Logger logger = Logger
+			.getLogger(AggregationProxySbb.class);
 
-	/**
-	 * Called when an sbb object is instantied and enters the pooled state.
-	 */
 	public void setSbbContext(SbbContext context) {
-		if (logger.isDebugEnabled())
-			logger.debug("setSbbContext(context=" + context.toString() + ")");
 		this.sbbContext = context;
 	}
 
 	public void unsetSbbContext() {
-
 		this.sbbContext = null;
 	}
 
@@ -106,24 +106,28 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 
 	public abstract ChildRelation getRequestProcessorChildRelation();
 
-	public abstract void setRequestProcessorSbbLocalObjectCMP(
-			RequestProcessorSbbLocalObject value);
-
-	public abstract RequestProcessorSbbLocalObject getRequestProcessorSbbLocalObjectCMP();
-
 	protected RequestProcessorSbbLocalObject getRequestProcessor() {
-		RequestProcessorSbbLocalObject childSbb = getRequestProcessorSbbLocalObjectCMP();
-		if (childSbb == null) {
+		try {
+			return (RequestProcessorSbbLocalObject) getRequestProcessorChildRelation()
+			.create();
+		} catch (Exception e) {
+			logger.error("Failed to create child sbb", e);
+			return null;
+		}
+	}
+
+	// added by aayush here: Child relation and child sbb creation
+	// for Authentication Proxy.
+	public abstract ChildRelation getAuthenticationProxyChildRelation();
+
+	protected AuthenticationProxySbbLocalObject getAuthenticationProxy() {
 			try {
-				childSbb = (RequestProcessorSbbLocalObject) getRequestProcessorChildRelation()
+				return (AuthenticationProxySbbLocalObject) getAuthenticationProxyChildRelation()
 						.create();
 			} catch (Exception e) {
 				logger.error("Failed to create child sbb", e);
 				return null;
 			}
-			setRequestProcessorSbbLocalObjectCMP(childSbb);
-		}
-		return childSbb;
 	}
 
 	public void onDelete(HttpServletRequestEvent event,
@@ -138,17 +142,27 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 		try {
 
 			PrintWriter responseWriter = response.getWriter();
+
 			try {
 
 				// get xcap root from config
 				String xcapRoot = ServerConfiguration.XCAP_ROOT;
 
-				// create jxcap resource selector from request's uri & query
+				// create resource selector from request's uri & query
 				// string
 				ResourceSelector resourceSelector = Parser
 						.parseResourceSelector(xcapRoot, request
 								.getRequestURI(), request.getQueryString());
 
+				// user authentication
+				String user = null;
+				if (ServerConfiguration.DO_AUTHENTICATION) {
+					user = getAuthenticationProxy().authenticate(request, response);
+					if (user == null) {
+						return;
+					}
+				}
+				
 				// check conditional request headers
 				// get ifMatch eTag
 				ETagValidator eTagValidator = null;
@@ -261,8 +275,19 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 										.getQueryString());
 				// read result from data source
 				if (logger.isInfoEnabled()) {
-					logger.info("get(resourceSelector=" + resourceSelector + ")");
+					logger.info("get(resourceSelector=" + resourceSelector
+							+ ")");
 				}
+				
+				// user authentication
+				String user = null;
+				if (ServerConfiguration.DO_AUTHENTICATION) {
+					user = getAuthenticationProxy().authenticate(request, response);
+					if (user == null) {
+						return;
+					}
+				}
+				
 				ReadResult result = getRequestProcessor().get(resourceSelector);
 				// get data object from result
 				Resource dataObject = result.getResponseDataObject();
@@ -328,6 +353,15 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 								request.getRequestURI(), request
 										.getQueryString());
 
+				// user authentication
+				String user = null;
+				if (ServerConfiguration.DO_AUTHENTICATION) {
+					user = getAuthenticationProxy().authenticate(request, response);
+					if (user == null) {
+						return;
+					}
+				}
+				
 				// check conditional request headers
 				// get ifMatch eTag
 				ETagValidator eTagValidator = null;
@@ -345,7 +379,8 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				if (logger.isInfoEnabled()) {
 					logger.info("put(resourceSelector=" + resourceSelector
 							+ ",mimetype=" + mimetype + ",eTagValidator="
-							+ eTagValidator + ",xcapRoot=" + ServerConfiguration.XCAP_ROOT + ")");
+							+ eTagValidator + ",xcapRoot="
+							+ ServerConfiguration.XCAP_ROOT + ")");
 				}
 				// put object in data source
 				WriteResult result = getRequestProcessor().put(
@@ -444,59 +479,28 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 	public void onPost(HttpServletRequestEvent event,
 			ActivityContextInterface aci) {
 
-		// detach from the activity
-		aci.detach(sbbContext.getSbbLocalObject());
-
-		// method not allowed, set right sc and allow header then send response
-		try {
-			HttpServletResponse response = event.getResponse();
-			response.setStatus(MethodNotAllowedException.RESPONSE_STATUS);
-			response.setHeader(HttpConstant.HEADER_ALLOW, "GET, PUT, DELETE");
-			response.flushBuffer();
-		} catch (Exception e) {
-			logger.error("unable to send response", e);
-		}
-
+		sendUnsupportedRequestErrorResponse(event, aci);
 	}
 
 	public void onHead(HttpServletRequestEvent event,
 			ActivityContextInterface aci) {
 
-		// detach from the activity
-		aci.detach(sbbContext.getSbbLocalObject());
-
-		// method not allowed, set right sc and allow header then send response
-		try {
-			HttpServletResponse response = event.getResponse();
-			response.setStatus(MethodNotAllowedException.RESPONSE_STATUS);
-			response.setHeader(HttpConstant.HEADER_ALLOW, "GET, PUT, DELETE");
-			response.flushBuffer();
-		} catch (Exception e) {
-			logger.error("unable to send response", e);
-		}
-
+		sendUnsupportedRequestErrorResponse(event, aci);
 	}
 
 	public void onOptions(HttpServletRequestEvent event,
 			ActivityContextInterface aci) {
 
-		// detach from the activity
-		aci.detach(sbbContext.getSbbLocalObject());
-
-		// method not allowed, set right sc and allow header then send response
-		try {
-			HttpServletResponse response = event.getResponse();
-			response.setStatus(MethodNotAllowedException.RESPONSE_STATUS);
-			response.setHeader(HttpConstant.HEADER_ALLOW, "GET, PUT, DELETE");
-			response.flushBuffer();
-		} catch (Exception e) {
-			logger.error("unable to send response", e);
-		}
-
+		sendUnsupportedRequestErrorResponse(event, aci);
 	}
 
 	public void onTrace(HttpServletRequestEvent event,
 			ActivityContextInterface aci) {
+		sendUnsupportedRequestErrorResponse(event, aci);
+	}
+
+	private void sendUnsupportedRequestErrorResponse(
+			HttpServletRequestEvent event, ActivityContextInterface aci) {
 
 		// detach from the activity
 		aci.detach(sbbContext.getSbbLocalObject());
@@ -510,7 +514,6 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 		} catch (Exception e) {
 			logger.error("unable to send response", e);
 		}
-
 	}
 
 }

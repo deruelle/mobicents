@@ -33,6 +33,11 @@
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>http-servlet-events</artifactId>
 		</dependency>	
+		<dependency>
+			<artifactId>sbb</artifactId>
+			<groupId>org.mobicents.slee.enabler.userprofile</groupId>
+			<version>${pom.version}</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
