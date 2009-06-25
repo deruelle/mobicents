@@ -22,6 +22,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	
 	<modules>		
+		<module>user-profile</module>
 		<module>sip-event</module>
 		<module>xcap-client</module>	
 		<module>xdms-core</module>	

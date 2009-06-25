@@ -34,6 +34,9 @@
   <classpathentry kind="src" path="sip-event/subscription/sbb/src/main/java"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb/src/test/java"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb-local-object/src/main/java"/>
+  <classpathentry kind="src" path="user-profile/du/src/main/resources"/>
+  <classpathentry kind="src" path="user-profile/sbb/src/main/resources"/>
+  <classpathentry kind="src" path="user-profile/sbb/src/main/java"/>
   <classpathentry kind="src" path="xcap-client/api/src/main/java"/>
   <classpathentry kind="src" path="xcap-client/ra/du/src/main/resources"/>
   <classpathentry kind="src" path="xcap-client/ra/events/src/main/java"/>
