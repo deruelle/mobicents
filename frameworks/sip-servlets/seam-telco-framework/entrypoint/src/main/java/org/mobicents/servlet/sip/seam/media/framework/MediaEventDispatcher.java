@@ -17,6 +17,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.dtmf.MsDtmfNotifyEvent;
@@ -113,7 +114,15 @@ public class MediaEventDispatcher {
 	@Observer("preLinkConnected")
 	public void doLinkConnected(MsLinkEvent linkEvent) {
 		mediaSessionStore.setMsLink(linkEvent.getSource());
-		mediaSessionStore.setMsEndpoint(linkEvent.getSource().getEndpoints()[0]);
+		MsEndpoint from = linkEvent.getSource().getEndpoints()[0];
+		MsEndpoint to = linkEvent.getSource().getEndpoints()[1];
+		MsEndpoint prEndpoint = (MsEndpoint) 
+			sipSession.getAttribute("org.mobicents.servlet.sip.seam.media.prEndpoint");
+		MsEndpoint terminatingEndpoint = from;
+		if(from.getLocalName().equals(prEndpoint.getLocalName())) {
+			terminatingEndpoint = to;
+		}
+		mediaSessionStore.setMsEndpoint(terminatingEndpoint);
 		Events.instance().raiseEvent("linkConnected", linkEvent);
 		Events.instance().raiseEvent("storeLinkConnected", linkEvent);
 	}
@@ -133,6 +142,8 @@ public class MediaEventDispatcher {
 		log.info("PRECONNECTION for " + sipSession.toString());
 		mediaSessionStore.setMsConnection(connectionEvent.getConnection());
 		mediaSessionStore.setMsEndpoint(connectionEvent.getConnection().getEndpoint());
+		sipSession.setAttribute("org.mobicents.servlet.sip.seam.media.prEndpoint",
+				connectionEvent.getConnection().getEndpoint());
 		Events.instance().raiseEvent("connectionHalfOpen", connectionEvent);
 	}
 	

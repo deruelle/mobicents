@@ -28,7 +28,7 @@ public class SeamEntryPointServlet extends javax.servlet.sip.SipServlet implemen
 	private static LogProvider log = Logging.getLogProvider(SeamEntryPointServlet.class);
 	
 	public void sessionCreated(final SipSessionEvent arg0) {
-		Thread t =new Thread() {
+		Thread t = new Thread() {
 			@Override
 			public void run() {
 				arg0.getSession().setAttribute("msSession", MsProviderContainer.msProvider.createSession());
@@ -84,6 +84,7 @@ public class SeamEntryPointServlet extends javax.servlet.sip.SipServlet implemen
 				log.error("Unexpected exception while movking the servlet context", e);
 			}
 		}
+		String dtmf = checkForSipDtmf(request);
 		SeamEntrypointUtils.beginEvent(request);
 		Contexts.getApplicationContext().set("sipFactory", (SipFactory) getServletContext().getAttribute(
 				SIP_FACTORY));
@@ -92,7 +93,40 @@ public class SeamEntryPointServlet extends javax.servlet.sip.SipServlet implemen
 		Contexts.getApplicationContext().set("timerService", (TimerService) getServletContext().getAttribute(
 				TIMER_SERVICE));
 		Events.instance().raiseEvent(request.getMethod().toUpperCase(), request);
+		if(dtmf != null) {
+			Events.instance().raiseEvent("DTMF", dtmf);
+		}
 		SeamEntrypointUtils.endEvent();
+	}
+	
+	private String checkForSipDtmf(SipServletRequest request) {
+		// seek for DTMF in the message http://www.voip-info.org/wiki/view/SIP+Info+DTMF
+
+		try{
+			if(request.getMethod().equalsIgnoreCase("INFO")) {
+				String contentType = request.getContentType();
+				if(contentType != null) {
+					if("application/dtmf".equalsIgnoreCase(contentType.trim())) {
+						String messageContent = new String( (byte[]) request.getContent());
+						log.debug("Detected application/dtmf");
+						return messageContent.trim();
+					} else if("application/dtmf-relay".equalsIgnoreCase(contentType.trim())) {
+						String messageContent = new String( (byte[]) request.getContent());
+						int signalIndex = messageContent.indexOf("Signal=");
+						log.debug("Detected application/dtmf-relay");
+						if(messageContent != null && messageContent.length() > 0 && signalIndex != -1) {
+							String signal = messageContent.substring("Signal=".length(),
+									"Signal=".length() + 1).trim();
+							return signal;
+						}
+					}
+				}
+			}
+		} catch(Exception e) {
+			log.error("Can not parse DTMF", e);
+		}
+
+		return null;
 	}
 
 	@Override
