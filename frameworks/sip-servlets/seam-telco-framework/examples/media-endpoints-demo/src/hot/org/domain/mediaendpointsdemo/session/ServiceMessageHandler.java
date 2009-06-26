@@ -142,7 +142,9 @@ public class ServiceMessageHandler {
 	
 	/* [13]
 	 * The Media Server notifies us that the link we created in step [12]
-	 * was connected successfully.
+	 * was connected successfully. This method is also called from steps [20],
+	 * [21], [22] where we perform a similar link connection operation. This
+	 * method can handle all cases as long as the mode is set.
 	 */
 	@Observer("linkConnected")
 	public void doLinkConnected(MsLinkEvent event) {
