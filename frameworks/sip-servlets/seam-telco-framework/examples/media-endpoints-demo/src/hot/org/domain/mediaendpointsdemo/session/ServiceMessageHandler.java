@@ -198,7 +198,7 @@ public class ServiceMessageHandler {
 					mediaSessionStore.getMsConnection().getEndpoint().getLocalName());
 		} else if("2".equals(digit)) {
 			/* [21]
-			 * If "1" is pressed build the following topology:
+			 * If "2" is pressed build the following topology:
 			 * Caller <----MsConnection----> PacketRelay <----MsLink----> Conference
 			 */
 			mediaController.createLink(MsLinkMode.FULL_DUPLEX)
@@ -206,7 +206,7 @@ public class ServiceMessageHandler {
 					mediaSessionStore.getMsConnection().getEndpoint().getLocalName());
 		} else if("3".equals(digit)) {
 			/* [22]
-			 * If "1" is pressed build the following topology:
+			 * If "3" is pressed build the following topology:
 			 * Caller <----MsConnection----> PacketRelay <----MsLink----> Conference
 			 * 
 			 * The difference from the previous option is only that here we strictly
