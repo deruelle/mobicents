@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!-- chapter id nickname: ittms -->
+<chapter id="ittms-Introduction_to_the_Media_Server">
+  <title>Introduction to the Mobicents Media Server</title>
+  <section id="ittms-Overview-the_Reasoning_and_Need_for_Media_Servers">
+    <title>Overview: the Reasoning and Need for Media Servers</title>
+    <formalpara>
+      <title>Media Gateways Bridge Multiple Technologies</title>
+      <para>Today, all communications can be routed through computers. Widespread access to broadband Internet and the ubiquity of Internet Protocol (<acronym>IP</acronym>) enable the convergence of voice, data and video. Media gateways provide the ability to switch voice media between a network and its access point. Using Digital Subscriber Line (<acronym>DSL</acronym>) and fast-Internet cable technology, a media gateway converts, compresses and packetizes voice data for transmission back-and-forth across the Internet backbone for landline and wireless phones. Media gateways sit at the intersection of Public Switched Telephone Networks (<acronym>PSTN</acronym>s) and wireless or IP-based networks.</para>
+    </formalpara>
+    <formalpara>
+      <title>The Justification for Media Gateways for VoIP</title>
+      <para>Multiple market demands are pushing companies to converge all of their media services using media gateways with Voice-over-IP (<acronym>VoIP</acronym>) capabilities. Companies have expectations for such architectures, which include:</para>
+    </formalpara>
+    <variablelist>
+      <varlistentry>
+        <term>Lowering initial costs</term>
+        <listitem>
+          <para>Capital investment is decreased because low-cost commodity hardware can be used for multiple functions.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Lowering development costs</term>
+        <listitem>
+          <para>Open system hardware and software standards with well-defined applications reduce costs, and Application Programming Interfaces (<acronym>API</acronym>s) accelerate development.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Handling multiple media types</term>
+        <listitem>
+          <para>Companies want <acronym>VoIP</acronym> solutions today, but also need to choose extensible solutions that will handle video in the near future.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Lowering the costs of deployment and maintenance</term>
+        <listitem>
+          <para>Standardized, modular systems reduce training costs and maintenance while simultaneously improving uptime.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Enabling rapid time-to-market</term>
+        <listitem>
+          <para>Early market entry hits the window of opportunity and maximizes revenue.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <formalpara>
+      <title>What Is the Mobicents Media Server?</title>
+      <para>The Mobicents Media Gateway is an open source Media Server aimed at:</para>
+    </formalpara>
+    <itemizedlist>
+      <listitem>
+        <para>Delivering competitive, complete, best-of-breed media gateway functionality of the highest quality.</para>
+      </listitem>
+      <listitem>
+        <para>Meeting the demands of converged wireless and landline networks, DSL and cable broadband access, and fixed-mobile converged <acronym>VoIP</acronym>&mdash;&mdash; networks from a singleand singularly-capablemedia gateway platform.</para>
+      </listitem>
+      <listitem>
+        <para>Increasing flexibility with a media gateway that supports a wide variety of call control protocols, which possesses an architecture that can scale to meet the demands of small-carrier providers as well as large enterprises.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+  <section id="ittms-Media_Server_Architecture">
+    <title>Media Server Architecture</title>
+    <para>Media services have played an important role in the traditional Time Division Multiplexing (<acronym>TDM</acronym>)-based telephone network.  As the network migrates to an Internet Protocol (<acronym>IP</acronym>)-based environment, media services are also moving to new environments.</para>
+    <para>One of the most exciting trends is the emergence and adoption of complementary modular standards that leverage the Internet to enable media services to be developed, deployed and updated more rapidly than before in a network architecture that supports the two concepts called <emphasis>provisioning-on-demand</emphasis> and <emphasis>scaling-on-demand</emphasis>.</para>
+    <section id="ittms-Design_Overview">
+      <title>Design Overview</title>
+      <formalpara>
+        <title>Base Architecture</title>
+        <para>The Media Server is developed using the JBoss Microcontainer kernel.  The JBoss Microcontainer provides the following major capabilities:
+				<itemizedlist><listitem><para>Configure, and Deploy, Plain Old Java Objects (POJOs) into a Java Standard Edition (SE) runtime environment.</para></listitem><listitem><para>Manage the lifecycle of applications used with the Media Server.</para></listitem><listitem><para>Convert internal, fixed subsystems into stand-alone POJOs.</para></listitem><listitem><para>Introduces the Service Provider Interface (SPI) throughout the base server.</para></listitem></itemizedlist>
+	      </para>
+      </formalpara>
+      <mediaobject id="ittms-mms-MMSArchitecture-dia-MSGeneral">
+        <imageobject>
+          <imagedata width="405" align="center" fileref="images/mms-MMSArchitecture-dia-MSGeneral.jpg" format="JPG"></imagedata>
+        </imageobject>
+      </mediaobject>
+      <para>The Media Server's high degree of modularity benefits the application developer in several ways.  The already-tight code can be further optimized to support applications that require small footprints.  For example, if <acronym>PSTN</acronym> interconnection is unnecessary in an application, then the D-channel feature can be removed from the Media Server.  In the future, if the same application is deployed within a Signaling System 7 (<acronym>SS7</acronym>) network, then the appropriate endpoint can be enabled, and the application is then compatible.</para>
+      <mediaobject id="ittms-mms-MMSArchictecture-dia-MMS">
+        <imageobject>
+          <imagedata align="center" width="550" fileref="images/mms-MMSArchictecture-dia-MMS.png" format="PNG"></imagedata>
+        </imageobject>
+      </mediaobject>
+      <para>The Media Server architecture assumes that call control intelligence lies outside of the Media Server, and is handled by an external entity. The Media Server also assumes that call controllers will use control procedures such as <acronym>MGCP</acronym>, Mecago or <acronym>MSML</acronym>, among others.  Each specific control module can be plugged in directly to the server as a standard deployable unit.  Utilizing the JBoss Microcontainer for the implementation of control protocol-specific communication logic allows for simple deployment.  It is therefore unnecessary for developers to configure low-level transaction and state management details, multi-threading, connection-pooling and other low-level details and <acronym>API</acronym>s.</para>
+      <note>
+        <para>The Media Server uses <acronym>SLEE</acronym> for implementing its own communication capabilities. The <acronym>SLEE</acronym> container does not serve here as a call controller.</para>
+      </note>
+      <para>In addition to control protocol modules, the <acronym>SLEE</acronym> container is aimed at providing high-level features like Interactive Voice Response (<acronym>IVR</acronym>), the Drools business rule management system, and VoiceXML engines.</para>
+      <para>The modules deployed under <acronym>SLEE</acronym> control interact with the Media Server's Service Provider Interface (<acronym>SPI</acronym>) through the Media Server Control Resource Adapter, or <acronym>MSC-RA</acronym>. The <acronym>MSC-RA</acronym> follows the recommendations of <ulink url="http://jcp.org/en/jsr/detail?id=309">JSR-309</ulink> and implements asynchronous interconnection with the Media Server <acronym>SPI</acronym> stack.  This local implementation is restricted and does not use high-level abstractions (for example, VoiceXML dialogs).</para>
+      <formalpara>
+        <title>Media Flow Path</title>
+        <para>Service Objects are used to represent the media flow path for media objects used with the Media Server.  By implementing Service Objects to manage components, constructing media services can be separated into two areas: 
+       <itemizedlist><listitem><para>Implementing components that generate, or consume, media data.</para></listitem><listitem><para>Assembling media component chains to build a media flow path.</para></listitem></itemizedlist>
+       </para>
+      </formalpara>
+      <para>Media Components consist of a number of sub-components</para>
+      <formalpara>
+        <title>Media Flow Path</title>
+        <para>Service Objects are used to represent the media flow path for media objects used with the Media Server.  By implementing Service Objects to manage components, constructing media services can be separated into two areas: 
+       <itemizedlist><listitem><para>Implementing components that generate, or consume, media data.</para></listitem><listitem><para>Assembling media component chains to build a media flow path.</para></listitem></itemizedlist>
+       </para>
+      </formalpara>
+      <section id="ittms-Typical_Deployment_Scenario">
+        <title>Typical Deployment Scenario</title>
+        <para>The Media Server offers a complete media gateway and server solution; here is a non-exhaustive list of the MMS's capabilities:</para>
+        <itemizedlist>
+          <listitem>
+            <para>Digital Signal Processing to convert and compress <acronym>TDB</acronym> voice circuits into IP packets.</para>
+          </listitem>
+          <listitem>
+            <para>Announcement access points.</para>
+          </listitem>
+          <listitem>
+            <para>Conferencing.</para>
+          </listitem>
+          <listitem>
+            <para>High-level Interactive Voice Response (<acronym>IVR</acronym>) engines.</para>
+          </listitem>
+        </itemizedlist>
+        <para>The gateway is able to provide signaling conversation and can operate as a Session Border Controller at the boundaries of Local Access Networks (<acronym>LAN</acronym>s). The Media Server is always controlled by an external <application>Mobicents Platform</application> application server, which implements the call control logic.</para>
+        <mediaobject id="ittms-mms-MMSArchitecture-MSDeployment">
+          <imageobject>
+            <imagedata width="450" align="center" fileref="images/mms-MMSArchitecture-MSDeployment.gif" format="GIF"></imagedata>
+          </imageobject>
+          <caption>
+					<para>Typical Media Server Deployment Scenario</para>
+				</caption>
+        </mediaobject>
+      </section>
+    </section>
+    <section id="ittms-Endpoints">
+      <title>Endpoints</title>
+      <formalpara>
+        <title>Endpoints</title>
+        <para>It is convenient to consider a media gateway as a collection of endpoints. An endpoint is a logical representation of a physical entity such as an analog phone or a channel in a trunk. Endpoints are sources or sinks of data and can be either physical or virtual. Physical endpoint creation requires hardware installation, while software is sufficient for creating virtual endpoints. An interface on a gateway that terminates at a trunk connected to a <acronym>PTSN</acronym> switch would be an example of a physical endpoint. An audio source in an audio content server would be an example of a virtual endpoint.</para>
+      </formalpara>
+      <para>The type of the endpoint determines its functionality. Our analysis, so far, has led us to isolate the following basic endpoint types:</para>
+      <itemizedlist>
+        <listitem>
+          <para>digital signal 0 (<acronym>DS0</acronym>)</para>
+        </listitem>
+        <listitem>
+          <para>analog line</para>
+        </listitem>
+        <listitem>
+          <para>announcement server access point</para>
+        </listitem>
+        <listitem>
+          <para>conference bridge access point</para>
+        </listitem>
+        <listitem>
+          <para>packet relay</para>
+        </listitem>
+        <listitem>
+          <para>Asynchronous Transfer Mode (<acronym>ATM</acronym>) "trunk side" interface</para>
+        </listitem>
+      </itemizedlist>
+      <para>This list is not final: other endpoint types may be defined in the future, such as test endpoints which could be used to check network quality, or frame-relay endpoints that could be used to manage audio channels multiplexed over a frame-relay virtual circuit.</para>
+      <variablelist>
+        <title>Descriptions of Various Access Point Types</title>
+        <varlistentry>
+          <term>Announcement Server Access Point</term>
+          <listitem>
+            <para>An announcement server endpoint provides access, intuitively, to an announcement server. Upon receiving requests from the call agent, the announcement server <quote>plays</quote> a specified announcement. A given announcement endpoint is not expected to support more than one connection at a time. Connections to an announcement server are typically one-way; they are <quote>half-duplex</quote>: the announcement server is not expected to listen to audio signals from the connection. Announcement access points are capable of playing announcements; however, these endpoints do not have the capability of transcoding. To achieve transcoding, a Packet Relay must be used. Also note that the announcement server endpoint can generate tones, such as dual-tone multi-frequency (DTMF).</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Interactive Voice Response Access Point</term>
+          <listitem>
+            <para>An Interactive Voice Response (<acronym>IVR</acronym>) endpoint provides access to an <acronym>IVR</acronym> service. Upon requests from the call agent, the <acronym>IVR</acronym> server <quote>plays</quote> announcements and tones, and <quote>listens</quote> for responses, such as (<acronym>DTMF</acronym>) input or voice messages, from the user. A given <acronym>IVR</acronym> endpoint is not expected to support more than one connection at a time. Similarly to announcement endpoints, IVR endpoints do not possess media-transcoding capabilities. IVR plays and records in the format in which the media was stored or received.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Conference Bridge Access Point</term>
+          <listitem>
+            <para>A conference bridge endpoint is used to provide access to a specific conference. Media gateways should be able to establish several connections between the endpoint and packet networks, or between the endpoint and other endpoints in the same gateway. The signals originating from these connections are mixed according to the connection <quote>mode</quote> (as specified later in this document). The precise number of connections that an endpoint supports is characteristic of the gateway, and may, in fact, vary according to the allocation of resources within the gateway.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Packet Relay Endpoint</term>
+          <listitem>
+            <para>A packet relay endpoint is a specific form of conference bridge that typically only supports two connections. Packet relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between incompatible gateways, such as gateways which don't support compatible compression algorithms and gateways which operate over different transmission networks, such as IP or ATM.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Echo Endpoint</term>
+          <listitem>
+            <para>An echo—or loopback—endpoint is a test endpoint that is used for maintenance and/or continuity testing. The endpoint returns the incoming audio signal from the endpoint back to that same endpoint, thus creating an echo effect</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <formalpara>
+        <title>Signal Generators (<acronym>SG</acronym>s) and Signal Detectors (<acronym>SD</acronym>s)</title>
+        <para>This endpoint contains a set of resources which provide media-processing functionality.  It manages the interconnection of media streams between the resources, and arbitrates the flow of media stream data between them.  Media services, also called <emphasis>commands</emphasis>, are invoked by a client application on the endpoint; that endpoint causes the resources to perform the desired services, and directs events sent by the resources to the appropriate client. A primary resource and zero or more secondary resources are included in the endpoint. The primary resource is typically connected to an external media stream, and provides the data from that stream to secondary resources. The secondary resources may process that stream (for example, recording it and/or performing automatic speech recognition on it), or may themselves generate generate media stream data (for example, playing a voice file) which is then transmitted to the primary resource.</para>
+      </formalpara>
+      <mediaobject id="ittms-mms-MMSArchitecture-dia-Endpoint">
+        <imageobject>
+          <imagedata width="370" align="left" fileref="images/mms-MMSArchitecture-dia-Endpoint.gif" format="GIF"></imagedata>
+        </imageobject>
+      </mediaobject>
+      <para>A resource is statically prepared if the preparation takes place at the time of creation. A resource is dynamically prepared if preparation of a particular resource (and its associated media streams) does not occur until it is required by a media operation. Static preparation can lead to less efficient usage of the Media Server's resources, because those resources tend to be allocated for a longer time before use. However, once a resource has been prepared, it is guaranteed to be available for use. Dynamic preparation may utilize resources more efficiently because just-in-time (<acronym>JIT</acronym>) allocation algorithms may be used.</para>
+      <para>An endpoint is divided logically into a Service Provider Interface that is used to implement a specific endpoint, and a management interface, which is used to implement the manageable resources of that endpoint.  All endpoints are plugged into the Mobicents <acronym>SLEE</acronym> server by registering each endpoint with the appropriate JBoss Microcontainer.  All major endpoints are manageable JBoss Microcontainers which are interconnected through the server.  The most effective way to add endpoints to a Media Server is to create the endpoint application within a JBoss Microcontainer.</para>
+      <para>The <acronym>SPI</acronym> layer is an abstraction that endpoint providers must implement in order to enable their media-processing features. An implementation of an <acronym>SPI</acronym> for an endpoint is referred to as an <emphasis>Endpoint Provider</emphasis>.</para><!--<mediaobject
+				id="ittms-mms-MMSArchictecture-dia-Endpoint">
+				<imageobject>
+					<imagedata
+						align="center"
+						width="700"
+						fileref="images/mms-MMSArchictecture-dia-Endpoint.png"
+						format="PNG" />
+				</imageobject>
+				<caption>
+					<para>EndpointManagementMBean UML Diagram</para>
+				</caption>
+			</mediaobject>-->
+      
+    </section>
+    <section id="ittms-Endpoint_Identifiers">
+      <title>Endpoint Identifiers</title>
+      <para>An endpoint is identified by its local name. The syntax of the local name depends on the type of endpoint being named. However, the local name for each of these types is naturally hierarchical, beginning with a term that identifies the physical gateway containing the given endpoint, and ending with a term which specifies the individual endpoint concerned. With this in mind,  the JNDI naming rules are applied to the endpoint identifiers.</para>
+    </section>
+    <section id="ittms-Controller-Modules">
+      <title>Controller Modules</title>
+      <para>Controller Modules allows external interfaces to be implemented for the Media Server.  Each controller module implements an industry standard control protocol, and uses a generic SPI to control processing components or endpoints.</para>
+      <para>One such controller module is the Media Gateway Control Protocol (MGCP).  This controller module is implemented as an internal protocol within a distributed system, and appears to external networks as a single VoIP gateway.  The MGCP is composed of a Call Agent, a set of gateways including at least one "media gateway", and a "signalling gateway" (when connecting to an SS7 controlled network).  The Call Agent can be distributed over several computer platforms.  Each gateway handles the conversion of media signals between circuits and packets.</para>
+    </section>
+    <section id="ittms-Connections">
+      <title>Connections</title>
+      <para>Connections are created on the call agent on each endpoint that will be involved in the <quote>call</quote>. In the classic example of a connection between two <quote>DS0</quote> endpoints, EP1 and EP2, the call agents controlling the endpoints establish two connections (C1 and C2):</para>
+      <mediaobject id="ittms-mms-MMSArchitecture-dia-MsConnection">
+        <imageobject>
+          <imagedata width="450" align="center" fileref="images/mms-MMSArchitecture-dia-MsConnection.png" format="PNG"></imagedata>
+        </imageobject>
+        <caption>
+					<para>Media Server Connections</para>
+				</caption>
+      </mediaobject>
+      <para>Each connection is designated locally by a connection identifier, and will be characterized by connection attributes.</para>
+      <formalpara>
+        <title>Resources and Connection Attributes</title>
+        <para>Many types of resources can be associated with a connection, such as specific signal-processing functions or packetization functions. Generally, these resources fall in two categories:</para>
+      </formalpara>
+      <variablelist id="ittms-Two_Types_of_Resources">
+        <title>Two Types of Resources</title>
+        <varlistentry>
+          <term>Externally-Visible Resources</term>
+          <listitem>
+            <para>Externally-visible resources are ones which affect the format of <quote>the bits on the network</quote>, and must be communicated to the second endpoint involved in the connection.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Internal Resources</term>
+          <listitem>
+            <para>Internal resources are resources which determine which signal is being sent over the connection and how the received signals are processed by the endpoint.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <para>The resources allocated to a connection or, more generally, to the handling of the connection, are chosen by the Media Server under instructions from the call agent. The call agent provides these instructions by sending two set of parameters to the Media Server:</para>
+      <itemizedlist id="ittms-Two_Sets_of_Parameters">
+        <listitem>
+          <para>The local directives instruct the gateway on the choice of resources that should be used for a connection.</para>
+        </listitem>
+        <listitem>
+          <para>When available, the <emphasis>session description</emphasis> is provided by the other end of the connection.</para>
+        </listitem>
+      </itemizedlist>
+      <para>The local directives specify parameters such as the mode of the connection (e.g. send-only, or send-receive), preferred coding or packetization methods, the usage of echo-cancellation or silence suppression, etc. (A more comprehensive and detailed list can be found in the specification of the <literal>LocalConnectionOptions</literal> parameter of the <literal>CreateConnection</literal> command.) For each of these parameters, the call agent can either specify a value, a range of values, or no value at all. This allow various implementations to implement various levels of control, from very tight control where the call agent specifies minute details of the connection-handling, to very loose control, where the call agent only specifies broad guidelines, such as the maximum bandwidth, and lets the gateway select the detailed values itself.</para>
+      <para>Based on the value of the local directives, the gateway determines the resources allocated to the connection. When this is possible, the gateway will choose values that are in line with the remote session description; however, there is no absolute requirement that the parameters will be exactly the same.</para>
+      <para>Once the resource have been allocated, the gateway will compose a <emphasis>session description</emphasis> that describes the way it intends to receive packets. Note that the session description may in some cases present a range of values. For example, if the gateway is ready to accept one of several compression algorithms, it can provide a list of these accepted algorithms.</para>
+      <formalpara id="ittms-Local_Connections_Are_a_Special_Case">
+        <title>Local Connections Are a Special Case</title>
+        <para>Large gateways include a large number of endpoints which are often of different types. In some networks, we may often have to set up connections between endpoints located within the same gateway. Examples of such connections may be:</para>
+      </formalpara>
+      <itemizedlist id="ittms-Examples_of_Local_Connections">
+        <listitem>
+          <para>connecting a trunk line to a wiretap device;</para>
+        </listitem>
+        <listitem>
+          <para>connecting a call to an Interactive Voice-Response (<acronym>IVR</acronym>) unit;</para>
+        </listitem>
+        <listitem>
+          <para>connecting a call to a conferencing unit; or,</para>
+        </listitem>
+        <listitem>
+          <para>routing a call from one endpoint to another, something often described as a <emphasis>hairpin</emphasis> connection.</para>
+        </listitem>
+      </itemizedlist>
+      <para>Local connections are much simpler to establish than network connections. In most cases, the connection will be established through a local interconnecting device, such as, for example, a TDM bus.</para>
+    </section>
+    <section id="ittms-Events_and_Signals">
+      <title>Events and Signals</title>
+      <para>The concept of events and signals is central to the Media Server. A Call Controller may ask to be notified about certain events occurring in an endpoint (for example: off-hook events) by passing an event identifier as a parameter to an endpoint's <function>subscribe()</function> method.</para>
+      <para>A Call Controller may also request certain signals to be applied to an endpoint (for example: a dial-tone) by supplying the identifier of the event as an argument to the endpoint's <function>apply()</function> method.</para>
+      <para>Events and signals are grouped in packages, within which they share the same namespace. which we will refer to as an event identifier. Event identifiers are integer constants. Some of the events may be parametrized with additional data such as with a DTMF mask.</para>
+      <para>Signals are divided into different types depending on their behavior:</para>
+      <variablelist id="ittms-Types_of_Signals">
+        <title>Types of Signals</title>
+        <varlistentry>
+          <term>On/off (OO)</term>
+          <listitem>
+            <para>Once applied, these signals last until they are turned off. This can only happen as the result of a reboot/restart or a new signal request where the signal is explicitly turned off. Signals of type OO are defined to be idempotent; thus, multiple requests to turn a given OO signal on (or off) are perfectly valid.  An On/Off signal could be a visual message-waiting indicator (<acronym>VMWI</acronym>). Once turned on, it <emphasis>must not</emphasis> be turned off until explicitly instructed to by the Call Agent, or as a result of an endpoint restart. In other words, these signals will not turn off as a result of the detection of a requested event.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Time-out (TO)</term>
+          <listitem>
+            <para>Once applied, these signals last until they are either cancelled (by the occurrence of an event or by explicit releasing of signal generator), or a signal-specific period of time has elapsed. A TO signal that times out will generate an <emphasis>operation complete</emphasis> event. If an event occurs prior to the allotted 180 seconds, the signal will, by default, be stopped (the <emphasis>keep signals active</emphasis> action can be used to override this behavior). If the signal is not stopped, the signal will time out, stop, and generate an <emphasis>operation complete</emphasis> event, about which the server controller may or may not have requested to be notified. A TO signal that fails after being started, but before having generated an <emphasis>operation complete</emphasis> event, will generate an <emphasis>operation failure</emphasis> event that includes the name of the signal that failed. Deletion of a connection with an active TO signal will result in such a failure.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Brief (BR)</term>
+          <listitem>
+            <para>The duration of these signals is normally so short that they stop on their own. If a signal stopping event occurs, or a new signal request is applied, a currently active BR signal will not stop. However, any pending BR signals not yet applied will be cancelled (a BR signal becomes pending if a signal request includes a BR signal, and there is already an active BR signal). As an example, a brief tone could be a DTMF digit. If the DTMF digit <literal>1</literal> is currently being played, and a signal stopping event occurs, the <literal>1</literal> would play to completion. If a request to play DTMF digit <literal>2</literal> arrives before DTMF digit <literal>1</literal> finishes playing, DTMF digit <literal>2</literal> would become pending.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <para>Signal(s) may be generated on endpoints or on connections. One or more actions such as the following are associated with each event:</para>
+      <itemizedlist id="ittms-Types_of_Actions_Which_Can_Be_Associated_with_Events">
+        <listitem>
+          <para>notify the event immediately, together with the accumulated list of observed events;</para>
+        </listitem>
+        <listitem>
+          <para>accumulate the event in an event buffer, but do not yet notify;</para>
+        </listitem>
+        <listitem>
+          <para>keep signal(s) active; or</para>
+        </listitem>
+        <listitem>
+          <para>ignore the event.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+</chapter>
