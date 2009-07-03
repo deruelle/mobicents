@@ -205,7 +205,7 @@ public abstract class AbstractAppUsageSbb implements javax.slee.Sbb {
 							xcapCapsMimetype,
 							new ByteArrayInputStream(sb1.toString().getBytes(
 									"utf-8")), null,
-							ServerConfiguration.XCAP_ROOT);
+							ServerConfiguration.XCAP_ROOT,null);
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new InternalServerErrorException(

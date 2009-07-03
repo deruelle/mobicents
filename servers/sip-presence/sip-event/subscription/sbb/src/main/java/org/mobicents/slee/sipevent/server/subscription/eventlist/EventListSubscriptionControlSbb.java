@@ -82,7 +82,7 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 		}
 		XDMClientControlSbbLocalObject xdm = getXDMClientControlSbb(); 
 		// ask for the global document		
-		xdm.get(globalRLSDocumentKey);
+		xdm.get(globalRLSDocumentKey,null);
 		// subscribe it to know when it is updated
 		xdm.subscribeDocument(globalRLSDocumentKey.getDocumentSelector());
 	}

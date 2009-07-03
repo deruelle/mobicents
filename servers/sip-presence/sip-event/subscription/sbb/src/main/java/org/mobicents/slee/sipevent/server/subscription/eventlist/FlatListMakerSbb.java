@@ -148,7 +148,7 @@ public abstract class FlatListMakerSbb implements Sbb,
 										null,
 										entryRefType.getRef(), null);
 					}
-					getXDMClientControlSbb().get(new XcapUriKey(resourceSelector));
+					getXDMClientControlSbb().get(new XcapUriKey(resourceSelector),null);
 					return;
 				}
 				catch (Exception e) {
@@ -278,7 +278,7 @@ public abstract class FlatListMakerSbb implements Sbb,
 					return;
 				}				
 				setFlatList(flatList);
-				getXDMClientControlSbb().get(key);	
+				getXDMClientControlSbb().get(key,null);	
 			}
 			else {
 				if (logger.isInfoEnabled()) {

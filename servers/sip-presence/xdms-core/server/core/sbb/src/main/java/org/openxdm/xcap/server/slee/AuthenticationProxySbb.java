@@ -174,7 +174,7 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 	 * 
 	 * @param request
 	 * @param response
-	 * @return
+	 * @return null if authentication failed, authenticated user@domain otherwise
 	 * @throws NoSuchAlgorithmException
 	 */
 	private String checkAuthenticatedCredentials(HttpServletRequest request,

@@ -41,7 +41,7 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * Retrieves the XML resource from the XCAP server, for the specified key.
 	 * Response is async.
 	 */
-	public void get(XcapUriKey key);
+	public void get(XcapUriKey key, String user);
 
 	/**
 	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
@@ -55,7 +55,7 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
 	 */
-	public void put(XcapUriKey key, String mimetype, byte[] content);
+	public void put(XcapUriKey key, String mimetype, byte[] content, String user);
 
 	/**
 	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
@@ -71,7 +71,7 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param content
 	 */
 	public void putIfMatch(XcapUriKey key, String eTag, String mimetype,
-			byte[] content);
+			byte[] content, String user);
 
 	/**
 	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
@@ -88,14 +88,14 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param content
 	 */
 	public void putIfNoneMatch(XcapUriKey key, String eTag, String mimetype,
-			byte[] content);
+			byte[] content, String user);
 
 	/**
 	 * Deletes the content related the specified XCAP URI key.
 	 * 
 	 * @param key
 	 */
-	public void delete(XcapUriKey key);
+	public void delete(XcapUriKey key, String user);
 
 	/**
 	 * Deletes the content related the specified XCAP URI key, if the specified
@@ -104,7 +104,7 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param key
 	 * @param eTag
 	 */
-	public void deleteIfMatch(XcapUriKey key, String eTag);
+	public void deleteIfMatch(XcapUriKey key, String eTag, String user);
 
 	/**
 	 * Deletes the content related the specified XCAP URI key, if the specified
@@ -113,7 +113,7 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param key
 	 * @param eTag
 	 */
-	public void deleteIfNoneMatch(XcapUriKey key, String eTag);
+	public void deleteIfNoneMatch(XcapUriKey key, String eTag, String user);
 
 	// --- subscribe/unsubscribe interface methods
 

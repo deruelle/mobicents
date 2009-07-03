@@ -21,11 +21,13 @@ public class DefaultAuthorizationPolicy extends AuthorizationPolicy {
 
 	public boolean isAuthorized(String user, AuthorizationPolicy.Operation operation, DocumentSelector documentSelector) {
 		
-		// check args
 		if (user == null) {
-			throw new IllegalArgumentException("user is null");
+			// no authorization to do
+			return true;
 		}
-		else if (operation == null) {
+		
+		// check other args
+		if (operation == null) {
 			throw new IllegalArgumentException("operation is null");
 		}		
 		else if (documentSelector == null) {

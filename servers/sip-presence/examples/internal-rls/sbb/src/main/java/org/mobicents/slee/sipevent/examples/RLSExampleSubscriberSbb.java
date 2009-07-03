@@ -163,7 +163,7 @@ public abstract class RLSExampleSubscriberSbb implements javax.slee.Sbb,
 		try {
 			XDMClientControlSbbLocalObject xdm = getXDMClientControlSbb();
 			// insert the document
-			xdm.put(new UserDocumentUriKey(RLSServicesAppUsage.ID,subscriber,"index"), RLSServicesAppUsage.MIMETYPE, getRlsServices(entryURIs).getBytes("UTF-8"));			
+			xdm.put(new UserDocumentUriKey(RLSServicesAppUsage.ID,subscriber,"index"), RLSServicesAppUsage.MIMETYPE, getRlsServices(entryURIs).getBytes("UTF-8"),null);			
 		} catch (Exception e) {
 			log4j.error(e.getMessage(), e);
 			getParentSbbCMP().subscriberNotStarted();
@@ -214,7 +214,7 @@ public abstract class RLSExampleSubscriberSbb implements javax.slee.Sbb,
 	
 	private void deleteRlsServices() {
 		try {
-			getXDMClientControlSbb().delete(new UserDocumentUriKey(RLSServicesAppUsage.ID,subscriber,"index"));			
+			getXDMClientControlSbb().delete(new UserDocumentUriKey(RLSServicesAppUsage.ID,subscriber,"index"),null);			
 		} catch (Exception e) {
 			log4j.error(e.getMessage(), e);			
 		}

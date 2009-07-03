@@ -82,7 +82,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 
 	// -- SBB LOCAL OBJECT METHODS
 
-	private void delete(XcapUriKey key, ETagValidator eTagValidator) {
+	private void delete(XcapUriKey key, ETagValidator eTagValidator, String user) {
 		if (logger.isInfoEnabled()) {
 			logger.info("Deleting " + key);
 		}
@@ -92,7 +92,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 		try {
 			WriteResult writeResult = getRequestProcessor().delete(
 					key.getResourceSelector(), null,
-					ServerConfiguration.XCAP_ROOT);
+					ServerConfiguration.XCAP_ROOT,user);
 			responseCode = writeResult.getResponseStatus();
 			eTag = writeResult.getResponseEntityTag();
 		} catch (ConflictException e) {
@@ -108,15 +108,15 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 		delete(key, null);
 	}
 
-	public void deleteIfMatch(XcapUriKey key, String tag) {
-		delete(key, new IfMatchETagValidator(tag));
+	public void deleteIfMatch(XcapUriKey key, String tag, String user) {
+		delete(key, new IfMatchETagValidator(tag),user);
 	}
 
-	public void deleteIfNoneMatch(XcapUriKey key, String tag) {
-		delete(key, new IfNoneMatchETagValidator(tag));
+	public void deleteIfNoneMatch(XcapUriKey key, String tag, String user) {
+		delete(key, new IfNoneMatchETagValidator(tag),user);
 	}
 
-	public void get(XcapUriKey key) {
+	public void get(XcapUriKey key, String user) {
 		if (logger.isInfoEnabled()) {
 			logger.info("Retreiving " + key);
 		}
@@ -126,7 +126,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 		String eTag = null;
 		try {
 			ReadResult readResult = getRequestProcessor().get(
-					key.getResourceSelector());
+					key.getResourceSelector(),user);
 			responseCode = 200;
 			mimetype = readResult.getResponseDataObject().getMimetype();
 			content = readResult.getResponseDataObject().toXML();
@@ -142,7 +142,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 	}
 
 	private void put(XcapUriKey key, String mimetype, byte[] content,
-			ETagValidator eTagValidator) {
+			ETagValidator eTagValidator, String user) {
 		
 		if (logger.isInfoEnabled()) {
 			logger.info("Putting content with mimetype "+mimetype+" at " + key);
@@ -155,7 +155,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 		try {
 			WriteResult writeResult = getRequestProcessor().put(
 					key.getResourceSelector(), mimetype, bais, eTagValidator,
-					ServerConfiguration.XCAP_ROOT);
+					ServerConfiguration.XCAP_ROOT,user);
 			responseCode = writeResult.getResponseStatus();
 			eTag = writeResult.getResponseEntityTag();
 		
@@ -182,18 +182,18 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 		getParentSbbCMP().putResponse(key, responseCode, responseContent, eTag);
 	}
 
-	public void put(XcapUriKey key, String mimetype, byte[] content) {
-		put(key, mimetype, content, null);
+	public void put(XcapUriKey key, String mimetype, byte[] content, String user) {
+		put(key, mimetype, content, null,user);
 	}
 
 	public void putIfMatch(XcapUriKey key, String tag, String mimetype,
-			byte[] content) {
-		put(key, mimetype, content, new IfMatchETagValidator(tag));
+			byte[] content, String user) {
+		put(key, mimetype, content, new IfMatchETagValidator(tag),user);
 	}
 
 	public void putIfNoneMatch(XcapUriKey key, String tag, String mimetype,
-			byte[] content) {
-		put(key, mimetype, content, new IfNoneMatchETagValidator(tag));
+			byte[] content, String user) {
+		put(key, mimetype, content, new IfNoneMatchETagValidator(tag), user);
 	}
 
 	// --- subscribe/unsubscribe interface methods

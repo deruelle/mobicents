@@ -102,7 +102,7 @@ public class PresenceSubscriptionControl {
 						Response.ACCEPTED,eventList,serverTransaction);
 				// ask for pres-rules doc
 				sbb.getXDMClientControlSbb().get(
-						new DocumentUriKey(documentSelector));
+						new DocumentUriKey(documentSelector),null);
 			}
 		} else {
 			// great, we already had the doc, send response code to the abstract

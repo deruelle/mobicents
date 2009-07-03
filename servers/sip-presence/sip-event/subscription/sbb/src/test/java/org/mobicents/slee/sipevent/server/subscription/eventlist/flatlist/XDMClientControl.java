@@ -19,17 +19,17 @@ public class XDMClientControl implements XDMClientControlSbbLocalObject {
 	
 	private int requestCounter = 0;
 	
-	public void delete(XcapUriKey key) {
+	public void delete(XcapUriKey key, String user) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void deleteIfMatch(XcapUriKey key, String tag) {
+	public void deleteIfMatch(XcapUriKey key, String tag, String user) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void deleteIfNoneMatch(XcapUriKey key, String tag) {
+	public void deleteIfNoneMatch(XcapUriKey key, String tag, String user) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -48,7 +48,7 @@ public class XDMClientControl implements XDMClientControlSbbLocalObject {
 		}
 	}
 	
-	public void get(XcapUriKey key) {
+	public void get(XcapUriKey key, String user) {
 		String content = null;
 		if (requestCounter == 0) {
 			requestCounter++;
@@ -61,19 +61,19 @@ public class XDMClientControl implements XDMClientControlSbbLocalObject {
 		parentSbb.getResponse(key, 200, "", content, "");
 	}
 
-	public void put(XcapUriKey key, String mimetype, byte[] content) {
+	public void put(XcapUriKey key, String mimetype, byte[] content, String user) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	public void putIfMatch(XcapUriKey key, String tag, String mimetype,
-			byte[] content) {
+			byte[] content, String user) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	public void putIfNoneMatch(XcapUriKey key, String tag, String mimetype,
-			byte[] content) {
+			byte[] content, String user) {
 		// TODO Auto-generated method stub
 		
 	}

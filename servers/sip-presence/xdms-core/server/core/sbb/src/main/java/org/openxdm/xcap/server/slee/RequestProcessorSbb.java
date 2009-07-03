@@ -22,6 +22,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.openxdm.xcap.common.appusage.AppUsage;
+import org.openxdm.xcap.common.appusage.AuthorizationPolicy;
 import org.openxdm.xcap.common.datasource.DataSource;
 import org.openxdm.xcap.common.error.BadRequestException;
 import org.openxdm.xcap.common.error.CannotDeleteConflictException;
@@ -31,6 +32,7 @@ import org.openxdm.xcap.common.error.ConstraintFailureConflictException;
 import org.openxdm.xcap.common.error.InternalServerErrorException;
 import org.openxdm.xcap.common.error.MethodNotAllowedException;
 import org.openxdm.xcap.common.error.NoParentConflictException;
+import org.openxdm.xcap.common.error.NotAuthorizedRequestException;
 import org.openxdm.xcap.common.error.NotFoundException;
 import org.openxdm.xcap.common.error.NotUTF8ConflictException;
 import org.openxdm.xcap.common.error.NotValidXMLFragmentConflictException;
@@ -162,13 +164,13 @@ public abstract class RequestProcessorSbb implements
 	// #############################################################
 
 	public WriteResult delete(ResourceSelector resourceSelector,
-			ETagValidator eTagValidator, String xcapRoot)
+			ETagValidator eTagValidator, String xcapRoot, String authenticatedUser)
 			throws NotFoundException, InternalServerErrorException,
 			BadRequestException, CannotDeleteConflictException,
 			PreconditionFailedException, MethodNotAllowedException,
 			SchemaValidationErrorConflictException,
 			UniquenessFailureConflictException,
-			ConstraintFailureConflictException {
+			ConstraintFailureConflictException, NotAuthorizedRequestException {
 
 		WriteResult result = new OKWriteResult();
 		DocumentSelector documentSelector = null;
@@ -188,6 +190,10 @@ public abstract class RequestProcessorSbb implements
 				if (logger.isDebugEnabled())
 					logger.debug("appusage not found");
 				throw new NotFoundException();
+			}
+			// authorize user
+			if (!appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.DELETE, documentSelector)) {
+				throw new NotAuthorizedRequestException();
 			}
 			// get document
 			org.openxdm.xcap.common.datasource.Document document = dataSourceSbbInterface
@@ -558,9 +564,9 @@ public abstract class RequestProcessorSbb implements
 
 	}
 
-	public ReadResult get(ResourceSelector resourceSelector)
+	public ReadResult get(ResourceSelector resourceSelector, String authenticatedUser)
 			throws NotFoundException, InternalServerErrorException,
-			BadRequestException {
+			BadRequestException, NotAuthorizedRequestException {
 
 		AppUsage appUsage = null;
 		try {
@@ -575,6 +581,10 @@ public abstract class RequestProcessorSbb implements
 				if (logger.isDebugEnabled())
 					logger.debug("appusage not found");
 				throw new NotFoundException();
+			}
+			// authorize user
+			if (!appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.GET, documentSelector)) {
+				throw new NotAuthorizedRequestException();
 			}
 			// get document
 			org.openxdm.xcap.common.datasource.Document document = dataSourceSbbInterface
@@ -789,10 +799,10 @@ public abstract class RequestProcessorSbb implements
 
 	public WriteResult put(ResourceSelector resourceSelector, String mimetype,
 			InputStream contentStream, ETagValidator eTagValidator,
-			String xcapRoot) throws ConflictException,
+			String xcapRoot, String authenticatedUser) throws ConflictException,
 			MethodNotAllowedException, UnsupportedMediaTypeException,
 			InternalServerErrorException, PreconditionFailedException,
-			BadRequestException {
+			BadRequestException, NotAuthorizedRequestException {
 
 		WriteResult result = null;
 		DocumentSelector documentSelector = null;
@@ -819,7 +829,10 @@ public abstract class RequestProcessorSbb implements
 					logger.debug("appusage not found");
 				throw new NoParentConflictException(xcapRoot);
 			}
-
+			// authorize user
+			if (!appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.PUT, documentSelector)) {
+				throw new NotAuthorizedRequestException();
+			}
 			if (dynamicUserProvisioning) {
 				// creates user if does not exist
 				String[] appUsageCollections = dataSourceSbbInterface
@@ -1439,7 +1452,7 @@ public abstract class RequestProcessorSbb implements
 				logger
 						.debug("failed to parse document selector, returning no parent conflict");
 			throw new NoParentConflictException(getDocumentExistingAncestor(
-					xcapRoot, appUsage.getAUID(),
+					xcapRoot, documentSelector != null ? documentSelector.getAUID() : null,
 					documentSelector != null ? documentSelector
 							.getDocumentParent() : e.getValidParent(),
 					dataSourceSbbInterface));

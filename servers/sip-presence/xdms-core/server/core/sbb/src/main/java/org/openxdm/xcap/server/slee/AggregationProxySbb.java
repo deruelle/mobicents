@@ -183,7 +183,7 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 							+ xcapRoot + ")");
 				}
 				WriteResult result = getRequestProcessor().delete(
-						resourceSelector, eTagValidator, xcapRoot);
+						resourceSelector, eTagValidator, xcapRoot,user);
 				// set response status
 				response.setStatus(result.getResponseStatus());
 				// set response entity tag if provided
@@ -288,7 +288,7 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 					}
 				}
 				
-				ReadResult result = getRequestProcessor().get(resourceSelector);
+				ReadResult result = getRequestProcessor().get(resourceSelector,user);
 				// get data object from result
 				Resource dataObject = result.getResponseDataObject();
 				// set response content type
@@ -385,7 +385,7 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				// put object in data source
 				WriteResult result = getRequestProcessor().put(
 						resourceSelector, mimetype, request.getInputStream(),
-						eTagValidator, ServerConfiguration.XCAP_ROOT);
+						eTagValidator, ServerConfiguration.XCAP_ROOT,user);
 				// set response status
 				response.setStatus(result.getResponseStatus());
 				// set response entity tag with new one on result
