@@ -120,7 +120,7 @@ public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscovery
         Properties config = parseMobicentsSipBalancerConfig(commandLine, installationPath);
 
         // Create pieces necessary for the resource creation
-        String resourceVersion = determineVersion(commandLine);
+        String resourceVersion = determineVersion(commandLine, installationPath);
         log.debug("Version for the newly found mobicents sip balancer process is " + resourceVersion);
         String hostname = systemInfo.getHostname();
         String resourceName = ((hostname == null) ? "" : (hostname + " ")) + PRODUCT_NAME + " " + resourceVersion + "(" + config.getProperty(HOST_PROP) + ")";
@@ -151,15 +151,15 @@ public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscovery
 		return installationPath;
 	}
 
-	private String determineVersion(String[] commandLine) {
+	private String determineVersion(String[] commandLine, String installationPath) {
 		String version = "1.0";
 		String argMainJar = findMainJarArgument(commandLine);
 		if(argMainJar != null) {
 			try {
-				JarFile mainJar = new JarFile(argMainJar);
+				JarFile mainJar = new JarFile(installationPath + File.separatorChar + argMainJar);
 				version = mainJar.getManifest().getMainAttributes().getValue("Implementation-Version");
 			} catch (IOException e) {
-				log.error("An unexpected exception occured while trying to open the following jar file " + argMainJar, e);
+				log.error("An unexpected exception occured while trying to open the following jar file " + installationPath + File.separatorChar + argMainJar, e);
 			}
 		}
 		return version;
@@ -229,7 +229,8 @@ public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscovery
         configuration.put(new PropertySimple(JMX_HTML_ADAPTER_PORT_PROP, properties.getProperty(JMX_HTML_ADAPTER_PORT_PROP)));
         String balancerJar = findMainJarArgument(processInfo.getCommandLine());
         log.debug("balancerJar = " + balancerJar);
-        String balancerJarPath = balancerJar.substring(0, balancerJar.lastIndexOf(File.separatorChar));
+//        String balancerJarPath = balancerJar.substring(0, balancerJar.lastIndexOf(File.separatorChar));
+        String balancerJarPath = determineMobicentsSipBalancerConfigPath(processInfo);
         log.debug("balancerJarPath = " + balancerJarPath);
         configuration.put(new PropertySimple(BALANCER_EXECUTABLE_JAR_FILE_PATH, balancerJarPath));
         configuration.put(new PropertySimple(BALANCER_EXECUTABLE_JAR_FILE, balancerJar));
