@@ -275,6 +275,7 @@ public abstract class PresenceSubscriptionControlSbb implements Sbb,
 							+ ":org.mobicents.slee.sippresence.pojo.rpid"
 							+ ":org.mobicents.slee.sippresence.pojo.datamodel"
 							+ ":org.mobicents.slee.sippresence.pojo.commonschema"
+							+ ":org.mobicents.slee.sippresence.pojo.pidf.oma"
 							+ ":org.openxdm.xcap.client.appusage.presrules.jaxb.commonpolicy"
 							+ ":org.openxdm.xcap.client.appusage.presrules.jaxb"
 							+ ":org.openxdm.xcap.client.appusage.omapresrules.jaxb");
