@@ -1,0 +1,74 @@
+﻿<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section>
+	<title>Setting the JBOSS_HOME Environment Variable</title>
+	<para>
+		The <application>Mobicents Platform</application> (<application>Mobicents</application>) is built on top of the <application>JBoss Application Server</application> (<application>JBoss AS</application>).  The <envar>JBOSS_HOME</envar> environment variable does not need to be set to run any of the <application>Mobicents Platform</application> servers <emphasis>unless</emphasis> <envar>JBOSS_HOME</envar> is <emphasis>already</emphasis> set.
+	</para>
+	<formalpara>
+		<title>Verifying if JBOSS_HOME is set on Linux</title>
+		<para>To determine whether <envar>JBOSS_HOME</envar> is set, execute the following command in a terminal.</para>
+	</formalpara>
+	<screen>~]$ echo $JBOSS_HOME</screen>
+	<para>The <application>Mobicents Platform</application>, and its individual servers, are built on top of the <application>JBoss Application Server</application> (<application>JBoss AS</application>).  When the <application>Mobicents Platform</application> or servers are built from source, <envar>JBOSS_HOME</envar> <emphasis>must</emphasis> be set.</para>  
+	<para>Mobicents files are installed onto a clean <application>JBoss AS</application> installation.  The build process assumes that the location referenced in the <envar>JBOSS_HOME</envar> environment variable is the <application>JBoss AS</application> installation into which the Mobicents files must be installed.</para>
+	<para>Building the servers from source is outside the scope of this user guide, however it is useful to understand the role played by <application>JBoss AS</application> and <envar>JBOSS_HOME</envar> in the Mobicents ecosystem.</para>
+	<important>
+		<para>Always check <envar>JBOSS_HOME</envar> to verify if the environment variable is correctly defined for the system on which the server is installed.  Potential troubleshooting may be avoided by performing this check.</para>
+	</important>
+	<bridgehead><envar>JBOSS_HOME</envar> does not need to be specified for the following binary packages:</bridgehead>
+	<itemizedlist>
+		<listitem>
+			<para>Mobicents Platform.</para>
+		</listitem>
+		<listitem>
+			<para>Mobicents Server binary distribution <emphasis>that include</emphasis> the JBoss AS.</para>
+		</listitem>
+	</itemizedlist>
+	<bridgehead><envar>JBOSS_HOME</envar> must be specified for the following conditions:</bridgehead>
+	<itemizedlist>
+		<listitem>
+			<para>When installing the <application>Mobicents Platform</application> or any of the Mobicents servers <emphasis>from source</emphasis>.</para>
+		</listitem>
+		<listitem>
+			<para>When installing any binary that <emphasis>does not</emphasis> bundle <application>JBoss AS</application>.</para>
+		</listitem>
+	</itemizedlist>
+	<para>For information regarding installing the <application>JBoss AS</application>, refer to the <ulink url="http://www.jboss.org/file-access/default/members/jbossas/freezone/docs/Installation_Guide/4/html/index.html"><application>JBoss AS</application> Installation Guide</ulink>.</para>
+	<formalpara>
+		<title>Setting the JBOSS_HOME Environment Variable on Linux</title>
+		<para>The <envar>JBOSS_HOME</envar> environment variable must point to the directory which contains all of the files for the installed <application>Mobicents Platform</application> or individual <application>Mobicents</application> server.  In the following procedure, <replaceable>install_directory_path</replaceable> refers to the server directory that contains a <filename>/bin</filename> subdirectory.</para>
+	</formalpara>
+	<para>Setting <envar>JBOSS_HOME</envar> in the <filename>~/.bashrc</filename> startup script sets the environment variable for the current user each time the server starts.  It is possible to set <envar>JBOSS_HOME</envar> as a system-wide environment variable, by specifying it in <filename>/etc/bashrc</filename>, but this method is not recommended.</para>
+	<procedure>
+		<title>Seting JBOSS_HOME on Linux</title>
+		<step><para>Navigate to the <filename>/home</filename> directory, and ensure that hidden files are visible (if using a GUI-based File Manager).</para></step>
+		<step><para>Open the <filename>.bashrc</filename> startup script in a text editor.</para></step>
+		<step><para>Append the following information on a separate line, ensuring the placeholder install location is substituted with the correct path:</para>
+			<screen>export JBOSS_HOME="/home/&lt;username&gt;/&lt;install_directory_path&gt;"</screen>
+    </step>
+		<step>
+			<para>Save and close the <filename>.bashrc</filename> startup script.</para>
+		</step>
+		<step>
+		  <para>Execute the following command to apply the changes to the environment variable to the current session.</para>
+		  <para>Terminals open prior to altering <filename>.bashrc</filename> must have this command excuted within each instance for the changes to take effect.</para>
+			<screen>~]$ source ~/.bashrc</screen>
+		</step>
+		<step>
+			<para>Execute the following command to verify that <envar>JBOSS_HOME</envar> is set in the current session, and points to the correct location.</para>
+			<screen>~]$ echo $JBOSS_HOME
+/home/&lt;username&gt;/&MOB_JBOSS_HOME_LIN;</screen>
+			<note><para>In the sample output, <envar>JBOSS_HOME</envar> has been set correctly to the <replaceable>install_directory</replaceable> of the <application>Mobicents</application> installation.  The returned path will be similar for standalone <application>Mobicents</application> server binaries.</para></note>
+			</step>
+	</procedure>
+
+	<formalpara>
+		<title>Setting the JBOSS_HOME Environment Variable on Windows</title>
+		<para>The <envar>JBOSS_HOME</envar> environment variable must point to the directory which contains all of the files for the installed <application>Mobicents Platform</application> or individual <application>Mobicents</application> server.  The target directory refers to the server directory that contains the <filename>/bin</filename> subdirectory.</para>
+	</formalpara>
+	<para>For information on how to set environment variables in recent versions of Windows, refer to <ulink url="http://support.microsoft.com/kb/931715"></ulink>.</para>
+</section>
+
+

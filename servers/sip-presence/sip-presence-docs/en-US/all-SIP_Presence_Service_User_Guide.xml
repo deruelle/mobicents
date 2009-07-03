@@ -1,0 +1,1842 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SIP_Presence_Service_User_Guide.ent">
+<!-- NOTES ON CHANGING ENTITY FILES
+Important: take care when changing entities for directories
+* Linux path separators must be: "/"
+* Windows path separators must be: "\"
+* Entities which represent directories MUST HAVE a final path separator:
+	my/path/  <- (final separator)
+If this final separator is missing, then the documentation will be wrong. --><!-- Common entities: same across all books except for BOOKID --><!ENTITY PRODUCT "JBoss Communications Platform">
+<!ENTITY BOOKID "SIP_Presence_Service_User_Guide">
+<!ENTITY YEAR "2009">
+<!ENTITY HOLDER "Red Hat Inc">
+<!-- Shared: Configuring the JBOSS_HOME Environment Variable --><!ENTITY MOB_JBOSS_HOME_LIN "mobicents-all-1.2.1.GA-jboss-4.2.3.GA/jboss/">
+<!ENTITY JBCP_JBOSS_HOME_LIN "jboss-eap-4.3/jboss-as/">
+<!-- SIP Presence Service User Guide --><!ENTITY SPS_INT_VERSION "1.0.0 BETA4">
+<!ENTITY SPS_INT_SIZE "90 MB">
+<!ENTITY SPS_INT_ZIP "mobicents-sip-presence-integrated-1.0.0.BETA4-CP1.zip">
+<!ENTITY SPS_INT_JBOSS_HOME_BIN_LIN "bin/">
+<!ENTITY SPS_INT_JBOSS_HOME_BIN_WIN "bin\">
+<!ENTITY SPS_XDMS_VERSION "1.0.0 BETA4 CP1">
+<!ENTITY SPS_XDMS_SIZE "90 MB">
+<!ENTITY SPS_XDMS_ZIP "mobicents-sip-presence-xdms-1.0.0.BETA4-CP1.zip">
+<!ENTITY SPS_XDMS_JBOSS_HOME_BIN_LIN "bin/">
+<!ENTITY SPS_XDMS_JBOSS_HOME_BIN_WIN "bin\">
+]>
+<book lang="en-US">
+	<bookinfo id="spsug-SIP_Presence_Service_User_Guide" lang="en-US">
+	<!--  chapter id nickname: spsug  --><title>SIP Presence Service User Guide</title>
+	<subtitle>The Guide to the SIP Presence and XML Document Management Servers</subtitle>
+	<productname>Mobicents Platform</productname>
+	<productnumber>1.2.1</productnumber>
+	<edition>2.0</edition>
+	<pubsnumber>1</pubsnumber>
+	<abstract>
+		<para><application condition="mob">The Mobicents Platform</application> is the first and only open source <acronym>VoIP</acronym> platform certified for <acronym>JAIN SLEE</acronym> 1.0 and <acronym>SIP</acronym> Servlets 1.1 compliance. <application condition="mob">Mobicents</application> serves as a high-performance core for Service Delivery Platforms (<acronym>SDP</acronym>s) and <acronym>IP</acronym> Multimedia Subsystems (<acronym>IMS</acronym>s) by leveraging <acronym>J2EE</acronym> to enable the convergence of data and video in Next-Generation
+Intelligent Network (<acronym>NGIN</acronym>) applications.</para>
+			<para>The <application condition="mob">Mobicents Platform</application> enables the composition of predefined Service Building Blocks (<acronym>SBB</acronym>s) such as Call-Control, Billing, User-Provisioning, Administration
+and Presence-Sensing. Out-of-the-box monitoring and management of <application condition="mob">Mobicents</application> components is achieved through <acronym>JMX</acronym> Consoles. <acronym>JSLEE</acronym> allows popular protocol stacks such as <acronym>SIP</acronym> to be plugged in as Resource Adapters (<acronym>RA</acronym>s), and Service Building Blocks—which share many similarities with <acronym>EJB</acronym>s—allow the easy accommodation and integration of enterprise
+applications with end points such as the Web, Customer Relationship
+Management (<acronym>CRM</acronym>) systems and Service-Oriented Architectures (<acronym>SOA</acronym>s). The <application condition="mob">Mobicents Platform</application> is the natural choice for telecommunication Operations Support
+Systems (OSSs) and Network Management Systems (NMSs).</para>
+				<para>In addition to the telecommunication industry, the <application condition="mob">Mobicents Platform</application> is suitable for a variety of problem domains demanding an
+Event-Driven Architecture (<acronym>EDA</acronym>) for high-volume, low-latency signaling, such as financial
+trading, online gaming, (<acronym>RFID</acronym>) sensor network integration, and distributed control.</para></abstract>
+					<corpauthor>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="Common_Content/images/title_logo.svg" format="SVG"/>
+							</imageobject>
+							<textobject>
+								<phrase>Logo</phrase>
+							</textobject>
+						</inlinemediaobject>
+					</corpauthor>
+					<copyright>
+						<year>2009</year>
+						<holder>Red Hat Inc</holder>
+					</copyright>
+					<!-- ORIGINAL:
+	<xi:include
+		href="Common_Content/Legal_Notice.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" /> --><!-- FOR JDOCBOOK: --><!-- <xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="Common_Content/Legal_Notice.xml">
+		<xi:fallback
+			xmlns:xi="http://www.w3.org/2001/XInclude">
+			<xi:include
+				href="fallback_content/Legal_Notice.xml"
+				xmlns:xi="http://www.w3.org/2001/XInclude"></xi:include>
+		</xi:fallback>
+	</xi:include> --><authorgroup lang="en-US">
+	<author>
+		<firstname>Jared</firstname>
+		<surname>Morgan</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv>Engineering Content Services</orgdiv>
+		</affiliation>
+		<email condition="mobicents">jmorgan@redhat.com</email>
+	</author>
+	<author>
+		<firstname>Douglas</firstname>
+		<surname>Silas</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv>Engineering Content Services</orgdiv>
+		</affiliation>
+		<email condition="mobicents">dhensley@redhat.com</email>
+	</author>
+	<author>
+		<firstname>Ivelin</firstname>
+		<surname>Ivanov</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">ivelin.atanasoff.ivanov@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Vladimir</firstname>
+		<surname>Ralev</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">vladimir.ralev@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Eduardo</firstname>
+		<surname>Martins</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">emmartins@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Jean</firstname>
+		<surname>Deruelle</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">jean.deruelle@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Oleg</firstname>
+		<surname>Kulikov</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">oleg.kulikoff@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Amit</firstname>
+		<surname>Bhayani</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">amit.bhayani@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Luis</firstname>
+		<surname>Barreiro</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">lbbbarreiro@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Alexandre</firstname>
+		<surname>Mendonça</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">brainslog@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Bartosz</firstname>
+		<surname>Baranowski</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">baranowb@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Pavel</firstname>
+		<surname>Šlégr</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">pavel.slegr@gmail.com</email>
+	</author>
+</authorgroup>
+				</bookinfo>
+	<preface lang="en-US">
+	<title>Preface</title>
+	<para>
+		 
+	</para>
+	<section lang="en-US" xml:base="Common_Content/Conventions.xml">
+	<title>Document Conventions</title>
+	<para>
+		This manual uses several conventions to highlight certain words and phrases and draw attention to specific pieces of information.
+	</para>
+	<para>
+		In PDF and paper editions, this manual uses typefaces drawn from the <ulink url="https://fedorahosted.org/liberation-fonts/">Liberation Fonts</ulink> set. The Liberation Fonts set is also used in HTML editions if the set is installed on your system. If not, alternative but equivalent typefaces are displayed. Note: Red Hat Enterprise Linux 5 and later includes the Liberation Fonts set by default.
+	</para>
+	<section>
+		<title>Typographic Conventions</title>
+		<para>
+			Four typographic conventions are used to call attention to specific words and phrases. These conventions, and the circumstances they apply to, are as follows.
+		</para>
+		<para>
+			<literal>Mono-spaced Bold</literal>
+		</para>
+		<para>
+			Used to highlight system input, including shell commands, file names and paths. Also used to highlight key caps and key-combinations. For example:
+		</para>
+		<blockquote>
+			<para>
+				To see the contents of the file <filename>my_next_bestselling_novel</filename> in your current working directory, enter the <command>cat my_next_bestselling_novel</command> command at the shell prompt and press <keycap>Enter</keycap> to execute the command.
+			</para>
+		</blockquote>
+		<para>
+			The above includes a file name, a shell command and a key cap, all presented in Mono-spaced Bold and all distinguishable thanks to context.
+		</para>
+		<para>
+			Key-combinations can be distinguished from key caps by the hyphen connecting each part of a key-combination. For example:
+		</para>
+		<blockquote>
+			<para>
+				Press <keycap>Enter</keycap> to execute the command.
+			</para>
+			<para>
+				Press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>F1</keycap></keycombo> to switch to the first virtual terminal. Press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>F7</keycap></keycombo> to return to your X-Windows session.
+			</para>
+		</blockquote>
+		<para>
+			The first sentence highlights the particular key cap to press. The second highlights two sets of three key caps, each set pressed simultaneously.
+		</para>
+		<para>
+			If source code is discussed, class names, methods, functions, variable names and returned values mentioned within a paragraph will be presented as above, in <literal>Mono-spaced Bold</literal>. For example:
+		</para>
+		<blockquote>
+			<para>
+				File-related classes include <classname>filesystem</classname> for file systems, <classname>file</classname> for files, and <classname>dir</classname> for directories. Each class has its own associated set of permissions.
+			</para>
+		</blockquote>
+		<para>
+			<application>Proportional Bold</application>
+		</para>
+		<para>
+			This denotes words or phrases encountered on a system, including application names; dialogue box text; labelled buttons; check-box and radio button labels; menu titles and sub-menu titles. For example:
+		</para>
+		<blockquote>
+			<para>
+				Choose <guimenu>System &gt; Preferences &gt; Mouse</guimenu> from the main menu bar to launch <application>Mouse Preferences</application>. In the <guilabel>Buttons</guilabel> tab, click the <guilabel>Left-handed mouse</guilabel> check box and click <guibutton>Close</guibutton> to switch the primary mouse button from the left to the right (making the mouse suitable for use in the left hand).
+			</para>
+			<para>
+				To insert a special character into a <application>gedit</application> file, choose <guimenu>Applications &gt; Accessories &gt; Character Map</guimenu> from the main menu bar. Next, choose <guimenu>Search &gt; Find…</guimenu> from the <application>Character Map</application> menu bar, type the name of the character in the <guilabel>Search</guilabel> field and click <guibutton>Next</guibutton>. The character you sought will be highlighted in the <guilabel>Character Table</guilabel>. Double-click this highlighted character to place it in the <guilabel>Text to copy</guilabel> field and then click the <guibutton>Copy</guibutton> button. Now switch back to your document and choose <guimenu>Edit &gt; Paste</guimenu> from the <application>gedit</application> menu bar.
+			</para>
+		</blockquote>
+		<para>
+			The above text includes application names; system-wide menu names and items; application-specific menu names; and buttons and text found within a GUI interface, all presented in Proportional Bold and all distinguishable by context.
+		</para>
+		<para>
+			Note the <guimenu>&gt;</guimenu> shorthand used to indicate traversal through a menu and its sub-menus. This is to avoid the difficult-to-follow 'Select <guimenuitem>Mouse</guimenuitem> from the <guimenu>Preferences</guimenu> sub-menu in the <guimenu>System</guimenu> menu of the main menu bar' approach.
+		</para>
+		<para>
+			<command><replaceable>Mono-spaced Bold Italic</replaceable></command> or <application><replaceable>Proportional Bold Italic</replaceable></application>
+		</para>
+		<para>
+			Whether Mono-spaced Bold or Proportional Bold, the addition of Italics indicates replaceable or variable text. Italics denotes text you do not input literally or displayed text that changes depending on circumstance. For example:
+		</para>
+		<blockquote>
+			<para>
+				To connect to a remote machine using ssh, type <command>ssh <replaceable>username</replaceable>@<replaceable>domain.name</replaceable></command> at a shell prompt. If the remote machine is <filename>example.com</filename> and your username on that machine is john, type <command>ssh john@example.com</command>.
+			</para>
+			<para>
+				The <command>mount -o remount <replaceable>file-system</replaceable></command> command remounts the named file system. For example, to remount the <filename>/home</filename> file system, the command is <command>mount -o remount /home</command>.
+			</para>
+			<para>
+				To see the version of a currently installed package, use the <command>rpm -q <replaceable>package</replaceable></command> command. It will return a result as follows: <command><replaceable>package-version-release</replaceable></command>.
+			</para>
+		</blockquote>
+		<para>
+			Note the words in bold italics above — username, domain.name, file-system, package, version and release. Each word is a placeholder, either for text you enter when issuing a command or for text displayed by the system.
+		</para>
+		<para>
+			Aside from standard usage for presenting the title of a work, italics denotes the first use of a new and important term. For example:
+		</para>
+		<blockquote>
+			<para>
+				When the Apache HTTP Server accepts requests, it dispatches child processes or threads to handle them. This group of child processes or threads is known as a <firstterm>server-pool</firstterm>. Under Apache HTTP Server 2.0, the responsibility for creating and maintaining these server-pools has been abstracted to a group of modules called <firstterm>Multi-Processing Modules</firstterm> (<firstterm>MPMs</firstterm>). Unlike other modules, only one module from the MPM group can be loaded by the Apache HTTP Server.
+			</para>
+		</blockquote>
+	</section>
+	
+	<section>
+		<title>Pull-quote Conventions</title>
+		<para>
+			Two, commonly multi-line, data types are set off visually from the surrounding text.
+		</para>
+		<para>
+			Output sent to a terminal is set in <computeroutput>Mono-spaced Roman</computeroutput> and presented thus:
+		</para>
+		
+<screen>
+books        Desktop   documentation  drafts  mss    photos   stuff  svn
+books_tests  Desktop1  downloads      images  notes  scripts  svgs
+</screen>
+		<para>
+			Source-code listings are also set in <computeroutput>Mono-spaced Roman</computeroutput> but are presented and highlighted as follows:
+		</para>
+		
+<programlisting language="java">
+package org.jboss.book.jca.ex1;
+
+import javax.naming.InitialContext;
+
+public class ExClient
+{
+   public static void main(String args[]) 
+       throws Exception
+   {
+      InitialContext iniCtx = new InitialContext();
+      Object         ref    = iniCtx.lookup("EchoBean");
+      EchoHome       home   = (EchoHome) ref;
+      Echo           echo   = home.create();
+
+      System.out.println("Created Echo");
+
+      System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
+   }
+   
+}
+</programlisting>
+	</section>
+	
+	<section>
+		<title>Notes and Warnings</title>
+		<para>
+			Finally, we use three visual styles to draw attention to information that might otherwise be overlooked.
+		</para>
+		<note>
+			<title>Note</title>
+			<para>
+				A note is a tip or shortcut or alternative approach to the task at hand. Ignoring a note should have no negative consequences, but you might miss out on a trick that makes your life easier.
+			</para>
+		</note>
+		<important>
+			<title>Important</title>
+			<para>
+				Important boxes detail things that are easily missed: configuration changes that only apply to the current session, or services that need restarting before an update will apply. Ignoring Important boxes won't cause data loss but may cause irritation and frustration.
+			</para>
+		</important>
+		<warning>
+			<title>Warning</title>
+			<para>
+				A Warning should not be ignored. Ignoring warnings will most likely cause data loss.
+			</para>
+		</warning>
+	</section>
+
+</section>
+	<!-- <xi:include
+		href="Feedback.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude">
+		<xi:fallback
+			xmlns:xi="http://www.w3.org/2001/XInclude">
+			<xi:include
+				href="Common_Content/Feedback.xml"
+				xmlns:xi="http://www.w3.org/2001/XInclude" />
+		</xi:fallback>
+	</xi:include> -->
+</preface>
+	<chapter id="ittsps-Introduction_to_the_SIP_Presence_Service" lang="en-US">
+	<!--  chapter id nickname: ittsps  --><title>Introduction to the SIP Presence Service</title>
+	<para>
+		The <application>SIP Presence Service</application> provides presence functionalities to SIP-based networks using standards developed by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP), and the European Telecommunications Standards Institute (ETSI).
+	</para>
+	<section id="ittsps-Architecture_of_the_SIP_Presence_Service">
+		<title>Architecture of the Mobicents SIP Presence Service</title>
+		<para>
+			The <application>SIP Presence Service</application> is comprised of three separate but interrelated servers.
+		</para>
+		<mediaobject id="ittsps-sps-SIPPresService-dia-SIPPresServiceArchitecture">
+			<imageobject>
+				<imagedata align="center" fileref="images/sps-SIPPresService-dia-SIPPresServiceArchitecture.jpg" format="JPG" scalefit="1" width="450"/>
+			</imageobject>
+			<caption>
+			<para>
+				Functional Diagram of the Mobicents SIP Presence Service
+			</para>
+			</caption>
+		</mediaobject>
+		<variablelist id="ittsps-The_Three_Servers_Comprising_the_SIP_Presence_Service">
+			<title>The Three Servers Comprising the SIP Presence Service</title>
+			<varlistentry>
+				<term>The SIP Presence Server</term>
+				<listitem>
+					<para>
+						The SIP Presence Server is an entity that accepts, stores and distributes Presence Information. The <application>SIP Presence Server</application> performs the following functions:
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								It manages publications from one or multiple presence source(s) of a certain <emphasis>presentity</emphasis>. This includes refreshing presence information, replacing existing presence information with newly-published information, or removing presence information.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								It manages subscriptions from watchers to presence information and generates notifications about presence information state changes, retrieving the presence authorization rules from the <application>XDM Server</application>.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								It manages subscriptions from watcher information subscribers to watcher information and generates notifications about watcher information state changes.
+							</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>The XML Document Management Server</term>
+				<listitem>
+					<para>
+						The <application>XML Document Management Server</application> (<acronym>XDM Server</acronym>) is a functional element of next-generation IP communications networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, static presence information, contact and group lists (also known as <quote>resource lists</quote>), policy data, and many others.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>The Resource List Server</term>
+				<listitem>
+					<para>
+						The <application>Resource List Server</application> (<acronym>RLS</acronym>) handles subscriptions to presence lists. It creates and manages back-end subscriptions to all resources in the presence list. The list content is retrieved from the <application>XDM Server</application>.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>
+			A major advantage of the <application>SIP Presence Service</application> is that, depending on your needs, each server can be deployed separately, or all servers can be integrated on the same host. In addition, there are JAIN SLEE internal client interfaces available for each server, which distinguishes the <application>SIP Presence Service</application> from other presence services.
+		</para>
+		<para>
+			For documentation on each server proceed to links under this page Resources section.
+		</para>
+		<formalpara>
+			<title>Resources and Further Information about the Mobicents Presence Service</title>
+			<para>
+				A list of additional resources is provided below for the SIP Presence Service:
+			</para>
+		</formalpara>
+		<variablelist>
+			<varlistentry>
+				<term>Issue tracker</term>
+				<listitem>
+					<para>
+						<ulink url="http://mobicents.googlecode.com/svn/trunk/servers/sip-presence/">Source Code Location</ulink>
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Forums</term>
+				<listitem>
+					<para>
+						<ulink url="http://forums.java.net/jive/category.jspa?categoryID=36">Java.net Forums</ulink>
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+</chapter>
+	<chapter id="itsps-Installing_the_SIP_Presence_Service" lang="en-US">
+	<!--  chapter id nickname: itsps  --><title>Installing the SIP Presence Service</title>
+	<section lang="en-US">
+	<!--  chapter id nickname: jdkicar  --><title>Java Development Kit: Installing, Configuring and Running</title>
+	<para>
+		The <application>Mobicents</application> platform is written in Java. A working Java Runtime Environment (<acronym>JRE</acronym>) or Java Development Kit (<acronym>JDK</acronym>) must be installed prior to running the server. The required versiom must be version 5 or higher.
+	</para>
+	<para>
+		It is possible to run most servers, such as the JAIN SLEE Server, using a Java 6 JRE or JDK. However, the XML Document Management Server does not run on Java 6. Check the <ulink url="http://groups.google.com/group/mobicents-public/topics">public support forum</ulink> and <ulink url="http://www.mobicents.org/roadmap.html">project roadmap</ulink> pages to verify Java 6 support prior to running the XML Document Management Server with Java 6.
+	</para>
+	<formalpara>
+		<title>JRE or JDK?</title>
+		<para>
+			Although <application condition="mob">Mobicents</application> servers are capable of running on the Java Runtime Environment, this guide assumes the audience is mainly developers interested in developing Java-based, <application condition="mob">Mobicents</application>-driven solutions. Therefore, installing the Java Development Kit is covered due to the anticipated audience requirements.
+		</para>
+	</formalpara>
+	<formalpara>
+		<title>32-Bit or 64-Bit JDK</title>
+		<para>
+			If the system uses 64-Bit Linux or Windows architecure, the 64-bit JDK is strongly recommended over the 32-bit version. The following heuristics should be considered in determining whether the 64-bit Java Virtual Machine (JVM) is suitable:
+		</para>
+	</formalpara>
+	<itemizedlist>
+		<listitem>
+			<para>
+				Wider datapath: the pipe between RAM and CPU is doubled, which improves the performance of memory-bound applications when using a 64-bit JVM.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				64-bit memory addressing provides a virtually unlimited (1 exabyte) heap allocation. Note that large heaps can affect garbage collection.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Applications that run with more than 1.5 GB of RAM (including free space for garbage collection optimization) should utilize the 64-bit JVM.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Applications that run on a 32-bit JVM and do not require more than minimal heap sizes will gain nothing from a 64-bit JVM. Excluding memory issues, 64-bit hardware with the same relative clock speed and architecture is not likely to run Java applications faster than the 32-bit version.
+			</para>
+		</listitem>
+	</itemizedlist>
+	<note>
+		<para>
+			The following instructions describe how to download and install the 32-bit JDK, however the steps are nearly identical for installing the 64-bit version.
+		</para>
+	</note>
+	<!--  <formalpara
+			id="jdkicar-binary-Java_Development_Kit-Pre-Install Requirements and Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para></para>
+		</formalpara>  --><!--   <variablelist
+			condition="jdkicar-binary-Java_Development_Kit-Hardware_Requirements">
+			<title>Hardware Requirements</title>
+			<varlistentry>
+				<term>Sufficient Disk Space</term>
+				<listitem>
+					<para></para>
+				</listitem>
+			</varlistentry>
+		</variablelist>   --><!--   <variablelist
+			condition="jdkicar-binary-Java_Development_Kit-Software_Prerequisites">
+			<title>Software Prerequisites</title>
+			<varlistentry>
+				<term></term>
+				<listitem>
+					<para></para>
+				</listitem>
+			</varlistentry>
+		</variablelist>   -->
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Downloading">  --><title>Downloading</title>
+		<para>
+			Download the Sun JDK 5.0 (Java 2 Development Kit) from Sun's website: <ulink url="http://java.sun.com/javase/downloads/index_jdk5.jsp"/>. Click the <guilabel>Download</guilabel> link next to "JDK 5.0 Update <replaceable>&lt;x&gt;</replaceable>" (where <replaceable>&lt;x&gt;</replaceable> is the latest minor version release number).
+		</para>
+	</formalpara>
+	<para>
+		The Sun website offers two download options: 
+		<itemizedlist>
+			<listitem>
+				<para>
+					A self-extracting RPM (for example, <filename>jdk-1_5_0_16-linux-i586-rpm.bin</filename>)
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					A self-extracting file (e.g. <filename>jdk-1_5_0_16-linux-i586.bin</filename>)
+				</para>
+			</listitem>
+		</itemizedlist>
+	</para>
+	<para>
+		If installing the JDK on Red Hat Enterprise Linux, Fedora, or another RPM-based Linux system, it is recommended that the self-extracting file containing the RPM package is selected. This option will set up and use the SysV service scripts in addition to installing the JDK. The RPM option is also recommended if the <application condition="mob">Mobicents</application> platform is being set up in a production environment.
+	</para>
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Installing">  --><title>Installing</title>
+		<para>
+			The following procedures detail how to install the Java Development Kit on both Linux and Windows.
+		</para>
+	</formalpara>
+	<procedure>
+		<title>Installing the JDK on Linux</title>
+		<step>
+			<para>
+				Ensure the file is executable, then run it:
+			</para>
+			<!--   ~]$ chmod +x "jdk-1_5_0_<minor_version>-linux-<architecture>-rpm.bin"
+~]$ ./"jdk-1_5_0_<minor_version>-linux-<architecture>-rpm.bin"   -->
+<screen>~]$ chmod +x "jdk-1_5_0_&lt;minor_version&gt;-linux-&lt;architecture&gt;-rpm.bin"
+~]$ ./"jdk-1_5_0_&lt;minor_version&gt;-linux-&lt;architecture&gt;-rpm.bin"
+</screen>
+		</step>
+	</procedure>
+	
+	<note>
+		<title>Setting up SysV Service Scripts for Non-RPM Files</title>
+		<para>
+			If the non-RPM self-extracting file is selected for an RPM-based system, the SysV service scripts can be configured by downloading and installing one of the <literal>-compat</literal> packages from the JPackage project. Download the <literal>-compat</literal> package that corresponds correctly to the minor release number of the installed JDK. The compat packages are available from <ulink url="ftp://jpackage.hmdc.harvard.edu/JPackage/1.7/generic/RPMS.non-free/"/>.
+		</para>
+	</note>
+	<important>
+		<para>
+			A <literal>-compat</literal> package is not required for RPM installations. The <literal>-compat</literal> package performs the same SysV service script set up that the RPM version of the JDK installer does.
+		</para>
+	</important>
+	<procedure>
+		<title>Installing the JDK on Windows</title>
+		<step>
+			<para>
+				Using Explorer, double-click the downloaded self-extracting installer and follow the instructions to install the JDK.
+			</para>
+		</step>
+	</procedure>
+	
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Configuring">  --><title>Configuring</title>
+		<para>
+			Configuring the system for the JDK consists of two tasks: setting the <envar>JAVA_HOME</envar> environment variable, and ensuring the system is using the proper JDK (or JRE) using the <command>alternatives</command> command. Setting <envar>JAVA_HOME</envar> generally overrides the values for <command>java</command>, <command>javac</command> and <command>java_sdk_1.5.0</command> in <command>alternatives</command>, however it is recommended to specify the value for consistency.
+		</para>
+	</formalpara>
+	<variablelist>
+		<varlistentry>
+			<term>Setting the <envar>JAVA_HOME</envar> Environment Variable on Generic Linux</term>
+			<listitem>
+				<para>
+					After installing the JDK, ensure the <envar>JAVA_HOME</envar> environment variable exists and points to the location of the JDK installation.
+				</para>
+				<formalpara>
+					<title>Setting the <envar>JAVA_HOME</envar> Environment Variable on Linux</title>
+					<para>
+						Determine whether <envar>JAVA_HOME</envar> is set by executing the following command:
+					</para>
+				</formalpara>
+				
+<screen>~]$ echo $JAVA_HOME
+</screen>
+				<para>
+					If <envar>JAVA_HOME</envar> is not set, the value must be set to the location of the JDK installation on the system. This can be achieved by adding two lines to the <filename>~/.bashrc</filename> configuration file. Open <filename>~/.bashrc</filename> (or create it if it does not exist) and add a line similar to the following one anywhere inside the file:
+				</para>
+				
+<programlisting>export JAVA_HOME="/usr/lib/jvm/jdk1.5.0_&lt;version&gt;"
+</programlisting>
+				<para>
+					The changes should also be applied for other users who will be running the <application condition="mob">Mobicents</application> on the machine (any environment variables <command>export</command>ed from <filename>~/.bashrc</filename> files are local to that user).
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Setting <envar>java</envar>, <envar>javac</envar> and <envar>java_sdk_1.5.0</envar> using the <command>alternatives</command> command </term>
+			<listitem>
+				<formalpara>
+					<title>Selecting the Correct System JVM on Linux using <command>alternatives</command></title>
+					<para>
+						On systems with the <command>alternatives</command> command, including Red Hat Enterprise Linux and Fedora, it is possible to choose which JDK (or JRE) installation to use, as well as which <command>java</command> and <command>javac</command> executables should be run when called.
+					</para>
+				</formalpara>
+				<para>
+					<emphasis>As the superuser</emphasis>, call <command>/usr/sbin/alternatives</command> with the <option>--config java</option> option to select between JDKs and JREs installed on your system:
+				</para>
+				
+<programlisting>
+home]$ sudo /usr/sbin/alternatives --config java
+
+There are 3 programs which provide 'java'.
+
+  Selection    Command
+-----------------------------------------------
+   1           /usr/lib/jvm/jre-1.5.0-gcj/bin/java
+   2           /usr/lib/jvm/jre-1.6.0-sun/bin/java
+*+ 3         /usr/lib/jvm/jre-1.5.0-sun/bin/java
+
+Enter to keep the current selection[+], or type selection number:
+</programlisting>
+				<para>
+					The Sun JDK, version 5, is required to run the <command>java</command> executable. In the <command>alternatives</command> information printout above, a plus (<literal>+</literal>) next to a number indicates the option currently being used. Press <keycap>Enter</keycap> to keep the current JVM, or enter the number corresponding to the JVM to select that option.
+				</para>
+				<para>
+					As the superuser, repeat the procedure above for the <command>javac</command> command and the <literal>java_sdk_1.5.0</literal> environment variable:
+				</para>
+				
+<screen>home]$ sudo /usr/sbin/alternatives --config javac
+</screen>
+				
+<screen>home]$ sudo /usr/sbin/alternatives --config java_sdk_1.5.0
+</screen>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Setting the <envar>JAVA_HOME</envar> Environment Variable on Windows</term>
+			<listitem>
+				<para>
+					For information on how to set environment variables in Windows, refer to <ulink url="http://support.microsoft.com/kb/931715"/>.
+				</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Testing">  --><title>Testing</title>
+		<para>
+			To ensure the correct JDK or Java version (5 or higher), and that the java executable is in the <envar>PATH</envar> environment variable, run the <command>java -version</command> command in the terminal from the home directory:
+		</para>
+	</formalpara>
+	
+<programlisting>
+home]$ java -version
+java version "1.5.0_16"
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b03)
+Java HotSpot(TM) Client VM (build 1.5.0_16-b03, mixed mode, sharing)
+</programlisting>
+	<!--  <formalpara
+		id="jdkicar-binary-Java_Development_Kit-Running">
+		<title>Running</title>
+		<para></para>
+	</formalpara>  --><!--   <formalpara
+		id="jdkicar-binary-Java_Development_Kit-Stopping">
+		<title>Stopping</title>
+		<para></para>
+	</formalpara>   -->
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Uninstalling">  --><title>Uninstalling</title>
+		<para>
+			It is not necessary to remove a particular JDK from a system, because the JDK and JRE version can be switched as required using the <command>alternatives</command> command, and/or by setting <envar>JAVA_HOME</envar>.
+		</para>
+	</formalpara>
+	<formalpara>
+		<title>Uninstalling the JDK on Linux</title>
+		<para>
+			On RPM-based systems, uninstall the JDK using the <command>yum remove &lt;jdk_rpm_name&gt;</command> command.
+		</para>
+	</formalpara>
+	<formalpara>
+		<title>Uninstalling the JDK on Windows</title>
+		<para>
+			On Windows systems, check the JDK entry in the <literal>Start</literal> menu for an uninstall option, or use <literal>Add/Remove Programs</literal>.
+		</para>
+	</formalpara>
+</section>
+	<section id="itsps-binary-SIP_Presence_Service-Installing_Configuring_and_Running">
+		<title>Mobicents SIP Presence Service: Installing, Configuring and Running</title>
+		<para>
+			There are multiple distributions of the <application>Mobicents SIP Presence Service</application>.
+		</para>
+		<variablelist id="itsps-Description_of_the_Different_SIP_Presence_Service_Distributions">
+			<title>Description of the Different SIP Presence Service Distributions</title>
+			<varlistentry>
+				<term>The zipped-up source distribution</term>
+				<listitem>
+					<para>
+						This distribution is source only, and its installation is not covered in this guide. Be careful you don't accidentally download this distribution when wanting one of the binary distributions (this one has <filename>.src</filename> in its file name).
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>The all-included integrated <application>SIP Presence Service</application> binary distribution <emphasis>with JBoss</emphasis></term>
+				<listitem>
+					<para>
+						These installation instructions detail the installation, running and configuring of the all-included <emphasis>integrated</emphasis> binary <application>SIP Presence Service</application> distribution. In addition to the <application>XML Document</application> and <application>SIP Presence Servers</application>, this distribution bundles the <application>JBoss Application Server</application>, the latest version of the <application>Mobicents JAIN SLEE Server</application>, and the SIP and HTTP Servlet resource adapters.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>The integrated <application>SIP Presence Service</application> binary distribution <emphasis>without</emphasis> JBoss</term>
+				<listitem>
+					<para>
+						Users who have already installed and set up a separate <application>Mobicents JAIN SLEE Server</application> installation may want to install this the integrated distribution without JBoss. If you install this distribution, keep in mind that the <envar>JBOSS_HOME</envar> environment variable <emphasis>must</emphasis> be set to the correct location.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>The <application>XML Document Management</application> Server binary distribution with <application>JBoss</application></term>
+				<listitem>
+					<para>
+						Users who wish to deploy the <application>XML Document Server</application> on a different host or who do not require the <application>SIP Presence Server</application> should install the standalone <application>XDM Server</application> binary distribution. The following installation, running and configuring instructions provide parallel instructions specific to the <application>XDM Server</application>.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<section id="itms-binary-SIP_Presence_Service-PreInstall_Requirements_and_Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para>
+				Ensure that the following requirements have been met before continuing with the install.
+			</para>
+			<variablelist id="itms-binary-SIP_Presence_Service-Hardware_Requirements">
+				<title>Hardware Requirements</title>
+				<varlistentry>
+					<term>Sufficient Disk Space</term>
+					<listitem>
+						<para>
+							Once unzipped, the SIP Presence Service binary release requires <emphasis>at least</emphasis> 90 MB of free disk space. The <application>XDM Server</application> binary release requires <emphasis>at least</emphasis> 90 MB of disk space. Keep in mind that disk space requirements may change from release to release.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Anything Java Itself Will Run On</term>
+					<listitem>
+						<para>
+							The SIP Presence Service and its bundled servers, JBoss and JAIN SLEE, are 100% Java. The SIP Presence Service will run on the same hardware that the JBoss Application Server runs on.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist id="itms-binary-SIP_Presence_Service-Software_Prerequisites">
+				<title>Software Prerequisites</title>
+				<varlistentry>
+					<term>JDK 5 or Higher</term>
+					<listitem>
+						<para>
+							A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 5 or higher is required in order to run the SIP Presence Service (or XDM Server). Note that the JBoss Application Server is a runtime dependency of the SIP Presence Service (or XDM Server) and, as mentioned, comes bundled with the binary distribution.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		
+		<section id="itms-binary-SIP_Presence_Service-Downloading">
+			<title>Downloading</title>
+			<para>
+				The latest version of the SIP Presence Service (or XDM Server) is available from <ulink url="http://sourceforge.net/projects/mobicents/files/"/>. The SIP Presence Service section contains the latest released version at the top of the list.
+			</para>
+			<para>
+				To determine which distribution zip file to download, refer to <xref linkend="itsps-Description_of_the_Different_SIP_Presence_Service_Distributions"/>, and the following list of release binaries.
+			</para>
+			<variablelist id="itsps-SIP_Presence_Service_Binary_Distribution_Zip_Files">
+				<title>SIP Presence Service Binary Distribution Zip Files</title>
+				<varlistentry>
+					<term>mobicents-sip-presence-integrated-1.0.0.BETA4-CP1.zip</term>
+					<listitem>
+						<para>
+							Download this zip file to obtain the integrated <application>SIP Presence Service</application> binary distribution, which includes the <application>SIP Presence Server</application>, the <application>XDM Server</application>, and the <application>JBoss Application Server</application> as well as all required resource adapters.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>mobicents-sip-presence-xdms-1.0.0.BETA4-CP1.zip</term>
+					<listitem>
+						<para>
+							Download this zip file to obtain the <application>XML Document Management Server</application> binary distribution, which bundles the <application>JBoss Application Server</application> and the <application>Mobicents JAIN SLEE Server</application>.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		
+		<section id="itms-binary-SIP_Presence_Service-Installing">
+			<title>Installing</title>
+			<para>
+				Once the requirements and prerequisites have been met and you have downloaded the binary distribution zip file, you are ready to install the SIP Presence Service (or XDM Server). Follow the instructions below for your platform, whether Linux or Windows. Because the instructions for installing both servers are identical, the XDM Server installation commands appear below the SIP Presence Service commands. Disregard the XDM Server install commands if the SIP Presence Service is only being installed.
+			</para>
+			<note id="itms-SIP_Presence_Service-Use_Version_Numbers_Relevant_to_Your_Installation">
+				<title>Version Number</title>
+				<para>
+					For clarity, the command line instructions presented in this chapter use specific version numbers and directory names. Ensure this information is substituted with the binary distribution's version numbers and file names.
+				</para>
+			</note>
+			<procedure>
+				<title>Installing the SIP Presence Service (or XDM Server) Binary Distribution on Linux</title>
+				<para>
+					It is assumed that the downloaded archive is saved in the home directory, and that a terminal window is open displaying the home directory.
+				</para>
+				<step>
+					<para>
+						Create a subdirectory to extract the files into. For ease of identification, it is recommended that the version number of the binary is included in this directory name.
+					</para>
+					
+<screen>~]$ mkdir <quote>sps-<replaceable>&lt;version&gt;</replaceable></quote>
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>~]$ mkdir <quote>xdms-<replaceable>&lt;version&gt;</replaceable></quote>
+</screen>
+				</step>
+				<step>
+					<para>
+						Move the downloaded zip file into the directory:
+					</para>
+					
+<screen>~]$ mv <quote>mobicents-sip-presence-integrated-1.0.0.BETA4-CP1.zip</quote><quote>sps-<replaceable>&lt;version&gt;</replaceable></quote>
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>~]$ mv <quote>mobicents-sip-presence-xdms-1.0.0.BETA4-CP1.zip</quote><quote>xdms-<replaceable>&lt;version&gt;</replaceable></quote>
+</screen>
+				</step>
+				<step>
+					<para>
+						Move into the directory:
+					</para>
+					
+<screen>~]$ cd <quote>sps-<replaceable>&lt;version&gt;</replaceable></quote>
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>~]$ cd <quote>xdms-<replaceable>&lt;version&gt;</replaceable></quote>
+</screen>
+				</step>
+				<step>
+					<para>
+						Extract the files into the current directory by executing one of the following commands. 
+						<itemizedlist>
+							<listitem>
+								<para>
+									Java: 
+<screen>sps-<replaceable>&lt;version&gt;</replaceable>]$ jar -xvf <quote>mobicents-sip-presence-integrated-1.0.0.BETA4-CP1.zip</quote>
+</screen>
+									
+<screen>xdms-<replaceable>&lt;version&gt;</replaceable>]$ jar -xvf <quote>mobicents-sip-presence-xdms-1.0.0.BETA4-CP1.zip</quote>
+</screen>
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									Linux: 
+<screen>sps-<replaceable>&lt;version&gt;</replaceable>]$ unzip "mobicents-sip-presence-integrated-1.0.0.BETA4-CP1.zip"
+</screen>
+									
+<screen>xdms-<replaceable>&lt;version&gt;</replaceable>]$ unzip "mobicents-sip-presence-xdms-1.0.0.BETA4-CP1.zip"
+</screen>
+								</para>
+							</listitem>
+						</itemizedlist>
+						<note>
+							<para>
+								Alternatively, use <command>unzip</command> -d &lt;unzip_to_location&gt; to extract the zip file's contents to a location other than the current directory.
+							</para>
+						</note>
+					</para>
+				</step>
+				<step>
+					<para>
+						Consider deleting the archive, if free disk space is an issue.
+					</para>
+					
+<screen>sps-<replaceable>&lt;version&gt;</replaceable>]$ rm <quote>mobicents-sip-presence-integrated-1.0.0.BETA4-CP1.zip</quote>
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>xdms-<replaceable>&lt;version&gt;</replaceable>]$ rm <quote>mobicents-sip-presence-xdms-1.0.0.BETA4-CP1.zip</quote>
+</screen>
+				</step>
+			</procedure>
+			
+			<procedure>
+				<title>Installing the SIP Presence Service (or XDM Server) Binary Distribution on Windows</title>
+				<step>
+					<para>
+						For this procedure, it is assumed that the downloaded archive is saved in the <filename>My Downloads</filename> folder.
+					</para>
+				</step>
+				<step>
+					<para>
+						Create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. For ease of identification, it is recommended that the version number of the binary is included in the folder name. For example, <filename>sps-&lt;version&gt;</filename> (or for the XDM Server, <filename>xdms-&lt;version&gt;</filename>.
+					</para>
+				</step>
+				<step>
+					<para>
+						Extract the contents of the archive, specifying the destination folder as the one created in the previous step.
+					</para>
+				</step>
+				<step>
+					<para>
+						Alternatively, execute the <command>jar -xvf</command> command to extract the binary distribution files from the zip archive.
+					</para>
+					<orderedlist>
+						<listitem>
+							<para>
+								Move the downloaded zip file from <filename>My Downloads</filename> to the folder created in the previous step.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Open the Windows Command Prompt and navigate to the folder that contains the archive using the <command>cd</command> command.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Execute the <command>jar -xvf</command> command to extract the archive contents into the current folder.
+							</para>
+							
+<screen>C:\Users\&lt;user&gt;\My Downloads\sps-&lt;version&gt;\jar -xvf "mobicents-sip-presence-integrated-1.0.0.BETA4-CP1.zip"
+</screen>
+							
+<screen>C:\Users\&lt;user&gt;\My Downloads\xdms-&lt;version&gt;\jar -xvf "mobicents-sip-presence-xdms-1.0.0.BETA4-CP1.zip"
+</screen>
+						</listitem>
+					</orderedlist>
+				</step>
+				<step>
+					<para>
+						It is recommended that the folder holding the files (in this example, the folder named <filename>sps-<replaceable>&lt;version&gt;</replaceable></filename> or <filename>xdms-<replaceable>&lt;version&gt;</replaceable></filename>) is moved to a user-defined location for storing executable programs. For example, the <filename>Program Files</filename> folder.
+					</para>
+				</step>
+				<step>
+					<para>
+						Consider deleting the archive, if free disk space is an issue.
+					</para>
+					
+<screen>C:\Users\&lt;user&gt;\My Downloads\mss-&lt;version&gt;\delete "mobicents-sip-presence-integrated-1.0.0.BETA4-CP1.zip"
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>C:\Users\&lt;user&gt;\My Downloads\xdms-&lt;version&gt;\delete "mobicents-sip-presence-xdms-1.0.0.BETA4-CP1.zip"
+</screen>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section lang="en-US">
+	<title>Setting the JBOSS_HOME Environment Variable</title>
+	<para>
+		The <application>Mobicents Platform</application> (<application>Mobicents</application>) is built on top of the <application>JBoss Application Server</application> (<application>JBoss AS</application>). The <envar>JBOSS_HOME</envar> environment variable does not need to be set to run any of the <application>Mobicents Platform</application> servers <emphasis>unless</emphasis> <envar>JBOSS_HOME</envar> is <emphasis>already</emphasis> set.
+	</para>
+	<formalpara>
+		<title>Verifying if JBOSS_HOME is set on Linux</title>
+		<para>
+			To determine whether <envar>JBOSS_HOME</envar> is set, execute the following command in a terminal.
+		</para>
+	</formalpara>
+	
+<screen>~]$ echo $JBOSS_HOME
+</screen>
+	<para>
+		The <application>Mobicents Platform</application>, and its individual servers, are built on top of the <application>JBoss Application Server</application> (<application>JBoss AS</application>). When the <application>Mobicents Platform</application> or servers are built from source, <envar>JBOSS_HOME</envar> <emphasis>must</emphasis> be set.
+	</para>
+	<para>
+		Mobicents files are installed onto a clean <application>JBoss AS</application> installation. The build process assumes that the location referenced in the <envar>JBOSS_HOME</envar> environment variable is the <application>JBoss AS</application> installation into which the Mobicents files must be installed.
+	</para>
+	<para>
+		Building the servers from source is outside the scope of this user guide, however it is useful to understand the role played by <application>JBoss AS</application> and <envar>JBOSS_HOME</envar> in the Mobicents ecosystem.
+	</para>
+	<important>
+		<para>
+			Always check <envar>JBOSS_HOME</envar> to verify if the environment variable is correctly defined for the system on which the server is installed. Potential troubleshooting may be avoided by performing this check.
+		</para>
+	</important>
+	<bridgehead><envar>JBOSS_HOME</envar> does not need to be specified for the following binary packages:</bridgehead>
+	<itemizedlist>
+		<listitem>
+			<para>
+				Mobicents Platform.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Mobicents Server binary distribution <emphasis>that include</emphasis> the JBoss AS.
+			</para>
+		</listitem>
+	</itemizedlist>
+	<bridgehead><envar>JBOSS_HOME</envar> must be specified for the following conditions:</bridgehead>
+	<itemizedlist>
+		<listitem>
+			<para>
+				When installing the <application>Mobicents Platform</application> or any of the Mobicents servers <emphasis>from source</emphasis>.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				When installing any binary that <emphasis>does not</emphasis> bundle <application>JBoss AS</application>.
+			</para>
+		</listitem>
+	</itemizedlist>
+	<para>
+		For information regarding installing the <application>JBoss AS</application>, refer to the <ulink url="http://www.jboss.org/file-access/default/members/jbossas/freezone/docs/Installation_Guide/4/html/index.html"><application>JBoss AS</application> Installation Guide</ulink>.
+	</para>
+	<formalpara>
+		<title>Setting the JBOSS_HOME Environment Variable on Linux</title>
+		<para>
+			The <envar>JBOSS_HOME</envar> environment variable must point to the directory which contains all of the files for the installed <application>Mobicents Platform</application> or individual <application>Mobicents</application> server. In the following procedure, <filename>&lt;install_directory_path&gt;</filename> refers to the server directory that contains a <filename>/bin</filename> subdirectory.
+		</para>
+	</formalpara>
+	<para>
+		Setting <envar>JBOSS_HOME</envar> in the <filename>~/.bashrc</filename> startup script sets the environment variable for the current user each time the server starts. It is possible to set <envar>JBOSS_HOME</envar> as a system-wide environment variable, by specifying it in <filename>/etc/bashrc</filename>, but this method is not recommended.
+	</para>
+	<procedure>
+		<title>Seting JBOSS_HOME on Linux</title>
+		<step>
+			<para>
+				Navigate to the <filename>/home</filename> directory, and ensure that hidden files are visible (if using a GUI-based File Manager).
+			</para>
+		</step>
+		<step>
+			<para>
+				Open the <filename>.bashrc</filename> startup script in a text editor.
+			</para>
+		</step>
+		<step>
+			<para>
+				Append the following information on a separate line, ensuring the placeholder install location is substituted with the correct path:
+			</para>
+			
+<screen>export JBOSS_HOME="/home/&lt;username&gt;/&lt;install_directory_path&gt;"
+</screen>
+		</step>
+		<step>
+			<para>
+				Save and close the <filename>.bashrc</filename> startup script.
+			</para>
+		</step>
+		<step>
+			<para>
+				Execute the following command to apply the changes to the environment variable to the current session.
+			</para>
+			<para>
+				Terminals open prior to altering <filename>.bashrc</filename> must have this command excuted within each instance for the changes to take effect.
+			</para>
+			
+<screen>~]$ source ~/.bashrc
+</screen>
+			<para>
+				Terminals open prior to altering <filename>.bashrc</filename> must have this command excuted within each instance for the changes to take effect.
+			</para>
+		</step>
+		<step>
+			<para>
+				Execute the following command to verify that <envar>JBOSS_HOME</envar> is set in the current session, and points to the correct location.
+			</para>
+			
+<screen>~]$ echo $JBOSS_HOME
+/home/&lt;username&gt;/mobicents-all-1.2.1.GA-jboss-4.2.3.GA/jboss/
+</screen>
+			<note>
+				<para>
+					In the sample output, <envar>JBOSS_HOME</envar> has been set correctly to the <replaceable>install_directory</replaceable> of the <application>Mobicents</application> installation. The returned path will be similar for standalone <application>Mobicents</application> server binaries.
+				</para>
+			</note>
+		</step>
+	</procedure>
+	
+	<formalpara>
+		<title>Setting the JBOSS_HOME Environment Variable on Windows</title>
+		<para>
+			The <envar>JBOSS_HOME</envar> environment variable must point to the directory which contains all of the files for the installed <application>Mobicents Platform</application> or individual <application>Mobicents</application> server. The target directory refers to the server directory that contains the <filename>/bin</filename> subdirectory.
+		</para>
+	</formalpara>
+	<para>
+		For information on how to set environment variables in recent versions of Windows, refer to <ulink url="http://support.microsoft.com/kb/931715"/>.
+	</para>
+</section>
+		<section id="itms-binary-SIP_Presence_Service-Running">
+			<title>Running</title>
+			<para>
+				In the Linux terminal or Command Prompt, you will be able to tell that the SIP Presence Service (or XDM Server) started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):
+			</para>
+			
+<programlisting>11:23:07,656 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 23s:648ms
+</programlisting>
+			<procedure>
+				<title>Running the SIP Presence Service (or XDM Server) on Linux</title>
+				<step>
+					<para>
+						Change the working directory to installation directory (the one in which the zip file's contents was extracted to)
+					</para>
+					
+<screen>downloads]$ cd "sps-&lt;version&gt;"
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>downloads]$ cd "xdms-&lt;version&gt;"
+</screen>
+				</step>
+				<step>
+					<para>
+						(Optional) Ensure that the <filename>bin/run.sh</filename> start script is executable.
+					</para>
+					
+<screen>sps-&lt;version&gt;]$ chmod +x bin/run.sh
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>xdms-&lt;version&gt;]$ chmod +x bin/run.sh
+</screen>
+				</step>
+				<step>
+					<para>
+						Execute the <filename>run.sh</filename> Bourne shell script.
+					</para>
+					
+<screen>sps-&lt;version&gt;]$ ./bin/run.sh
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>sps-&lt;version&gt;]$ ./bin/run.sh
+</screen>
+				</step>
+			</procedure>
+			
+			<note>
+				<para>
+					Instead of executing the Bourne shell script to start the server, the <filename>run.jar</filename> executable Java archive can be executed from the <filename>bin</filename> directory:
+				</para>
+				
+<screen>sps-&lt;version&gt;]$ java -jar bin/run.jar
+</screen>
+				<para>
+					or
+				</para>
+				
+<screen>xdms-&lt;version&gt;]$ java -jar bin/run.jar
+</screen>
+			</note>
+			<procedure>
+				<title>Running SIP Presence Service (or XDM Server) on <productname>Windows</productname>
+				</title>
+				<step>
+					<para>
+						Using Windows Explorer, navigate to the <filename>bin</filename> subfolder in the installation directory.
+					</para>
+				</step>
+				<step>
+					<para>
+						The preferred way to start the SIP Presence Service (or XDM Server) is from the Command Prompt. The command line interface displays details of the startup process, including any problems encountered during the startup process.
+					</para>
+					<para>
+						Open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:
+					</para>
+					
+<screen>C:\Users\&lt;user&gt;\My Downloads&gt; cd "sps-&lt;version&gt;"
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>C:\Users\&lt;user&gt;\My Downloads&gt; cd "sps-&lt;version&gt;"
+</screen>
+				</step>
+				<step>
+					<para>
+						Start the JBoss Application Server by executing one of the following files: 
+						<itemizedlist>
+							<listitem>
+								<para>
+									<filename>run.bat</filename> batch file:
+								</para>
+								
+<screen>C:\Users\&lt;user&gt;\My Downloads\sps-&lt;version&gt;&gt;bin\run.bat
+</screen>
+								
+<screen>C:\Users\&lt;user&gt;\My Downloads\xdms-&lt;version&gt;&gt;bin\run.bat
+</screen>
+							</listitem>
+							<listitem>
+								<para>
+									<filename>run.jar</filename> executable Java archive:
+								</para>
+								
+<screen>C:\Users\&lt;user&gt;\My Downloads\sps-&lt;version&gt;&gt;\java -jar bin\run.jar
+</screen>
+								
+<screen>C:\Users\&lt;user&gt;\My Downloads\xdms-&lt;version&gt;&gt;\java -jar bin\run.jar
+</screen>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section id="itms-binary-SIP_Presence_Service-Stopping">
+			<title>Stopping</title>
+			<para>
+				Detailed instructions for stopping the <application>SIP Presence Service</application> and <application>XDM Server</application> are given below, arranged by platform. If the server is correctly stopped, the following three lines are displayed as the last output in the Linux terminal or Command Prompt:
+			</para>
+			
+<programlisting>[Server] Shutdown complete
+Shutdown complete
+Halting VM
+</programlisting>
+			<procedure>
+				<title>Stopping the SIP Presence Service (or XDM Server) on Linux</title>
+				<step>
+					<para>
+						Change the working directory to the binary distribution's install directory.
+					</para>
+					
+<screen>~]$ cd "sps-&lt;version&gt;"
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>~]$ cd "xdms-&lt;version&gt;"
+</screen>
+				</step>
+				<step>
+					<para>
+						(Optional) Ensure that the bin/shutdown.sh start script is executable:
+					</para>
+					
+<screen>sps-&lt;version&gt;]$ chmod +x bin/shutdown.sh
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>xdms-&lt;version&gt;]$ chmod +x bin/shutdown.sh
+</screen>
+				</step>
+				<step>
+					<para>
+						Run the <filename>shutdown.sh</filename> executable Bourne shell script with the <option>-S</option> option (the short option for <option>--shutdown</option>) as a command line argument:
+					</para>
+					
+<screen>sps-&lt;version&gt;]$ ./bin/shutdown.sh -S
+</screen>
+					<para>
+						or
+					</para>
+					
+<screen>xdms-&lt;version&gt;]$ ./bin/shutdown.sh -S
+</screen>
+				</step>
+			</procedure>
+			
+			<note>
+				<para>
+					The <filename>shutdown.jar</filename> executable Java archive with the <option>-S</option> option can also be used to shut down the server:
+				</para>
+				
+<screen>sps-&lt;version&gt;]$ java -jar bin/shutdown.jar -S
+</screen>
+				<para>
+					or
+				</para>
+				
+<screen>xdms-&lt;version&gt;]$ java -jar bin/shutdown.jar -S
+</screen>
+			</note>
+			<procedure>
+				<title>Stopping MSS for JBoss on Windows</title>
+				<step>
+					<para>
+						Stopping the JBoss Application Server on Windows consists of executing either the <filename>shutdown.bat</filename> or the <filename>shutdown.jar</filename> executable file in the <filename>bin</filename> subfolder of the MSS for JBoss binary distribution. Ensure the <option>-S</option> option (the short option for <option>--shutdown</option>) is included in the command line argument.
+					</para>
+					
+<screen>C:\Users\&lt;user&gt;\My Downloads\sps-&lt;version&gt;&gt;bin\shutdown.bat -S
+</screen>
+				</step>
+			</procedure>
+			
+			<note>
+				<para>
+					The <filename>shutdown.jar</filename> executable Java archive with the <option>-S</option> option can also be used to shut down the server:
+				</para>
+				
+<screen>C:\Users\&lt;user&gt;\My Downloads\ms-&lt;version&gt;&gt;java -jar bin\shutdown.jar -S
+</screen>
+			</note>
+		</section>
+		
+		<section id="itsps-binary-SIP_Presence_Service-Testing">
+			<title>Testing</title>
+			<para>
+				 
+			</para>
+		</section>
+		
+		<section id="itsps-binary-SIP_Presence_Service-Uninstalling">
+			<title>Uninstalling</title>
+			<para>
+				To uninstall the <application>SIP Presence Service</application> or <application>XDM Server</application>, delete the installation directory where the archive was extracted to.
+			</para>
+		</section>
+
+	</section>
+
+</chapter>
+	<chapter id="sps-SIP_Presence_Server" lang="en-US">
+	<!--  chapter id nickname: sps  --><title>Mobicents SIP Presence Server</title>
+	<para>
+		The <application>Mobicents SIP Presence Server</application> is a free and open source implementation of a SIP Presence Server, as defined by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).
+	</para>
+	<para>
+		The <application>SIP Presence Server</application> is an entity that accepts, stores and distributes SIP presence information.
+	</para>
+	<section id="sps-Functional_Architecture_of_the_SIP_Presence_Server">
+		<title>Functional Architecture of the SIP Presence Server</title>
+		<mediaobject id="sps-SIPPresenceServer-dia-PSFunctionalArchitecture">
+			<imageobject>
+				<imagedata align="center" fileref="images/sps-SIPPresenceServer-dia-PSFunctionalArchitecture.jpg" format="JPG" scalefit="1" width="450"/>
+			</imageobject>
+			<caption>
+			<para>
+				Functional Diagram of the Mobicents SIP Presence Server
+			</para>
+			</caption>
+		</mediaobject>
+		<para>
+			The <application>SIP Presence Server</application> is comprised of the following functional elements:
+		</para>
+		<variablelist id="sps-Functional_Elements_of_the_SIP_Presence_Server">
+			<varlistentry>
+				<term>Presence Publication Control</term>
+				<listitem>
+					<para>
+						This functional element manages the publication of presence events, which includes not only the handling of new publications, but also the refreshing, modification or removal of, already-published information.
+					</para>
+					<para>
+						Because the presence resource, which is also called a <emphasis>presentity</emphasis>, can have multiple publications simultaneously, such as some state published by a user agent or device, and some location data published by a Presence Network Agent (on behalf of the presentity), this element is also responsible for composing all of the different publications for the same resource.
+					</para>
+					<para>
+						In some presence networks, it may be necessary to allow resources to have a static presence state which is stored in the XDM Server. The Presence Publication Control may need to interface with the <application>XDM Server</application> to retrieve and subscribe to (learn about changes to) that information, and use it when composing the final presence information document.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Presence Subscription Control</term>
+				<listitem>
+					<para>
+						This functional element handles subscriptions to presence events, or to the list of subscribers (watchers), for any specific resource. The Presence Subscription Control is alsoresponsible for emitting notifications related to those subscriptions.
+					</para>
+					<para>
+						Presence authorization rules are stored on the <application>XDM Server</application> by the user. These rules define whether a subscription is allowed or rejected and, if allowed, define which transformations to the original presence events are needed. The Presence Subscription Control needs to retrieve and subscribe to this information.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XDM Client Control</term>
+				<listitem>
+					<para>
+						This element is responsible for interfacing with the <application>XDM Server</application> that manages the user's XML documents, and is related to the main functions of the presence server. It is capable of retrieving a partial or full document, and subscribing to either updates of a single, specific document, or to a full collection of documents of a specific type or application.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<section id="sps-Implementation_Architecture_of_the_Mobicents_SIP_Presence_Server">
+			<title>Implementation Architecture of the Mobicents SIP Presence Server</title>
+			<mediaobject id="sps-SIPPresenceServer-dia-PSImplementation">
+				<imageobject>
+					<imagedata align="center" fileref="images/sps-SIPPresenceServer-dia-PSImplementation.jpg" format="JPG" scalefit="1" width="450"/>
+				</imageobject>
+				<caption>
+				<para>
+					Implementation Architecture of the SIP Presence Server
+				</para>
+				</caption>
+			</mediaobject>
+			<para>
+				The implementation of the SIP Presence Server comprises the following functional elements:
+			</para>
+			<variablelist id="sps-The_Two_Services_Which_Compose_the_Presence_Server">
+				<title>SIP Presence Server Services</title>
+				<varlistentry>
+					<term>Presence Publication Control</term>
+					<listitem>
+						<para>
+							This JAIN SLEE service includes the root Service Building Block (SBB), <literal>PresencePublicationControlSbb</literal>, which is the implementation of the abstract SIP event <literal>PublicationControlSbb</literal>. <literal>PublicationControlSbb</literal> handles publications on the <application>presence</application> event package.
+						</para>
+						<para>
+							The <literal>PresencePublicationControlSbb</literal> provides the following capabilities:
+						</para>
+						<itemizedlist>
+							<listitem>
+								<para>
+									Logic to authorize a publication. <literal>PUBLISH</literal> requests are authorized only when the request URI matches the Presence Information Data Format (PIDF) document <quote>entity</quote> attribute.
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									Java Architecture for XML Binding (JAXB) unmarshellers that validate and parse the PIDF document for the abstract <literal>PublicationControlSbb</literal>.
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									Subscriber notification through a child relation to the root SBB of the Presence Subscription Control Service.
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									Provides an <literal>SbbLocalObject</literal> interface that can be used, in JAIN SLEE child relations, to obtain the composed presence information for a specific resource.
+								</para>
+							</listitem>
+						</itemizedlist>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Presence Subscription Control Service.</term>
+					<listitem>
+						<para>
+							This JAIN SLEE service includes the root Service Building Block (SBB) <literal>PresenceSubscriptionControlSbb</literal>, which is the implementation of the abstract SIP Event <literal>SubscriptionControlSbb</literal>. It handles subscriptions on the <quote>presence</quote> event package.
+						</para>
+						<para>
+							The standout SBB logic item is the usage of presence-rules documents, obtained through the XDM Client SBB child relation, in order to authorize subscriptions and transform the content notified. It also defines a child relation to the root SBB of <literal>PresencePublicationService</literal> to retrieve the composed PIDF document for the subscription's notifier.
+						</para>
+						<para>
+							The SBB also provides an <literal>SbbLocalObject</literal> interface that can be used, in JAIN SLEE child relations, to make the presence event known to the subscribers of a specific resource.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<!-- <para>The implementation architecture of the SIP Presence Server also contains client-side components:</para>
+			<variablelist>
+				<varlistentry>
+					<term>Presence Client SBB</term>
+					<listitem>
+						<note>
+							<title>Not Yet Available</title>
+							<para>This SBB is not yet available.</para>
+						</note>
+						<para>The <literal>PresenceClientSBB</literal> is the interface to a JAIN SLEE SBB intended to be used as a client for the <application>Mobicents SIP Presence Server</application> (and other servers compliant with same standards), in JAIN SLEE child relations.</para>
+						<para>Two implementations of this interface are provided: the <literal>InternalPresenceClientSBB</literal> that is used with applications running in the <application>Mobicents SIP Presence Server</application> JAIN SLEE container, and the <literal>ExternalPresenceClientSBB</literal>, used with applications running in a different JAIN SLEE container than the <application>Mobicents SIP Presence Server</application>.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist> -->
+		</section>
+
+	</section>
+	
+	<!-- TODO: This section links to a mobicents pages that contains no information.  Work out what information is required here and create the content in this section
+	<section id="sps-Resources_and_Further_Information_about_the_SIP_Presence_Server">
+		<title>Resources and Further Information about the SIP Presence Server</title>
+		<para>For further information on the Mobicents SIP Presence Server, see the following list of additional resources:</para>
+		<itemizedlist id="sps-Further_Information_on_the_SIP_Presence_Server">
+			<listitem>
+				<para>How to Manage the Mobicents SIP Presence Server</para>
+			</listitem>
+			<listitem>
+				<para>Integrating the Mobicents SIP Presence Server into Your JAIN SLEE Applications: Code Snippets for Internal Presence Client SBB Usage.</para>
+			</listitem>
+			<listitem>
+				<para>Integrating the Mobicents SIP Presence Server into Your JAIN SLEE Applications: Code Snippets for External Presence Client SBB Usage.</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://groups.google.com/group/mobicents-public/web/mobicents-sip-event-components">Mobicents SIP Event Publication and Subscription Control Components</ulink>
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section> -->
+</chapter>
+	<chapter id="xdms-XML_Document_Management_Server" lang="en-US">
+	<!--  chapter id nickname: xdms  --><title>Mobicents XML Document Management Server</title>
+	<para>
+		The <application>Mobicents XML Document Management Server</application> (<application>XDM Server</application>) is part of the <application>Mobicents SIP Presence Service</application>; it is the first free and open source implementation of an <application>XML Document Management Server</application> as defined in the <ulink url="Open Mobile Alliance (OMA) XML Document Management v1.1 specification"/>. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.
+	</para>
+	<section id="xdms-Functional_Architecture_of_the_XDM_Server">
+		<title>Functional Architecture of the XDM Server</title>
+		<para>
+			The <application>Mobicents XDM Server</application> includes the following XCAP application usages:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<ulink url="http://tools.ietf.org/html/rfc5025">IETF Presence Rules (RFC 5025)</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://www.openmobilealliance.org/Technical/release_program/Presence_simple_v1_1.aspx">OMA Presence Rules (OMA Presence Simple v1.1 Candidate Release)</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://tools.ietf.org/html/rfc4826">IETF Resource Lists</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://tools.ietf.org/html/rfc4826">IETF RLS Services (RFC 4826)</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://tools.ietf.org/html/rfc4825">IETF XCAP-CAPS (RFC 4825)</ulink>
+				</para>
+			</listitem>
+		</itemizedlist>
+		<para>
+			The SIP interface partially implements the XCAP Diff Event IETF draft, version 3. Subscriptions to a single document or usage by an entire application are supported. However, these differing usages do not extend to the single-XML element or attribute value level. Regarding the notifications, the diff-processing subscription parameter, if present, is ignored, and patching of content is not available at the moment, which means that only the document etags, new and/or old, will be provided.
+		</para>
+		<para>
+			View the <ulink url="http://mobicents-public.googlegroups.com/web/XDM+Functional+Architecture.jpg?gda=vowVslEAAAAF_VX0TG5xx-FBSRUj3rSw3W3MetT0jWUh4Xj3nCKKkJRg1dOenZYHeKjWSh6kKUoVQKX_J3c2taUlhicc8as8Uwk_6Qi3BU8HCN0q6OYwM5VxXgp_nHWJXhfr7YhqVgA">XML Document Management Server Architecture</ulink>
+		</para>
+		<!-- <mediaobject
+			id="xdms-sps-XDMS-dia-XDMFunctionalArchitecture">
+			<imageobject>
+				<imagedata
+					align="center"
+					width="700"
+					fileref="images/sps-XDMS-dia-XDMFunctionalArchitecture.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>The Mobicents XML Document Management Server</para>
+			</caption>
+		</mediaobject> -->
+		<para>
+			The <application>XDM Server</application> comprises the following functional elements:
+		</para>
+		<variablelist id="xdms-Functional_Elements_of_the_XDM_Server">
+			<title>Functional Elements of the XDM Server</title>
+			<varlistentry>
+				<term>Data Source</term>
+				<listitem>
+					<para>
+						The <application>XDM Server</application> data source is where all user XML documents are stored. Information related to the server itself is also stored in this element along with the user's provisioned data
+					</para>
+					<para>
+						The data source also handles subscriptions to updates on specific documents, or complete XCAP application usages.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Aggregation Proxy</term>
+				<listitem>
+					<para>
+						The aggregation proxy is responsible for handling an XDM client's XCAP requests, which includes authentication and authorization of the requester.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Request Processor</term>
+				<listitem>
+					<para>
+						This element includes the XCAP Server logic to process an XCAP request and return a proper response.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XDM Event Subscription Control</term>
+				<listitem>
+					<para>
+						This element, using the SIP protocol, is responsible for handling subscriptions to documents managed by the XDM. Its functions include the authentication and authorization of a subscription, attachment to update events on specific documents or application usages, and the sending of notifications when documents change.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara>
+			<title>Implementation Architecture of the Mobicents XML Document Management Server</title>
+			<para>
+				The <application>XDM Server</application> is built on top of the <application>Mobicents JAIN SLEE</application> container. This figure depicts the architecture of the <application>XDM Server</application> implementation.
+			</para>
+		</formalpara>
+		<para>
+			View the diagram of the <ulink url="http://mobicents-public.googlegroups.com/web/XDMS+Implementation.jpg?gda=9hCf4kkAAAAF_VX0TG5xx-FBSRUj3rSw3W3MetT0jWUh4Xj3nCKKkJQ0jPtcnRwbFIKXxiisEZifs7maW8FM3kQMOUV88KaGhAioEG5q2hncZWbpWmJ7IQ">XDM Server Implementation</ulink>.
+		</para>
+		<!-- <mediaobject
+			id="xdms-sps-XDMS-dia-XDMSImplementation">
+			<imageobject>
+				<imagedata
+					align="center"
+					width="700"
+					fileref="images/sps-XDMS-dia-XDMSImplementation.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>Mobicents XML Document Management Server</para>
+			</caption>
+		</mediaobject> -->
+		<variablelist id="xdms-The_Functional_Elements_Which_Compose_the_XML_Document_Management_Server">
+			<title>The Functional Elements of the XML Document Management Server</title>
+			<varlistentry>
+				<term>Data Source Resource Adapter</term>
+				<listitem>
+					<para>
+						This resource adapter implements the Data Source functional element.
+					</para>
+					<para>
+						The <literal>RA Type</literal> defines two activities objects, <literal>DocumentActivity</literal> and <literal>AppUsageActivity</literal>, both of which are used to fire events that signal that a document, element or attribute was updated.
+					</para>
+					<para>
+						The <literal>RA Type</literal> also defines a Service Building Block (<acronym>SBB</acronym>) RA interface to manage the users and documents stored in the XDM Server, and create activities, where events will be fired. The resource adapter will only fire events on activities that exist; that is, the RA won't create activities implicitly if a document is updated.
+					</para>
+					<para>
+						The <literal>RA Type</literal> also provides a base abstract implementation of the resource adapter, making it very simple to change the underlying resource used to store information, which is by default the internal JDBC datasource of the <application>JBoss Application Server</application>.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>AppUsage Cache Resource Adaptor</term>
+				<listitem>
+					<para>
+						This resource adapter stores the XCAP application usages installed in the server.
+					</para>
+					<para>
+						Each <literal>AppUsage</literal> is an object that includes the logic to validate XCAP documents that result from XCAP requests and are expensive to create; this resource adapter thus provides caching of AppUsages, using a pool model.
+					</para>
+					<para>
+						The resource adapter doesn't possess events or activities.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>AppUsage Service</term>
+				<listitem>
+					<para>
+						XCAP Application Usages are installed through a JAIN SLEE service, making it possible to add and/or remove application usages while the server is running.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Aggregation Proxy Service</term>
+				<listitem>
+					<para>
+						This JAIN SLEE service implements the aggregation proxy functional element. It handles events fired by the Mobicents HTTP Servlet resource adapter and then uses two child SBBs: the <literal>User Profile Enabler SBB</literal> to retrieve information regarding the user needed for authentication/authorization of the XCAP request, and the <literal>Request Processor SBB</literal>, which handles the XCAP request.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Request Processor SBB</term>
+				<listitem>
+					<para>
+						The <literal>Request Processor SBB</literal> implements the request processor functional element, providing a synchronous SBB interface to process XCAP requests. It uses the <literal>AppUsage Cache</literal> resource adapter to borrow AppUsage objects, and the Data Source resource adapter to retrieve or set documents stored in the server's data source.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>User Profile Enabler SBB (TBD: not available yet)</term>
+				<listitem>
+					<para>
+						This SBB provides a synchronous SBB interface used in JAIN SLEE child relations in order to retrieve user information. Two different implementations of the interface are provided: the first considers whether the information is stored in the XDM Data Source, another interfaces with a Diameter Sh Server, such as <application>IMS HSS</application>.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XCAP Diff Subscription Control Service</term>
+				<listitem>
+					<para>
+						This JAIN SLEE Service extends the abstract SIP Event Subscription Control component to handle SIP subscriptions on the xcap-diff event package.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>
+			The implementation architecture figure also contains client-side components:
+		</para>
+		<variablelist id="xdms-Client-Side_Components_of_the_XML_Document_Management_Server_">
+			<title>Client-Side Components of the XML Document Management Server </title>
+			<varlistentry>
+				<term>XCAP Client</term>
+				<listitem>
+					<para>
+						The XCAP client is a simple API to interact with an XCAP Server that internally uses the Apache HTTP Client.
+					</para>
+					<!-- <para>The API documentation and example code snippets can be found TBD</para> -->
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XCAP Client Resource Adaptor</term>
+				<listitem>
+					<para>
+						The XCAP Client Resource Adapter adapts the XCAP Client API into the JAIN SLEE domain. It provides methods to interact with the XCAP server in both synchronous and asynchronous ways.
+					</para>
+					<para>
+						The RA Type description and code snippets using the RA can be found here.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XDM Client SBB</term>
+				<listitem>
+					<para>
+						The XDMClientSBB is an interface of a JAIN SLEE SBB to be used as a client to the <application>Mobicents XDM Server</application> (and others compliant with same standards), in JAIN SLEE child relations.
+					</para>
+					<para>
+						Two implementations of this interface are provided:
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								<literal>InternalXDMClientSBB</literal> is intended to be used on applications running in the <application>Mobicents XDM Server</application> JAIN SLEE container, and
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								<literal>ExternalXDMClientSBB</literal>, which is intended to be used on applications in a different JAIN SLEE container than the <application>Mobicents XDM Server</application>.
+							</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+	
+	<section id="xdms-Resources_and_Further_Information_about_the_XDM_Server">
+		<title>Resources and Further Information about the XDM Server</title>
+		<para>
+			For further information on the Mobicents XDM Server, here is a list of additional resources:
+		</para>
+		<itemizedlist id="xdms-Further_Information_on_the_XDM_Server">
+			<listitem>
+				<para>
+					<ulink url="http://groups.google.com/group/mobicents-public/web/xcap-client-api">XCAP Client API Documentation</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://groups.google.com/group/mobicents-public/web/xcap-client-resource-adaptor">XCAP Client RA Type Description and Example Code Snippets</ulink>
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+</chapter>
+	<chapter id="rls-Resource_List_Server" lang="en-US">
+	<!--  chapter id nickname: rls  --><title>Mobicents Resource List Server</title>
+	<para>
+		 
+	</para>
+	<note>
+		<title>Resource List Server</title>
+		<para>
+			The <application>Mobicents Resource List Server</application> is not yet fully-implemented.
+		</para>
+	</note>
+</chapter>
+	<appendix lang="en-US">
+	<title>Revision History</title>
+	<simpara>
+		<revhistory>
+			<revision>
+				<revnumber>3.0</revnumber>
+				<date>Thu Jun 11 2009</date>
+				<author>
+					<firstname>Jared</firstname>
+					<surname>Morgan</surname>
+					<email>jmorgan@redhat.com</email>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>Second release of the "parameterized" documentation.</member>
+					</simplelist>
+				</revdescription>
+			</revision>
+			<revision>
+				<revnumber>2.0</revnumber>
+				<date>Fri Mar 06 2009</date>
+				<author>
+					<firstname>Douglas</firstname>
+					<surname>Silas</surname>
+					<email>dhensley@redhat.com</email>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>First release of the "parameterized", and much-improved JBCP documentation.</member>
+					</simplelist>
+				</revdescription>
+			</revision>
+		</revhistory>
+	</simpara>
+</appendix>
+	<!-- <index /> -->
+</book>
