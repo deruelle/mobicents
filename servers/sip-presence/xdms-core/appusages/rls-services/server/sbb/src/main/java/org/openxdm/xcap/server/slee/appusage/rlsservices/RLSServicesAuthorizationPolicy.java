@@ -31,10 +31,13 @@ public class RLSServicesAuthorizationPolicy extends AuthorizationPolicy {
 
 	public boolean isAuthorized(String user, AuthorizationPolicy.Operation operation, DocumentSelector documentSelector) {
 		
-		// check args
 		if (user == null) {
-			throw new IllegalArgumentException("user is null");
+			// no authentication so no authorization
+			return true;
 		}
+		
+		// check args
+		
 		else if (operation == null) {
 			throw new IllegalArgumentException("operation is null");
 		}		
