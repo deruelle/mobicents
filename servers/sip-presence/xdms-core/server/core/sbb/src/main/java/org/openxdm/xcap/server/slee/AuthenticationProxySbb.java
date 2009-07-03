@@ -22,6 +22,7 @@ import org.apache.commons.httpclient.util.ParameterFormatter;
 import org.apache.commons.httpclient.util.ParameterParser;
 import org.apache.log4j.Logger;
 import org.mobicents.slee.enabler.userprofile.UserProfileControlSbbLocalObject;
+import org.mobicents.slee.xdm.server.ServerConfiguration;
 import org.openxdm.xcap.common.error.InternalServerErrorException;
 import org.openxdm.xcap.common.http.HttpConstant;
 
@@ -157,17 +158,20 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		 * challenge response MUST contain the nonce-count and cnonce
 		 * parameters. This will be checked later on.
 		 */
-		final String challengeParams = "Digest algorithm =\"" + getAlgorithm()
-				+ "\" nonce =\"" + generateNonce()
-				+ "\" opaque =\" \" stale =\"false\" realm =\"" + getRealm()
-				+ "\" uri =\"" + getRealm() + "\" qop =\"auth\"";
+		final String challengeParams = "Digest algorithm=" + getAlgorithm()
+				+ " nonce=\"" + generateNonce()
+				+ "\" opaque=\"\" stale=false realm=\"" + getRealm()
+				+ "\" uri =\"" + request.getRequestURI() + "\" qop=\"auth\"";
 
 		response.setHeader(HttpConstant.HEADER_WWW_AUTHENTICATE,
 				challengeParams);
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("Sending response with header "+HttpConstant.HEADER_WWW_AUTHENTICATE+" challenge params: "+challengeParams);
+		}
+		
 		// send to client
 		response.getWriter().close();
-
 	}
 
 	/**
@@ -395,6 +399,9 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 			myEnv = (Context) new InitialContext().lookup("java:comp/env");
 			this.authenticationRealm = (String) myEnv
 					.lookup("authenticationRealm");
+			if (authenticationRealm.equals("")) {
+				authenticationRealm = ServerConfiguration.SERVER_HOST;
+			}
 
 		} catch (NamingException e) {
 			// TODO Auto-generated catch block
