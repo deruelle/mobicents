@@ -65,9 +65,9 @@ public abstract class InternalUserProfileControlSbb implements Sbb,
 	
 	// -- SBB LOCAL OBJECT METHODS
 
-	public UserProfile find(String username, String realm) {
+	public UserProfile find(String username) {
 		
-		org.mobicents.slee.enabler.userprofile.jpa.UserProfile jpaUserProfile = management.getUser(username, realm);
+		org.mobicents.slee.enabler.userprofile.jpa.UserProfile jpaUserProfile = management.getUser(username);
 		if (jpaUserProfile != null) {
 			return new UserProfile(jpaUserProfile);
 		}

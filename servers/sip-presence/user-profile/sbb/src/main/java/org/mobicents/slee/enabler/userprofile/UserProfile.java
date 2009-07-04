@@ -12,11 +12,7 @@ public class UserProfile {
 	}
 	
 	public String getUsername() {
-		return userProfile.getKey().getUsername();
-	}
-	
-	public String getRealm() {
-		return userProfile.getKey().getRealm();
+		return userProfile.getUsername();
 	}
 	
 	public String getPassword() {

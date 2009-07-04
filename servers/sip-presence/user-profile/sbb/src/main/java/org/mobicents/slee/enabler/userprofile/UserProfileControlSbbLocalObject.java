@@ -12,9 +12,8 @@ public interface UserProfileControlSbbLocalObject extends SbbLocalObject {
 	/**
 	 * 
 	 * @param username
-	 * @param realm
 	 * @return
 	 */
-	public UserProfile find(String username, String realm);
+	public UserProfile find(String username);
 	
 }

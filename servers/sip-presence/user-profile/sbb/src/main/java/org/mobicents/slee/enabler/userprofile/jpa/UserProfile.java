@@ -3,8 +3,8 @@ package org.mobicents.slee.enabler.userprofile.jpa;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -29,8 +29,9 @@ public class UserProfile implements Serializable {
 	private static final String JPA_NAMED_QUERY_PREFIX = "MSPS_UP_NQUERY_";
 	public static final String JPA_NAMED_QUERY_SELECT_ALL_USERPROFILES = JPA_NAMED_QUERY_PREFIX + "selectAllUserProfiles";
 	
-	@EmbeddedId
-	protected UserProfilePrimaryKey key;
+	@Id
+	@Column(name = "USERNAME", nullable = false)
+	private String username;
 	
 	/**
 	 * the user password
@@ -42,20 +43,28 @@ public class UserProfile implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public UserProfile(String username, String realm) {
-		setKey(new UserProfilePrimaryKey(username,realm));
+	public UserProfile(String username) {
+		setUsername(username);
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 	@Override
 	public int hashCode() {
-		return key.hashCode();
+		return username.hashCode();
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass() == this.getClass()) {
 			UserProfile other = (UserProfile) obj;
-			return other.key.equals(this.key);
+			return other.username.equals(this.username);
 		}
 		else {
 			return false;
@@ -64,14 +73,6 @@ public class UserProfile implements Serializable {
 
 	// -- GETTERS AND SETTERS
 	
-	public UserProfilePrimaryKey getKey() {
-		return key;
-	}
-
-	public void setKey(UserProfilePrimaryKey key) {
-		this.key = key;
-	}
-
 	public String getPassword() {
 		return password;
 	}

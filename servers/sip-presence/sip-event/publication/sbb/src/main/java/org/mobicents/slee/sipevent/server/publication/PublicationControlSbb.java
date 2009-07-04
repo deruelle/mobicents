@@ -1,6 +1,5 @@
 package org.mobicents.slee.sipevent.server.publication;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +28,8 @@ import javax.slee.facilities.TimerPreserveMissed;
 import javax.slee.nullactivity.NullActivity;
 import javax.slee.nullactivity.NullActivityContextInterfaceFactory;
 import javax.slee.nullactivity.NullActivityFactory;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
@@ -776,8 +777,35 @@ public abstract class PublicationControlSbb implements Sbb,
 
 	// --- JPA INITIALIZATION
 
-	private static EntityManagerFactory entityManagerFactory = Persistence
-			.createEntityManagerFactory("sipevent-publication-pu");
+	private static EntityManagerFactory initEntityManagerFactory() {
+		try {
+			TransactionManager txMgr = (TransactionManager) new InitialContext()
+					.lookup("java:/TransactionManager");
+
+			Transaction tx = null;
+			try {
+				if (txMgr.getTransaction() != null) {
+					tx = txMgr.suspend();
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
+			try {
+				return Persistence
+						.createEntityManagerFactory("sipevent-publication-pu");
+			} finally {
+				if (tx != null) {
+					txMgr.resume(tx);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
+	
+	private static EntityManagerFactory entityManagerFactory = initEntityManagerFactory();
 
 	private EntityManager getEntityManager() {
 		return entityManagerFactory.createEntityManager();

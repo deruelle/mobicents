@@ -19,7 +19,6 @@ import javax.transaction.TransactionManager;
 import org.apache.log4j.Logger;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.enabler.userprofile.jpa.UserProfile;
-import org.mobicents.slee.enabler.userprofile.jpa.UserProfilePrimaryKey;
 
 /**
  * Management interface for user profiles stored on JPA.
@@ -104,22 +103,20 @@ public class UserProfileControlManagement implements
 	 * 
 	 * @seeorg.mobicents.slee.xdm.server.userprofile.jmx.
 	 * UserProfileControlManagementMBean#addUser(java.lang.String,
-	 * java.lang.String, java.lang.String)
+	 * java.lang.String)
 	 */
-	public void addUser(String username, String realm, String password)
+	public void addUser(String username, String password)
 			throws NullPointerException, IllegalStateException, ManagementException {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("addUser( username = "+username+" , realm = "+realm+" )");
+			logger.debug("addUser( username = "+username+")");
 		}
 		
 		if (username == null)
 			throw new NullPointerException("null username");
-		if (realm == null)
-			throw new NullPointerException("null realm");
 
-		if (getUser(username, realm) != null) {
-			throw new IllegalStateException("user "+username+"@"+realm+" already exists");
+		if (getUser(username) != null) {
+			throw new IllegalStateException("user "+username+" already exists");
 		}
 		
 		EntityManager entityManager = null;
@@ -130,7 +127,7 @@ public class UserProfileControlManagement implements
 			
 			entityManager = entityManagerFactory.createEntityManager();		
 			
-			UserProfile userProfile = new UserProfile(username, realm);
+			UserProfile userProfile = new UserProfile(username);
 			userProfile.setPassword(password);
 
 			entityManager.persist(userProfile);
@@ -138,7 +135,7 @@ public class UserProfileControlManagement implements
 			txMgr.commit();
 			
 			if (logger.isInfoEnabled()) {
-				logger.info("Added user "+username+"@"+realm);
+				logger.info("Added user "+username);
 			}
 
 		} catch (Throwable e) {
@@ -177,8 +174,7 @@ public class UserProfileControlManagement implements
 					UserProfile.JPA_NAMED_QUERY_SELECT_ALL_USERPROFILES)
 					.getResultList()) {
 				UserProfile userProfile = (UserProfile) result;
-				resultList.add(userProfile.getKey().getUsername() + '@'
-						+ userProfile.getKey().getRealm());
+				resultList.add(userProfile.getUsername());
 			}
 
 			String[] resultArray = new String[resultList.size()];
@@ -205,20 +201,17 @@ public class UserProfileControlManagement implements
 	 * (non-Javadoc)
 	 * 
 	 * @seeorg.mobicents.slee.xdm.server.userprofile.jmx.
-	 * UserProfileControlManagementMBean#removeUser(java.lang.String,
-	 * java.lang.String)
+	 * UserProfileControlManagementMBean#removeUser(java.lang.String)
 	 */
-	public boolean removeUser(String username, String realm)
+	public boolean removeUser(String username)
 			throws NullPointerException, ManagementException {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("removeUser( username = "+username+" , realm = "+realm+" )");
+			logger.debug("removeUser( username = "+username+" )");
 		}
 		
 		if (username == null)
 			throw new NullPointerException("null username");
-		if (realm == null)
-			throw new NullPointerException("null realm");
 
 		EntityManager entityManager = null;
 		try {
@@ -227,14 +220,13 @@ public class UserProfileControlManagement implements
 			
 			entityManager = entityManagerFactory.createEntityManager();
 
-			UserProfile userProfile = entityManager.find(UserProfile.class,
-					new UserProfilePrimaryKey(username, realm));
+			UserProfile userProfile = entityManager.find(UserProfile.class,username);
 
 			boolean exists = userProfile != null;
 			if (exists) {
 				entityManager.remove(userProfile);
 				if (logger.isInfoEnabled()) {
-					logger.info("Removed user "+username+"@"+realm);
+					logger.info("Removed user "+username);
 				}
 			}
 
@@ -256,30 +248,26 @@ public class UserProfileControlManagement implements
 	}
 
 	/**
-	 * Retrieves the user profile for the specified username and realm.
+	 * Retrieves the user profile for the specified username.
 	 * 
 	 * @param username
-	 * @param realm
 	 * @return
 	 * @throws NullPointerException
 	 */
-	public UserProfile getUser(String username, String realm)
+	public UserProfile getUser(String username)
 			throws NullPointerException {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("getUser( username = "+username+" , realm = "+realm+" )");
+			logger.debug("getUser( username = "+username+" )");
 		}
 		
 		if (username == null)
 			throw new NullPointerException("null username");
-		if (realm == null)
-			throw new NullPointerException("null realm");
-
+		
 		EntityManager entityManager = entityManagerFactory
 				.createEntityManager();
 
-		UserProfile userProfile = entityManager.find(UserProfile.class,
-				new UserProfilePrimaryKey(username, realm));
+		UserProfile userProfile = entityManager.find(UserProfile.class,username);
 
 		entityManager.close();
 

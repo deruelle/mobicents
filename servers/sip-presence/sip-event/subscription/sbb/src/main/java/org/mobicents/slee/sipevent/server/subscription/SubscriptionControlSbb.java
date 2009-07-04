@@ -37,6 +37,8 @@ import javax.slee.nullactivity.NullActivityFactory;
 import javax.slee.serviceactivity.ServiceActivity;
 import javax.slee.serviceactivity.ServiceActivityFactory;
 import javax.slee.serviceactivity.ServiceStartedEvent;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
 import net.java.slee.resource.sip.SleeSipProvider;
@@ -159,8 +161,34 @@ public abstract class SubscriptionControlSbb implements Sbb,
 
 	// --- JPA STUFF
 
-	private static EntityManagerFactory entityManagerFactory = Persistence
-			.createEntityManagerFactory("sipevent-subscription-pu");
+	private static EntityManagerFactory initEntityManagerFactory() {
+		try {
+			TransactionManager txMgr = (TransactionManager) new InitialContext()
+					.lookup("java:/TransactionManager");
+
+			Transaction tx = null;
+			try {
+				if (txMgr.getTransaction() != null) {
+					tx = txMgr.suspend();
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			try {
+				return Persistence
+						.createEntityManagerFactory("sipevent-subscription-pu");
+			} finally {
+				if (tx != null) {
+					txMgr.resume(tx);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
+	
+	private static EntityManagerFactory entityManagerFactory = initEntityManagerFactory();
 
 	public EntityManager getEntityManager() {
 		return entityManagerFactory.createEntityManager();
@@ -920,7 +948,7 @@ public abstract class SubscriptionControlSbb implements Sbb,
 		// if dialog is not needed anymore (and remove if that's the case)
 		if (dialog != null) {
 			// get subscriptions of dialog from persistence
-			List subscriptionsInDialog = Subscription.getDialogSubscriptions(
+			List<?> subscriptionsInDialog = Subscription.getDialogSubscriptions(
 					entityManager, dialog.getCallId().getCallId(), dialog
 							.getRemoteTag());
 			if (subscriptionsInDialog.size() == 0) {

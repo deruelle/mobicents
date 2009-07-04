@@ -1,11 +1,8 @@
 package org.openxdm.xcap.server.slee;
 
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -17,14 +14,12 @@ import javax.slee.ChildRelation;
 import javax.slee.RolledBackContext;
 import javax.slee.SbbContext;
 
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.util.ParameterFormatter;
-import org.apache.commons.httpclient.util.ParameterParser;
 import org.apache.log4j.Logger;
 import org.mobicents.slee.enabler.userprofile.UserProfileControlSbbLocalObject;
 import org.mobicents.slee.xdm.server.ServerConfiguration;
 import org.openxdm.xcap.common.error.InternalServerErrorException;
 import org.openxdm.xcap.common.http.HttpConstant;
+import org.openxdm.xcap.server.slee.auth.RFC2617AuthQopDigest;
 
 /**
  * 
@@ -72,20 +67,11 @@ import org.openxdm.xcap.common.http.HttpConstant;
 public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		AuthenticationProxySbbLocalObject {
 
-	/**
-	 * Hex characters
-	 */
-	private final char[] toHex = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
-			'9', 'a', 'b', 'c', 'd', 'e', 'f' };
-
 	private static final Logger logger = Logger
 			.getLogger(AuthenticationProxySbb.class);
 
 	private Context myEnv = null;
 	public String authenticationRealm = null;
-
-	public static org.apache.commons.httpclient.util.ParameterFormatter formatter = new ParameterFormatter();
-	public static org.apache.commons.httpclient.util.ParameterParser parser = new ParameterParser();
 
 	private static final SecureRandom nonceGenerator = new SecureRandom();
 
@@ -158,10 +144,11 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		 * challenge response MUST contain the nonce-count and cnonce
 		 * parameters. This will be checked later on.
 		 */
-		final String challengeParams = "Digest algorithm=" + getAlgorithm()
-				+ " nonce=\"" + generateNonce()
-				+ "\" opaque=\"\" stale=false realm=\"" + getRealm()
-				+ "\" uri =\"" + request.getRequestURI() + "\" qop=\"auth\"";
+		// FIXME we are not storing the nonce & relation with request/user, 
+		// so this is very weak against replay attacks
+		final String challengeParams = "Digest nonce=\"" + generateNonce()
+				+ "\", realm=\"" + getRealm()
+				+ "\", qop=\"auth\"";
 
 		response.setHeader(HttpConstant.HEADER_WWW_AUTHENTICATE,
 				challengeParams);
@@ -179,13 +166,10 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 	 * @param request
 	 * @param response
 	 * @return null if authentication failed, authenticated user@domain otherwise
-	 * @throws NoSuchAlgorithmException
+	 * @throws InternalServerErrorException 
 	 */
 	private String checkAuthenticatedCredentials(HttpServletRequest request,
-			HttpServletResponse response) throws NoSuchAlgorithmException {
-
-		if (logger.isDebugEnabled())
-			logger.debug("Authorization header included, checking credentials");
+			HttpServletResponse response) throws InternalServerErrorException {
 
 		/**
 		 * On receiving an HTTP request that contains the Authorization header
@@ -214,10 +198,17 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		 */
 		String authHeaderParams = request
 				.getHeader(HttpConstant.HEADER_AUTHORIZATION);
-
-		List<?> values = parser.parse(authHeaderParams, ',');
-		Iterator<?> it = values.iterator();
-
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Authorization header included with value: "+authHeaderParams);
+		}
+		
+		// 6 is "Digest".length(), lets skip the header value till that index
+		final int digestParamsStart = 6;
+		if (authHeaderParams.length() > digestParamsStart) {
+			authHeaderParams = authHeaderParams.substring(digestParamsStart);
+		}
+		
 		String username = null;
 		String password = null;
 		String realm = null;
@@ -228,35 +219,99 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		String qop = null;
 		String resp = null;
 
-		while (it.hasNext()) {
-			String value = formatter.format((NameValuePair) it.next());
-
-			if (value.contains("username"))
-				username = value.split("=")[1].replace('"', ' ').trim()
-						.replace('\\', ' ').trim();
-			if (value.startsWith("nonce"))
-				nonce = value.split("=")[1].replace('"', ' ').trim().replace(
-						'\\', ' ').trim();
-			if (value.startsWith("cnonce"))
-				cnonce = value.split("=")[1].replace('"', ' ').trim().replace(
-						'\\', ' ').trim();
-			if (value.contains("realm"))
-				realm = value.split("=")[1].replace('"', ' ').trim().replace(
-						'\\', ' ').trim();
-			if (value.contains("nc"))
-				nc = value.split("=")[1].replace('"', ' ').trim().replace('\\',
-						' ').trim();
-			if (value.contains("response"))
-				resp = value.split("=")[1].replace('"', ' ').trim().replace(
-						'\\', ' ').trim();
-			if (value.contains("uri"))
-				uri = value.split("=")[1].replace('"', ' ').trim().replace(
-						'\\', ' ').trim();
-			if (value.contains("qop"))
-				qop = value.split("=")[1].replace('"', ' ').trim().replace(
-						'\\', ' ').trim();
+		for(String param : authHeaderParams.split(",")) {
+			String[] paramParts = param.split("=");
+			if (paramParts.length == 2) {
+				String paramName = paramParts[0].trim();
+				String paramValue = paramParts[1].trim();
+				if (logger.isDebugEnabled()) {
+					logger.debug("Found param "+paramName+" with value "+paramValue);
+				}
+				if (paramName.equals("username")) {
+					if (paramValue.length()>2) {
+						username = paramValue.substring(1, paramValue.length()-1);						
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ignoring invalid param "+paramName+" value "+paramValue);
+						}
+					}					
+				}
+				else if (paramName.equals("nonce")) {
+					if (paramValue.length()>2) {
+						nonce = paramValue.substring(1, paramValue.length()-1);
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ignoring invalid param "+paramName+" value "+paramValue);
+						}
+					}
+				}
+				else if (paramName.equals("cnonce")) {
+					if (paramValue.length()>2) {
+						cnonce = paramValue.substring(1, paramValue.length()-1);
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ignoring invalid param "+paramName+" value "+paramValue);
+						}
+					}
+				}
+				else if (paramName.equals("realm")) {
+					if (paramValue.length()>2) {
+						realm = paramValue.substring(1, paramValue.length()-1);
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ignoring invalid param "+paramName+" value "+paramValue);
+						}
+					}
+				}
+				else if (paramName.equals("nc")) {
+					nc = paramValue;
+				}
+				else if (paramName.equals("response")) {
+					if (paramValue.length()>2) {
+						resp = paramValue.substring(1, paramValue.length()-1);
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ignoring invalid param "+paramName+" value "+paramValue);
+						}
+					}
+				}
+				else if (paramName.equals("uri")) {
+					if (paramValue.length()>2) {
+						uri = paramValue.substring(1, paramValue.length()-1);
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ignoring invalid param "+paramName+" value "+paramValue);
+						}
+					}
+				}
+				else if (paramName.equals("qop")) {
+					if (paramValue.charAt(0) == '"') {
+						if (paramValue.length()>2) {
+							qop = paramValue.substring(1, paramValue.length()-1);
+						}
+						else {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Ignoring invalid param "+paramName+" value "+paramValue);
+							}
+						}
+					}
+					else {
+						qop = paramValue;
+					}
+				}
+			}
+			else {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ignoring invalid param "+param);
+				}
+			}
 		}
-
 		/**
 		 * The client response to a WWW-Authenticate challenge for a protection
 		 * space starts an authentication session with that protection space.
@@ -267,35 +322,17 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		 * construct the Authorization header in future requests within that
 		 * protection space.
 		 */
-		if (username == null || realm == null || cnonce == null || nc == null
+		if (username == null || realm == null || nonce == null || cnonce == null || nc == null
 				|| uri == null || resp == null) {
 			logger
 					.error("A required parameter is missing in the challenge response");
+			// FIXME should be replied with BAD REQUEST 400
 			return null;
 		}
-		MessageDigest md5 = MessageDigest.getInstance("MD5");
-
-		String A1 = username + ":" + realm + ":" + password;
-		String A2 = null;
-
-		A2 = request.getMethod().toUpperCase() + ":" + uri.toString();
-
-		byte mdbytes[] = md5.digest(A1.getBytes());
-		String HA1 = toHexString(mdbytes);
-
-		mdbytes = md5.digest(A2.getBytes());
-		String HA2 = toHexString(mdbytes);
-
-		String KD = HA1 + ":" + nonce;
-		KD += ":" + cnonce;
-
-		KD += ":" + HA2;
-		mdbytes = md5.digest(KD.getBytes());
-
-		String mdString = toHexString(mdbytes);
-
-		int res = (mdString.compareTo(resp));
-		if (res == 0) {
+		
+		final String digest = new RFC2617AuthQopDigest(username, realm, password, nonce, nc, cnonce, qop, request.getMethod().toUpperCase(), uri).digest();
+		
+		if (digest != null && digest.equals(resp)) {
 			if (logger.isDebugEnabled())
 				logger.debug("authentication response is matching");
 
@@ -308,14 +345,17 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 			 * rspauth="6629fae49394a05397450978507c4ef1",
 			 * cnonce="6629fae49393a05397450978507c4ef1", nc=00000001
 			 */
-			String params = "cnonce=\"" + cnonce + "\" nc=" + nc + " qop="
-					+ qop + " rspauth=\"" + mdString;
+			String params = "cnonce=\"" + cnonce + "\", nc=" + nc + ", qop="
+					+ qop + ", rspauth=\"" + digest+"\"";
 
 			response.addHeader("Authentication-Info", params);
-			return username+"@"+realm;
-		} else
-			return null;
+			return username;
+		} else {
+			if (logger.isDebugEnabled())
+				logger.debug("authentication response digest received ("+resp+") didn't match the one calculated ("+digest+")");
 
+			return null;
+		}
 	}
 
 	/**
@@ -355,24 +395,6 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		synchronized (nonceGenerator) {
 			return Integer.toHexString(nonceGenerator.nextInt());
 		}
-	}
-
-	/**
-	 * Convert an array of bytes to an hexadecimal string
-	 * 
-	 * @param b
-	 *            The byte array to convert to a hexadecimal string
-	 * @return The hexadecimal string representation of the byte array
-	 * 
-	 */
-	private String toHexString(byte b[]) {
-		int pos = 0;
-		char[] c = new char[b.length * 2];
-		for (int i = 0; i < b.length; i++) {
-			c[pos++] = this.toHex[(b[i] >> 4) & 0x0F];
-			c[pos++] = this.toHex[b[i] & 0x0f];
-		}
-		return new String(c);
 	}
 
 	// -- user profile enabler child relation
