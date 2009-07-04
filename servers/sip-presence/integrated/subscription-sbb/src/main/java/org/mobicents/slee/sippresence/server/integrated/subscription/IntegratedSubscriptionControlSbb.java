@@ -354,6 +354,7 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,
 		try {
 			return JAXBContext
 					.newInstance("org.mobicents.slee.sippresence.pojo.pidf"
+							+ ":org.mobicents.slee.sippresence.pojo.pidf.oma"
 							+ ":org.mobicents.slee.sippresence.pojo.rpid"
 							+ ":org.mobicents.slee.sippresence.pojo.datamodel"
 							+ ":org.mobicents.slee.sippresence.pojo.commonschema"
