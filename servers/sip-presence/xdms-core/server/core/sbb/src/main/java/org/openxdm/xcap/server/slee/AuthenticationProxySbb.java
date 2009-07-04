@@ -14,6 +14,7 @@ import javax.slee.RolledBackContext;
 import javax.slee.SbbContext;
 
 import org.apache.log4j.Logger;
+import org.mobicents.slee.enabler.userprofile.UserProfile;
 import org.mobicents.slee.enabler.userprofile.UserProfileControlSbbLocalObject;
 import org.mobicents.slee.xdm.server.ServerConfiguration;
 import org.openxdm.xcap.common.error.InternalServerErrorException;
@@ -376,10 +377,26 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 			if (logger.isDebugEnabled())
 				logger.debug("Authentication failed, nonce provided doesn't match the one generated using opaque as seed");
 			return null;
-
 		}
 		
-		final String digest = new RFC2617AuthQopDigest(username, realm, password, nonce, nc, cnonce, qop, request.getMethod().toUpperCase(), uri).digest();
+		if (!qop.equals("auth")) {
+			if (logger.isDebugEnabled())
+				logger.debug("Authentication failed, qop value "+qop+" unsupported");
+			return null;
+		}
+		
+		// get user password
+		UserProfile userProfile = getUserProfileControlSbb().find(username);
+		if (userProfile == null) {
+			if (logger.isDebugEnabled())
+				logger.debug("Authentication failed, profile not found for user "+username);
+			return null;
+		}
+		else {
+			password = userProfile.getPassword();
+		}
+		
+		final String digest = new RFC2617AuthQopDigest(username, realm, password, nonce, nc, cnonce, request.getMethod().toUpperCase(), uri).digest();
 		
 		if (digest != null && digest.equals(resp)) {
 			if (logger.isDebugEnabled())

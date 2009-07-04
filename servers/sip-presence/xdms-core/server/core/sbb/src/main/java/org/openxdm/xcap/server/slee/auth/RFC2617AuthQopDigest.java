@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.httpclient.util.EncodingUtil;
+import org.apache.log4j.Logger;
 import org.openxdm.xcap.common.error.InternalServerErrorException;
 
 /**
@@ -12,6 +13,8 @@ import org.openxdm.xcap.common.error.InternalServerErrorException;
  *
  */
 public class RFC2617AuthQopDigest {
+	
+	private static final Logger logger = Logger.getLogger(RFC2617AuthQopDigest.class);
 	
 	/**
 	 * 
@@ -46,7 +49,7 @@ public class RFC2617AuthQopDigest {
 	/**
 	 * 
 	 */
-	private final String qop;
+	private final String qop = "auth";
 	
 	/**
 	 * 
@@ -72,14 +75,13 @@ public class RFC2617AuthQopDigest {
 	 */
 	public RFC2617AuthQopDigest(String username, String realm,
 			String password, String nonce, String nonceCount, String cnonce,
-			String qop, String method, String digestUri) {
+			String method, String digestUri) {
 		this.username = username;
 		this.realm = realm;
 		this.password = password;
 		this.nonce = nonce;
 		this.nonceCount = nonceCount;
 		this.cnonce = cnonce;
-		this.qop = qop;
 		this.method = method;
 		this.digestUri = digestUri;
 	}
@@ -91,6 +93,10 @@ public class RFC2617AuthQopDigest {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public String digest() throws InternalServerErrorException {
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Calculating RFC 2617 qop=auth digest with params: username = "+username+" , realm = "+realm+" , password = "+password+" , nonce = "+nonce+" , nonceCount = "+nonceCount+" , cnonce = "+cnonce+" , method = "+method+" , digestUri = "+digestUri+" ;");
+		}
 		
 		MessageDigest messageDigest = null;
 		try {

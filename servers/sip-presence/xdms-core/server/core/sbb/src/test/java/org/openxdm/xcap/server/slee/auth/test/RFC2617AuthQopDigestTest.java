@@ -24,13 +24,12 @@ public class RFC2617AuthQopDigestTest {
 		String nonce = "dcd98b7102dd2f0e8b11d0f600bfb0c093";
 		String nonceCount = "00000001";
 		String cnonce = "0a4f113b";
-		String qop = "auth";
 
 		String method = "GET";
 		String digestUri = "/dir/index.html";
 
 		RFC2617AuthQopDigest digestProcessor = new RFC2617AuthQopDigest(
-				username, realm, password, nonce, nonceCount, cnonce, qop,
+				username, realm, password, nonce, nonceCount, cnonce,
 				method, digestUri);
 
 		String digest = digestProcessor.digest();
