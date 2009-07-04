@@ -2,7 +2,6 @@ package org.openxdm.xcap.server.slee;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -20,6 +19,7 @@ import org.mobicents.slee.xdm.server.ServerConfiguration;
 import org.openxdm.xcap.common.error.InternalServerErrorException;
 import org.openxdm.xcap.common.http.HttpConstant;
 import org.openxdm.xcap.server.slee.auth.RFC2617AuthQopDigest;
+import org.openxdm.xcap.server.slee.auth.RFC2617ChallengeParamGenerator;
 
 /**
  * 
@@ -70,10 +70,10 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 	private static final Logger logger = Logger
 			.getLogger(AuthenticationProxySbb.class);
 
+	private static final RFC2617ChallengeParamGenerator challengeParamGenerator = new RFC2617ChallengeParamGenerator();
+	
 	private Context myEnv = null;
 	public String authenticationRealm = null;
-
-	private static final SecureRandom nonceGenerator = new SecureRandom();
 
 	/*
 	 * (non-Javadoc)
@@ -128,10 +128,11 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 	 * @param response
 	 * @throws IOException
 	 * @throws NoSuchAlgorithmException
+	 * @throws InternalServerErrorException 
 	 */
 	private void challengeRequest(HttpServletRequest request,
 			HttpServletResponse response) throws IOException,
-			NoSuchAlgorithmException {
+			NoSuchAlgorithmException, InternalServerErrorException {
 
 		if (logger.isDebugEnabled())
 			logger
@@ -144,10 +145,10 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		 * challenge response MUST contain the nonce-count and cnonce
 		 * parameters. This will be checked later on.
 		 */
-		// FIXME we are not storing the nonce & relation with request/user, 
-		// so this is very weak against replay attacks
-		final String challengeParams = "Digest nonce=\"" + generateNonce()
+		String opaque = challengeParamGenerator.generateOpaque();
+		final String challengeParams = "Digest nonce=\"" + challengeParamGenerator.getNonce(opaque)
 				+ "\", realm=\"" + getRealm()
+				+ "\", opaque=\"" + opaque
 				+ "\", qop=\"auth\"";
 
 		response.setHeader(HttpConstant.HEADER_WWW_AUTHENTICATE,
@@ -218,18 +219,19 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		String nc = null;
 		String qop = null;
 		String resp = null;
+		String opaque = null;
 
 		for(String param : authHeaderParams.split(",")) {
 			String[] paramParts = param.split("=");
 			if (paramParts.length == 2) {
 				String paramName = paramParts[0].trim();
 				String paramValue = paramParts[1].trim();
-				if (logger.isDebugEnabled()) {
-					logger.debug("Found param "+paramName+" with value "+paramValue);
-				}
 				if (paramName.equals("username")) {
 					if (paramValue.length()>2) {
-						username = paramValue.substring(1, paramValue.length()-1);						
+						username = paramValue.substring(1, paramValue.length()-1);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Username param with value "+username);
+						}
 					}
 					else {
 						if (logger.isDebugEnabled()) {
@@ -240,6 +242,9 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 				else if (paramName.equals("nonce")) {
 					if (paramValue.length()>2) {
 						nonce = paramValue.substring(1, paramValue.length()-1);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Nonce param with value "+nonce);
+						}
 					}
 					else {
 						if (logger.isDebugEnabled()) {
@@ -250,6 +255,9 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 				else if (paramName.equals("cnonce")) {
 					if (paramValue.length()>2) {
 						cnonce = paramValue.substring(1, paramValue.length()-1);
+						if (logger.isDebugEnabled()) {
+							logger.debug("CNonce param with value "+cnonce);
+						}
 					}
 					else {
 						if (logger.isDebugEnabled()) {
@@ -260,6 +268,9 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 				else if (paramName.equals("realm")) {
 					if (paramValue.length()>2) {
 						realm = paramValue.substring(1, paramValue.length()-1);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Realm param with value "+realm);
+						}
 					}
 					else {
 						if (logger.isDebugEnabled()) {
@@ -269,10 +280,16 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 				}
 				else if (paramName.equals("nc")) {
 					nc = paramValue;
+					if (logger.isDebugEnabled()) {
+						logger.debug("Nonce-count param with value "+nc);
+					}
 				}
 				else if (paramName.equals("response")) {
 					if (paramValue.length()>2) {
 						resp = paramValue.substring(1, paramValue.length()-1);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Response param with value "+resp);
+						}
 					}
 					else {
 						if (logger.isDebugEnabled()) {
@@ -283,6 +300,22 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 				else if (paramName.equals("uri")) {
 					if (paramValue.length()>2) {
 						uri = paramValue.substring(1, paramValue.length()-1);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Digest uri param with value "+uri);
+						}
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Ignoring invalid param "+paramName+" value "+paramValue);
+						}
+					}
+				}
+				else if (paramName.equals("opaque")) {
+					if (paramValue.length()>2) {
+						opaque = paramValue.substring(1, paramValue.length()-1);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Opaque param with value "+opaque);
+						}
 					}
 					else {
 						if (logger.isDebugEnabled()) {
@@ -304,6 +337,9 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 					else {
 						qop = paramValue;
 					}
+					if (logger.isDebugEnabled()) {
+						logger.debug("Qop param with value "+qop);
+					}
 				}
 			}
 			else {
@@ -323,11 +359,24 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		 * protection space.
 		 */
 		if (username == null || realm == null || nonce == null || cnonce == null || nc == null
-				|| uri == null || resp == null) {
+				|| uri == null || resp == null || opaque == null) {
 			logger
 					.error("A required parameter is missing in the challenge response");
 			// FIXME should be replied with BAD REQUEST 400
 			return null;
+		}
+		
+		// verify opaque vs nonce
+		if (challengeParamGenerator.getNonce(opaque).equals(nonce)) {
+			if (logger.isDebugEnabled())
+				logger.debug("Nonce provided matches the one generated using opaque as seed");
+			
+		}
+		else {
+			if (logger.isDebugEnabled())
+				logger.debug("Authentication failed, nonce provided doesn't match the one generated using opaque as seed");
+			return null;
+
 		}
 		
 		final String digest = new RFC2617AuthQopDigest(username, realm, password, nonce, nc, cnonce, qop, request.getMethod().toUpperCase(), uri).digest();
@@ -374,29 +423,8 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 	 */
 	public String getRealm() {
 		return this.authenticationRealm;
-	}
-
-	/**
-	 * Get the authentication Algorithm
-	 * 
-	 * @return the alogrithm name (i.e. Digest).
-	 */
-	public String getAlgorithm() {
-		return "MD5";
-	}
-
-	/**
-	 * Generate the challenge string.
-	 * 
-	 * @return a generated nonce.
-	 * @throws NoSuchAlgorithmException
-	 */
-	public String generateNonce() {
-		synchronized (nonceGenerator) {
-			return Integer.toHexString(nonceGenerator.nextInt());
-		}
-	}
-
+	}	
+	
 	// -- user profile enabler child relation
 	
 	public abstract ChildRelation getUserProfileControlChildRelation();
