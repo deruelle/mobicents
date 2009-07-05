@@ -29,20 +29,17 @@ import org.openxdm.xcap.common.uri.DocumentSelector;
 
 public class RLSServicesAuthorizationPolicy extends AuthorizationPolicy {
 
-	public boolean isAuthorized(String user, AuthorizationPolicy.Operation operation, DocumentSelector documentSelector) {
-		
-		if (user == null) {
-			// no authentication so no authorization
-			return true;
-		}
+	public boolean isAuthorized(String user, AuthorizationPolicy.Operation operation, DocumentSelector documentSelector) throws NullPointerException {
 		
 		// check args
-		
+		if (user == null) {
+			throw new NullPointerException("user is null");
+		}
 		else if (operation == null) {
-			throw new IllegalArgumentException("operation is null");
-		}		
+			throw new NullPointerException("operation is null");
+		}			
 		else if (documentSelector == null) {
-			throw new IllegalArgumentException("document selector is null");
+			throw new NullPointerException("document selector is null");
 		}
 				
 		try {
@@ -52,7 +49,6 @@ public class RLSServicesAuthorizationPolicy extends AuthorizationPolicy {
 			if (documentParentParts[2].equalsIgnoreCase("global")) {
 				// /auid/global dir, never authorize operation except pre-authorized users
 				// which will not need to use the auth policy
-				// FIXME should these users be controlled here too?
 				return false;				
 			} else if (documentParentParts[2].equalsIgnoreCase("users")) {
 				// /auid/users directory, get it's child, the user directory 

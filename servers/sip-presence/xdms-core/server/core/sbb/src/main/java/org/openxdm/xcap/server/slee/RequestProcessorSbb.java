@@ -192,7 +192,7 @@ public abstract class RequestProcessorSbb implements
 				throw new NotFoundException();
 			}
 			// authorize user
-			if (!appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.DELETE, documentSelector)) {
+			if (authenticatedUser != null && !appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.DELETE, documentSelector)) {
 				throw new NotAuthorizedRequestException();
 			}
 			// get document
@@ -583,7 +583,7 @@ public abstract class RequestProcessorSbb implements
 				throw new NotFoundException();
 			}
 			// authorize user
-			if (!appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.GET, documentSelector)) {
+			if (authenticatedUser != null && !appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.GET, documentSelector)) {
 				throw new NotAuthorizedRequestException();
 			}
 			// get document
@@ -830,7 +830,7 @@ public abstract class RequestProcessorSbb implements
 				throw new NoParentConflictException(xcapRoot);
 			}
 			// authorize user
-			if (!appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.PUT, documentSelector)) {
+			if (authenticatedUser != null && !appUsage.getAuthorizationPolicy().isAuthorized(authenticatedUser, AuthorizationPolicy.Operation.PUT, documentSelector)) {
 				throw new NotAuthorizedRequestException();
 			}
 			if (dynamicUserProvisioning) {

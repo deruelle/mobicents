@@ -16,7 +16,6 @@ public class ServerConfiguration {
 	public static int SERVER_PORT;
 	public static String SCHEME_AND_AUTHORITY_URI;
 	public static String XCAP_ROOT;
-	public static boolean DO_AUTHENTICATION;
 	static {
 		ServerConfiguration serverConfiguration = new ServerConfiguration();
 		Properties properties = new Properties();
@@ -30,8 +29,8 @@ public class ServerConfiguration {
 		try {
 		MBeanServer server = MBeanServerLocator.locateJBoss(); 
 		ObjectName query = new ObjectName("jboss.web:type=Connector,*"); // valid query 
-		Set objectNames = server.queryNames(query, null); 
-		for (Iterator i = objectNames.iterator(); i.hasNext();) {
+		Set<?> objectNames = server.queryNames(query, null); 
+		for (Iterator<?> i = objectNames.iterator(); i.hasNext();) {
 			ObjectName o = (ObjectName) i.next();
 			String protocol = (server.getAttribute(o, "protocol")).toString();
 			if(protocol.startsWith("HTTP")){
@@ -55,7 +54,6 @@ public class ServerConfiguration {
 		
 		XCAP_ROOT = properties.getProperty("XCAP_ROOT", "/mobicents");
 		
-		DO_AUTHENTICATION = Boolean.valueOf(properties.getProperty("DO_AUTHENTICATION", "false"));
 	}
 	
 }

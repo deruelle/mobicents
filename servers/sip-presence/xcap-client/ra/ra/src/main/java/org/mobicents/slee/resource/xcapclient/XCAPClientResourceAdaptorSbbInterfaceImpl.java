@@ -89,4 +89,15 @@ public class XCAPClientResourceAdaptorSbbInterfaceImpl implements XCAPClientReso
 		throw new UnsupportedOperationException("shutdown of ra interface not supported");
 	}
 
+	public boolean getDoAuthentication() {
+		return ra.getClient().getDoAuthentication();
+	}
+	
+	public void setAuthenticationCredentials(String userName, String password) {
+		ra.getClient().setAuthenticationCredentials(userName, password);
+	}
+	
+	public void setDoAuthentication(boolean value) {
+		ra.getClient().setDoAuthentication(value);		
+	}
 }

@@ -155,12 +155,10 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 								.getRequestURI(), request.getQueryString());
 
 				// user authentication
-				String user = null;
-				if (ServerConfiguration.DO_AUTHENTICATION) {
-					user = getAuthenticationProxy().authenticate(request, response);
-					if (user == null) {
-						return;
-					}
+				String user = getAuthenticationProxy().authenticate(request, response);
+				if (user == null) {
+					// authentication failed, stop processing request
+					return;
 				}
 				
 				// check conditional request headers
@@ -280,12 +278,10 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				}
 				
 				// user authentication
-				String user = null;
-				if (ServerConfiguration.DO_AUTHENTICATION) {
-					user = getAuthenticationProxy().authenticate(request, response);
-					if (user == null) {
-						return;
-					}
+				String user = getAuthenticationProxy().authenticate(request, response);
+				if (user == null) {
+					// authentication failed, stop processing request
+					return;
 				}
 				
 				ReadResult result = getRequestProcessor().get(resourceSelector,user);
@@ -354,12 +350,10 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 										.getQueryString());
 
 				// user authentication
-				String user = null;
-				if (ServerConfiguration.DO_AUTHENTICATION) {
-					user = getAuthenticationProxy().authenticate(request, response);
-					if (user == null) {
-						return;
-					}
+				String user = getAuthenticationProxy().authenticate(request, response);
+				if (user == null) {
+					// authentication failed, stop processing request
+					return;
 				}
 				
 				// check conditional request headers

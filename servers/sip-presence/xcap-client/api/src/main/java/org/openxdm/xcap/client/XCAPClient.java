@@ -11,6 +11,28 @@ import org.openxdm.xcap.common.resource.ElementResource;
 public interface XCAPClient {
 
 	/**
+	 * 
+	 * Sets the username and passowrd for authentication in the server. 
+	 * 
+	 * @param userName
+	 * @param password
+	 */
+	public void setAuthenticationCredentials(String userName, String password);
+	
+	/**
+	 * Turns on or off the request authentication.
+	 * 
+	 * @param value
+	 */
+	public void setDoAuthentication(boolean value);
+	
+	/**
+	 * Indicates if the client is set to do authentication on server.
+	 * @return
+	 */
+	public boolean getDoAuthentication();
+	
+	/**
 	 * Shutdown the client.
 	 */
 	public void shutdown();

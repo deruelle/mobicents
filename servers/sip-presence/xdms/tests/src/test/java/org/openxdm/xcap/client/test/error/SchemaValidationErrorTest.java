@@ -12,7 +12,6 @@ import org.apache.commons.httpclient.HttpException;
 import org.junit.Test;
 import org.openxdm.xcap.client.Response;
 import org.openxdm.xcap.client.test.AbstractXDMJunitTest;
-import org.openxdm.xcap.client.test.ServerConfiguration;
 import org.openxdm.xcap.common.error.SchemaValidationErrorConflictException;
 import org.openxdm.xcap.common.key.UserDocumentUriKey;
 
@@ -24,9 +23,7 @@ public class SchemaValidationErrorTest extends AbstractXDMJunitTest {
 	
 	@Test
 	public void test() throws HttpException, IOException, JAXBException, InterruptedException {
-		
-		client = ServerConfiguration.getXCAPClientInstance();
-		
+				
 		// create exception for return codes
 		SchemaValidationErrorConflictException exception = new SchemaValidationErrorConflictException();
 		

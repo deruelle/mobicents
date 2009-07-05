@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ReflectionException;
+import javax.naming.NamingException;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.DialogTerminatedEvent;
@@ -446,7 +451,7 @@ public class SubscribeDocumentTest extends AbstractXDMJunitTest implements SipLi
 	// ---- TEST setup/cleanup
 	
 	@Before
-	public void runBefore() throws IOException, InterruptedException {
+	public void runBefore() throws IOException, InterruptedException, MalformedObjectNameException, InstanceNotFoundException, NullPointerException, MBeanException, ReflectionException, NamingException {
 			
 		super.runBefore();
 		
@@ -492,7 +497,7 @@ public class SubscribeDocumentTest extends AbstractXDMJunitTest implements SipLi
 	}
 	
 	@After
-	public void runAfter() throws IOException {
+	public void runAfter() throws IOException, InstanceNotFoundException, MBeanException, ReflectionException {
 		
 		super.runAfter();
 		

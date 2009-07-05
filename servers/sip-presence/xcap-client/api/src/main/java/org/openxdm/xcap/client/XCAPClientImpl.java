@@ -10,6 +10,8 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -26,6 +28,7 @@ public class XCAPClientImpl implements XCAPClient {
 	
 	private HttpClient client;
 	private String xcapRoot;
+	private boolean doAuthentication = false;
 	
 	public XCAPClientImpl(String host,int port,String xcapRoot) throws InterruptedException {		
 		this.xcapRoot = xcapRoot;
@@ -40,6 +43,18 @@ public class XCAPClientImpl implements XCAPClient {
 	}
 		
 	// CLIENT MANAGEMENT
+	
+	public boolean getDoAuthentication() {
+		return doAuthentication;
+	}
+	
+	public void setDoAuthentication(boolean value) {
+		this.doAuthentication = value;
+	}
+	
+	public void setAuthenticationCredentials(String userName, String password) {
+		client.getState().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(userName,password));
+	}
 	
 	public void shutdown() {		
 		log.info("shutdown()");
@@ -103,6 +118,8 @@ public class XCAPClientImpl implements XCAPClient {
 		// create method with key uri
 		GetMethod get = new GetMethod(addXcapRoot(key.toString()));
 		
+		get.setDoAuthentication(doAuthentication);
+		
 		// add additional headers
 		addAdditionalRequestHeaders(get, additionalRequestHeaders);
 		
@@ -130,6 +147,8 @@ public class XCAPClientImpl implements XCAPClient {
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		put.setDoAuthentication(doAuthentication);
 		
 		// add additional headers
 		addAdditionalRequestHeaders(put, additionalRequestHeaders);
@@ -163,6 +182,8 @@ public class XCAPClientImpl implements XCAPClient {
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		put.setDoAuthentication(doAuthentication);
 		
 		// add additional headers
 		addAdditionalRequestHeaders(put, additionalRequestHeaders);
@@ -198,6 +219,8 @@ public class XCAPClientImpl implements XCAPClient {
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
 		
+		put.setDoAuthentication(doAuthentication);
+		
 		// add additional headers
 		addAdditionalRequestHeaders(put, additionalRequestHeaders);
 		
@@ -232,6 +255,8 @@ public class XCAPClientImpl implements XCAPClient {
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
 		
+		put.setDoAuthentication(doAuthentication);
+		
 		// add additional headers
 		addAdditionalRequestHeaders(put, additionalRequestHeaders);
 		
@@ -263,6 +288,8 @@ public class XCAPClientImpl implements XCAPClient {
 		
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
+		
+		put.setDoAuthentication(doAuthentication);
 		
 		// add additional headers
 		addAdditionalRequestHeaders(put, additionalRequestHeaders);
@@ -297,6 +324,8 @@ public class XCAPClientImpl implements XCAPClient {
 		// create method with key uri
 		PutMethod put = new PutMethod(addXcapRoot(key.toString()));
 		
+		put.setDoAuthentication(doAuthentication);
+		
 		// add additional headers
 		addAdditionalRequestHeaders(put, additionalRequestHeaders);
 		
@@ -330,6 +359,8 @@ public class XCAPClientImpl implements XCAPClient {
 		// create method with key uri
 		DeleteMethod delete = new DeleteMethod(addXcapRoot(key.toString()));
 		
+		delete.setDoAuthentication(doAuthentication);
+		
 		// add additional headers
 		addAdditionalRequestHeaders(delete, additionalRequestHeaders);
 		
@@ -357,6 +388,8 @@ public class XCAPClientImpl implements XCAPClient {
 		
 		// create method with key uri
 		DeleteMethod delete = new DeleteMethod(addXcapRoot(key.toString()));
+		
+		delete.setDoAuthentication(doAuthentication);
 		
 		// add additional headers
 		addAdditionalRequestHeaders(delete, additionalRequestHeaders);
@@ -387,6 +420,8 @@ public class XCAPClientImpl implements XCAPClient {
 		
 		// create method with key uri
 		DeleteMethod delete = new DeleteMethod(addXcapRoot(key.toString()));
+		
+		delete.setDoAuthentication(doAuthentication);
 		
 		// add additional headers
 		addAdditionalRequestHeaders(delete, additionalRequestHeaders);

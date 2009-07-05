@@ -19,19 +19,17 @@ import org.openxdm.xcap.common.uri.DocumentSelector;
  */
 public class DefaultAuthorizationPolicy extends AuthorizationPolicy {
 
-	public boolean isAuthorized(String user, AuthorizationPolicy.Operation operation, DocumentSelector documentSelector) {
+	public boolean isAuthorized(String user, AuthorizationPolicy.Operation operation, DocumentSelector documentSelector) throws NullPointerException {
 		
+		// check args
 		if (user == null) {
-			// no authorization to do
-			return true;
+			throw new NullPointerException("user is null");
 		}
-		
-		// check other args
-		if (operation == null) {
-			throw new IllegalArgumentException("operation is null");
+		else if (operation == null) {
+			throw new NullPointerException("operation is null");
 		}		
 		else if (documentSelector == null) {
-			throw new IllegalArgumentException("document selector is null");
+			throw new NullPointerException("document selector is null");
 		}
 				
 		try {

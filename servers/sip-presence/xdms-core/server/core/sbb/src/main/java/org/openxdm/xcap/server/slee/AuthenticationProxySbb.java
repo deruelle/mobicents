@@ -150,7 +150,7 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		final String challengeParams = "Digest nonce=\"" + challengeParamGenerator.getNonce(opaque)
 				+ "\", realm=\"" + getRealm()
 				+ "\", opaque=\"" + opaque
-				+ "\", qop=\"auth\"";
+				+ "\", qop=auth";
 
 		response.setHeader(HttpConstant.HEADER_WWW_AUTHENTICATE,
 				challengeParams);
@@ -223,10 +223,10 @@ public abstract class AuthenticationProxySbb implements javax.slee.Sbb,
 		String opaque = null;
 
 		for(String param : authHeaderParams.split(",")) {
-			String[] paramParts = param.split("=");
-			if (paramParts.length == 2) {
-				String paramName = paramParts[0].trim();
-				String paramValue = paramParts[1].trim();
+			int i = param.indexOf('=');
+			if (i > 0 && i < (param.length()-1)) {
+				String paramName = param.substring(0,i).trim();
+				String paramValue = param.substring(i+1).trim();
 				if (paramName.equals("username")) {
 					if (paramValue.length()>2) {
 						username = paramValue.substring(1, paramValue.length()-1);
