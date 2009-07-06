@@ -11,47 +11,46 @@ import java.util.Properties;
  * @author Andreas Hoheneder (ahoh_at_inode.at)
  * @version $Id$
  */
-public class ReflectionProperties
-    extends Properties
+public class ReflectionProperties extends Properties
 {
 
-    private MavenProject project;
+  private static final long serialVersionUID = 1L;
 
-    boolean escapedBackslashesInFilePath;
+  private MavenProject project;
 
-    public ReflectionProperties( MavenProject aProject, boolean escapedBackslashesInFilePath )
+  boolean escapedBackslashesInFilePath;
+
+  public ReflectionProperties( MavenProject aProject, boolean escapedBackslashesInFilePath )
+  {
+    super();
+
+    project = aProject;
+
+    this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
+  }
+
+  public Object get( Object key )
+  {
+    Object value = null;
+    try
     {
-       super();
+      value = ReflectionValueExtractor.evaluate( "" + key , project );
 
-       project = aProject;
+      if ( escapedBackslashesInFilePath && value != null && value instanceof String )
+      {
+        String val = (String) value;
 
-       this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
-    }
-
-    public Object get( Object key )
-    {
-        Object value = null;
-        try
+        // Check if it's a windows path
+        if ( val.indexOf( ":\\" ) == 1 )
         {
-            value = ReflectionValueExtractor.evaluate( "" + key , project );
-
-            if ( escapedBackslashesInFilePath && value != null &&
-                "java.lang.String".equals( value.getClass().getName() ) )
-            {
-                String val = (String) value;
-
-                // Check if it's a windows path
-                if ( val.indexOf( ":\\" ) == 1 )
-                {
-                    value = StringUtils.replace( (String)value, "\\", "\\\\" );
-                    value = StringUtils.replace( (String)value, ":", "\\:" );
-                }
-            }
+          value = StringUtils.replace( (String)value, "\\", "\\\\" );
+          value = StringUtils.replace( (String)value, ":", "\\:" );
         }
-        catch ( Exception e )
-        {
-            //TODO: remove the try-catch block when ReflectionValueExtractor.evaluate() throws no more exceptions
-        }
-        return value;
+      }
     }
+    catch ( Exception e ) {
+      //TODO: remove the try-catch block when ReflectionValueExtractor.evaluate() throws no more exceptions
+    }
+    return value;
+  }
 }

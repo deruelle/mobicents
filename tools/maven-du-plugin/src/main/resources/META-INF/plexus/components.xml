@@ -6,7 +6,7 @@
 		-->
 		<component>
 			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-			<role-hint>du</role-hint>
+			<role-hint>jainslee-du</role-hint>
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
@@ -29,13 +29,14 @@
 			<role>
 				org.apache.maven.artifact.handler.ArtifactHandler
 			</role>
-			<role-hint>du</role-hint>
+			<role-hint>jainslee-du</role-hint>
 			<implementation>
 				org.apache.maven.artifact.handler.DefaultArtifactHandler
 			</implementation>
 			<configuration>
 				<extension>jar</extension>
-				<type>du</type>
+				<type>jainslee-du</type>
+				<packaging>jainslee-du</packaging>
 				<language>java</language>
 				<addedToClasspath>true</addedToClasspath>
 				<includesDependencies>true</includesDependencies>

@@ -25,6 +25,7 @@ import java.io.File;
  * Build a DU from the current project.
  *
  * @author <a href="michele.laporta@gmail.com">Michele La Porta</a>
+ * @author <a href="brainslog@gmail.com">Alexandre Mendonca</a>
  * @version $Id$
  * @goal create
  * @phase package
@@ -32,42 +33,41 @@ import java.io.File;
  * @requiresDependencyResolution runtime
  * @aggregator
  */
-public class DuMojo
-    extends AbstractDuMojo
+public class DuMojo extends AbstractDuMojo
 {
-    /**
-     * Directory containing the classes.
-     *
-     * @parameter expression="${project.build.outputDirectory}"
-     * @required
-     */
-    private File classesDirectory;
+  /**
+   * Directory containing the classes.
+   *
+   * @parameter expression="${project.build.outputDirectory}"
+   * @required
+   */
+  private File classesDirectory;
 
-    /**
-     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
-     *
-     * @parameter
-     */
-    private String classifier;
+  /**
+   * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+   *
+   * @parameter
+   */
+  private String classifier;
 
-    protected String getClassifier()
-    {
-        return classifier;
-    }
+  protected String getClassifier()
+  {
+    return classifier;
+  }
 
-    /**
-     * @return type of the generated artifact
-     */
-    protected String getType()
-    {
-        return "jar";
-    }
+  /**
+   * @return type of the generated artifact
+   */
+  protected String getType()
+  {
+    return "jar";
+  }
 
-    /**
-     * Return the main classes directory, so it's used as the root of the jar.
-     */
-    protected File getClassesDirectory()
-    {
-        return classesDirectory;
-    }
+  /**
+   * Return the main classes directory, so it's used as the root of the jar.
+   */
+  protected File getClassesDirectory()
+  {
+    return classesDirectory;
+  }
 }
