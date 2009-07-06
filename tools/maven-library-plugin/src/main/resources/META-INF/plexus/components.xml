@@ -6,7 +6,7 @@
 		-->
 		<component>
 			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-			<role-hint>library</role-hint>
+			<role-hint>jainslee-library</role-hint>
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
@@ -29,13 +29,14 @@
 			<role>
 				org.apache.maven.artifact.handler.ArtifactHandler
 			</role>
-			<role-hint>library</role-hint>
+			<role-hint>jainslee-library</role-hint>
 			<implementation>
 				org.apache.maven.artifact.handler.DefaultArtifactHandler
 			</implementation>
 			<configuration>
 				<extension>jar</extension>
-				<type>library</type>
+				<type>jainslee-library</type>
+        <packaging>jainslee-library</packaging>
 				<language>java</language>
 				<addedToClasspath>true</addedToClasspath>
 				<includesDependencies>true</includesDependencies>
