@@ -2,11 +2,10 @@ package org.mobicents.slee.sipevent.server.subscription.eventlist;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-
 public class RlsServicesCache {
 	
 	private ConcurrentHashMap<String, FlatList> cache = new ConcurrentHashMap<String, FlatList>();
-		
+	
 	public void putFlatList(FlatList flatList) {
 		cache.put(flatList.getServiceType().getUri(), flatList);
 	}
@@ -22,4 +21,5 @@ public class RlsServicesCache {
 	public void clear() {
 		cache.clear();
 	}
+
 }

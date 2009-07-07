@@ -15,6 +15,11 @@ public interface EventListSubscriptionControlSbbLocalObject extends XDMClientCon
 	public void initRLSCache();
 	
 	/**
+	 * Shuts down the RLS cache.
+	 */
+	public void shutdownRLSCache();
+	
+	/**
 	 * Used to set the call back sbb local object in the sbb implementing this
 	 * interface. Must be used whenever a new object of this interface is
 	 * created.

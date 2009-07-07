@@ -130,115 +130,117 @@ public class RulesetProcessor {
 		else {
 
 			for (Object identityOrSphereOrValidityObject : identityOrSphereOrValidityObjectList) {
-				JAXBElement identityOrSphereOrValidity = (JAXBElement) identityOrSphereOrValidityObject;
+				if (identityOrSphereOrValidityObject instanceof JAXBElement) {
+					JAXBElement identityOrSphereOrValidity = (JAXBElement) identityOrSphereOrValidityObject;
 
-				if (identityOrSphereOrValidity.getValue() instanceof IdentityType) {
-					IdentityType identityType = (IdentityType) identityOrSphereOrValidity.getValue();
-					// identity permission is granted if one sub-clause matches subscriber
-					boolean idPermission = false;
-					for (Object oneOrManyOrAnyObject : identityType.getOneOrManyOrAny()) {
-						JAXBElement oneOrManyOrAny = (JAXBElement) oneOrManyOrAnyObject;
+					if (identityOrSphereOrValidity.getValue() instanceof IdentityType) {
+						IdentityType identityType = (IdentityType) identityOrSphereOrValidity.getValue();
+						// identity permission is granted if one sub-clause matches subscriber
+						boolean idPermission = false;
+						for (Object oneOrManyOrAnyObject : identityType.getOneOrManyOrAny()) {
+							JAXBElement oneOrManyOrAny = (JAXBElement) oneOrManyOrAnyObject;
 
-						if (oneOrManyOrAny.getValue() instanceof OneType) {
-							OneType oneType = (OneType) oneOrManyOrAny.getValue();
-							if (subscriber.equals(oneType.getId())) {
-								// found identity of subscriber											
-								idPermission = true;
-								break;
-							}
-						}
-
-						else if (oneOrManyOrAny.getValue() instanceof ManyType) {
-							ManyType manyType = (ManyType) oneOrManyOrAny.getValue();
-							if (subscriberDomain == null) {
-								int i = subscriber.indexOf('@');
-								if (i>0) {
-									subscriberDomain = subscriber.substring(i+1);
-								}
-							}
-							if (manyType.getDomain() == null || domainsMatch(subscriberDomain,manyType.getDomain())) {
-								boolean exceptNotFound = true;
-								for(Object exceptOrAnyObject: manyType.getExceptOrAny()) {
-									JAXBElement exceptOrAny = (JAXBElement) exceptOrAnyObject;
-									if (exceptOrAny.getValue() instanceof ExceptType) {
-										ExceptType exceptType = (ExceptType) exceptOrAny.getValue();
-										if (subscriber.equals(exceptType.getId())) {
-											// found subscriber as exception in domain
-											exceptNotFound = false;
-											break;
-										}
-										else if (domainsMatch(subscriberDomain, exceptType.getDomain())) {
-											// found subscriber domain as exception in domain
-											exceptNotFound = false;
-											break;
-										}
-									}
-								}							
-								if (exceptNotFound) {
+							if (oneOrManyOrAny.getValue() instanceof OneType) {
+								OneType oneType = (OneType) oneOrManyOrAny.getValue();
+								if (subscriber.equals(oneType.getId())) {
+									// found identity of subscriber											
 									idPermission = true;
 									break;
 								}
 							}
-						}							
-					}
-					if (!idPermission) {
-						return false;
-					}
-				}
 
-				else if (identityOrSphereOrValidity.getValue() instanceof SphereType) {
-					SphereType sphereType = (SphereType) identityOrSphereOrValidity.getValue();
-					// we need current sphere published by notifier
-					String sphere = publishedSphereSource.getSphere(notifier);
-					if (sphereType.getValue() == null || spheresMatch(sphere, sphereType.getValue())) {
-						return false;
+							else if (oneOrManyOrAny.getValue() instanceof ManyType) {
+								ManyType manyType = (ManyType) oneOrManyOrAny.getValue();
+								if (subscriberDomain == null) {
+									int i = subscriber.indexOf('@');
+									if (i>0) {
+										subscriberDomain = subscriber.substring(i+1);
+									}
+								}
+								if (manyType.getDomain() == null || domainsMatch(subscriberDomain,manyType.getDomain())) {
+									boolean exceptNotFound = true;
+									for(Object exceptOrAnyObject: manyType.getExceptOrAny()) {
+										JAXBElement exceptOrAny = (JAXBElement) exceptOrAnyObject;
+										if (exceptOrAny.getValue() instanceof ExceptType) {
+											ExceptType exceptType = (ExceptType) exceptOrAny.getValue();
+											if (subscriber.equals(exceptType.getId())) {
+												// found subscriber as exception in domain
+												exceptNotFound = false;
+												break;
+											}
+											else if (domainsMatch(subscriberDomain, exceptType.getDomain())) {
+												// found subscriber domain as exception in domain
+												exceptNotFound = false;
+												break;
+											}
+										}
+									}							
+									if (exceptNotFound) {
+										idPermission = true;
+										break;
+									}
+								}
+							}							
+						}
+						if (!idPermission) {
+							return false;
+						}
 					}
-				}
 
-				else if (identityOrSphereOrValidity.getValue() instanceof ValidityType) {
-					ValidityType validityType = (ValidityType) identityOrSphereOrValidity.getValue();
-					/*
-					 * The <validity> element is the third condition element
-					 * specified in this document. It expresses the rule
-					 * validity period by two attributes, a starting and an
-					 * ending time. The validity condition is TRUE if the
-					 * current time is greater than or equal to at least one
-					 * <from> child, but less than the <until> child after it.
-					 * This represents a logical OR operation across each <from>
-					 * and <until> pair. Times are expressed in XML dateTime
-					 * format.
-					 */
-					if (validityType.getFromAndUntil().size()%2 == 0) {
-						// verified we have a pair number of subclauses
+					else if (identityOrSphereOrValidity.getValue() instanceof SphereType) {
+						SphereType sphereType = (SphereType) identityOrSphereOrValidity.getValue();
+						// we need current sphere published by notifier
+						String sphere = publishedSphereSource.getSphere(notifier);
+						if (sphereType.getValue() == null || spheresMatch(sphere, sphereType.getValue())) {
+							return false;
+						}
 					}
-					boolean valid = false;
-					XMLGregorianCalendar calendar = null;
-					try {
-						calendar = DatatypeFactory.newInstance()
-						.newXMLGregorianCalendar(new GregorianCalendar());
-					} catch (DatatypeConfigurationException e) {
-						System.err.println("Failed to create calendar to verify pres-rules condition validity");
-						e.printStackTrace();
-					}
-					if (calendar != null) {
-						for (Iterator<JAXBElement<XMLGregorianCalendar>> iterator = validityType.getFromAndUntil().iterator(); iterator.hasNext();) {
-							JAXBElement<XMLGregorianCalendar> fromElement = iterator.next();
-							JAXBElement<XMLGregorianCalendar> untilElement = iterator.next();
-							if (fromElement.getName().getLocalPart().equals("from") && untilElement.getName().getLocalPart().equals("until")) {
-								if (fromElement.getValue().compare(calendar) < 1 && untilElement.getValue().compare(calendar) > -1) {
-									valid = true;
+
+					else if (identityOrSphereOrValidity.getValue() instanceof ValidityType) {
+						ValidityType validityType = (ValidityType) identityOrSphereOrValidity.getValue();
+						/*
+						 * The <validity> element is the third condition element
+						 * specified in this document. It expresses the rule
+						 * validity period by two attributes, a starting and an
+						 * ending time. The validity condition is TRUE if the
+						 * current time is greater than or equal to at least one
+						 * <from> child, but less than the <until> child after it.
+						 * This represents a logical OR operation across each <from>
+						 * and <until> pair. Times are expressed in XML dateTime
+						 * format.
+						 */
+						if (validityType.getFromAndUntil().size()%2 == 0) {
+							// verified we have a pair number of subclauses
+						}
+						boolean valid = false;
+						XMLGregorianCalendar calendar = null;
+						try {
+							calendar = DatatypeFactory.newInstance()
+							.newXMLGregorianCalendar(new GregorianCalendar());
+						} catch (DatatypeConfigurationException e) {
+							System.err.println("Failed to create calendar to verify pres-rules condition validity");
+							e.printStackTrace();
+						}
+						if (calendar != null) {
+							for (Iterator<JAXBElement<XMLGregorianCalendar>> iterator = validityType.getFromAndUntil().iterator(); iterator.hasNext();) {
+								JAXBElement<XMLGregorianCalendar> fromElement = iterator.next();
+								JAXBElement<XMLGregorianCalendar> untilElement = iterator.next();
+								if (fromElement.getName().getLocalPart().equals("from") && untilElement.getName().getLocalPart().equals("until")) {
+									if (fromElement.getValue().compare(calendar) < 1 && untilElement.getValue().compare(calendar) > -1) {
+										valid = true;
+										break;
+									}
+								}
+								else {
+									// invalid condition, fail
+									valid = false;
 									break;
 								}
 							}
-							else {
-								// invalid condition, fail
-								valid = false;
-								break;
-							}
 						}
-					}
-					if (!valid) {
-						return false;
+						if (!valid) {
+							return false;
+						}
 					}
 				}
 			}

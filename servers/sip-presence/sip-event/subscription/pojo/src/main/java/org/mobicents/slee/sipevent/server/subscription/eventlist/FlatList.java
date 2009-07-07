@@ -1,16 +1,21 @@
 package org.mobicents.slee.sipevent.server.subscription.eventlist;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openxdm.xcap.client.appusage.resourcelists.jaxb.EntryType;
 import org.openxdm.xcap.client.appusage.rlsservices.jaxb.ServiceType;
+import org.openxdm.xcap.common.uri.DocumentSelector;
 
 public class FlatList {
 
 	private final ConcurrentHashMap<String, EntryType> entries = new ConcurrentHashMap<String, EntryType>();
 	
 	private final ServiceType serviceType;
+	
+	private final Set<DocumentSelector> resourceLists = new HashSet<DocumentSelector>(); 
 	
 	private int status = 200;  
 	
@@ -22,14 +27,16 @@ public class FlatList {
 		return entries;
 	}
 	
+	public Set<DocumentSelector> getResourceLists() {
+		return resourceLists;
+	}
+	
 	public ServiceType getServiceType() {
 		return serviceType;
 	}
 	
 	public void putEntry(EntryType entryType) {
-		if (!entries.containsKey(entryType.getUri())) {			
-			entries.put(entryType.getUri(), entryType);
-		}
+		entries.putIfAbsent(entryType.getUri(), entryType);
 	}
 	
 	public int getStatus() {

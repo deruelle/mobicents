@@ -619,7 +619,7 @@ public abstract class PublicationControlSbb implements Sbb,
 
 	public void shutdown() {
 		// close entity manager factory
-		entityManagerFactory.close();
+		stopEntityManagerFactory();
 	}
 
 	public ComposedPublication getComposedPublication(String entity,
@@ -802,6 +802,31 @@ public abstract class PublicationControlSbb implements Sbb,
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return null;
+		}
+	}
+	
+	private static void stopEntityManagerFactory() {
+		try {
+			TransactionManager txMgr = (TransactionManager) new InitialContext()
+					.lookup("java:/TransactionManager");
+
+			Transaction tx = null;
+			try {
+				if (txMgr.getTransaction() != null) {
+					tx = txMgr.suspend();
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			try {
+				entityManagerFactory.close();
+			} finally {
+				if (tx != null) {
+					txMgr.resume(tx);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
 	}
 	

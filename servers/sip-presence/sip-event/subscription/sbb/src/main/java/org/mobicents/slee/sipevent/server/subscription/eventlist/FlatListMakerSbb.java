@@ -27,6 +27,7 @@ import org.openxdm.xcap.client.appusage.resourcelists.jaxb.ExternalType;
 import org.openxdm.xcap.client.appusage.resourcelists.jaxb.ListType;
 import org.openxdm.xcap.client.appusage.rlsservices.jaxb.ServiceType;
 import org.openxdm.xcap.common.key.XcapUriKey;
+import org.openxdm.xcap.common.uri.DocumentSelector;
 import org.openxdm.xcap.common.uri.Parser;
 import org.openxdm.xcap.common.uri.ResourceSelector;
 
@@ -123,38 +124,16 @@ public abstract class FlatListMakerSbb implements Sbb,
 				 * returned is processed as described in the previous step.
 				 */
 				
-				// we need to derrefer the entry, which is async, so we need to store current list
+				// we need to derefer the entry, which is async, so we need to store current list
 				setCurrentListType(currentListType);
 				setFlatList(flatList);
 				setLists(lists);
-				// now lets ask for it from the xdm
+				
 				EntryRefType entryRefType = (EntryRefType) element.getValue();
-				try {
-					ResourceSelector resourceSelector = null;
-					int queryComponentSeparator = entryRefType.getRef().indexOf('?');
-					if (queryComponentSeparator > 0) {
-						resourceSelector = Parser
-								.parseResourceSelector(
-										null,
-										entryRefType.getRef()
-												.substring(0,
-														queryComponentSeparator),
-										entryRefType.getRef()
-												.substring(
-														queryComponentSeparator + 1));
-					} else {
-						resourceSelector = Parser
-								.parseResourceSelector(
-										null,
-										entryRefType.getRef(), null);
-					}
-					getXDMClientControlSbb().get(new XcapUriKey(resourceSelector),null);
+				String resourceList = entryRefType.getRef();
+				if (!dereferenceResourceList(resourceList, flatList,false)) {
 					return;
 				}
-				catch (Exception e) {
-					logger.error("failed to parse entry ref "+entryRefType.getRef(),e);
-					flatList.setStatus(Response.BAD_GATEWAY);					
-				}				
 			}
 			
 			else if (element.getValue() instanceof ExternalType) {
@@ -188,8 +167,19 @@ public abstract class FlatListMakerSbb implements Sbb,
 				 * 
 				 */
 				
-				// FIXME set 502 for now
-				flatList.setStatus(Response.BAD_GATEWAY);
+				//FIXME add support to really external uris
+				
+				ExternalType externalType = (ExternalType)element.getValue();
+				String resourceList = externalType.getAnchor();
+				
+				// we need to derefer the entry, which is async, so we need to store current list
+				setCurrentListType(currentListType);
+				setFlatList(flatList);
+				setLists(lists);
+				
+				if (!dereferenceResourceList(resourceList, flatList,true)) {
+					return;
+				}
 			}
 		}
 		
@@ -199,8 +189,82 @@ public abstract class FlatListMakerSbb implements Sbb,
 			processList(flatList, lists, nextListType);
 		}
 		else {
-			getParentSbbCMP().flatListMade(flatList);
+			returnFlatListToParent(flatList);
 		}
+	}
+	
+	/**
+	 * 
+	 * @param resourceList
+	 * @param flatList
+	 * @param absoluteURI indicates if the uri is absolute or not
+	 * @return true if the make of the flat list should continue, false otherwise
+	 */
+	private boolean dereferenceResourceList(String resourceList, FlatList flatList, boolean absoluteURI) {
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Dereferencing resource list "+resourceList);
+		}
+		
+		XcapUriKey key = null;
+		DocumentSelector documentSelector = null;
+		try {
+			if (absoluteURI) {
+				String shemeAndAuthorityURI = getSchemeAndAuthorityURI();
+				if (resourceList.startsWith(shemeAndAuthorityURI)) {
+					resourceList = resourceList.substring(shemeAndAuthorityURI.length());
+				}
+				else {
+					if (logger.isDebugEnabled()) {
+						logger.debug("The resource list (to dereference) uri "+resourceList+" does not starts with server scheme and authority uri "+shemeAndAuthorityURI);
+					}
+					return true;
+				}
+			}
+			else {
+				resourceList = "/" + resourceList;
+			}
+			ResourceSelector resourceSelector = null;
+			int queryComponentSeparator = resourceList.indexOf('?');
+			if (queryComponentSeparator > 0) {
+				resourceSelector = Parser
+						.parseResourceSelector(
+								getLocalXcapRoot(),
+								resourceList
+										.substring(0,
+												queryComponentSeparator),
+								resourceList
+										.substring(
+												queryComponentSeparator + 1));
+			} else {
+				resourceSelector = Parser
+						.parseResourceSelector(
+								getLocalXcapRoot(),
+								resourceList, null);
+			}
+			
+			documentSelector = Parser.parseDocumentSelector(resourceSelector.getDocumentSelector());
+			if (!documentSelector.getAUID().equals("resource-lists")) {
+				logger.error("Unable to make flat list, invalid or not supported resource list uri: "+resourceList);
+				flatList.setStatus(Response.BAD_GATEWAY);
+				returnFlatListToParent(flatList);
+				return false;
+			}
+			else {
+				flatList.getResourceLists().add(documentSelector);
+				setFlatList(flatList);
+			}
+			key = new XcapUriKey(resourceSelector);
+		}
+		catch (Exception e) {
+			logger.error("Failed to parse resource list (to dereference) "+resourceList,e);
+			flatList.setStatus(Response.BAD_GATEWAY);
+			returnFlatListToParent(flatList);
+			return false;
+		}
+		XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
+		xdmClientSbb.get(key,null);
+		return false;
 	}
 	
 	private void makeFlatList(FlatList flatList, ListType listType) {
@@ -232,62 +296,10 @@ public abstract class FlatListMakerSbb implements Sbb,
 		}
 		else {
 			String resourceList = serviceType.getResourceList().trim();
-			if (resourceList != null) {
-				// get list, FIXME for now support only lists in local xdm
-				// lets build the list xdm key
-				XcapUriKey key = null;
-				try {
-					String shemeAndAuthorityURI = getSchemeAndAuthorityURI();
-					if (resourceList.startsWith(shemeAndAuthorityURI)) {
-						resourceList = resourceList.substring(shemeAndAuthorityURI.length());
-					}
-					else {
-						if (logger.isDebugEnabled()) {
-							logger.debug("The resource list uri "+resourceList+" does not starts with server scheme and authority uri "+shemeAndAuthorityURI);
-						}
-					}
-					ResourceSelector resourceSelector = null;
-					int queryComponentSeparator = resourceList.indexOf('?');
-					if (queryComponentSeparator > 0) {
-						resourceSelector = Parser
-								.parseResourceSelector(
-										getLocalXcapRoot(),
-										resourceList
-												.substring(0,
-														queryComponentSeparator),
-										resourceList
-												.substring(
-														queryComponentSeparator + 1));
-					} else {
-						resourceSelector = Parser
-								.parseResourceSelector(
-										getLocalXcapRoot(),
-										resourceList, null);
-					}
-					if (!resourceSelector.getDocumentSelector().startsWith("/resource-lists")) {
-						logger.error("Unable to make flat list, invalid or not supported resource list uri: "+serviceType.getResourceList());
-						flatList.setStatus(Response.BAD_GATEWAY);
-						getParentSbbCMP().flatListMade(flatList);
-					}
-					key = new XcapUriKey(resourceSelector);
-				}
-				catch (Exception e) {
-					logger.error("Failed to parse resource list "+resourceList,e);
-					flatList.setStatus(Response.BAD_GATEWAY);
-					getParentSbbCMP().flatListMade(flatList);
-					return;
-				}				
-				setFlatList(flatList);
-				getXDMClientControlSbb().get(key,null);	
-			}
-			else {
-				if (logger.isInfoEnabled()) {
-					logger.info("service type to make flat list doesn't contains list or resource list");
-				}				
-				flatList.setStatus(Response.BAD_GATEWAY);
-				getParentSbbCMP().flatListMade(flatList);
-			}
+			setFlatList(flatList);
+			dereferenceResourceList(resourceList, flatList,true);
 		}
+		
 	}
 	
 	// --- XDM call backs
@@ -309,11 +321,11 @@ public abstract class FlatListMakerSbb implements Sbb,
 				logger.error("failed to unmarshall content for key "+key,e);
 				// if it was deferring an entry ref continue
 				flatList.setStatus(Response.BAD_GATEWAY);
-				if (getCurrentListType() != null) {					
+				if (currentListType != null) {					
 					processList(flatList, lists, currentListType);
 				}
 				else {
-					getParentSbbCMP().flatListMade(flatList);					
+					returnFlatListToParent(flatList);					
 				}				
 				return;
 			}
@@ -324,7 +336,13 @@ public abstract class FlatListMakerSbb implements Sbb,
 			// check what type of object we got
 			if (o instanceof ListType) {
 				// we are deferring a resource list
-				makeFlatList(flatList,(ListType) o);										
+				if (lists == null) {
+					makeFlatList(flatList,(ListType) o);
+				}
+				else {
+					// restart procedure to make flat list
+					processList(flatList, lists, (ListType) o);
+				}								
 			}
 			else if (o instanceof EntryType) {
 				// we are deferring a entry ref
@@ -344,9 +362,14 @@ public abstract class FlatListMakerSbb implements Sbb,
 				processList(flatList, lists, currentListType);
 			}
 			else {
-				getParentSbbCMP().flatListMade(flatList);					
+				returnFlatListToParent(flatList);					
 			}				
 		}
+	}
+	
+	private void returnFlatListToParent(FlatList flatList) {
+		getParentSbbCMP().flatListMade(flatList);
+		sbbContext.getSbbLocalObject().remove();
 	}
 	
 	// --- aux public getter that reuires jboss running, publi so junit tests overwrite it

@@ -192,9 +192,6 @@
                 <sbb-abstract-class-name>org.mobicents.slee.sipevent.server.subscription.eventlist.EventListSubscriptionControlSbb</sbb-abstract-class-name>
                 <cmp-field>
                 	<cmp-field-name>xDMClientControlChildSbbCMP</cmp-field-name>
-                </cmp-field>
-                <cmp-field>
-                	<cmp-field-name>flatListMakerChildSbbCMP</cmp-field-name>
                 </cmp-field> 
                 <cmp-field>
                 	<cmp-field-name>parentSbbCMP</cmp-field-name>
@@ -220,6 +217,15 @@
             </sbb-local-interface>	   
         </sbb-classes>            
      
+      <event event-direction="Receive" initial-event="False">
+            <event-name>TimerEvent</event-name>
+            <event-type-ref>
+                <event-type-name>javax.slee.facilities.TimerEvent</event-type-name>
+                <event-type-vendor>javax.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        
     </sbb>
     
     <!-- flat list maker sbb -->

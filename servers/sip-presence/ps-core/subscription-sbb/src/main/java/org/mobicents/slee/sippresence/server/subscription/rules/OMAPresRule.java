@@ -30,7 +30,9 @@ public class OMAPresRule extends PresRule {
 		}
 		this.provideNetworkAvailability = this.provideNetworkAvailability || other.provideNetworkAvailability;
 		this.provideRegistrationState = this.provideRegistrationState || other.provideRegistrationState;
-		this.serviceIDs.addAll(other.serviceIDs);
+		if (other.serviceIDs != null) {
+			getServiceIDs().addAll(other.serviceIDs);
+		}
 		this.provideSessionParticipation = this.provideSessionParticipation || other.provideSessionParticipation;
 		this.provideWillingness = this.provideWillingness || other.provideWillingness;
 	}
