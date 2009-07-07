@@ -326,9 +326,11 @@ public class AnnCall extends AbstractCall {
 			int localPort = super.datagramChannel.socket().getLocalPort();
 			crcx.setRemoteConnectionDescriptor(new ConnectionDescriptor(super.getLocalDescriptor(localPort)));
 			crcx.setTransactionHandle(this.provider.getUniqueTransactionHandler());
+			
+			super.testCase.addCall(crcx, this);
 			super.provider.sendMgcpEvents(new JainMgcpEvent[] { crcx });
 
-			super.testCase.addCall(crcx, this);
+			
 
 			this.setLocalFlowState(AnnCallState.SENT_CRCX);
 			super.setState(CallState.INITIAL);
