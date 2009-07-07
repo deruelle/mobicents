@@ -48,11 +48,7 @@
 		</section>
 		<section	id="itms-binary-Media_Server-Installing">
 			<title>Installing</title>
-			<para>Once the requirements and prerequisites have been met and you have downloaded the binary distribution zip file, you are ready to install the Media Server. Follow the instructions below for your platform, whether Linux or Windows.</para>
-			<note id="itms-Media_Server-Use_Version_Numbers_Relevant_to_Your_Installation">
-				<title>Version Number</title>
-				<para>For clarity, the command line instructions presented in this chapter use specific version numbers and directory names.  Ensure this information is substituted with the binary distribution's version numbers and file names.</para>
-			</note>
+			<para>Once the requirements and prerequisites have been met, the Media Server can be installed onto the system. Follow the instructions below for the operating system on which the server will reside.</para>
 			<procedure>
 				<title>Installing the Media Server Binary Distribution on Linux</title>
 				<para>It is assumed that the downloaded archive is saved in the home directory, and that a terminal window is open displaying the home directory.</para>
@@ -117,7 +113,7 @@
     
 		<section	id="itms-binary-Media_Server-Running">
 			<title>Running</title>
-			<para>In the Linux terminal or Command Prompt, you will be able to tell that the Media Server started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):</para>
+			<para>In the Linux terminal or Windows command prompt, the Media Server has started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):</para>
 			<programlisting><![CDATA[11:23:07,656 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 23s:648ms]]></programlisting>
 			<procedure>
 				<title>Running the Media Server on Linux</title>
@@ -137,7 +133,7 @@
 		  <note><para>Instead of executing the Bourne shell script to start the server, the <filename>run.jar</filename> executable Java archive can be executed from the <filename>bin</filename> directory:</para>
 			<screen>ms-&lt;version&gt;]$ java -jar bin/run.jar</screen></note>
 		  <procedure>
-		  	<title>Running Media Server on <productname>Windows</productname></title>
+		  	<title>Running the Media Server on <productname>Windows</productname></title>
 	  		<step>
 		  		<para>Using Windows Explorer, navigate to the <filename>bin</filename> subfolder in the installation directory.</para>
         </step>
@@ -157,7 +153,7 @@
 			</procedure>
 		</section>
 		<section	id="itms-binary-Media_Server-Stopping">
-		  <title>Stopping the Media Server</title>
+		  <title>Stopping</title>
 			<para>Detailed instructions for stopping the JBoss Application Server are given below, arranged by platform.  If the server is correctly stopped, the following three lines are displayed as the last output in the Linux terminal or Command Prompt:</para>
 		  <programlisting>[Server] Shutdown complete
 Shutdown complete
@@ -199,7 +195,7 @@ Halting VM</programlisting>
 		</section>
 		<section id="itms-Server_Structure">
   	<title>Server Structure</title>
-  	<para>Now the server is installed, it is important to understand the layout of the server directories.  An understanding of the server strucutre is useful when deploying examples, and making configuration changes.  It is also useful to understand what components can be removed to reduce the server boot time.</para>
+  	<para>Now the server is installed, it is important to understand the layout of the server directories.  An understanding of the server structure is useful when deploying examples, and making configuration changes.  It is also useful to understand what components can be removed to reduce the server boot time.</para>
   	<para>The directory structure in the Media Server installation directory is named using a standard structure.  <xref linkend="tab-mss-Directory-Structure"/> describes each directory, and the type of information contained within each location.</para>
   	<table id="tab-mss-Directory-Structure" frame='all'>
       <title>Directory Structure</title>
@@ -280,7 +276,7 @@ Halting VM</programlisting>
 		
 		<section	id="itms-binary-Media_Server-Uninstalling">
 			<title>Uninstalling</title>
-			<para>To uninstall the Media Server, simply delete the directory you decompressed the binary distribution archive into.</para>
+			<para>To uninstall the Media Server, delete the directory containing the extracted binary distribution.</para>
 		</section>
 	</section>
 	
