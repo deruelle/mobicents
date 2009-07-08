@@ -28,9 +28,15 @@ public interface EventListSubscriptionControlParentSbbLocalObject extends
 	public Subscription getSubscription(SubscriptionKey key);
 	
 	/**
-	 * Warns the parent about a new RLS Service.
+	 * Warns the parent about an updated RLS Service.
 	 * @param uri
 	 */
-	public void newRlsService(String uri);
+	public void rlsServiceUpdated(String uri);
+	
+	/**
+	 * Warns the parent about a RLS Service that was removed from the XDM
+	 * @param uri
+	 */
+	public void rlsServiceRemoved(String uri);
 
 }

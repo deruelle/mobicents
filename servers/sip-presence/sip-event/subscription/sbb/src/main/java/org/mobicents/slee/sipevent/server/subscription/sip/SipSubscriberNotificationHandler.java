@@ -19,6 +19,7 @@ import javax.sip.header.EventHeader;
 import javax.sip.header.SubscriptionStateHeader;
 import javax.sip.message.Request;
 import javax.slee.ActivityContextInterface;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
@@ -110,7 +111,16 @@ public class SipSubscriberNotificationHandler {
 		}
 		else {
 			// resource list subscription, no filtering
-			notify.setContent(content, contentTypeHeader);
+			if (content instanceof JAXBElement) {
+				// marshall content to string
+				StringWriter stringWriter = new StringWriter();
+				childSbb.getMarshaller().marshal(content, stringWriter);
+				notify.setContent(stringWriter.toString(), contentTypeHeader);
+				stringWriter.close();
+			}
+			else {
+				notify.setContent(content, contentTypeHeader);
+			}
 		}
 		return notify;
 	}

@@ -815,10 +815,34 @@ public abstract class SubscriptionControlSbb implements Sbb,
 	 * created and a subscription arrives before the rls knows about the new service
 	 * 	
 	 * (non-Javadoc)
-	 * @see org.mobicents.slee.sipevent.server.subscription.EventListSubscriptionControlParentSbbLocalObject#newRlsService(java.lang.String)
+	 * @see org.mobicents.slee.sipevent.server.subscription.EventListSubscriptionControlParentSbbLocalObject#rlsServiceUpdated(java.lang.String)
 	 */
-	public void newRlsService(String uri) {
+	public void rlsServiceUpdated(String uri) {		 
+		terminateRlsServiceSubscriptions(uri, Subscription.Event.deactivated);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mobicents.slee.sipevent.server.subscription.EventListSubscriptionControlParentSbbLocalObject#rlsServiceRemoved(java.lang.String)
+	 */
+	public void rlsServiceRemoved(String uri) {
+		terminateRlsServiceSubscriptions(uri, Subscription.Event.noresource);
+	}
+	
+	/*
+	 * Terminates all subscriptions where the notifier is the specified RLS
+	 * service uri, with the provided event.
+	 * 
+	 * @param notifier
+	 * 
+	 * @param event
+	 */
+	private void terminateRlsServiceSubscriptions(String notifier, Subscription.Event event) {
 		
+		if (logger.isDebugEnabled()) {
+			logger.debug("terminating rls service "+notifier+" subscriptions with event "+event);
+		}
+			
 		if (configuration.getEventListSupportOn()) {
 			// create jpa entity manager
 			EntityManager entityManager = getEntityManager();
@@ -826,10 +850,13 @@ public abstract class SubscriptionControlSbb implements Sbb,
 			// process subscriptions
 			for (Object object : entityManager.createNamedQuery(
 			Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER).setParameter(
-					"notifier", uri).getResultList()) {
+					"notifier", notifier).getResultList()) {				
 				Subscription subscription = (Subscription) object;
-				if (!subscription.getResourceList()) {
-					subscription.changeStatus(Subscription.Event.deactivated);
+				if (logger.isDebugEnabled()) {
+					logger.debug("terminating rls service "+notifier+" subscription "+subscription+" with event "+event);
+				}
+				//if (!subscription.getResourceList()) {
+					subscription.changeStatus(event);
 					try {
 						// get subscription aci
 						ActivityContextInterface aci = getActivityContextNamingfacility().lookup(
@@ -845,13 +872,12 @@ public abstract class SubscriptionControlSbb implements Sbb,
 					} catch (Exception e) {
 						logger.error("failed to notify internal subscriber", e);
 					}
-				}
+				//}
 			}
 
 			// close entity manager
 			entityManager.close();
 		}
-		
 	}
 	
 	// --- INTERNAL SUBSCRIPTIONS

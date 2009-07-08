@@ -1,12 +1,12 @@
 package org.mobicents.slee.sipevent.server.subscription.eventlist;
 
 import java.io.StringReader;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.sip.RequestEvent;
 import javax.sip.header.AcceptHeader;
 import javax.sip.header.SupportedHeader;
@@ -17,13 +17,6 @@ import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
-import javax.slee.facilities.TimerEvent;
-import javax.slee.facilities.TimerFacility;
-import javax.slee.facilities.TimerOptions;
-import javax.slee.facilities.TimerPreserveMissed;
-import javax.slee.nullactivity.NullActivity;
-import javax.slee.nullactivity.NullActivityContextInterfaceFactory;
-import javax.slee.nullactivity.NullActivityFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -75,8 +68,6 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 	 * can verify if a service type object has a certain event package
 	 */
 	private static final ServiceTypePackageVerifier serviceTypePackageVerifier = new ServiceTypePackageVerifier();
-
-	private static final long manualCacheUpdateTimerPeriod = 300000; // 1000ms * 60s * 5 min
 	
 	// --- parent sbb
 
@@ -102,58 +93,28 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 		xdm.get(globalRLSDocumentKey, null);
 		// subscribe to get notifications on updates
 		xdm.subscribeDocument(globalRLSDocumentKey.getDocumentSelector());
-		// since we currently don't subscribe resource lists linked to services,
-		// there is no way to know when those are updated, for now lets set a
-		// periodic timer on service activity to force update
-		try {
-			Context context = (Context) new InitialContext()
-					.lookup("java:comp/env");
-			TimerFacility timerFacility = (TimerFacility) context
-					.lookup("slee/facilities/timer");
-			NullActivityContextInterfaceFactory nullACIFactory = (NullActivityContextInterfaceFactory) context
-			.lookup("slee/nullactivity/activitycontextinterfacefactory");
-			NullActivityFactory nullActivityFactory = (NullActivityFactory) context
-			.lookup("slee/nullactivity/factory");
-			TimerOptions options = new TimerOptions();
-			options.setPersistent(true);
-			options.setPreserveMissed(TimerPreserveMissed.ALL);
-			NullActivity nullActivity = nullActivityFactory.createNullActivity();
-			ActivityContextInterface nullAci = nullACIFactory.getActivityContextInterface(nullActivity);
-			nullAci.attach(sbbContext.getSbbLocalObject());
-			timerFacility.setTimer(nullAci, null, (System.currentTimeMillis()+manualCacheUpdateTimerPeriod), manualCacheUpdateTimerPeriod, 0, options);
-		} catch (Exception e) {
-			logger.error(
-					"Unable to retrieve factories, facilities & providers", e);
-		}
 	}
 
 	public void shutdownRLSCache() {
-		// terminate the null activity where the periodic timer is set
-		for (ActivityContextInterface aci : sbbContext.getActivities()) {
-			Object activity = aci.getActivity();
-			if (activity instanceof NullActivity) {
-				((NullActivity) activity).endActivity();
-			}
-		}
+		XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
+		for(String serviceURI : rlsServicesCache.getFlatListServiceURIs()) {
+			rlsServicesCache.removeFlatList(serviceURI, xdmClientSbb);
+		} 
+		xdmClientSbb.unsubscribeDocument(globalRLSDocumentKey.getDocumentSelector());
 	}
-	
-	public void onTimerEvent(TimerEvent timerEvent, ActivityContextInterface aci) {
-		XDMClientControlSbbLocalObject xdm = getXDMClientControlSbb();
-		// ask for the global document,this will trigger rls cache update 
-		xdm.get(globalRLSDocumentKey, null);
-	}
-	
+
 	private void updateCache(String document) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Mobicents Resource List Server: updating cache...");
 		}
-		rlsServicesCache.clear();
+		Set<String> servicesToRemove = new HashSet<String>(rlsServicesCache.getFlatListServiceURIs());
 		StringReader stringReader = new StringReader(document);
 		try {
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			Object obj = unmarshaller.unmarshal(stringReader);
 			if (obj instanceof RlsServices) {
 				for (ServiceType serviceType : ((RlsServices) obj).getService()) {
+					servicesToRemove.remove(serviceType.getUri());
 					getFlatListMakerSbb().makeFlatList(serviceType);
 				}
 			}
@@ -162,27 +123,30 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 		} finally {
 			stringReader.close();
 		}
+		if (!servicesToRemove.isEmpty()) {
+			XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
+			for (String serviceToRemove : servicesToRemove) {
+				rlsServicesCache.removeFlatList(serviceToRemove, xdmClientSbb);
+				getParentSbbCMP().rlsServiceRemoved(serviceToRemove);
+			}
+		}
 	}
 
 	public void flatListMade(FlatList flatList) {
 
-		rlsServicesCache.putFlatList(flatList);
+		XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
+		
+		rlsServicesCache.putFlatList(flatList,xdmClientSbb);
 		if (logger.isInfoEnabled()) {
 			logger.info("Mobicents Resource List Server: updated cache with "
 					+ flatList);
-		}
-
-		// subscribe all resource lists linked to the flat list
-		XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
-		for (DocumentSelector documentSelector : flatList.getResourceLists()) {
-			xdmClientSbb.subscribeDocument(documentSelector);
 		}
 
 		// warn the parent sbb, perhaps there are subscriptions for this flat
 		// list uri that are
 		// not set for a rls service, this can happen when a new list is
 		// created and a subscription arrives before the rlscache is updated
-		getParentSbbCMP().newRlsService(flatList.getServiceType().getUri());
+		getParentSbbCMP().rlsServiceUpdated(flatList.getServiceType().getUri());
 	}
 
 	public void getResponse(XcapUriKey key, int responseCode, String mimetype,
@@ -202,9 +166,15 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 
 	public void documentUpdated(DocumentSelector documentSelector,
 			String oldETag, String newETag, String documentAsString) {
-		// FIXME should be optimized once xcap diff interface in xdm is final
-		// and just provides patch diff of document
-		if (documentSelector.equals(globalRLSDocumentKey.getDocumentSelector())) {
+		if (documentSelector.getAUID().equals("resource-lists")) {
+			for (FlatList flatList : rlsServicesCache.getFlatListsLinkedToResourceList(documentSelector)) {
+				// rebuild flat list
+				// FIXME flat list should instead just be updated
+				getFlatListMakerSbb().makeFlatList(flatList.getServiceType());
+			}
+		}
+		else {
+			// rls-services global doc
 			updateCache(documentAsString);
 		}
 	}
@@ -241,7 +211,7 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 			if (event != null) {
 				// check event list support is present in UA
 				boolean isEventListSupported = false;
-				for (ListIterator lit = event.getRequest().getHeaders(
+				for (ListIterator<?> lit = event.getRequest().getHeaders(
 						SupportedHeader.NAME); lit.hasNext();) {
 					SupportedHeader sh = (SupportedHeader) lit.next();
 					if (sh.getOptionTag().equals("eventlist")) {
@@ -259,7 +229,7 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 
 				boolean isMultipartAccepted = false;
 				boolean isRlmiAccepted = false;
-				for (ListIterator lit = event.getRequest().getHeaders(
+				for (ListIterator<?> lit = event.getRequest().getHeaders(
 						AcceptHeader.NAME); lit.hasNext();) {
 					AcceptHeader ah = (AcceptHeader) lit.next();
 					if (ah.allowsAllContentTypes()
@@ -416,7 +386,7 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 		ChildRelation childRelation = getEventListSubscriberChildRelation();
 		EventListSubscriberSbbLocalObject subscriptionChildSbb = null;
 		// let's see if child is already created
-		for (Iterator it = childRelation.iterator(); it.hasNext();) {
+		for (Iterator<?> it = childRelation.iterator(); it.hasNext();) {
 			EventListSubscriberSbbLocalObject childSbb = (EventListSubscriberSbbLocalObject) it
 					.next();
 			SubscriptionKey childSbbSubscriptionKey = childSbb
