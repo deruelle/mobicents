@@ -99,14 +99,14 @@ public class InnerNamingService implements NamingService {
 
 	public Endpoint lookup(String endpointName, boolean allowInUse) throws ResourceUnavailableException {
 		if (endpointName.endsWith("$")) {
-			return findAny(endpointName, allowInUse); // findAny(endpointName);
+			return findAny(endpointName); // findAny(endpointName);
 		} else {
 			return find(endpointName, allowInUse);
 		}
 		// return null;
 	}
 
-	public synchronized Endpoint findAny(String name, boolean allowInUse) throws ResourceUnavailableException {
+	public synchronized Endpoint findAny(String name) throws ResourceUnavailableException {
 		// TODO : Can name have two '$'? In this case the search will be
 		// slow once we add logic for this
 
@@ -123,18 +123,16 @@ public class InnerNamingService implements NamingService {
 				if (suffix != null) {
 					if (key.contains(suffix)) {
 						endpt = endpoints.get(key);
-						if (endpt.isInUse() && !allowInUse) {
-							endpt = null;
-						} else {
-							break;
-						}						
+						if (!endpt.isInUse()) {
+							endpt.setInUse(true);
+							return endpt;
+						} 
 					}
 				} else {
 					endpt = endpoints.get(key);
-					if (endpt.isInUse() && !allowInUse) {
-						endpt = null;
-					} else {
-						break;
+					if (!endpt.isInUse()) {
+						endpt.setInUse(true);
+						return endpt;
 					}
 				}
 			}
@@ -143,7 +141,7 @@ public class InnerNamingService implements NamingService {
 		if (endpt == null) {
 			throw new ResourceUnavailableException("No Endpoint found for " + name);
 		}
-		endpt.setInUse(true);
+
 		return endpt;
 
 	}
