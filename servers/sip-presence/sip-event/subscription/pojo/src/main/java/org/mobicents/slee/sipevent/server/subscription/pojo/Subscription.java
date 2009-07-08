@@ -32,6 +32,7 @@ import javax.slee.facilities.TimerID;
 	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTION_FROM_TIMERID,query="SELECT s FROM Subscription s WHERE s.timerID = :timerID"),
 	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier AND s.key.eventPackage = :eventPackage"),
 	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier"),
+	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_WITH_PARAMS,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier and s.notifierParams = :notifierParams"),
 	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_DIALOG_SUBSCRIPTIONS,query="SELECT s FROM Subscription s WHERE s.key.callId = :callId AND s.key.remoteTag = :remoteTag")
 	})
 public class Subscription implements Serializable {
@@ -45,6 +46,7 @@ public class Subscription implements Serializable {
 	public static final String JPA_NAMED_QUERY_SELECT_SUBSCRIPTION_FROM_TIMERID = JPA_NAMED_QUERY_PREFIX + "selectSubscriptionFromTimerID";
 	public static final String JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE = JPA_NAMED_QUERY_PREFIX + "selectSubscriptionsFromNotifierAndEventPackage";
 	public static final String JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER = JPA_NAMED_QUERY_PREFIX + "selectSubscriptionsFromNotifier";
+	public static final String JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_WITH_PARAMS = JPA_NAMED_QUERY_PREFIX + "selectSubscriptionsFromNotifierWithParams";
 	public static final String JPA_NAMED_QUERY_SELECT_DIALOG_SUBSCRIPTIONS = JPA_NAMED_QUERY_PREFIX + "selectDialogSubscriptions";
 	
 	/**

@@ -136,17 +136,17 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 
 		XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
 		
-		rlsServicesCache.putFlatList(flatList,xdmClientSbb);
+		if (rlsServicesCache.putFlatList(flatList,xdmClientSbb)) {
+			// warn the parent sbb, perhaps there are subscriptions for this flat
+			// list uri that are
+			// not set for a rls service, this can happen when a new list is
+			// created and a subscription arrives before the rlscache is updated
+			getParentSbbCMP().rlsServiceUpdated(flatList.getServiceType().getUri());
+		}
 		if (logger.isInfoEnabled()) {
 			logger.info("Mobicents Resource List Server: updated cache with "
 					+ flatList);
 		}
-
-		// warn the parent sbb, perhaps there are subscriptions for this flat
-		// list uri that are
-		// not set for a rls service, this can happen when a new list is
-		// created and a subscription arrives before the rlscache is updated
-		getParentSbbCMP().rlsServiceUpdated(flatList.getServiceType().getUri());
 	}
 
 	public void getResponse(XcapUriKey key, int responseCode, String mimetype,

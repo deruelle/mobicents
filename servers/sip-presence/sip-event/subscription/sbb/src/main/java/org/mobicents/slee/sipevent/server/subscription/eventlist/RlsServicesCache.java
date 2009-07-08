@@ -15,8 +15,15 @@ public class RlsServicesCache {
 	
 	private Map<DocumentSelector, Set<FlatList>> resourceLists = new HashMap<DocumentSelector, Set<FlatList>>();
 	
-	public void putFlatList(FlatList flatList, XDMClientControlSbbLocalObject xdmClientSbb) {
+	/**
+	 * 
+	 * @param flatList
+	 * @param xdmClientSbb
+	 * @return false if there was already a list with same service uri and with same entries, true otherwise
+	 */
+	public boolean putFlatList(FlatList flatList, XDMClientControlSbbLocalObject xdmClientSbb) {
 		FlatList oldFlatList = cache.put(flatList.getServiceType().getUri(), flatList);
+		boolean updated = false;
 		if (oldFlatList != null) {
 			oldFlatList.getResourceLists().removeAll(flatList.getResourceLists());
 			for (DocumentSelector documentSelector : oldFlatList.getResourceLists()) {
@@ -31,6 +38,20 @@ public class RlsServicesCache {
 					}
 				}
 			}
+			for (String entry : flatList.getEntries().keySet()) {
+				if (oldFlatList.getEntries().remove(entry) == null) {
+					// it is a new entry
+					updated = true;
+					break;
+				}
+			}
+			if (!updated && !oldFlatList.getEntries().isEmpty()) {
+				// new list lost some entries
+				updated = true;
+			}
+		}
+		else {
+			updated = true;
 		}
 		for (DocumentSelector documentSelector : flatList.getResourceLists()) {
 			synchronized (resourceLists) {
@@ -43,6 +64,7 @@ public class RlsServicesCache {
 				flatListsLinked.add(flatList);
 			}
 		}
+		return updated;
 	}
 	
 	public FlatList getFlatList(String uri) {

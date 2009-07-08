@@ -847,32 +847,47 @@ public abstract class SubscriptionControlSbb implements Sbb,
 			// create jpa entity manager
 			EntityManager entityManager = getEntityManager();
 
+			int index = notifier.indexOf(';');
+			String notifierWithoutParams = null;
+			String notifierParams = null;
+			if (index > 0) {
+				notifierWithoutParams = notifier.substring(0,index);
+				notifierParams = notifier.substring(index);			
+			}
+			else {
+				notifierWithoutParams = notifier;
+				notifierParams = null;
+			}
+			
 			// process subscriptions
 			for (Object object : entityManager.createNamedQuery(
-			Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER).setParameter(
-					"notifier", notifier).getResultList()) {				
+			Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_WITH_PARAMS).setParameter(
+					"notifier", notifierWithoutParams).setParameter("notifierParams", notifierParams).getResultList()) {				
 				Subscription subscription = (Subscription) object;
 				if (logger.isDebugEnabled()) {
 					logger.debug("terminating rls service "+notifier+" subscription "+subscription+" with event "+event);
 				}
-				//if (!subscription.getResourceList()) {
-					subscription.changeStatus(event);
-					try {
-						// get subscription aci
-						ActivityContextInterface aci = getActivityContextNamingfacility().lookup(
-										subscription.getKey().toString());
-						if (aci != null) {
-							if (subscription.getKey().isInternalSubscription()) {							
-								new InternalSubscriptionHandler(this).getRemoveInternalSubscriptionHandler().removeInternalSubscription(aci, subscription, entityManager, getImplementedControlChildSbb());
-							}
-							else {
-								new SipSubscriptionHandler(this).getRemoveSipSubscriptionHandler().removeSipSubscription(aci, subscription, entityManager, getImplementedControlChildSbb());
-							}
+				if (subscription.getResourceList()) {
+					getEventListControlChildSbb().removeSubscription(subscription);	
+				}
+				
+				subscription.changeStatus(event);
+				try {
+					// get subscription aci
+					ActivityContextInterface aci = getActivityContextNamingfacility().lookup(
+							subscription.getKey().toString());
+					if (aci != null) {
+						if (subscription.getKey().isInternalSubscription()) {							
+							new InternalSubscriptionHandler(this).getRemoveInternalSubscriptionHandler().removeInternalSubscription(aci, subscription, entityManager, getImplementedControlChildSbb());
 						}
-					} catch (Exception e) {
-						logger.error("failed to notify internal subscriber", e);
+						else {
+							new SipSubscriptionHandler(this).getRemoveSipSubscriptionHandler().removeSipSubscription(aci, subscription, entityManager, getImplementedControlChildSbb());
+						}
 					}
-				//}
+				} catch (Exception e) {
+					logger.error("failed to notify internal subscriber", e);
+				}
+
 			}
 
 			// close entity manager
