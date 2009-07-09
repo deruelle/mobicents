@@ -1,31 +1,48 @@
-﻿<?xml version='1.0'?>
+<?xml version='1.0'?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]><!-- chapter id nickname: ittsps -->
 <chapter
 	id="ittsps-Introduction_to_the_SIP_Presence_Service">
-	<title>Introduction to the SIP Presence Service</title>
-	<para>The <application>SIP Presence Service</application> provides presence functionalities to SIP-based networks using standards developed by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP), and the European Telecommunications Standards Institute (ETSI).</para>
-	
-	<section	id="ittsps-Architecture_of_the_SIP_Presence_Service">
+	<title>Introduction to the Mobicents SIP Presence Service</title>
+	<para>The <application
+			condition="mob">Mobicents</application>
+		<application
+			condition="jbcp">JBCP</application> <application>SIP Presence Service</application> provides presence functionalities to SIP-based networks using standards developed by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).</para>
+	<section
+		id="ittsps-Architecture_of_the_SIP_Presence_Service">
 		<title>Architecture of the Mobicents SIP Presence Service</title>
 		<para>The <application>SIP Presence Service</application> is comprised of three separate but interrelated servers.</para>
-		<mediaobject id="ittsps-sps-SIPPresService-dia-SIPPresServiceArchitecture">
+		<para>View the <ulink
+				url="http://mobicents-public.googlegroups.com/web/MobicentsSipPresenceServerArchitecture.jpg?gda=hTO2O1wAAAAF_VX0TG5xx-FBSRUj3rSwIO4FCNj8IiPb7zdEEjjYwlAgDLzQ8i_XkNckzGVsS4tcrsHvKlAHZlMtp5btUQdlZU3ceRGzPAq0DrjjiW76mv1ab5qObNWgAVSUTtz98C0"><application
+					condition="mob">Mobicents Platform</application>
+				<application
+					condition="jbcp">JBoss Communications Platform</application> SIP Presence Service architecture</ulink>
+		</para>
+		<!--<mediaobject
+			id="ittsps-sps-SIPPresService-dia-SIPPresServiceArchitecture">
 			<imageobject>
-				<imagedata width="450" align="center" fileref="images/sps-SIPPresService-dia-SIPPresServiceArchitecture.jpg" format="JPG" />
+				<imagedata
+					align="center"
+					fileref="images/sps-SIPPresService-dia-SIPPresServiceArchitecture.jpg"
+					format="JPG" />
 			</imageobject>
 			<caption>
 				<para>Functional Diagram of the Mobicents SIP Presence Service</para>
 			</caption>
-		</mediaobject>
-		<variablelist id="ittsps-The_Three_Servers_Comprising_the_SIP_Presence_Service">
+		</mediaobject>-->
+		<variablelist
+			id="ittsps-The_Three_Servers_Comprising_the_SIP_Presence_Service">
 			<title>The Three Servers Comprising the SIP Presence Service</title>
 			<varlistentry>
 				<term>The SIP Presence Server</term>
 				<listitem>
-					<para>The SIP Presence Server is an entity that accepts, stores and distributes Presence Information. The <application>SIP Presence Server</application> performs the following functions:</para>
+					<para>The <application
+							condition="mob">Mobicents</application>
+						<application
+							condition="jbcp">JBCP</application> SIP Presence Server is an entity that accepts, stores and distributes Presence Information. The <application>SIP Presence Server</application> performs the following functions:</para>
 					<itemizedlist>
 						<listitem>
-							<para>It manages publications from one or multiple presence source(s) of a certain <emphasis>presentity</emphasis>.  This includes refreshing presence information, replacing existing presence information with newly-published information, or removing presence information.</para>
+							<para>It manages publications from one or multiple presence source(s) of a certain <emphasis>presentity</emphasis>. This includes refreshing presence information, replacing existing presence information with newly-published information, or removing presence information.</para>
 						</listitem>
 						<listitem>
 							<para>It manages subscriptions from watchers to presence information and generates notifications about presence information state changes, retrieving the presence authorization rules from the <application>XDM Server</application>.</para>
@@ -45,22 +62,26 @@
 			<varlistentry>
 				<term>The Resource List Server</term>
 				<listitem>
-					<para>The <application>Resource List Server</application> (<acronym>RLS</acronym>) handles subscriptions to presence lists. It creates and manages back-end subscriptions to all resources in the presence list.  The list content is retrieved from the <application>XDM Server</application>.</para>
+					<para>The <application>Resource List Server</application> (<acronym>RLS</acronym>) handles subscriptions to presence lists. It creates and manages back-end subscriptions to all resources in the presence list. The list content is retrieved from the <application>XDM Server</application>.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<para>A major advantage of the <application>SIP Presence Service</application> is that, depending on your needs, each server can be deployed separately, or all servers can be integrated on the same host.  In addition, there are JAIN SLEE internal client interfaces available for each server, which distinguishes the <application>SIP Presence Service</application> from other presence services.</para>
+		<para>A major advantage of the SIP Presence Service is that, depending on your needs, each server can be deployed separately, or all servers can be integrated on the same host. In addition, there are JAIN SLEE internal client interfaces available for each server, which distinguishes the <application
+				condition="mob">Mobicents</application>
+			<application
+				condition="jbcp">JBCP</application> SIP Presence Service from other presence services.</para>
 		<para>For documentation on each server proceed to links under this page Resources section.</para>
 		<formalpara>
 			<title>Resources and Further Information about the Mobicents Presence Service</title>
-			<para>A list of additional resources is provided below for the SIP Presence Service:</para>
+			<para>For further information on the Mobicents Presence Service, here is a list of additional resources:</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
 				<term>Issue tracker</term>
 				<listitem>
 					<para>
-						<ulink url="http://mobicents.googlecode.com/svn/trunk/servers/sip-presence/">Source Code Location</ulink>
+						<ulink
+							url="http://mobicents.googlecode.com/svn/trunk/servers/sip-presence/">Source Code Location</ulink>
 					</para>
 				</listitem>
 			</varlistentry>
@@ -68,7 +89,8 @@
 				<term>Forums</term>
 				<listitem>
 					<para>
-						<ulink url="http://forums.java.net/jive/category.jspa?categoryID=36">Java.net Forums</ulink>
+						<ulink
+							url="http://forums.java.net/jive/category.jspa?categoryID=36">Java.net Forums</ulink>
 					</para>
 				</listitem>
 			</varlistentry>

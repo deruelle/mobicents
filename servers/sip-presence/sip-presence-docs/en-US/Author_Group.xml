@@ -1,25 +1,14 @@
-﻿<?xml version='1.0'?>
+<?xml version='1.0'?>
 <!DOCTYPE authorgroup PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
-<authorgroup>
-  <author>
-		<firstname>Jared</firstname>
-		<surname>Morgan</surname>
-		<affiliation>
-			<orgname>Red Hat, </orgname>
-			<orgdiv>Engineering Content Services</orgdiv>
-		</affiliation>
-		<email
-			condition="mobicents">jmorgan@redhat.com</email>
-		<email
-			condition="jbcp">jmorgan@redhat.com</email>
-	</author>
+<authorgroup
+	id="sps-Author_Group">
 	<author>
 		<firstname>Douglas</firstname>
 		<surname>Silas</surname>
 		<affiliation>
-			<orgname>Red Hat, </orgname>
-			<orgdiv>Engineering Content Services</orgdiv>
+			<orgname>Red Hat Engineering</orgname>
+			<orgdiv>Content Services</orgdiv>
 		</affiliation>
 		<email
 			condition="mobicents">dhensley@redhat.com</email>

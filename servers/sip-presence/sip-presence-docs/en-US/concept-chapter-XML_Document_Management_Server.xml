@@ -1,33 +1,50 @@
-﻿<?xml version='1.0'?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
-<!-- chapter id nickname: xdms -->
-<chapter id="xdms-XML_Document_Management_Server">
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]><!-- chapter id nickname: xdms -->
+<chapter
+	id="xdms-XML_Document_Management_Server">
 	<title>Mobicents XML Document Management Server</title>
-	<para>The <application>Mobicents XML Document Management Server</application> (<application>XDM Server</application>) is part of the <application>Mobicents SIP Presence Service</application>; it is the first free and open source implementation of an <application>XML Document Management Server</application> as defined in the <ulink url="Open Mobile Alliance (OMA) XML Document Management v1.1 specification"/>. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.</para>
-	
-	<section id="xdms-Functional_Architecture_of_the_XDM_Server">
+	<para>The <application>Mobicents XML Document Management Server</application> (<application>XDM Server</application>) is part of the <application>Mobicents SIP Presence Service</application>; it is the first free and open source implementation of an <application>XML Document Management Server</application> as defined in the <ulink
+			url="Open Mobile Alliance (OMA) XML Document Management v1.1 specification"/>. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.</para>
+	<section
+		id="xdms-Functional_Architecture_of_the_XDM_Server">
 		<title>Functional Architecture of the XDM Server</title>
 		<para>The <application>Mobicents XDM Server</application> includes the following XCAP application usages:</para>
 		<itemizedlist>
 			<listitem>
-				<para><ulink url="http://tools.ietf.org/html/rfc5025">IETF Presence Rules (RFC 5025)</ulink></para>
-			</listitem>
-			<listitem>
-				<para><ulink url="http://www.openmobilealliance.org/Technical/release_program/Presence_simple_v1_1.aspx">OMA Presence Rules (OMA Presence Simple v1.1 Candidate Release)</ulink></para>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc5025">IETF Presence Rules (RFC 5025)</ulink>
+				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<ulink url="http://tools.ietf.org/html/rfc4826">IETF Resource Lists</ulink></para>
+					<ulink
+						url="http://www.openmobilealliance.org/Technical/release_program/Presence_simple_v1_1.aspx">OMA Presence Rules (OMA Presence Simple v1.1 Candidate Release)</ulink>
+				</para>
 			</listitem>
 			<listitem>
-				<para><ulink url="http://tools.ietf.org/html/rfc4826">IETF RLS Services (RFC 4826)</ulink></para>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc4826">IETF Resource Lists</ulink>
+				</para>
 			</listitem>
 			<listitem>
-				<para><ulink url="http://tools.ietf.org/html/rfc4825">IETF XCAP-CAPS (RFC 4825)</ulink></para>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc4826">IETF RLS Services (RFC 4826)</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc4825">IETF XCAP-CAPS (RFC 4825)</ulink>
+				</para>
 			</listitem>
 		</itemizedlist>
 		<para>The SIP interface partially implements the XCAP Diff Event IETF draft, version 3. Subscriptions to a single document or usage by an entire application are supported. However, these differing usages do not extend to the single-XML element or attribute value level. Regarding the notifications, the diff-processing subscription parameter, if present, is ignored, and patching of content is not available at the moment, which means that only the document etags, new and/or old, will be provided.</para>
-		<para>View the <ulink url="http://mobicents-public.googlegroups.com/web/XDM+Functional+Architecture.jpg?gda=vowVslEAAAAF_VX0TG5xx-FBSRUj3rSw3W3MetT0jWUh4Xj3nCKKkJRg1dOenZYHeKjWSh6kKUoVQKX_J3c2taUlhicc8as8Uwk_6Qi3BU8HCN0q6OYwM5VxXgp_nHWJXhfr7YhqVgA">XML Document Management Server Architecture</ulink>
+		<para>View the <ulink
+				url="http://mobicents-public.googlegroups.com/web/XDM+Functional+Architecture.jpg?gda=vowVslEAAAAF_VX0TG5xx-FBSRUj3rSw3W3MetT0jWUh4Xj3nCKKkJRg1dOenZYHeKjWSh6kKUoVQKX_J3c2taUlhicc8as8Uwk_6Qi3BU8HCN0q6OYwM5VxXgp_nHWJXhfr7YhqVgA">XML Document Management Server Architecture</ulink>
 		</para>
 		<!--<mediaobject
 			id="xdms-sps-XDMS-dia-XDMFunctionalArchitecture">
@@ -43,7 +60,8 @@
 			</caption>
 		</mediaobject>-->
 		<para>The <application>XDM Server</application> comprises the following functional elements:</para>
-		<variablelist id="xdms-Functional_Elements_of_the_XDM_Server">
+		<variablelist
+			id="xdms-Functional_Elements_of_the_XDM_Server">
 			<title>Functional Elements of the XDM Server</title>
 			<varlistentry>
 				<term>Data Source</term>
@@ -75,7 +93,9 @@
 			<title>Implementation Architecture of the Mobicents XML Document Management Server</title>
 			<para>The <application>XDM Server</application> is built on top of the <application>Mobicents JAIN SLEE</application> container. This figure depicts the architecture of the <application>XDM Server</application> implementation.</para>
 		</formalpara>
-		<para>View the diagram of the <ulink url="http://mobicents-public.googlegroups.com/web/XDMS+Implementation.jpg?gda=9hCf4kkAAAAF_VX0TG5xx-FBSRUj3rSw3W3MetT0jWUh4Xj3nCKKkJQ0jPtcnRwbFIKXxiisEZifs7maW8FM3kQMOUV88KaGhAioEG5q2hncZWbpWmJ7IQ">XDM Server Implementation</ulink>.</para>
+		<para>View the diagram of the <ulink
+				url="http://mobicents-public.googlegroups.com/web/XDMS+Implementation.jpg?gda=9hCf4kkAAAAF_VX0TG5xx-FBSRUj3rSw3W3MetT0jWUh4Xj3nCKKkJQ0jPtcnRwbFIKXxiisEZifs7maW8FM3kQMOUV88KaGhAioEG5q2hncZWbpWmJ7IQ">XDM Server Implementation</ulink>.
+		</para>
 		<!--<mediaobject
 			id="xdms-sps-XDMS-dia-XDMSImplementation">
 			<imageobject>
@@ -89,7 +109,8 @@
 				<para>Mobicents XML Document Management Server</para>
 			</caption>
 		</mediaobject>-->
-		<variablelist id="xdms-The_Functional_Elements_Which_Compose_the_XML_Document_Management_Server">
+		<variablelist
+			id="xdms-The_Functional_Elements_Which_Compose_the_XML_Document_Management_Server">
 			<title>The Functional Elements of the XML Document Management Server</title>
 			<varlistentry>
 				<term>Data Source Resource Adapter</term>
@@ -148,6 +169,7 @@
 				<listitem>
 					<para>The XCAP client is a simple API to interact with an XCAP Server that internally uses the Apache HTTP Client.</para>
 					<!--<para>The API documentation and example code snippets can be found TBD</para>-->
+					<para>&nbsp;</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -176,16 +198,23 @@
 			</varlistentry>
 		</variablelist>
 	</section>
-	
-	<section id="xdms-Resources_and_Further_Information_about_the_XDM_Server">
+	<section
+		id="xdms-Resources_and_Further_Information_about_the_XDM_Server">
 		<title>Resources and Further Information about the XDM Server</title>
 		<para>For further information on the Mobicents XDM Server, here is a list of additional resources:</para>
-		<itemizedlist id="xdms-Further_Information_on_the_XDM_Server">
+		<itemizedlist
+			id="xdms-Further_Information_on_the_XDM_Server">
 			<listitem>
-				<para><ulink url="http://groups.google.com/group/mobicents-public/web/xcap-client-api">XCAP Client API Documentation</ulink></para>
+				<para>
+					<ulink
+						url="http://groups.google.com/group/mobicents-public/web/xcap-client-api">XCAP Client API Documentation</ulink>
+				</para>
 			</listitem>
 			<listitem>
-				<para><ulink url="http://groups.google.com/group/mobicents-public/web/xcap-client-resource-adaptor">XCAP Client RA Type Description and Example Code Snippets</ulink></para>
+				<para>
+					<ulink
+						url="http://groups.google.com/group/mobicents-public/web/xcap-client-resource-adaptor">XCAP Client RA Type Description and Example Code Snippets</ulink>
+				</para>
 			</listitem>
 		</itemizedlist>
 	</section>
