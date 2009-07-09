@@ -1,101 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="examples/internal-publisher/du/src/main/resources"/>
   <classpathentry kind="src" path="examples/internal-publisher/sbb/src/main/java"/>
-  <classpathentry kind="src" path="examples/internal-publisher/sbb/src/main/resources"/>
-  <classpathentry kind="src" path="examples/internal-rls/du/src/main/resources"/>
-  <classpathentry kind="src" path="examples/internal-rls/sbb/src/main/resources"/>
   <classpathentry kind="src" path="examples/internal-rls/sbb/src/main/java"/>
-  <classpathentry kind="src" path="examples/internal-subscriber/du/src/main/resources"/>
   <classpathentry kind="src" path="examples/internal-subscriber/sbb/src/main/java"/>
-  <classpathentry kind="src" path="examples/internal-subscriber/sbb/src/main/resources"/>
-  <classpathentry kind="src" path="integrated/deployable-unit/src/main/resources"/>
   <classpathentry kind="src" path="integrated/subscription-sbb/src/main/java"/>
-  <classpathentry kind="src" path="integrated/subscription-sbb/src/main/resources"/>
-  <classpathentry kind="src" path="ps-core/internal-client/sbb/src/main/resources"/>
   <classpathentry kind="src" path="ps-core/internal-client/sbb/src/main/java"/>
   <classpathentry kind="src" path="ps-core/jaxb-pojos/src/main/java"/>
   <classpathentry kind="src" path="ps-core/publication-sbb/src/test/java"/>
   <classpathentry kind="src" path="ps-core/publication-sbb/src/main/java"/>
-  <classpathentry kind="src" path="ps-core/publication-sbb/src/main/resources"/>
-  <classpathentry kind="src" path="ps-core/subscription-sbb/src/main/resources"/>
   <classpathentry kind="src" path="ps-core/subscription-sbb/src/main/java"/>
   <classpathentry kind="src" path="sip-event/publication/pojo/src/main/java"/>
-  <classpathentry kind="src" path="sip-event/publication/pojo/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/publication/sbb/src/main/java"/>
-  <classpathentry kind="src" path="sip-event/publication/sbb/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/publication/sbb-local-object/src/main/java"/>
   <classpathentry kind="src" path="sip-event/subscription/event/src/main/java"/>
-  <classpathentry kind="src" path="sip-event/subscription/event/src/main/resources"/>
-  <classpathentry kind="src" path="sip-event/subscription/pojo/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/subscription/pojo/src/main/java"/>
   <classpathentry kind="src" path="sip-event/subscription/rls-test/src/test/java"/>
-  <classpathentry kind="src" path="sip-event/subscription/sbb/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb/src/main/java"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb/src/test/java"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb-local-object/src/main/java"/>
-  <classpathentry kind="src" path="user-profile/du/src/main/resources"/>
-  <classpathentry kind="src" path="user-profile/sbb/src/main/resources"/>
   <classpathentry kind="src" path="user-profile/sbb/src/main/java"/>
   <classpathentry kind="src" path="xcap-client/api/src/main/java"/>
-  <classpathentry kind="src" path="xcap-client/ra/du/src/main/resources"/>
   <classpathentry kind="src" path="xcap-client/ra/events/src/main/java"/>
-  <classpathentry kind="src" path="xcap-client/ra/events/src/main/resources"/>
   <classpathentry kind="src" path="xcap-client/ra/ra/src/main/java"/>
-  <classpathentry kind="src" path="xcap-client/ra/ra/src/main/resources"/>
   <classpathentry kind="src" path="xcap-client/ra/ratype/src/main/java"/>
-  <classpathentry kind="src" path="xcap-client/ra/ratype/src/main/resources"/>
-  <classpathentry kind="src" path="xcap-client/ra-example/du/src/main/resources"/>
-  <classpathentry kind="src" path="xcap-client/ra-example/sbb/src/main/resources"/>
   <classpathentry kind="src" path="xcap-client/ra-example/sbb/src/main/java"/>
-  <classpathentry kind="src" path="xdms/appusages/oma-pres-rules-server-du/src/main/resources"/>
-  <classpathentry kind="src" path="xdms/appusages/pres-rules-server-du/src/main/resources"/>
-  <classpathentry kind="src" path="xdms/appusages/resource-lists-server-du/src/main/resources"/>
-  <classpathentry kind="src" path="xdms/appusages/rls-services-server-du/src/main/resources"/>
-  <classpathentry kind="src" path="xdms/server/appusagecache-ra-du/src/main/resources"/>
-  <classpathentry kind="src" path="xdms/server/core-du/src/main/resources"/>
-  <classpathentry kind="src" path="xdms/server/datasource-ra-du/src/main/resources"/>
-  <classpathentry kind="src" path="xdms/server/subscription-control-du/src/main/resources"/>
   <classpathentry kind="src" path="xdms/tests/src/main/java"/>
-  <classpathentry kind="src" path="xdms/tests/src/main/resources"/>
   <classpathentry kind="src" path="xdms/tests/src/test/java"/>
   <classpathentry kind="src" path="xdms-core/appusages/oma-pres-rules/client/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/appusages/oma-pres-rules/server/sbb/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/appusages/oma-pres-rules/server/sbb/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/appusages/pres-rules/client/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/appusages/pres-rules/server/sbb/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/appusages/pres-rules/server/sbb/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/appusages/resource-lists/client/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/appusages/resource-lists/server/sbb/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/appusages/resource-lists/server/sbb/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/appusages/rls-services/client/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/appusages/rls-services/server/sbb/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/appusages/rls-services/server/sbb/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/appusages/rls-services/tests/src/test/java"/>
   <classpathentry kind="src" path="xdms-core/appusages/xcap-caps/client/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/appusages/xcap-caps/server/sbb/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/appusages/xcap-caps/server/sbb/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/commons/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/internal-client/sbb/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/internal-client/sbb/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/server/appusagecache/events/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/server/appusagecache/events/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/server/appusagecache/ra/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/server/appusagecache/ra/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/server/appusagecache/ratype/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/server/appusagecache/ratype/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/server/configuration/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/server/configuration/src/main/resources"/>
-  <classpathentry kind="src" path="xdms-core/server/core/sbb/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/server/core/sbb/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/server/core/sbb/src/test/java"/>
   <classpathentry kind="src" path="xdms-core/server/datasource/events/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/server/datasource/events/src/main/resources"/>
-  <classpathentry kind="src" path="xdms-core/server/datasource/ra/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/server/datasource/ra/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/server/datasource/ratype/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/server/datasource/ratype/src/main/java"/>
-  <classpathentry kind="src" path="xdms-core/server/subscription-sbb/src/main/resources"/>
   <classpathentry kind="src" path="xdms-core/server/subscription-sbb/src/main/java"/>
   <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar"/>
@@ -118,7 +70,7 @@
   <classpathentry kind="var" path="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-api/1.2/jain-sip-api-1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.100/jain-sip-ri-1.2.100.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.108/jain-sip-ri-1.2.108.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/slee/jain-slee/1.1.draft/jain-slee-1.1.draft.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1.jar"/>
@@ -143,12 +95,13 @@
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-entitymanager/3.3.1.ga/hibernate-entitymanager-3.3.1.ga.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/3.0.0.ga/hibernate-validator-3.0.0.ga.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.4.ga/hibernate-3.2.4.ga.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.5.GA/mobicents-core-jar-1.2.5.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-events/1.2.5.GA/http-servlet-events-1.2.5.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-ratype/1.2.5.GA/http-servlet-ratype-1.2.5.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-events/1.2.5.GA/sip11-events-1.2.5.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-ra/1.2.5.GA/sip11-ra-1.2.5.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-ratype/1.2.5.GA/sip11-ratype-1.2.5.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jboss/client/jbossall-client/4.2.2.GA/jbossall-client-4.2.2.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.6.GA/mobicents-core-jar-1.2.6.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-events/1.2.6.GA/http-servlet-events-1.2.6.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-ratype/1.2.6.GA/http-servlet-ratype-1.2.6.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-events/1.2.6.GA/sip11-events-1.2.6.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-ra/1.2.6.GA/sip11-ra-1.2.6.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip11-ratype/1.2.6.GA/sip11-ratype-1.2.6.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.6.0/xercesImpl-2.6.0.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="target/classes"/>

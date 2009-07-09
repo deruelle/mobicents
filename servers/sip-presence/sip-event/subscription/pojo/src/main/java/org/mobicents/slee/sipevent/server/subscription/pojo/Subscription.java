@@ -30,8 +30,8 @@ import javax.slee.facilities.TimerID;
 @Table(name = "MOBICENTS_SIPEVENT_SUBSCRIPTIONS")
 @NamedQueries({
 	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTION_FROM_TIMERID,query="SELECT s FROM Subscription s WHERE s.timerID = :timerID"),
-	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier AND s.key.eventPackage = :eventPackage"),
-	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier"),
+	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_AND_EVENTPACKAGE,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier AND s.key.eventPackage = :eventPackage and s.notifierParams = null"),
+	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier and s.notifierParams = null"),
 	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_WITH_PARAMS,query="SELECT s FROM Subscription s WHERE s.notifier = :notifier and s.notifierParams = :notifierParams"),
 	@NamedQuery(name=Subscription.JPA_NAMED_QUERY_SELECT_DIALOG_SUBSCRIPTIONS,query="SELECT s FROM Subscription s WHERE s.key.callId = :callId AND s.key.remoteTag = :remoteTag")
 	})
@@ -412,7 +412,7 @@ public class Subscription implements Serializable {
 	 * @param dialog
 	 * @return
 	 */
-	public static List getDialogSubscriptions(EntityManager entityManager, String callId, String remoteTag) {
+	public static List<?> getDialogSubscriptions(EntityManager entityManager, String callId, String remoteTag) {
 		return entityManager.createNamedQuery(JPA_NAMED_QUERY_SELECT_DIALOG_SUBSCRIPTIONS)
 		.setParameter("callId",callId)
 		.setParameter("remoteTag",remoteTag)

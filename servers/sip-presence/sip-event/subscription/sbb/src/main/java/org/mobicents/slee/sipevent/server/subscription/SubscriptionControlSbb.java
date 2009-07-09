@@ -838,10 +838,6 @@ public abstract class SubscriptionControlSbb implements Sbb,
 	 * @param event
 	 */
 	private void terminateRlsServiceSubscriptions(String notifier, Subscription.Event event) {
-		
-		if (logger.isDebugEnabled()) {
-			logger.debug("terminating rls service "+notifier+" subscriptions with event "+event);
-		}
 			
 		if (configuration.getEventListSupportOn()) {
 			// create jpa entity manager
@@ -864,28 +860,28 @@ public abstract class SubscriptionControlSbb implements Sbb,
 			Subscription.JPA_NAMED_QUERY_SELECT_SUBSCRIPTIONS_FROM_NOTIFIER_WITH_PARAMS).setParameter(
 					"notifier", notifierWithoutParams).setParameter("notifierParams", notifierParams).getResultList()) {				
 				Subscription subscription = (Subscription) object;
-				if (logger.isDebugEnabled()) {
-					logger.debug("terminating rls service "+notifier+" subscription "+subscription+" with event "+event);
-				}
-				if (subscription.getResourceList()) {
-					getEventListControlChildSbb().removeSubscription(subscription);	
-				}
-				
-				subscription.changeStatus(event);
-				try {
-					// get subscription aci
-					ActivityContextInterface aci = getActivityContextNamingfacility().lookup(
-							subscription.getKey().toString());
-					if (aci != null) {
-						if (subscription.getKey().isInternalSubscription()) {							
-							new InternalSubscriptionHandler(this).getRemoveInternalSubscriptionHandler().removeInternalSubscription(aci, subscription, entityManager, getImplementedControlChildSbb());
-						}
-						else {
-							new SipSubscriptionHandler(this).getRemoveSipSubscriptionHandler().removeSipSubscription(aci, subscription, entityManager, getImplementedControlChildSbb());
-						}
+				if (!subscription.getResourceList() || event == Subscription.Event.noresource) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("terminating rls service "+notifier+" subscription "+subscription+" with event "+event);
 					}
-				} catch (Exception e) {
-					logger.error("failed to notify internal subscriber", e);
+					
+					// remove subscription in those cases
+					subscription.changeStatus(event);
+					try {
+						// get subscription aci
+						ActivityContextInterface aci = getActivityContextNamingfacility().lookup(
+								subscription.getKey().toString());
+						if (aci != null) {
+							if (subscription.getKey().isInternalSubscription()) {							
+								new InternalSubscriptionHandler(this).getRemoveInternalSubscriptionHandler().removeInternalSubscription(aci, subscription, entityManager, getImplementedControlChildSbb());
+							}
+							else {
+								new SipSubscriptionHandler(this).getRemoveSipSubscriptionHandler().removeSipSubscription(aci, subscription, entityManager, getImplementedControlChildSbb());
+							}
+						}
+					} catch (Exception e) {
+						logger.error("failed to notify internal subscriber", e);
+					}
 				}
 
 			}

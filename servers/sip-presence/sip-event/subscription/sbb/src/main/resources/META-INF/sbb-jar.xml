@@ -217,6 +217,24 @@
             </sbb-local-interface>	   
         </sbb-classes>            
      
+     	<event event-direction="Fire">
+            <event-name>FlatListUpdatedEvent</event-name>
+            <event-type-ref>
+        		<event-type-name>FlatListUpdatedEvent</event-type-name>
+				<event-type-vendor>org.mobicents.slee.sipevent</event-type-vendor>
+				<event-type-version> 1.0 </event-type-version>
+			</event-type-ref>
+		</event>
+		
+		<event event-direction="Fire">
+            <event-name>FlatListRemovedEvent</event-name>
+            <event-type-ref>
+        		<event-type-name>FlatListRemovedEvent</event-type-name>
+				<event-type-vendor>org.mobicents.slee.sipevent</event-type-vendor>
+				<event-type-version> 1.0 </event-type-version>
+			</event-type-ref>
+		</event>
+		
     </sbb>
     
     <!-- flat list maker sbb -->
@@ -295,6 +313,9 @@
                 </cmp-field>
                 <cmp-field>
                 	<cmp-field-name>notificationData</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                	<cmp-field-name>subscriber</cmp-field-name>
                 </cmp-field> 
                 <cmp-field>
                 	<cmp-field-name>subscriptionKey</cmp-field-name>
@@ -313,6 +334,25 @@
             </sbb-local-interface>	   
         </sbb-classes>            
      
+     	
+		<event event-direction="Receive" initial-event="False">
+            <event-name>FlatListRemovedEvent</event-name>
+            <event-type-ref>
+        		<event-type-name>FlatListRemovedEvent</event-type-name>
+				<event-type-vendor>org.mobicents.slee.sipevent</event-type-vendor>
+				<event-type-version> 1.0 </event-type-version>
+			</event-type-ref>
+		</event>
+		
+		<event event-direction="Receive" initial-event="False">
+            <event-name>FlatListUpdatedEvent</event-name>
+            <event-type-ref>
+        		<event-type-name>FlatListUpdatedEvent</event-type-name>
+				<event-type-vendor>org.mobicents.slee.sipevent</event-type-vendor>
+				<event-type-version> 1.0 </event-type-version>
+			</event-type-ref>
+		</event>
+		
     </sbb>
     
 </sbb-jar>

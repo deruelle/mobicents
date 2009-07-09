@@ -280,7 +280,7 @@ public abstract class FlatListMakerSbb implements Sbb,
 		
 		// create flat list and store it in cmp
 		FlatList flatList = new FlatList(serviceType);
-				
+		
 		/*
 		 * 
 		 * If the <service> element had a <list> element, it is extracted. If

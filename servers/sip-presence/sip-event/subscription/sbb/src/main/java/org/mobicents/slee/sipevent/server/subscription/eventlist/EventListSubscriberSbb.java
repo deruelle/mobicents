@@ -1,5 +1,7 @@
 package org.mobicents.slee.sipevent.server.subscription.eventlist;
 
+import java.util.Set;
+
 import gov.nist.javax.sip.Utils;
 
 import javax.persistence.EntityManager;
@@ -40,11 +42,14 @@ public abstract class EventListSubscriberSbb implements Sbb,
 	public abstract void setNotificationData(NotificationData value);
 	public abstract NotificationData getNotificationData();
 	
-	public abstract void setFlatList(FlatList value);
-	public abstract FlatList getFlatList();
+	public abstract void setFlatList(String uri);
+	public abstract String getFlatList();
 	
 	public abstract void setSubscriptionKey(SubscriptionKey subscriptionKey);
 	public abstract SubscriptionKey getSubscriptionKey();
+	
+	public abstract void setSubscriber(String subscriber);
+	public abstract String getSubscriber();
 	
 	public abstract void setParentSbbCMP(EventListSubscriberParentSbbLocalObject parentSbb);
 	public abstract EventListSubscriberParentSbbLocalObject getParentSbbCMP();
@@ -59,13 +64,15 @@ public abstract class EventListSubscriberSbb implements Sbb,
 		return originalSubscriptionKey.toString() + ":list:" +virtualSubscriptionNotifier;
 	}
 	
-	public void subscribe(Subscription subscription, FlatList flatList) {
+	public void subscribe(Subscription subscription, FlatList flatList, ActivityContextInterface flatListACI) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("creating backend subscriptions for rls subscription "+subscription.getKey());
 		}
 		// store subscription data in cmp
 		setSubscriptionKey(subscription.getKey());
-		setFlatList(flatList);
+		setFlatList(flatList.getServiceType().getUri());
+		setSubscriber(subscription.getSubscriber());
+		flatListACI.attach(sbbContext.getSbbLocalObject());
 		// set notification data object, when a notification comes and this
 		// object exists the notification data will be added, otherwise a new
 		// NotificationData object for a single entry is created and the parent
@@ -79,38 +86,71 @@ public abstract class EventListSubscriberSbb implements Sbb,
 		}
 	}
 	
-	public void resubscribe(Subscription subscription) {
+	public void onFlatListRemovedEvent(FlatListRemovedEvent event, ActivityContextInterface aci) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("flat list activity ending, terminating subscription "+getSubscriptionKey());
+		}
+		// time to remove the subscription
+		unsubscribe(getSubscriber(), getSubscriptionKey(),event.getFlatList());
+	}
+	
+	public void onFlatListUpdatedEvent(FlatListUpdatedEvent event, ActivityContextInterface aci) {
+		Subscription subscription = getParentSbbCMP().getSubscription(getSubscriptionKey());
+		if (subscription != null) {
+			resubscribe(subscription, event.getFlatList(),event.getNewEntries(),event.getOldEntries(),event.getRemovedEntries());
+		}
+	}
+	
+	public void resubscribe(Subscription subscription, FlatList flatList) {
+		resubscribe(subscription, flatList, null, flatList.getEntries().keySet(), null);
+	}
+	
+	private void resubscribe(Subscription subscription, FlatList flatList, Set<String> newEntries, Set<String> oldEntries, Set<String> removedEntries) {
+		
 		if (logger.isDebugEnabled()) {
 			logger.debug("refreshing backend subscriptions for rls subscription "+subscription.getKey());
 		}
-		FlatList flatList = getFlatList();
 		// version is incremented
 		subscription.incrementVersion();
 		// prepare for a full state notification
 		setNotificationData(new NotificationData(subscription.getNotifierWithParams(),subscription.getVersion(),flatList,Utils.getInstance().generateTag(),Utils.getInstance().generateTag()));
 		// get subscription client child
 		SubscriptionClientControlSbbLocalObject subscriptionClient = getSubscriptionClientControlSbb();
-		// create "virtual" subscriptions
-		for (EntryType entryType : flatList.getEntries().values()) {
-			subscriptionClient.resubscribe(subscription.getSubscriber(), entryType.getUri(), subscription.getKey().getEventPackage(), getVirtualSubscriptionId(subscription.getKey(),entryType.getUri()), subscription.getExpires());
+		// update "virtual" subscriptions
+		if (removedEntries != null) {
+			for (String entryUri : removedEntries) {
+				subscriptionClient.unsubscribe(subscription.getSubscriber(), entryUri, subscription.getKey().getEventPackage(), getVirtualSubscriptionId(subscription.getKey(),entryUri));
+			}
+		}
+		if (oldEntries != null) {
+			for (String entryUri : oldEntries) {
+				subscriptionClient.resubscribe(subscription.getSubscriber(), entryUri, subscription.getKey().getEventPackage(), getVirtualSubscriptionId(subscription.getKey(),entryUri), subscription.getExpires());
+			}
+		}
+		if (newEntries != null) {
+			for (String entryUri : newEntries) {
+				subscriptionClient.subscribe(subscription.getSubscriber(), subscription.getSubscriberDisplayName(), entryUri, subscription.getKey().getEventPackage(), getVirtualSubscriptionId(subscription.getKey(),entryUri), subscription.getExpires(),null,null,null);
+			}
 		}
 	}
 	
-	public void unsubscribe(Subscription subscription) {
+	public void unsubscribe(Subscription subscription, FlatList flatList) {
+		unsubscribe(subscription.getSubscriber(), subscription.getKey(), flatList);
+	}
+	
+	private void unsubscribe(String subscriber, SubscriptionKey key, FlatList flatList) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("removing backend subscriptions for rls subscription "+subscription.getKey());
+			logger.debug("removing backend subscriptions for rls subscription "+key);
+		}
+		for (ActivityContextInterface aci : sbbContext.getActivities()) {
+			aci.detach(sbbContext.getSbbLocalObject());
 		}
 		// let's set the key as null so there are no further notifications from back end subscriptions
 		setSubscriptionKey(null);
-		// remove banck end subscriptions
-		unsubscribe(subscription.getSubscriber(), subscription.getKey());
-	}
-	
-	private void unsubscribe(String subscriber, SubscriptionKey key) {
 		// get subscription client child
 		SubscriptionClientControlSbbLocalObject subscriptionClient = getSubscriptionClientControlSbb();
-		// create "virtual" subscriptions
-		for (EntryType entryType : getFlatList().getEntries().values()) {
+		// remove "virtual" subscriptions
+		for (EntryType entryType : flatList.getEntries().values()) {
 			subscriptionClient.unsubscribe(subscriber, entryType.getUri(), key.getEventPackage(), getVirtualSubscriptionId(key,entryType.getUri()));
 		}
 	}
@@ -119,7 +159,7 @@ public abstract class EventListSubscriberSbb implements Sbb,
 		Subscription subscription = parentSbb.getSubscription(key);
 		if (subscription == null && getSubscriptionKey() != null) {
 			logger.warn("Unable to get subscription "+key+" from parent sbb, it does not exists anymore! Removing all virtual subscriptions");
-			unsubscribe(subscriber, key);
+			unsubscribe(subscriber, key,parentSbb.getFlatList(getFlatList()));
 		}
 		return subscription;
 	}
@@ -143,12 +183,16 @@ public abstract class EventListSubscriberSbb implements Sbb,
 				}
 				return null;
 			}
+			if (logger.isDebugEnabled()) {
+				logger.debug("(before partial notification) flat list: "+getFlatList());
+			}
 			// create notification data for a single resource
-			return new NotificationData(subscription.getNotifierWithParams(),subscription.getVersion(),getFlatList().getEntries().get(notifier),Utils.getInstance().generateTag(), Utils.getInstance().generateTag());
-		}			
-		else {
-			return null;
+			FlatList flatList = parentSbb.getFlatList(getFlatList());
+			if (flatList != null) {
+				return new NotificationData(subscription.getNotifierWithParams(),subscription.getVersion(),flatList.getEntries().get(notifier),Utils.getInstance().generateTag(), Utils.getInstance().generateTag());
+			}			
 		}
+		return null;
 	}
 	
 	public void notifyEvent(String subscriber, String notifier,

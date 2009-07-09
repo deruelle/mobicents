@@ -7,16 +7,23 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.sip.RequestEvent;
 import javax.sip.header.AcceptHeader;
 import javax.sip.header.SupportedHeader;
 import javax.sip.message.Response;
 import javax.slee.ActivityContextInterface;
+import javax.slee.Address;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
+import javax.slee.facilities.ActivityContextNamingFacility;
+import javax.slee.nullactivity.NullActivity;
+import javax.slee.nullactivity.NullActivityContextInterfaceFactory;
+import javax.slee.nullactivity.NullActivityFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -96,25 +103,64 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 	}
 
 	public void shutdownRLSCache() {
-		XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
-		for(String serviceURI : rlsServicesCache.getFlatListServiceURIs()) {
-			rlsServicesCache.removeFlatList(serviceURI, xdmClientSbb);
-		} 
-		xdmClientSbb.unsubscribeDocument(globalRLSDocumentKey.getDocumentSelector());
+		removeFlatLists(rlsServicesCache.getFlatListServiceURIs());
+		getXDMClientControlSbb().unsubscribeDocument(globalRLSDocumentKey.getDocumentSelector());
 	}
 
+	private String getRLSServiceACIName(String serviceURI) {
+		return "rls:aci:"+serviceURI;
+	}
+	
+	private void createRLSServiceACI(String serviceURI) {
+		NullActivity nullActivity = nullActivityFactory.createNullActivity();
+		try {
+			ActivityContextInterface aci = nullACIFactory.getActivityContextInterface(nullActivity);
+			activityContextNamingfacility.bind(aci, getRLSServiceACIName(serviceURI));			
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+	}
+	
+	private ActivityContextInterface getRLSServiceACI(String serviceURI) {
+		try {
+			return activityContextNamingfacility.lookup(getRLSServiceACIName(serviceURI));
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			return null;
+		}
+	}
+	
+	private ActivityContextInterface removeRLSServiceACI(String serviceURI) {
+		try {
+			ActivityContextInterface aci = getRLSServiceACI(serviceURI);
+			activityContextNamingfacility.unbind(getRLSServiceACIName(serviceURI));
+			((NullActivity)aci.getActivity()).endActivity();
+			return aci;
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			return null;
+		}
+	}
+	
 	private void updateCache(String document) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Mobicents Resource List Server: updating cache...");
 		}
 		Set<String> servicesToRemove = new HashSet<String>(rlsServicesCache.getFlatListServiceURIs());
+		
 		StringReader stringReader = new StringReader(document);
 		try {
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			Object obj = unmarshaller.unmarshal(stringReader);
 			if (obj instanceof RlsServices) {
 				for (ServiceType serviceType : ((RlsServices) obj).getService()) {
-					servicesToRemove.remove(serviceType.getUri());
+					if (!servicesToRemove.remove(serviceType.getUri())) {
+						// new flat list
+						createRLSServiceACI(serviceType.getUri());
+					}
 					getFlatListMakerSbb().makeFlatList(serviceType);
 				}
 			}
@@ -123,32 +169,55 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 		} finally {
 			stringReader.close();
 		}
+		
+		removeFlatLists(servicesToRemove);
+	}
+
+	private void removeFlatLists(Set<String> servicesToRemove) {
 		if (!servicesToRemove.isEmpty()) {
 			XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
 			for (String serviceToRemove : servicesToRemove) {
-				rlsServicesCache.removeFlatList(serviceToRemove, xdmClientSbb);
-				getParentSbbCMP().rlsServiceRemoved(serviceToRemove);
+				FlatList flatList = rlsServicesCache.removeFlatList(serviceToRemove, xdmClientSbb);
+				if (flatList != null) {
+					getParentSbbCMP().rlsServiceRemoved(serviceToRemove);
+					// end rls service aci
+					ActivityContextInterface aci = removeRLSServiceACI(serviceToRemove);
+					// fire event signaling removal
+					fireFlatListRemovedEvent(new FlatListRemovedEvent(flatList),aci,null);
+				}
 			}
 		}
 	}
-
+	
 	public void flatListMade(FlatList flatList) {
 
-		XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
-		
-		if (rlsServicesCache.putFlatList(flatList,xdmClientSbb)) {
-			// warn the parent sbb, perhaps there are subscriptions for this flat
-			// list uri that are
-			// not set for a rls service, this can happen when a new list is
-			// created and a subscription arrives before the rlscache is updated
-			getParentSbbCMP().rlsServiceUpdated(flatList.getServiceType().getUri());
-		}
 		if (logger.isInfoEnabled()) {
 			logger.info("Mobicents Resource List Server: updated cache with "
 					+ flatList);
 		}
+		
+		XDMClientControlSbbLocalObject xdmClientSbb = getXDMClientControlSbb();
+		
+		FlatListUpdatedEvent event = rlsServicesCache.putFlatList(flatList,xdmClientSbb);
+		
+		// warn the parent sbb, perhaps there are subscriptions for this flat
+		// list uri that are
+		// not set for a rls service, this can happen when a new list is
+		// created and a subscription arrives before the rlscache is updated
+		getParentSbbCMP().rlsServiceUpdated(flatList.getServiceType().getUri());
+		
+		
+		if (event != null) {
+			// fire event to warn falt list subscribers about update
+			fireFlatListUpdatedEvent(event, getRLSServiceACI(flatList.getServiceType().getUri()), null);
+		}
+		
 	}
 
+	public FlatList getFlatList(String serviceUri) {
+		return rlsServicesCache.getFlatList(serviceUri);
+	}
+	
 	public void getResponse(XcapUriKey key, int responseCode, String mimetype,
 			String content, String tag) {
 		if (logger.isDebugEnabled()) {
@@ -194,7 +263,7 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 		// FIXME for now redirect to document updated
 		documentUpdated(documentSelector, oldETag, newETag, documentAsString);
 	}
-
+	
 	// --- rls logic
 
 	public int validateSubscribeRequest(String subscriber, String notifier,
@@ -319,9 +388,9 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 			logger.error("Failed to create child sbb", e);
 			return false;
 		}
-
+		
 		// give the child control over the subscription
-		subscriptionChildSbb.subscribe(subscription, flatList);
+		subscriptionChildSbb.subscribe(subscription, flatList, getRLSServiceACI(flatList.getServiceType().getUri()));
 		return true;
 	}
 
@@ -329,7 +398,8 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 		EventListSubscriberSbbLocalObject childSbb = getEventListSubscriberSbb(subscription
 				.getKey());
 		if (childSbb != null) {
-			childSbb.resubscribe(subscription);
+			childSbb.resubscribe(subscription,rlsServicesCache.getFlatList(subscription
+				.getNotifierWithParams()));
 		} else {
 			logger
 					.warn("trying to refresh a event list subscription but child sbb not found");
@@ -340,7 +410,7 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 		EventListSubscriberSbbLocalObject childSbb = getEventListSubscriberSbb(subscription
 				.getKey());
 		if (childSbb != null) {
-			childSbb.unsubscribe(subscription);
+			childSbb.unsubscribe(subscription,rlsServicesCache.getFlatList(subscription.getNotifierWithParams()));
 		} else {
 			logger
 					.warn("trying to unsubscribe a event list subscription but child sbb not found");
@@ -445,8 +515,29 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 
 	private SbbContext sbbContext;
 
+	/**
+	 * SLEE Facilities
+	 */
+	private ActivityContextNamingFacility activityContextNamingfacility;
+	private NullActivityContextInterfaceFactory nullACIFactory;
+	private NullActivityFactory nullActivityFactory;
+	
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;
+		// retrieve factories, facilities & providers
+		try {
+			Context context = (Context) new InitialContext()
+					.lookup("java:comp/env");
+			nullACIFactory = (NullActivityContextInterfaceFactory) context
+					.lookup("slee/nullactivity/activitycontextinterfacefactory");
+			nullActivityFactory = (NullActivityFactory) context
+					.lookup("slee/nullactivity/factory");
+			activityContextNamingfacility = (ActivityContextNamingFacility) context
+					.lookup("slee/facilities/activitycontextnaming");
+		} catch (Exception e) {
+			logger.error(
+					"Unable to retrieve factories, facilities & providers", e);
+		}
 	}
 
 	public void sbbActivate() {
@@ -480,4 +571,10 @@ public abstract class EventListSubscriptionControlSbb implements Sbb,
 	public void unsetSbbContext() {
 		this.sbbContext = null;
 	}
+	
+	// events
+	
+	public abstract void fireFlatListUpdatedEvent(FlatListUpdatedEvent event, ActivityContextInterface aci, Address address);
+	public abstract void fireFlatListRemovedEvent(FlatListRemovedEvent event, ActivityContextInterface aci, Address address);
+	
 }

@@ -19,11 +19,11 @@ public class RlsServicesCache {
 	 * 
 	 * @param flatList
 	 * @param xdmClientSbb
-	 * @return false if there was already a list with same service uri and with same entries, true otherwise
+	 * @return an event with detailed data about the flat list update, null if it is a new put or no update 
 	 */
-	public boolean putFlatList(FlatList flatList, XDMClientControlSbbLocalObject xdmClientSbb) {
+	public FlatListUpdatedEvent putFlatList(FlatList flatList, XDMClientControlSbbLocalObject xdmClientSbb) {
+		FlatListUpdatedEvent result = null;
 		FlatList oldFlatList = cache.put(flatList.getServiceType().getUri(), flatList);
-		boolean updated = false;
 		if (oldFlatList != null) {
 			oldFlatList.getResourceLists().removeAll(flatList.getResourceLists());
 			for (DocumentSelector documentSelector : oldFlatList.getResourceLists()) {
@@ -38,20 +38,26 @@ public class RlsServicesCache {
 					}
 				}
 			}
+			Set<String> oldEntries = new HashSet<String>();
+			Set<String> newEntries = new HashSet<String>();
+			Set<String> removedEntries = new HashSet<String>();
+			boolean updated = false;
 			for (String entry : flatList.getEntries().keySet()) {
 				if (oldFlatList.getEntries().remove(entry) == null) {
-					// it is a new entry
+					newEntries.add(entry);
 					updated = true;
-					break;
+				}
+				else {
+					oldEntries.add(entry);
 				}
 			}
-			if (!updated && !oldFlatList.getEntries().isEmpty()) {
-				// new list lost some entries
+			removedEntries.addAll(oldFlatList.getEntries().keySet());
+			if (!updated && !removedEntries.isEmpty()) {
 				updated = true;
 			}
-		}
-		else {
-			updated = true;
+			if (updated) {
+				result = new FlatListUpdatedEvent(flatList,newEntries,oldEntries,removedEntries);
+			}
 		}
 		for (DocumentSelector documentSelector : flatList.getResourceLists()) {
 			synchronized (resourceLists) {
@@ -64,7 +70,7 @@ public class RlsServicesCache {
 				flatListsLinked.add(flatList);
 			}
 		}
-		return updated;
+		return result;
 	}
 	
 	public FlatList getFlatList(String uri) {

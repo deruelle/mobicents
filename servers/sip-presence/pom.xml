@@ -13,7 +13,7 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>11</version>
+		<version>12</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 		
@@ -35,7 +35,7 @@
 		<presence.server.notifier.presrules.auid>org.openmobilealliance.pres-rules</presence.server.notifier.presrules.auid>
 		<presence.server.notifier.presrules.documentName>pres-rules</presence.server.notifier.presrules.documentName>
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
-		<mobicents.servers.jainslee.version>1.2.5.GA</mobicents.servers.jainslee.version>
+		<mobicents.servers.jainslee.version>1.2.6.GA</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2</mobicents.tools.mavenplugin.du.version>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 		<!-- don't change -->

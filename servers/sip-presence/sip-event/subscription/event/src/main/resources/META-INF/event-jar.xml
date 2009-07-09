@@ -11,6 +11,20 @@
 		<event-class-name>org.mobicents.slee.sipevent.server.internal.InternalNotifyEvent</event-class-name>
 	</event-definition>
 
+	<event-definition>
+		<event-type-name>FlatListUpdatedEvent</event-type-name>
+		<event-type-vendor>org.mobicents.slee.sipevent</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>org.mobicents.slee.sipevent.server.subscription.eventlist.FlatListUpdatedEvent</event-class-name>
+	</event-definition>
+	
+	<event-definition>
+		<event-type-name>FlatListRemovedEvent</event-type-name>
+		<event-type-vendor>org.mobicents.slee.sipevent</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>org.mobicents.slee.sipevent.server.subscription.eventlist.FlatListRemovedEvent</event-class-name>
+	</event-definition>
+	
 </event-jar>
 
 
