@@ -141,6 +141,7 @@
 				<module>examples/internal-publisher</module>
 				<module>examples/internal-subscriber</module>
 				<module>examples/internal-rls</module>
+				<module>docs</module>				
 			</modules>
             <build>
 				<plugins>
