@@ -47,7 +47,7 @@ public class Encoder implements Codec {
     private static short seg_end[] = new short[]{0xFF, 0x1FF, 0x3FF, 0x7FF,
         0xFFF, 0x1FFF, 0x3FFF, 0x7FFF
     };
-    private byte[] temp = new byte[1200];
+    private byte[] temp = new byte[8192];
 
     public Format getSupportedInputFormat() {
         return Codec.LINEAR_AUDIO;
@@ -77,56 +77,24 @@ public class Encoder implements Codec {
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-        int len = process((byte[]) buffer.getData(), buffer.getLength(), temp);
+        int len = process((byte[]) buffer.getData(), buffer.getOffset(), buffer.getLength(), temp);
         System.arraycopy(temp, 0, (byte[])buffer.getData(), 0, len);
         buffer.setOffset(0);
         buffer.setLength(len);
         buffer.setFormat(PCMU);
-/*        byte[] data = (byte[]) buffer.getData();
-        
-        int offset = buffer.getOffset();
-        int length = buffer.getLength();
-        
-        byte[] media = new byte[length - offset];
-        System.arraycopy(data, 0, media, 0, media.length);
-        
-        byte[] res = process(data);
-        
-        buffer.setData(res);
-        buffer.setOffset(0);
-        buffer.setFormat(Codec.PCMU);
-        buffer.setLength(res.length);
- */ 
     }
     
-    private int process(byte[] src, int len, byte[] res) {
-        int j = 0;
+    private int process(byte[] src, int offset, int len, byte[] res) {
+        int j = offset;
         int count = len / 2;
         short sample = 0;
         for (int i = 0; i < count; i++) {
             sample = (short) (((src[j++] & 0xff) | (src[j++]) << 8));
-            res[i] = linear2ulaw(sample);
+            res[i] = this.linear2ulaw(sample);
         }
         return count;
     }
     
-    /**
-     * Perform compression using U-law.
-     * 
-     * @param media the input uncompressed media
-     * @return the output compressed media.
-     */
-    private byte[] process(byte[] media) {
-        byte[] compressed = new byte[media.length / 2];
-
-        int j = 0;
-        for (int i = 0; i < compressed.length; i++) {
-            short sample = (short) ((media[j++] & 0xff) | ((media[j++]) << 8));
-            compressed[i] = linear2ulaw(sample);
-        }
-        return compressed;
-    }
-
     /*
      * linear2ulaw() - Convert a linear PCM value to u-law
      *
@@ -196,4 +164,5 @@ public class Encoder implements Codec {
         }
         return (size);
     }
+    
 }
