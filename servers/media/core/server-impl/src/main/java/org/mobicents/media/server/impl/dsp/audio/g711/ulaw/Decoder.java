@@ -64,6 +64,8 @@ public class Decoder implements Codec {
         56, 48, 40, 32, 24, 16, 8, 0
     };
 
+    private byte[] temp = new byte[8192];
+    
     /**
      * (Non Java-doc)
      * 
@@ -90,18 +92,12 @@ public class Decoder implements Codec {
     public void process(Buffer buffer) {
         byte[] data = (byte[]) buffer.getData();
         
-        int offset = buffer.getOffset();
-        int length = buffer.getLength();
-        byte[] media = new byte[length - offset];
+        int len = process(data, buffer.getOffset(), buffer.getLength(), temp);
+        System.arraycopy(temp, 0, (byte[])buffer.getData(), 0, len);
         
-        System.arraycopy(data, 0, media, 0, media.length);
-        
-        byte[] res = process(data, length - offset);
-        
-        buffer.setData(res);
         buffer.setOffset(0);
         buffer.setFormat(Codec.LINEAR_AUDIO);
-        buffer.setLength(res.length);
+        buffer.setLength(len);
     }
     
     /**
@@ -110,15 +106,14 @@ public class Decoder implements Codec {
      * @param media the compressed media.
      * @param uncompressed media.
      */
-    private synchronized byte[] process(byte[] media, int len) {
-        byte[] decompressed = new byte[len * 2];
+    private int process(byte[] media, int offset, int len, byte[] res) {
         int j = 0;
         for (int i = 0; i < len; i++) {
-            short s = this.ulaw2linear(media[i]);
-            decompressed[j++] = (byte) s;
-            decompressed[j++] = (byte) (s >> 8);
+            short s = muLawDecompressTable[media[i + offset] & 0xff];
+            res[j++] = (byte) s;
+            res[j++] = (byte) (s >> 8);
         }
-        return decompressed;
+        return 2*len;
     }
 
     /*
