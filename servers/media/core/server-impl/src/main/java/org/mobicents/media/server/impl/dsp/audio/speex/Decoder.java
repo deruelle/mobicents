@@ -62,20 +62,11 @@ public class Decoder implements Codec {
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-        byte[] data = (byte[]) buffer.getData();
+        int len = process((byte[]) buffer.getData(), buffer.getOffset(), buffer.getLength(), (byte[]) buffer.getData());
         
-        int offset = buffer.getOffset();
-        int length = buffer.getLength();
-        
-        byte[] media = new byte[length - offset];
-        System.arraycopy(data, 0, media, 0, media.length);
-        
-        byte[] res = process(data);
-        
-        buffer.setData(res);
         buffer.setOffset(0);
         buffer.setFormat(Codec.LINEAR_AUDIO);
-        buffer.setLength(res.length);
+        buffer.setLength(len);
     }
     
     /**
@@ -84,17 +75,14 @@ public class Decoder implements Codec {
      * @param media input compressed speech.
      * @return uncompressed speech.
      */
-    private byte[] process(byte[] media) {
-        byte[] output = null;
-        
+    private int process(byte[] media, int offset, int len, byte[] res) {
         try {
-            decoder.processData(media, 0, media.length);
-            output = new byte[decoder.getProcessedDataByteSize()];
-            decoder.getProcessedData(output, 0);
+            decoder.processData(media, offset, len);
+            int size = decoder.getProcessedDataByteSize();
+            decoder.getProcessedData(res, 0);
+            return size;
         } catch (StreamCorruptedException e) {
-            e.printStackTrace();
+            return 0;
         }
-
-        return output;
     }
 }
