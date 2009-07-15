@@ -5,14 +5,19 @@
 
 package org.mobicents.media.server.impl.dsp.audio.g711.ulaw;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 import org.mobicents.media.Buffer;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class CodecTest extends TestCase {
+public class CodecTest  {
 
     private static short muLawDecompressTable[] = new short[]{
         -32124, -31100, -30076, -29052, -28028, -27004, -25980, -24956,
@@ -52,13 +57,19 @@ public class CodecTest extends TestCase {
     private byte[] src = new byte[512];
     private byte[] srcOriginal = new byte[512];
     
-    public CodecTest(String testName) {
-        super(testName);
+    public CodecTest() {
     }            
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() {
         int k = 0;
         int j = 0;
         for (int i = 0; i < 256; i++) {
@@ -67,18 +78,18 @@ public class CodecTest extends TestCase {
             srcOriginal[j++] = (byte)(s);
             
             src[k++] = (byte)(s >> 8);
-            srcOriginal[j++] = (byte)(s >> 8);
-             
+            srcOriginal[j++] = (byte)(s >> 8);             
         }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() {
     }
+    
     /**
      * Test of process method, of class Decoder.
      */
+    @Test
     public void testCodec() {
         Buffer buffer = new Buffer();
         buffer.setData(src);
@@ -87,12 +98,12 @@ public class CodecTest extends TestCase {
         
         org.mobicents.media.server.spi.dsp.Codec compressor = new Encoder();
         compressor.process(buffer);
-        
+
         org.mobicents.media.server.spi.dsp.Codec decompressor = new Decoder();
         decompressor.process(buffer);
         
         byte[] res = (byte[]) buffer.getData();
-        for (int i = 0; i < srcOriginal.length; i++) {
+        for (int i = 0; i < buffer.getLength(); i++) {
             if (srcOriginal[i] != res[i]) {
                 fail("mismatch found at " + i);
             }
