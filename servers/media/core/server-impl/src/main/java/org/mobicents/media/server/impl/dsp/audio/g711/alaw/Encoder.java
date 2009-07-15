@@ -76,15 +76,15 @@ public class Encoder implements Codec {
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-        int len = process((byte[]) buffer.getData(), buffer.getLength(), temp);
+        int len = process((byte[]) buffer.getData(), buffer.getOffset(), buffer.getLength(), temp);
         System.arraycopy(temp, 0, (byte[])buffer.getData(), 0, len);
         buffer.setOffset(0);
         buffer.setLength(len);
         buffer.setFormat(PCMA);
     }
     
-    private int process(byte[] src, int len, byte[] res) {
-        int j = 0;
+    private int process(byte[] src, int offset, int len, byte[] res) {
+        int j = offset;
         int count = len / 2;
         short sample = 0;
         
