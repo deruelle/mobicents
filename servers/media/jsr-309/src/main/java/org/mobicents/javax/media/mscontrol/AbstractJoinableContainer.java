@@ -38,12 +38,7 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 
 	protected int maxJoinees = 1;
 
-	public AbstractJoinableContainer(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, int maxJoinees,
-			String endpointName) {
-		this.mediaSession = mediaSession;
-		this.mgcpWrapper = mgcpWrapper;
-		this.maxJoinees = maxJoinees;
-		this.endpoint = endpointName;
+	public AbstractJoinableContainer() {
 		this.state = MediaObjectState.IDLE;
 	}
 

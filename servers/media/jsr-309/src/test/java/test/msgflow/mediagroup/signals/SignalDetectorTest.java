@@ -17,8 +17,6 @@ import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 
 import test.msgflow.MessageFlowHarness;
 
-
-
 /**
  * 
  * 
@@ -50,16 +48,13 @@ public class SignalDetectorTest extends MessageFlowHarness {
 			fail("Unexpected Exception");
 		}
 	}
-	
-	
+
 	public void testSignalDetect() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
 		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
 		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroup.SIGNALDETECTOR);
 		final SignalDetector detector = MG1.getSignalDetector();
 		final ContextImpl ser = new ContextImpl();
-
-		
 
 		JoinEventListener statusEvtList = new JoinEventListener() {
 
@@ -73,10 +68,12 @@ public class SignalDetectorTest extends MessageFlowHarness {
 							public void onEvent(SignalDetectorEvent anEvent) {
 								if (anEvent.isSuccessful()) {
 									if (SignalDetectorEvent.SIGNAL_DETECTED == anEvent.getEventType()) {
-										logger.debug(" SignalDetection successfully. received DTMF =  " + anEvent.getSignalString());
+										logger.debug(" SignalDetection successfully. received DTMF =  "
+												+ anEvent.getSignalString());
 										testPassed = true;
-									} else{
-										logger.error(" SignalDetection successfully. But EventType is = "+anEvent.getEventType());
+									} else {
+										logger.error(" SignalDetection successfully. But EventType is = "
+												+ anEvent.getEventType());
 									}
 								} else {
 									logger.error("Received Error from Player " + anEvent);
@@ -85,7 +82,7 @@ public class SignalDetectorTest extends MessageFlowHarness {
 						};
 
 						detector.addListener(sigDetectorListener);
-						try {							
+						try {
 							detector.receiveSignals(1, null, null, null);
 						} catch (MsControlException e) {
 							logger.error(e);
@@ -109,13 +106,26 @@ public class SignalDetectorTest extends MessageFlowHarness {
 		waitForMessage();
 		waitForMessage();
 
+		MG1.removeListener(statusEvtList);
+		MG1.unjoinInitiate(NC1, ser);
+
+		waitForMessage();
+
+		try {
+			detector.receiveSignals(1, null, null, null);
+			fail("SignalDetector didnt throw MsControlException(Container is not joined to any other container)");
+		} catch (MsControlException e) {
+			logger.error("expected error ", e);
+
+		}
+
 		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
 	}
 
 	private class ContextImpl implements Serializable {
 
 	}
-	
+
 	public void tearDown() {
 		this.mgw.checkState();
 		try {

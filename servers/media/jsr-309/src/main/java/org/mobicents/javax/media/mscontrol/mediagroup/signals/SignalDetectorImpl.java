@@ -16,7 +16,6 @@ import jain.protocol.ip.mgcp.message.parms.RequestedAction;
 import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
-import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,8 @@ import javax.media.mscontrol.resource.RTC;
 import javax.media.mscontrol.resource.enums.ParameterEnum;
 
 import org.apache.log4j.Logger;
+import org.mobicents.javax.media.mscontrol.MediaConfigImpl;
+import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.javax.media.mscontrol.mediagroup.MediaGroupImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
@@ -55,16 +56,19 @@ public class SignalDetectorImpl implements SignalDetector {
 	protected MgcpWrapper mgcpWrapper = null;
 	protected volatile RequestIdentifier reqId = null;
 
+	private MediaConfigImpl config = null;
+	private List<EventName> eveNames = new ArrayList<EventName>();
+
 	// TODO : Not really caring about State as of now
 	protected volatile SignalDetectorState state = SignalDetectorState.IDLE;
 
 	// TODO : Buffer needs to be implemented
 	private List<String> buffer = null;
 
-	public SignalDetectorImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper) {
+	public SignalDetectorImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper, MediaConfigImpl config) {
 		this.mediaGroup = mediaGroup;
 		this.mgcpWrapper = mgcpWrapper;
-
+		this.config = config;
 		this.mediaSession = (MediaSessionImpl) mediaGroup.getMediaSession();
 
 		this.buffer = new ArrayList<String>();
@@ -76,9 +80,14 @@ public class SignalDetectorImpl implements SignalDetector {
 
 	public void receiveSignals(int numSignals, Parameter[] patterns, RTC[] rtc, Parameters optargs)
 			throws MsControlException {
-		Runnable tx = new StartTx(this, patterns, optargs);
-		Provider.submit(tx);
-		this.state = SignalDetectorState.DETECTING;
+
+		if (MediaObjectState.JOINED.equals(this.mediaGroup.getState())) {
+			Runnable tx = new StartTx(this, patterns, optargs);
+			Provider.submit(tx);
+			this.state = SignalDetectorState.DETECTING;
+		} else {
+			throw new MsControlException(this.mediaGroup.getURI() + " Container is not joined to any other container");
+		}
 	}
 
 	public MediaGroup getContainer() {
@@ -476,42 +485,17 @@ public class SignalDetectorImpl implements SignalDetector {
 				RequestedAction[] dtmfActions = new RequestedAction[] { RequestedAction.NotifyImmediately };
 				// notificationRequest.setDigitMap(new DigitMap(digitMap));
 
-				RequestedEvent dtmf0 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf0, connId),
-						dtmfActions);
-				RequestedEvent dtmf1 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf1, connId),
-						dtmfActions);
-				RequestedEvent dtmf2 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf2, connId),
-						dtmfActions);
-				RequestedEvent dtmf3 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf3, connId),
-						dtmfActions);
-				RequestedEvent dtmf4 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf4, connId),
-						dtmfActions);
-				RequestedEvent dtmf5 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf5, connId),
-						dtmfActions);
-				RequestedEvent dtmf6 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf6, connId),
-						dtmfActions);
-				RequestedEvent dtmf7 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf7, connId),
-						dtmfActions);
-				RequestedEvent dtmf8 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf8, connId),
-						dtmfActions);
-				RequestedEvent dtmf9 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf9, connId),
-						dtmfActions);
-				RequestedEvent dtmfA = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmfA, connId),
-						dtmfActions);
-				RequestedEvent dtmfB = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmfB, connId),
-						dtmfActions);
-				RequestedEvent dtmfC = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmfC, connId),
-						dtmfActions);
-				RequestedEvent dtmfD = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmfD, connId),
-						dtmfActions);
-				RequestedEvent dtmfStar = new RequestedEvent(
-						new EventName(PackageName.Dtmf, MgcpEvent.dtmfStar, connId), dtmfActions);
-				RequestedEvent dtmfHash = new RequestedEvent(
-						new EventName(PackageName.Dtmf, MgcpEvent.dtmfHash, connId), dtmfActions);
+				for (SignalDetectorEventDetectorFactory detfact : config.getSigDeteEveDetFactList()) {
+					eveNames.add(detfact.generateMgcpEvent(null, connId));
+				}
 
-				RequestedEvent[] requestedEvents = { dtmf0, dtmf1, dtmf2, dtmf3, dtmf4, dtmf5, dtmf6, dtmf7, dtmf8,
-						dtmf9, dtmfA, dtmfB, dtmfC, dtmfD, dtmfStar, dtmfHash };
+				RequestedEvent[] requestedEvents = new RequestedEvent[eveNames.size()];
+				for (int i = 0; i < requestedEvents.length; i++) {
+					requestedEvents[i] = new RequestedEvent(eveNames.get(i), dtmfActions);
+				}
 
+				eveNames.clear();
+				
 				notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);
 
@@ -561,64 +545,78 @@ public class SignalDetectorImpl implements SignalDetector {
 			mgcpWrapper.removeListener(notify.getRequestIdentifier());
 
 			EventName[] observedEvents = notify.getObservedEvents();
-			SignalDetectorEvent event = null;
+			SignalDetectorEventImpl event = null;
 			for (EventName observedEvent : observedEvents) {
-				switch (observedEvent.getEventIdentifier().intValue()) {
-				case MgcpEvent.DTMF_0:
-					digitDetected = digitDetected + 0;
-					break;
-				case MgcpEvent.DTMF_1:
-					digitDetected = digitDetected + 1;
-					break;
-				case MgcpEvent.DTMF_2:
-					digitDetected = digitDetected + 2;
-					break;
-				case MgcpEvent.DTMF_3:
-					digitDetected = digitDetected + 3;
-					break;
-				case MgcpEvent.DTMF_4:
-					digitDetected = digitDetected + 4;
-					break;
-				case MgcpEvent.DTMF_5:
-					digitDetected = digitDetected + 5;
-					break;
-				case MgcpEvent.DTMF_6:
-					digitDetected = digitDetected + 6;
-					break;
-				case MgcpEvent.DTMF_7:
-					digitDetected = digitDetected + 7;
-					break;
-				case MgcpEvent.DTMF_8:
-					digitDetected = digitDetected + 8;
-					break;
-				case MgcpEvent.DTMF_9:
-					digitDetected = digitDetected + 9;
-					break;
-				case MgcpEvent.DTMF_A:
-					digitDetected = digitDetected + "A";
-					break;
-				case MgcpEvent.DTMF_B:
-					digitDetected = digitDetected + "B";
-					break;
-				case MgcpEvent.DTMF_C:
-					digitDetected = digitDetected + "C";
-					break;
-				case MgcpEvent.DTMF_D:
-					digitDetected = digitDetected + "D";
-					break;
-				case MgcpEvent.DTMF_HASH:
-					digitDetected = digitDetected + "#";
-					break;
-				case MgcpEvent.DTMF_STAR:
-					digitDetected = digitDetected + "*";
-					break;
+				for (SignalDetectorEventDetectorFactory detfact : config.getSigDeteEveDetFactList()) {
+					if ((detfact.getPkgName().compareTo(observedEvent.getPackageName().toString()) == 0)
+							&& (detfact.getEventName().compareTo(observedEvent.getEventIdentifier().getName()) == 0)) {
 
-				default:
-					// TODO : ObservedEvent could be not DTMF. Need to take care
-					// latter
-					logger.error("Detected unexpected MGCP Event " + observedEvent.getEventIdentifier().toString());
-					break;
+						switch (observedEvent.getEventIdentifier().intValue()) {
+						case MgcpEvent.DTMF_0:
+							digitDetected = digitDetected + 0;
+							break;
+						case MgcpEvent.DTMF_1:
+							digitDetected = digitDetected + 1;
+							break;
+						case MgcpEvent.DTMF_2:
+							digitDetected = digitDetected + 2;
+							break;
+						case MgcpEvent.DTMF_3:
+							digitDetected = digitDetected + 3;
+							break;
+						case MgcpEvent.DTMF_4:
+							digitDetected = digitDetected + 4;
+							break;
+						case MgcpEvent.DTMF_5:
+							digitDetected = digitDetected + 5;
+							break;
+						case MgcpEvent.DTMF_6:
+							digitDetected = digitDetected + 6;
+							break;
+						case MgcpEvent.DTMF_7:
+							digitDetected = digitDetected + 7;
+							break;
+						case MgcpEvent.DTMF_8:
+							digitDetected = digitDetected + 8;
+							break;
+						case MgcpEvent.DTMF_9:
+							digitDetected = digitDetected + 9;
+							break;
+						case MgcpEvent.DTMF_A:
+							digitDetected = digitDetected + "A";
+							break;
+						case MgcpEvent.DTMF_B:
+							digitDetected = digitDetected + "B";
+							break;
+						case MgcpEvent.DTMF_C:
+							digitDetected = digitDetected + "C";
+							break;
+						case MgcpEvent.DTMF_D:
+							digitDetected = digitDetected + "D";
+							break;
+						case MgcpEvent.DTMF_HASH:
+							digitDetected = digitDetected + "#";
+							break;
+						case MgcpEvent.DTMF_STAR:
+							digitDetected = digitDetected + "*";
+							break;
 
+						default:
+							// TODO : ObservedEvent could be not DTMF. Need to take care
+							// latter
+							logger.error("Detected unexpected MGCP Event "
+									+ observedEvent.getEventIdentifier().toString());
+							break;
+
+						}
+
+						event = (SignalDetectorEventImpl) detfact.generateMediaEvent();
+						event.setDetector(detector);
+						event.setSuccessful(true);
+						event.setSignal(digitDetected);
+						update(event);
+
+					}
 				}
 			}
 
@@ -636,10 +634,8 @@ public class SignalDetectorImpl implements SignalDetector {
 			// SignalDetector.ev_Pattern[count], digitDetected,
 			// count, SignalDetector.q_Pattern[count], null);
 			// } else {
-			event = new SignalDetectorEventImpl(this.detector, SignalDetectorEvent.SIGNAL_DETECTED, true, digitDetected);
-			// }
 
-			update(event);
+			// }
 
 		}
 

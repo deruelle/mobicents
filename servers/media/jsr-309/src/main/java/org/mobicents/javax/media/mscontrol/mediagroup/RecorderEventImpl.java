@@ -23,10 +23,14 @@ public class RecorderEventImpl implements RecorderEvent {
 	private MediaErr error = MediaErr.NO_ERROR;
 
 	private boolean isSuccessful = false;
+	
+	public RecorderEventImpl( EventType eventType){
+		this.eventType = eventType;
+	}
 
 	public RecorderEventImpl(Recorder recorder, EventType eventType, boolean isSuccessful) {
-		this.recorder = recorder;
-		this.eventType = eventType;
+		this(eventType);
+		this.recorder = recorder;		
 		this.isSuccessful = isSuccessful;
 	}
 

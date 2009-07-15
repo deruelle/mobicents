@@ -61,53 +61,96 @@ public class MediaSessionImpl implements MediaSession {
 	}
 
 	public MediaGroup createMediaGroup(Configuration<MediaGroup> paramConfiguration) throws MsControlException {
-		MediaGroup mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, paramConfiguration);
+		MediaConfigImpl config = MsControlFactoryImpl.configVsMediaConfigMap.get(paramConfiguration);
+		if (config == null) {
+			throw new MsControlException("No MediaConfig found for predefined Configuration<MediaGroup> "
+					+ paramConfiguration);
+		}
+		MediaGroup mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, config);
 		medGrpList.add(mediaGroupImpl);
 		return mediaGroupImpl;
 	}
 
 	public MediaGroup createMediaGroup(Configuration<MediaGroup> paramConfiguration, Parameters paramParameters)
 			throws MsControlException {
-		MediaGroup mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, paramConfiguration, paramParameters);
+
+		MediaConfigImpl config = MsControlFactoryImpl.configVsMediaConfigMap.get(paramConfiguration);
+		if (config == null) {
+			throw new MsControlException("No MediaConfig found for predefined Configuration<MediaGroup> "
+					+ paramConfiguration);
+		}
+
+		MediaGroup mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, config, paramParameters);
 		medGrpList.add(mediaGroupImpl);
 		return mediaGroupImpl;
 	}
 
 	public MediaGroup createMediaGroup(MediaConfig paramMediaConfig, Parameters paramParameters)
 			throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
+		MediaGroup mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, (MediaConfigImpl) paramMediaConfig);
+		medGrpList.add(mediaGroupImpl);
+		return mediaGroupImpl;
 	}
 
 	public MediaMixer createMediaMixer(Configuration<MediaMixer> paramConfiguration) throws MsControlException {
-		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper, paramConfiguration);
+
+		MediaConfigImpl config = MsControlFactoryImpl.configVsMediaConfigMap.get(paramConfiguration);
+		if (config == null) {
+			throw new MsControlException("No MediaConfig found for predefined Configuration<MediaMixer> "
+					+ paramConfiguration);
+		}
+
+		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper, config);
 		medMxrList.add(mediaMixerImpl);
 		return mediaMixerImpl;
 	}
 
 	public MediaMixer createMediaMixer(Configuration<MediaMixer> paramConfiguration, Parameters paramParameters)
 			throws MsControlException {
-		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper, paramConfiguration, paramParameters);
+
+		MediaConfigImpl config = MsControlFactoryImpl.configVsMediaConfigMap.get(paramConfiguration);
+		if (config == null) {
+			throw new MsControlException("No MediaConfig found for predefined Configuration<MediaMixer> "
+					+ paramConfiguration);
+		}
+
+		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper, config, paramParameters);
 		medMxrList.add(mediaMixerImpl);
 		return mediaMixerImpl;
 	}
 
 	public MediaMixer createMediaMixer(MediaConfig paramMediaConfig, Parameters paramParameters)
 			throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
+		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper, (MediaConfigImpl) paramMediaConfig,
+				paramParameters);
+		medMxrList.add(mediaMixerImpl);
+		return mediaMixerImpl;
 	}
 
 	public NetworkConnection createNetworkConnection(Configuration<NetworkConnection> paramConfiguration)
 			throws MsControlException {
-		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper, paramConfiguration);
+
+		MediaConfigImpl config = MsControlFactoryImpl.configVsMediaConfigMap.get(paramConfiguration);
+		if (config == null) {
+			throw new MsControlException("No NetworkConnection found for predefined Configuration<NetworkConnection> "
+					+ paramConfiguration);
+		}
+
+		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper, config);
 		netConnList.add(networkConnectionImpl);
 		return networkConnectionImpl;
 	}
 
 	public NetworkConnection createNetworkConnection(Configuration<NetworkConnection> paramConfiguration,
 			Parameters paramParameters) throws MsControlException {
-		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper, paramConfiguration,
+
+		MediaConfigImpl config = MsControlFactoryImpl.configVsMediaConfigMap.get(paramConfiguration);
+		if (config == null) {
+			throw new MsControlException("No NetworkConnection found for predefined Configuration<NetworkConnection> "
+					+ paramConfiguration);
+		}
+
+		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper, config,
 				paramParameters);
 		netConnList.add(networkConnectionImpl);
 		return networkConnectionImpl;
@@ -115,8 +158,10 @@ public class MediaSessionImpl implements MediaSession {
 
 	public NetworkConnection createNetworkConnection(MediaConfig paramMediaConfig, Parameters paramParameters)
 			throws MsControlException {
-		// TODO Auto-generated method stub
-		return null;
+		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper,
+				(MediaConfigImpl) paramMediaConfig, paramParameters);
+		netConnList.add(networkConnectionImpl);
+		return networkConnectionImpl;
 	}
 
 	public VxmlDialog createVxmlDialog(Parameters paramParameters) throws MsControlException {
@@ -166,19 +211,23 @@ public class MediaSessionImpl implements MediaSession {
 	}
 
 	public void release() {
-		for (MediaGroup mg : medGrpList) {
+
+		while (medGrpList.size() != 0) {
+			MediaGroup mg = medGrpList.get(0);
 			mg.release();
 		}
 
-		for (MediaMixer mx : medMxrList) {
+		while (medMxrList.size() != 0) {
+			MediaMixer mx = medMxrList.get(0);
 			mx.release();
 		}
 
-		for (NetworkConnection nc : netConnList) {
+		while (netConnList.size() != 0) {
+			NetworkConnection nc = netConnList.get(0);
 			nc.release();
 		}
+		
 		this.attributeMap.clear();
-
 	}
 
 	public void setParameters(Parameters paramParameters) {
@@ -188,6 +237,18 @@ public class MediaSessionImpl implements MediaSession {
 
 	public CallIdentifier getCallIdentifier() {
 		return this.callIdentifier;
+	}
+
+	public List<NetworkConnection> getNetConnList() {
+		return netConnList;
+	}
+
+	public List<MediaGroup> getMedGrpList() {
+		return medGrpList;
+	}
+
+	public List<MediaMixer> getMedMxrList() {
+		return medMxrList;
 	}
 
 }

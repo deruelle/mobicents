@@ -9,6 +9,11 @@ import javax.media.mscontrol.spi.PropertyInfo;
 
 import org.mobicents.javax.media.mscontrol.MsControlFactoryImpl;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class DriverImpl implements Driver {
 
 	public static final String DRIVER_NAME = "org.mobicents.Driver_1.0";

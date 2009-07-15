@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 
-import javax.media.mscontrol.Configuration;
 import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaObject;
 import javax.media.mscontrol.MsControlException;
@@ -23,10 +22,12 @@ import javax.media.mscontrol.resource.AllocationEventListener;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
+import org.mobicents.javax.media.mscontrol.MediaConfigImpl;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.javax.media.mscontrol.ParametersImpl;
 import org.mobicents.javax.media.mscontrol.mediagroup.signals.SignalDetectorImpl;
+import org.mobicents.javax.media.mscontrol.resource.ExtendedParameter;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
 /**
@@ -37,8 +38,7 @@ import org.mobicents.jsr309.mgcp.MgcpWrapper;
 public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGroup {
 	public static Logger logger = Logger.getLogger(MediaGroupImpl.class);
 
-	private static final String LOOP_ENDPOINT_NAME = "/mobicents/media/aap/$";
-	private static final String IVR_ENDPOINT_NAME = "/mobicents/media/IVR/$";
+	private String IVR_ENDPOINT_NAME = null;
 	private URI uri = null;
 	protected Player player = null;
 	protected SignalDetector detector = null;
@@ -46,34 +46,54 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	protected SignalGenerator generator = null;
 	public ConnectionIdentifier thisConnId = null;
 
-	private Configuration<MediaGroup> config = null;
+	private MediaConfigImpl config = null;
 	private Parameters parameters = null;
 
-	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, Configuration<MediaGroup> config)
+	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, MediaConfigImpl config)
 			throws MsControlException {
-		super(mediaSession, mgcpWrapper, 1, IVR_ENDPOINT_NAME);
-		this.player = new PlayerImpl(this, mgcpWrapper);
-		this.recorder = new RecorderImpl(this, mgcpWrapper);
-		this.detector = new SignalDetectorImpl(this, mgcpWrapper);
+		this.mediaSession = mediaSession;
+		this.mgcpWrapper = mgcpWrapper;
+		this.maxJoinees = 1;
 		this.config = config;
+
+		this.endpoint = (String) config.getParameters().get(ExtendedParameter.ENDPOINT_LOCAL_NAME);
+		this.IVR_ENDPOINT_NAME = this.endpoint;
+
+		if (config.isPlayer()) {
+			this.player = new PlayerImpl(this, mgcpWrapper, config);
+
+		}
+
+		if (config.isRecorder()) {
+			this.recorder = new RecorderImpl(this, mgcpWrapper, config);
+
+		}
+
+		if (config.isSignaldetector()) {
+			this.detector = new SignalDetectorImpl(this, mgcpWrapper, config);
+
+		}
+
+		if (config.isSignalgenerator()) {
+
+		}
+
 		try {
 			this.uri = new URI(mediaSession.getURI().toString() + "/MediaGroup." + this.id);
 		} catch (URISyntaxException e) {
 			logger.warn(e);
 		}
 	}
-	
-	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, Configuration<MediaGroup> config, Parameters params)
-	throws MsControlException {
+
+	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, MediaConfigImpl config,
+			Parameters params) throws MsControlException {
 		this(mediaSession, mgcpWrapper, config);
 		this.parameters = params;
 	}
 
 	// MediaGroup Methods
 	public Player getPlayer() throws MsControlException {
-		if (this.config == MediaGroup.PLAYER || this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR
-				|| this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR_SIGNALGENERATOR
-				|| this.config == MediaGroup.PLAYER_SIGNALDETECTOR) {
+		if (this.player != null) {
 			checkState();
 			return player;
 
@@ -84,8 +104,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public Recorder getRecorder() throws MsControlException {
-		if (this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR
-				|| this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR_SIGNALGENERATOR) {
+		if (this.recorder != null) {
 			checkState();
 			return this.recorder;
 
@@ -96,9 +115,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public SignalDetector getSignalDetector() throws MsControlException {
-		if (this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR
-				|| this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR_SIGNALGENERATOR
-				|| this.config == MediaGroup.PLAYER_SIGNALDETECTOR || this.config == MediaGroup.SIGNALDETECTOR) {
+		if (this.detector != null) {
 			checkState();
 			return this.detector;
 
@@ -109,7 +126,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public SignalGenerator getSignalGenerator() throws MsControlException {
-		if (this.config == MediaGroup.PLAYER_RECORDER_SIGNALDETECTOR_SIGNALGENERATOR) {
+		if (this.generator != null) {
 			checkState();
 			return this.generator;
 		} else {
@@ -131,7 +148,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public MediaConfig getConfig() {
-		return null;
+		return config;
 	}
 
 	public <R> R getResource(Class<R> arg0) throws MsControlException {
@@ -172,9 +189,17 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 
 	public void release() {
 		checkState();
-		this.player.stop();
-		this.recorder.stop();
-		this.detector.stop();
+		if (this.player != null) {
+			this.player.stop();
+		}
+
+		if (this.recorder != null) {
+			this.recorder.stop();
+		}
+
+		if (this.detector != null) {
+			this.detector.stop();
+		}
 		try {
 			Joinable[] joinableArray = this.getJoinees();
 			for (Joinable joinable : joinableArray) {
@@ -184,6 +209,8 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 			logger.error("release of MediaGroup failed ", e);
 		}
 		this.state = MediaObjectState.RELEASED;
+		
+		this.mediaSession.getMedGrpList().remove(this);
 	}
 
 	public void setParameters(Parameters params) {
@@ -217,7 +244,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	@Override
-	protected MediaObjectState getState() {
+	public MediaObjectState getState() {
 		return this.state;
 	}
 

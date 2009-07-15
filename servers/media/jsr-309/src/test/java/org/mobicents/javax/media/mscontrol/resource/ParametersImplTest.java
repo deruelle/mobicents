@@ -6,11 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
-import javax.media.mscontrol.mediagroup.CodecConstants;
-import javax.media.mscontrol.mediagroup.Recorder;
 import javax.media.mscontrol.Parameter;
 import javax.media.mscontrol.Parameters;
-import javax.media.mscontrol.resource.Resource;
+import javax.media.mscontrol.mediagroup.CodecConstants;
+import javax.media.mscontrol.mediagroup.Recorder;
 
 import org.junit.After;
 import org.junit.AfterClass;

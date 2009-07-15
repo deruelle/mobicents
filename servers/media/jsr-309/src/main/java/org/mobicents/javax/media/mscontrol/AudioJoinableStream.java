@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.join.JoinEvent;
 import javax.media.mscontrol.join.Joinable;
 import javax.media.mscontrol.join.JoinableContainer;
 import javax.media.mscontrol.join.JoinableStream;
-import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.join.TooManyJoineesException;
-import javax.media.mscontrol.MediaErr;
 import javax.media.mscontrol.resource.ResourceContainer;
 
 import org.apache.log4j.Logger;
@@ -40,7 +40,7 @@ import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class AudioJoinableStream implements JoinableStream {
 
@@ -49,15 +49,14 @@ public class AudioJoinableStream implements JoinableStream {
 	private final String id = (new UID()).toString();
 
 	/*
-	 * This is Map of Other AudioJoinableStream Vs this Direction i.e., this
-	 * stream is connected with other audioStream(key) with Direction (value)
+	 * This is Map of Other AudioJoinableStream Vs this Direction i.e., this stream is connected with other
+	 * audioStream(key) with Direction (value)
 	 */
 	protected ConcurrentHashMap<AudioJoinableStream, Direction> audJoinStrVsDirMap = new ConcurrentHashMap<AudioJoinableStream, Direction>();
 
 	/*
-	 * This Map of This ConnectionIdentifier (key) Vs Other
-	 * AudioJoinableStream(value) i.e., this stream is connected with
-	 * connectionid with other stream
+	 * This Map of This ConnectionIdentifier (key) Vs Other AudioJoinableStream(value) i.e., this stream is connected
+	 * with connectionid with other stream
 	 */
 	protected ConcurrentHashMap<AudioJoinableStream, ConnectionIdentifier> audJoinStrVsConnIdMap = new ConcurrentHashMap<AudioJoinableStream, ConnectionIdentifier>();
 
@@ -267,8 +266,8 @@ public class AudioJoinableStream implements JoinableStream {
 				logger.error("Exception ", e);
 				mgcpWrapper.removeListener(this.thisTx);
 
-				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.UNJOINED, false, MediaErr.UNKNOWN_ERROR, e.getMessage());
+				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+						container, JoinEvent.UNJOINED, false, MediaErr.UNKNOWN_ERROR, e.getMessage());
 				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
 				return;
@@ -308,8 +307,8 @@ public class AudioJoinableStream implements JoinableStream {
 			noOfRespReceived++;
 			mgcpWrapper.removeListener(jainMgcpComdEve.getTransactionHandle());
 			if (noOfRespReceived == 2) {
-				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.UNJOINED, false, MediaErr.TIMEOUT, this.errorTxt);
+				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+						container, JoinEvent.UNJOINED, false, MediaErr.TIMEOUT, this.errorTxt);
 				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
 			}
@@ -333,8 +332,9 @@ public class AudioJoinableStream implements JoinableStream {
 				mgcpWrapper.removeListener(respoTx);
 				if (noOfRespReceived == 2) {
 
-					JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-							this.thisAudJoiStr, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR, this.errorTxt);
+					JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this,
+							this.otherAudJoiStr.container, container, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR,
+							this.errorTxt);
 					container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
 							this.otherAudJoiStr.container, true);
 				}
@@ -367,13 +367,14 @@ public class AudioJoinableStream implements JoinableStream {
 						this.thisAudJoiStr.audJoinStrVsDirMap.remove(this.otherAudJoiStr);
 						this.otherAudJoiStr.audJoinStrVsDirMap.remove(this.thisAudJoiStr);
 
-						joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-								this.thisAudJoiStr, JoinEvent.UNJOINED, true);
+						joinEvent = new JoinEventImpl((ResourceContainer) container, this,
+								this.otherAudJoiStr.container, container, JoinEvent.UNJOINED, true);
 						container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
 								this.otherAudJoiStr.container, false);
 					} else {
-						joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-								this.thisAudJoiStr, JoinEvent.UNJOINED, false, MediaErr.UNKNOWN_ERROR, this.errorTxt);
+						joinEvent = new JoinEventImpl((ResourceContainer) container, this,
+								this.otherAudJoiStr.container, container, JoinEvent.UNJOINED, false,
+								MediaErr.UNKNOWN_ERROR, this.errorTxt);
 						container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
 								this.otherAudJoiStr.container, true);
 
@@ -387,8 +388,8 @@ public class AudioJoinableStream implements JoinableStream {
 				this.errorTxt += " - " + responseEvent.getReturnCode().getComment();
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				if (noOfRespReceived == 2) {
-					joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-							this.thisAudJoiStr, JoinEvent.UNJOINED, false, MediaErr.UNKNOWN_ERROR, this.errorTxt);
+					joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+							container, JoinEvent.UNJOINED, false, MediaErr.UNKNOWN_ERROR, this.errorTxt);
 					container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
 							this.otherAudJoiStr.container, true);
 				}
@@ -449,9 +450,9 @@ public class AudioJoinableStream implements JoinableStream {
 
 		public void transactionTxTimedOut(JainMgcpCommandEvent arg0) {
 			mgcpWrapper.removeListener(arg0.getTransactionHandle());
-			JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-					this.thisAudJoiStr, JoinEvent.JOINED, false, MediaErr.TIMEOUT,
-					"No response from MGW. Tx timed out " + arg0.toString());
+			JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+					container, JoinEvent.JOINED, false, MediaErr.TIMEOUT, "No response from MGW. Tx timed out "
+							+ arg0.toString());
 			container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container, true);
 		}
 
@@ -469,8 +470,8 @@ public class AudioJoinableStream implements JoinableStream {
 			default:
 				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
-				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR,
+				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this,
+						this.otherAudJoiStr.container, container, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR,
 						"Received unexpected Response " + jainmgcpresponseevent.toString());
 				container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
@@ -514,8 +515,8 @@ public class AudioJoinableStream implements JoinableStream {
 					break;
 				}
 
-				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.JOINED, true);
+				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+						container, JoinEvent.JOINED, true);
 				container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						false);
 
@@ -524,9 +525,9 @@ public class AudioJoinableStream implements JoinableStream {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 
-				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR, responseEvent
-								.getReturnCode().getComment());
+				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+						container, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR, responseEvent.getReturnCode()
+								.getComment());
 				container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
 
@@ -590,9 +591,8 @@ public class AudioJoinableStream implements JoinableStream {
 			logger.error("No response from MGW. Tx timed out for MGCP Tx " + this.tx + " For Command sent "
 					+ jainMgcpCommandEvent.toString());
 			mgcpWrapper.removeListener(jainMgcpCommandEvent.getTransactionHandle());
-			JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-					this.thisAudJoiStr, JoinEvent.JOINED, false, MediaErr.TIMEOUT,
-					" Request timedout. No response from MGW");
+			JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+					container, JoinEvent.JOINED, false, MediaErr.TIMEOUT, " Request timedout. No response from MGW");
 			container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 		}
 
@@ -615,9 +615,9 @@ public class AudioJoinableStream implements JoinableStream {
 			default:
 				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
-				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR, jainmgcpresponseevent
-								.getReturnCode().getComment());
+				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this,
+						this.otherAudJoiStr.container, container, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR,
+						jainmgcpresponseevent.getReturnCode().getComment());
 				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 
@@ -670,8 +670,8 @@ public class AudioJoinableStream implements JoinableStream {
 					break;
 				}
 
-				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.JOINED, true);
+				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+						container, JoinEvent.JOINED, true);
 				container.updateJoined(joinEvent, thisConnId, otherConnId, this.otherAudJoiStr.container, false);
 
 				break;
@@ -680,17 +680,17 @@ public class AudioJoinableStream implements JoinableStream {
 				logger.warn("joinInitiate() executed un-successfully for this.endpoint = "
 						+ this.thisAudJoiStr.container.endpoint + " this.other.endpoint = "
 						+ this.otherAudJoiStr.container.endpoint + " " + responseEvent.getReturnCode().getComment());
-				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.JOINED, false, MediaErr.RESOURCE_UNAVAILABLE, responseEvent
+				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+						container, JoinEvent.JOINED, false, MediaErr.RESOURCE_UNAVAILABLE, responseEvent
 								.getReturnCode().getComment());
 				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 			default:
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
-				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR, responseEvent
-								.getReturnCode().getComment());
+				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr.container,
+						container, JoinEvent.JOINED, false, MediaErr.UNKNOWN_ERROR, responseEvent.getReturnCode()
+								.getComment());
 				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 

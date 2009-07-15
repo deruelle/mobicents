@@ -15,11 +15,11 @@ import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import jain.protocol.ip.mgcp.message.parms.RequestedAction;
 import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
-import jain.protocol.ip.mgcp.pkg.MgcpEvent;
-import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.media.mscontrol.MediaErr;
@@ -35,6 +35,8 @@ import javax.media.mscontrol.resource.RTC;
 import javax.media.mscontrol.resource.ResourceEvent;
 
 import org.apache.log4j.Logger;
+import org.mobicents.javax.media.mscontrol.DefaultEventGeneratorFactory;
+import org.mobicents.javax.media.mscontrol.MediaConfigImpl;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
@@ -49,12 +51,12 @@ import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 public class PlayerImpl implements Player {
 
 	private static Logger logger = Logger.getLogger(PlayerImpl.class);
-	private static PlayerEventImpl playerBusyEvent = null;
 	protected MediaGroupImpl mediaGroup = null;
 	protected CopyOnWriteArrayList<MediaEventListener<PlayerEvent>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<PlayerEvent>>();
 
 	protected MediaSessionImpl mediaSession = null;
 	protected MgcpWrapper mgcpWrapper = null;
+	private MediaConfigImpl config = null;
 
 	protected volatile RequestIdentifier reqId = null;
 
@@ -62,12 +64,15 @@ public class PlayerImpl implements Player {
 
 	private volatile LinkedList<Runnable> txList = new LinkedList<Runnable>();
 
-	protected PlayerImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper) throws MsControlException {
+	private List<EventName> eveNames = new ArrayList<EventName>();
+
+	protected PlayerImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper, MediaConfigImpl config)
+			throws MsControlException {
 		this.mediaGroup = mediaGroup;
 		this.mediaSession = (MediaSessionImpl) mediaGroup.getMediaSession();
 		this.mgcpWrapper = mgcpWrapper;
+		this.config = config;
 
-		playerBusyEvent = new PlayerEventImpl(this, PlayerEvent.PLAY_COMPLETED, false, MediaErr.BUSY, "Player Busy");
 	}
 
 	private void updateState() {
@@ -88,18 +93,24 @@ public class PlayerImpl implements Player {
 
 	// Player methods
 	public void play(URI[] uris, RTC[] arg1, Parameters params) throws MsControlException {
+		for (URI uri : uris) {
+			this.play(uri, arg1, params);
+		}
 
+	}
+
+	public void play(URI uri, RTC[] arg1, Parameters params) throws MsControlException {
 		if (MediaObjectState.JOINED.equals(this.mediaGroup.getState())) {
 			if (this.state == PlayerState.ACTIVE) {
 				Object obj = null;
 				if (params != null && (obj = params.get(BEHAVIOUR_IF_BUSY)) != null) {
 					Value action = (Value) obj;
 					if (action == Player.QUEUE_IF_BUSY) {
-						Runnable tx = new StartTx(this, uris);
+						Runnable tx = new StartTx(this, uri);
 						txList.add(tx);
 					} else if (action == Player.STOP_IF_BUSY) {
 						txList.clear();
-						Runnable tx = new StartTx(this, uris);
+						Runnable tx = new StartTx(this, uri);
 						txList.add(tx);
 
 						// Stop the Player first
@@ -118,17 +129,13 @@ public class PlayerImpl implements Player {
 							.warn("The Player is busy and no Parameter BEHAVIOUR_IF_BUSY passed to take necessary action");
 				}
 			} else {
-				Runnable tx = new StartTx(this, uris);
+				Runnable tx = new StartTx(this, uri);
 				Provider.submit(tx);
 			}
 			this.state = PlayerState.ACTIVE;
 		} else {
 			throw new MsControlException(this.mediaGroup.getURI() + " Container is not joined to any other container");
 		}
-	}
-
-	public void play(URI arg0, RTC[] arg1, Parameters arg2) throws MsControlException {
-		this.play(new URI[] { arg0 }, arg1, arg2);
 	}
 
 	// Resource Methods
@@ -290,13 +297,11 @@ public class PlayerImpl implements Player {
 		private int tx = -1;
 
 		private PlayerImpl player = null;
-		private URI[] files = null;
+		private URI file = null;
 
-		private int annCompleted = 0;
-
-		StartTx(PlayerImpl player, URI[] files) {
+		StartTx(PlayerImpl player, URI file) {
 			this.player = player;
-			this.files = files;
+			this.file = file;
 		}
 
 		public void run() {
@@ -315,21 +320,35 @@ public class PlayerImpl implements Player {
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
 				ConnectionIdentifier connId = mediaGroup.thisConnId;
 
-				EventName[] signalRequests = new EventName[files.length];
-				int count = 0;
-				for (URI uri : files) {
-					String filePath = uri.toString();
-					signalRequests[count] = new EventName(PackageName.Announcement, MgcpEvent.ann.withParm(filePath));
-					count++;
+				EventName[] signalRequests = null;
+
+				for (DefaultEventGeneratorFactory genfact : config.getPlayerGeneFactList()) {
+					if (genfact.getEventName().compareTo("ann") == 0) {
+						String filePath = file.toString();
+						eveNames.add(genfact.generateMgcpEvent(filePath, connId));
+					} else {
+						eveNames.add(genfact.generateMgcpEvent(null, connId));
+					}
 				}
+				signalRequests = new EventName[eveNames.size()];
+				eveNames.toArray(signalRequests);
+
+				eveNames.clear();
 
 				notificationRequest.setSignalRequests(signalRequests);
 
+				// Request Event
 				RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
+				for (PlayerEventDetectorFactory detfact : config.getPlayerDetFactList()) {
+					eveNames.add(detfact.generateMgcpEvent(null, connId));
+				}
 
-				RequestedEvent[] requestedEvents = {
-						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.oc), actions),
-						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.of), actions) };
+				RequestedEvent[] requestedEvents = new RequestedEvent[eveNames.size()];
+				for (int i = 0; i < requestedEvents.length; i++) {
+					requestedEvents[i] = new RequestedEvent(eveNames.get(i), actions);
+				}
+				
+				eveNames.clear();
 
 				notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);
@@ -377,7 +396,7 @@ public class PlayerImpl implements Player {
 		public void processMgcpCommandEvent(JainMgcpCommandEvent command) {
 			logger.debug(" The NTFY received " + command.toString());
 
-			PlayerEvent event = null;
+			PlayerEventImpl event = null;
 
 			switch (command.getObjectIdentifier()) {
 			case Constants.CMD_NOTIFY:
@@ -385,33 +404,24 @@ public class PlayerImpl implements Player {
 				Notify notify = (Notify) command;
 				EventName[] observedEvents = notify.getObservedEvents();
 
-				for (EventName observedEvent : observedEvents) {
-					this.annCompleted++;
-					switch (observedEvent.getEventIdentifier().intValue()) {
-					case MgcpEvent.REPORT_ON_COMPLETION:
-						if (this.annCompleted == files.length) {
-							mgcpWrapper.removeListener(notify.getRequestIdentifier());
+				mgcpWrapper.removeListener(notify.getRequestIdentifier());
 
-							updateState();
-							event = new PlayerEventImpl(this.player, PlayerEvent.PLAY_COMPLETED, true,
-									ResourceEvent.STANDARD_COMPLETION, null);
+				updateState();
+
+				for (EventName observedEvent : observedEvents) {
+					for (PlayerEventDetectorFactory detfact : config.getPlayerDetFactList()) {
+						if ((detfact.getPkgName().compareTo(observedEvent.getPackageName().toString()) == 0)
+								&& (detfact.getEventName().compareTo(observedEvent.getEventIdentifier().getName()) == 0)) {
+
+							event = (PlayerEventImpl) detfact.generateMediaEvent();
+							event.setPlayer(this.player);
+							event.setSuccessful(true);
+							event.setQualifier(ResourceEvent.STANDARD_COMPLETION);
+							
 							update(event);
 							executeNextTx();
-						}
-						break;
-
-					case MgcpEvent.REPORT_FAILURE:
-						if (this.annCompleted != files.length) {
-							// TODO Stop the further playing of all file?
 
 						}
-						mgcpWrapper.removeListener(notify.getRequestIdentifier());
-						updateState();
-						event = new PlayerEventImpl(this.player, PlayerEvent.PLAY_COMPLETED, false,
-								MediaErr.UNKNOWN_ERROR, "Player failed on Server");
-						update(event);
-						executeNextTx();
-						break;
 					}
 				}
 				NotifyResponse response = new NotifyResponse(notify.getSource(),

@@ -23,9 +23,13 @@ public class PlayerEventImpl implements PlayerEvent {
 	private String errorText = null;
 	private MediaErr error = MediaErr.NO_ERROR;
 
-	public PlayerEventImpl(Player player, EventType eventType, boolean isSuccessful) {
-		this.player = player;
+	public PlayerEventImpl(EventType eventType) {
 		this.eventType = eventType;
+	}
+
+	public PlayerEventImpl(Player player, EventType eventType, boolean isSuccessful) {
+		this(eventType);
+		this.player = player;
 		this.isSuccessful = isSuccessful;
 	}
 
@@ -88,6 +92,30 @@ public class PlayerEventImpl implements PlayerEvent {
 
 	public boolean isSuccessful() {
 		return this.isSuccessful;
+	}
+
+	protected void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	protected void setQualifier(Qualifier qualifier) {
+		this.qualifier = qualifier;
+	}
+
+	protected void setRtcTrigger(Trigger rtcTrigger) {
+		this.rtcTrigger = rtcTrigger;
+	}
+
+	protected void setSuccessful(boolean isSuccessful) {
+		this.isSuccessful = isSuccessful;
+	}
+
+	protected void setErrorText(String errorText) {
+		this.errorText = errorText;
+	}
+
+	protected void setError(MediaErr error) {
+		this.error = error;
 	}
 
 }

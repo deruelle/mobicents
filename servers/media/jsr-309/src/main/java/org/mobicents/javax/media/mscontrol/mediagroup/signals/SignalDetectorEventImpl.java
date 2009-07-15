@@ -29,9 +29,13 @@ public class SignalDetectorEventImpl implements SignalDetectorEvent {
 
 	private boolean isSuccessful = false;
 
-	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, boolean isSuccessful) {
-		this.detector = detector;
+	public SignalDetectorEventImpl(EventType eventType) {
 		this.eventType = eventType;
+	}
+
+	public SignalDetectorEventImpl(SignalDetector detector, EventType eventType, boolean isSuccessful) {
+		this(eventType);
+		this.detector = detector;
 		this.isSuccessful = isSuccessful;
 	}
 
@@ -93,6 +97,38 @@ public class SignalDetectorEventImpl implements SignalDetectorEvent {
 
 	public boolean isSuccessful() {
 		return this.isSuccessful;
+	}
+
+	protected void setDetector(SignalDetector detector) {
+		this.detector = detector;
+	}
+
+	protected void setQualifier(Qualifier qualifier) {
+		this.qualifier = qualifier;
+	}
+
+	protected void setRtcTrigger(Trigger rtcTrigger) {
+		this.rtcTrigger = rtcTrigger;
+	}
+
+	protected void setErrorText(String errorText) {
+		this.errorText = errorText;
+	}
+
+	protected void setError(MediaErr error) {
+		this.error = error;
+	}
+
+	protected void setPatterIndex(int patterIndex) {
+		this.patterIndex = patterIndex;
+	}
+
+	protected void setSignal(String signal) {
+		this.signal = signal;
+	}
+
+	protected void setSuccessful(boolean isSuccessful) {
+		this.isSuccessful = isSuccessful;
 	}
 
 }

@@ -12,12 +12,12 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
-import jain.protocol.ip.mgcp.message.parms.RequestedAction;
-import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.media.mscontrol.MediaErr;
@@ -33,7 +33,8 @@ import javax.media.mscontrol.resource.RTC;
 
 import org.apache.log4j.Logger;
 import org.mobicents.jain.protocol.ip.mgcp.pkg.AUMgcpEvent;
-import org.mobicents.jain.protocol.ip.mgcp.pkg.AUPackage;
+import org.mobicents.javax.media.mscontrol.DefaultEventGeneratorFactory;
+import org.mobicents.javax.media.mscontrol.MediaConfigImpl;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
@@ -59,10 +60,15 @@ public class RecorderImpl implements Recorder {
 
 	protected RecorderState state = RecorderState.IDLE;
 
-	public RecorderImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper) {
+	private MediaConfigImpl config = null;
+
+	private List<EventName> eveNames = new ArrayList<EventName>();
+
+	public RecorderImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper, MediaConfigImpl config) {
 		this.mediaGroup = mediaGroup;
 		this.mediaSession = (MediaSessionImpl) mediaGroup.getMediaSession();
 		this.mgcpWrapper = mgcpWrapper;
+		this.config = config;
 	}
 
 	public void record(URI streamID, RTC[] rtc, Parameters optargs) throws MsControlException {
@@ -245,18 +251,30 @@ public class RecorderImpl implements Recorder {
 				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				ConnectionIdentifier connId = mediaGroup.thisConnId;
 
-				EventName signalRequest = new EventName(AUPackage.AU, AUMgcpEvent.aupr.withParm(this.file), null);
+				EventName[] signalRequests = null;
 
-				notificationRequest.setSignalRequests(new EventName[] { signalRequest });
+				for (DefaultEventGeneratorFactory genfact : config.getRecorderGeneFactList()) {
+					if (genfact.getEventName().compareTo(AUMgcpEvent.aupr.getName()) == 0) {
+						eveNames.add(genfact.generateMgcpEvent(this.file, connId));
+					} else {
+						eveNames.add(genfact.generateMgcpEvent(null, connId));
+					}
+				}
+				signalRequests = new EventName[eveNames.size()];
+				eveNames.toArray(signalRequests);
 
-				RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
+				eveNames.clear();
 
-				RequestedEvent[] requestedEvents = {
-						new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auoc, connId), actions),
-						new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auof, connId), actions) };
+				notificationRequest.setSignalRequests(signalRequests);
 
 				// TODO : These are not supported yet on MMS
+				// RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
+				// RequestedEvent[] requestedEvents = {
+				// new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auoc, connId), actions),
+				// new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auof, connId), actions) };
+
 				// notificationRequest.setRequestedEvents(requestedEvents);
+
 				notificationRequest.setTransactionHandle(this.tx);
 
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });

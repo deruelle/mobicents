@@ -21,34 +21,44 @@ import javax.media.mscontrol.mixer.MixerAdapter;
 import javax.media.mscontrol.mixer.MixerEvent;
 import javax.media.mscontrol.resource.Action;
 import javax.media.mscontrol.resource.AllocationEventListener;
+import javax.media.mscontrol.resource.enums.ParameterEnum;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
+import org.mobicents.javax.media.mscontrol.MediaConfigImpl;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.javax.media.mscontrol.ParametersImpl;
+import org.mobicents.javax.media.mscontrol.resource.ExtendedParameter;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class MediaMixerImpl extends AbstractJoinableContainer implements MediaMixer {
 
 	public static Logger logger = Logger.getLogger(MediaMixerImpl.class);
 
-	private static final String CONF_ENDPOINT_NAME = "/mobicents/media/cnf/$";
-	protected static final int MAX_CONNECTION = 5;
+	private String CONF_ENDPOINT_NAME = "/mobicents/media/cnf/$";
 
 	private URI uri = null;
-	private Configuration<MediaMixer> config = null;
+	private MediaConfigImpl config = null;
 	private Parameters params = null;
 
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
-	public MediaMixerImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, Configuration<MediaMixer> config) {
-		super(mediaSession, mgcpWrapper, MAX_CONNECTION, CONF_ENDPOINT_NAME);
+	public MediaMixerImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, MediaConfigImpl config) {
+		super();
+		this.mediaSession = mediaSession;
+		this.mgcpWrapper = mgcpWrapper;
+
+		this.endpoint = (String) config.getParameters().get(ExtendedParameter.ENDPOINT_LOCAL_NAME);
+		this.CONF_ENDPOINT_NAME = this.endpoint;
+
+		this.maxJoinees = Integer.parseInt((String) config.getParameters().get(ParameterEnum.MAX_PORTS));
+
 		this.config = config;
 		try {
 			this.uri = new URI(mediaSession.getURI().toString() + "/MediaMixer." + this.id);
@@ -57,8 +67,9 @@ public class MediaMixerImpl extends AbstractJoinableContainer implements MediaMi
 		}
 
 	}
-	
-	public MediaMixerImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, Configuration<MediaMixer> config, Parameters params) {
+
+	public MediaMixerImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, MediaConfigImpl config,
+			Parameters params) {
 		this(mediaSession, mgcpWrapper, config);
 		this.params = params;
 	}
@@ -156,6 +167,8 @@ public class MediaMixerImpl extends AbstractJoinableContainer implements MediaMi
 		}
 
 		this.state = MediaObjectState.RELEASED;
+
+		this.mediaSession.getMedMxrList().remove(this);
 	}
 
 	public void setParameters(Parameters params) {

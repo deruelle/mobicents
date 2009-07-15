@@ -47,9 +47,35 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 			fail("Unexpected Exception");
 		}
 	}
+	
+	public void tearDown() {
+		this.mgw.checkState();
+		try {
+			super.tearDown();
+		} catch (Exception ex) {
+		}
+	}
 
 	public void testprocessSdpOffer() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
+		
+		
+		//Test for predefined Configuration
+		try {
+			NetworkConnection ncTest = myMediaSession.createNetworkConnection(NetworkConnection.ECHO_CANCEL);
+			fail("MediaSession didn't throw MsControlException for pre defined Configuration NetworkConnection.ECHO_CANCEL");
+		} catch (MsControlException e) {
+			logger.debug("expected error", e);
+		}
+		
+		try {
+			NetworkConnection ncTest = myMediaSession.createNetworkConnection(NetworkConnection.DTMF_CONVERSION);
+			fail("MediaSession didn't throw MsControlException for pre defined Configuration NetworkConnection.DTMF_CONVERSION");
+		} catch (MsControlException e) {
+			logger.debug("expected error", e);
+		}		
+		
+		
 		final NetworkConnection myNetworkConnection = myMediaSession.createNetworkConnection(NetworkConnection.BASIC);
 
 		final String REMOTE_SDP = "v=0\n" + "m=audio 1234 RTP/AVP  0 \n" + "c=IN IP4 192.168.145.1\n"
@@ -168,6 +194,10 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 			public void onEvent(JoinEvent event) {
 				if (event.isSuccessful()) {
 					logger.info("Join successful " + event);
+					
+					assertEquals(myNetworkConnection1, event.getThisJoinable());
+					assertEquals(myNetworkConnection2, event.getOtherJoinable());
+					
 					testPassed = true;
 				} else {
 					logger.error("Join failed " + event);
@@ -635,12 +665,6 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 	}
 
-	public void tearDown() {
-		this.mgw.checkState();
-		try {
-			super.tearDown();
-		} catch (Exception ex) {
-		}
-	}
+
 
 }

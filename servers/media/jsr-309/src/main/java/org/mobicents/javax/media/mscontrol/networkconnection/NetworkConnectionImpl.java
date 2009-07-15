@@ -23,7 +23,6 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.media.mscontrol.Configuration;
 import javax.media.mscontrol.EventType;
 import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaErr;
@@ -47,9 +46,11 @@ import javax.media.mscontrol.resource.AllocationEventListener;
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
 import org.mobicents.javax.media.mscontrol.AudioJoinableStream;
+import org.mobicents.javax.media.mscontrol.MediaConfigImpl;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.javax.media.mscontrol.ParametersImpl;
+import org.mobicents.javax.media.mscontrol.resource.ExtendedParameter;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 import org.mobicents.jsr309.mgcp.Provider;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -63,9 +64,9 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	public static Logger logger = Logger.getLogger(NetworkConnectionImpl.class);
 
-	private static final String PR_ENDPOINT_NAME = "/mobicents/media/packetrelay/$";
+	private String PR_ENDPOINT_NAME = null;
 	private URI uri = null;
-	private Configuration<NetworkConnection> config = null;
+	private MediaConfigImpl config = null;
 
 	private EndpointIdentifier endpointIdentifier = null;
 	private ConnectionIdentifier connectionIdentifier = null;
@@ -74,15 +75,21 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	private byte[] localSessionDescription = null;
 
 	private SdpPortManager sdpPortManager = null;
-	
+
 	private Parameters params = null;
 
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> eventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
-	public NetworkConnectionImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper,
-			Configuration<NetworkConnection> config) {
-		super(mediaSession, mgcpWrapper, 1, PR_ENDPOINT_NAME);
+	public NetworkConnectionImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, MediaConfigImpl config) {
+		super();
+		this.mediaSession = mediaSession;
+		this.mgcpWrapper = mgcpWrapper;
+		this.maxJoinees = 1;
 		this.config = config;
+
+		this.endpoint = (String) config.getParameters().get(ExtendedParameter.ENDPOINT_LOCAL_NAME);
+		this.PR_ENDPOINT_NAME = this.endpoint;
+
 		try {
 			this.uri = new URI(mediaSession.getURI().toString() + "/NetworkConnection." + this.id);
 		} catch (URISyntaxException e) {
@@ -91,8 +98,8 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		sdpPortManager = new SdpPortManagerImpl(this);
 	}
 
-	public NetworkConnectionImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper,
-			Configuration<NetworkConnection> config, Parameters params) {
+	public NetworkConnectionImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, MediaConfigImpl config,
+			Parameters params) {
 		this(mediaSession, mgcpWrapper, config);
 		this.params = params;
 
@@ -196,6 +203,8 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		}
 
 		this.state = MediaObjectState.RELEASED;
+		
+		this.mediaSession.getNetConnList().remove(this);
 	}
 
 	public void setParameters(Parameters paramParameters) {

@@ -2,11 +2,11 @@ package org.mobicents.javax.media.mscontrol;
 
 import java.io.Serializable;
 
+import javax.media.mscontrol.EventType;
+import javax.media.mscontrol.MediaErr;
+import javax.media.mscontrol.MediaObject;
 import javax.media.mscontrol.join.JoinEvent;
 import javax.media.mscontrol.join.Joinable;
-import javax.media.mscontrol.MediaObject;
-import javax.media.mscontrol.MediaErr;
-import javax.media.mscontrol.EventType;
 
 /**
  * 
