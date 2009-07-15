@@ -84,7 +84,7 @@ public class Decoder implements Codec {
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-        int len = process((byte[]) buffer.getData(), buffer.getLength(), temp);
+        int len = process((byte[]) buffer.getData(), buffer.getOffset(), buffer.getLength(), temp);
         System.arraycopy(temp, 0, (byte[])buffer.getData(), 0, len);
         buffer.setOffset(0);
         buffer.setLength(len);
@@ -97,10 +97,10 @@ public class Decoder implements Codec {
      * @param media the input compressed media
      * @return the output decompressed media.
      */
-    private int process(byte[] src, int len, byte[] res) {
+    private int process(byte[] src, int offset, int len, byte[] res) {
         int j = 0;
         for (int i = 0; i < len; i++) {
-            short s = aLawDecompressTable[src[i] & 0xff];
+            short s = aLawDecompressTable[src[i + offset] & 0xff];
             res[j++] = (byte) s;
             res[j++] = (byte) (s >> 8);
         }
