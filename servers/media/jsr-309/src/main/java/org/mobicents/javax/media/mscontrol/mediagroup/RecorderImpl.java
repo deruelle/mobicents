@@ -281,6 +281,10 @@ public class RecorderImpl implements Recorder {
 
 			} catch (Exception e) {
 				logger.error(e);
+				
+				mgcpWrapper.removeListener(this.tx);
+				mgcpWrapper.removeListener(reqId);
+				
 				RecorderEventImpl event = new RecorderEventImpl(this.recorder, RecorderEvent.STARTED, false,
 						MediaErr.UNKNOWN_ERROR, "Error while sending RQNt " + e.getMessage());
 				update(event);
@@ -316,6 +320,8 @@ public class RecorderImpl implements Recorder {
 			Notify notify = (Notify) command;
 			EventName[] observedEvents = notify.getObservedEvents();
 			RecorderEvent event = null;
+			
+			//TODO : The MediaEvent should come from Factory
 			for (EventName observedEvent : observedEvents) {
 				switch (observedEvent.getEventIdentifier().intValue()) {
 				case AUMgcpEvent.OPERATION_COMPLETE:

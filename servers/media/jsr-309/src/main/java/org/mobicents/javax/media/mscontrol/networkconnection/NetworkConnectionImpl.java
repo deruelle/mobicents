@@ -203,7 +203,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		}
 
 		this.state = MediaObjectState.RELEASED;
-		
+
 		this.mediaSession.getNetConnList().remove(this);
 	}
 
@@ -626,8 +626,11 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 		}
 
-		public void transactionTxTimedOut(JainMgcpCommandEvent arg0) {
-			// TODO Auto-generated method stub
+		public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
+
+			logger.error("No response from MGW. Tx timed out for MGCP Tx " + this.tx + " For Command sent "
+					+ jainMgcpCommandEvent.toString());
+			mgcpWrapper.removeListener(jainMgcpCommandEvent.getTransactionHandle());
 
 		}
 
@@ -648,13 +651,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				break;
 			default:
 				mgcpWrapper.removeListener(response.getTransactionHandle());
-				logger.warn(" DLCX of Netwrok connction failed RESPONSE is unexpected " + response);
-				// NetworkConnectionEvent networkConnectionEvent = new
-				// NetworkConnectionEventImpl(
-				// this.networkConnectionImpl,
-				// NetworkConnection.e_ResourceNotAvailable, Error.e_System,
-				// "Delete failed. Look at logs ");
-				// update(networkConnectionEvent);
+				logger.warn(" DLCX of Netwrok connction failed RESPONSE is unexpected " + response);				
 				break;
 
 			}
@@ -672,11 +669,13 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				}
 				break;
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				if (logger.isDebugEnabled()) {
 					logger.debug("DLCX executed successfully for Tx = " + responseEvent.getTransactionHandle());
 				}
 				break;
 			default:
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				break;
 			}

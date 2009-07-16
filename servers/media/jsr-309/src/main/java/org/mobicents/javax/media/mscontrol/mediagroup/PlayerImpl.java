@@ -199,6 +199,12 @@ public class PlayerImpl implements Player {
 
 			} catch (Exception e) {
 				logger.error(e);
+				
+				mgcpWrapper.removeListener(this.tx);
+				mgcpWrapper.removeListener(reqId);
+
+				updateState();
+				
 				PlayerEventImpl event = new PlayerEventImpl(this.player, PlayerEvent.PLAY_COMPLETED, false,
 						MediaErr.UNKNOWN_ERROR, "Error " + e.getMessage());
 				update(event);
@@ -358,7 +364,12 @@ public class PlayerImpl implements Player {
 
 			} catch (Exception e) {
 				logger.error(e);
+				
+				mgcpWrapper.removeListener(this.tx);
+				mgcpWrapper.removeListener(reqId);
+				
 				updateState();
+				
 				PlayerEventImpl event = new PlayerEventImpl(this.player, PlayerEvent.PLAY_COMPLETED, false,
 						MediaErr.UNKNOWN_ERROR, "Error while sending RQNt " + e.getMessage());
 				update(event);
@@ -397,14 +408,12 @@ public class PlayerImpl implements Player {
 			logger.debug(" The NTFY received " + command.toString());
 
 			PlayerEventImpl event = null;
-
+			Notify notify = (Notify) command;
+			mgcpWrapper.removeListener(notify.getRequestIdentifier());
 			switch (command.getObjectIdentifier()) {
 			case Constants.CMD_NOTIFY:
-
-				Notify notify = (Notify) command;
-				EventName[] observedEvents = notify.getObservedEvents();
-
-				mgcpWrapper.removeListener(notify.getRequestIdentifier());
+				
+				EventName[] observedEvents = notify.getObservedEvents();				
 
 				updateState();
 
