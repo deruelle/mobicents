@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>xcap-client-ra-parent</artifactId>
 		<groupId>org.mobicents.servers.sippresence</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0.BETA5</version>
 	</parent>
 	
 	<artifactId>xcap-client-ra-ra</artifactId>	

@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>xdm-parent</artifactId>
 		<groupId>org.mobicents.servers.xdm</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0.BETA5</version>
 	</parent>
 
 	<artifactId>appusages-parent</artifactId>
