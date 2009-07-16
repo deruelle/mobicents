@@ -1,0 +1,1307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Platform_Installation_Guide.ent">
+<!-- NOTES ON CHANGING ENTITY FILES
+Important: take care when changing entities for directories
+* Linux path separators must be: "/"
+* Windows path separators must be: "\"
+* Entities which represent directories MUST HAVE a final path separator:
+	my/path/  <- (final separator)
+If this final separator is missing, then the documentation will be wrong. --><!ENTITY PRODUCT "JBoss Communications Platform">
+<!ENTITY BOOKID "Platform_Installation_Guide">
+<!ENTITY YEAR "2009">
+<!ENTITY HOLDER "Red Hat Inc">
+<!-- Shared: Configuring the JBOSS_HOME Environment Variable --><!ENTITY MOB_JBOSS_HOME_LIN "mobicents-all-1.2.1.GA-jboss-4.2.3.GA/jboss/">
+<!ENTITY JBCP_JBOSS_HOME_LIN "jboss-eap-4.3/jboss-as/">
+<!-- Platform Installation Guide --><!ENTITY PIG_MOB_PLAT_VERSION "1.2.1 GA">
+<!ENTITY PIG_MOB_PLAT_SIZE "200 MB">
+<!ENTITY PIG_MOB_PLAT_ZIP "mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip">
+<!ENTITY PIG_MOB_JBOSS_HOME_BIN_LIN "jboss-4.2.3.GA/bin/">
+<!ENTITY PIG_MOB_JBOSS_HOME_BIN_WIN "jboss-4.2.3.GA\bin\">
+<!ENTITY PIG_JBCP_PLAT_VERSION "1.2.1">
+<!ENTITY PIG_JBCP_PLAT_SIZE "310 MB">
+<!ENTITY PIG_JBCP_PLAT_ZIP "JBCP-1.2.1.GA-jboss-eap-4.3.zip">
+<!ENTITY PIG_JBCP_JBOSS_HOME_BIN_LIN "jboss-eap-4.3/jboss-as/bin/">
+<!ENTITY PIG_JBCP_JBOSS_HOME_BIN_WIN "jboss-eap-4.3\jboss-as\bin\">
+]>
+<book lang="en-US">
+	<bookinfo id="Platform_Installation_Guide" lang="en-US">
+	<title>Platform Installation Guide</title>
+	<subtitle>The Mobicents Platform Installation Guide</subtitle>
+	<productname>Mobicents Platform</productname>
+	<productnumber>1.2.1</productnumber>
+	<edition>2.0</edition>
+	<pubsnumber>1</pubsnumber>
+	<abstract>
+		<para>The Mobicents Platform is the first and only open source <acronym>VoIP</acronym> platform certified for <acronym>JAIN SLEE</acronym> 1.0 and <acronym>SIP</acronym> Servlets 1.1 compliance. Mobicents serves as a high-performance
+core for Service Delivery Platforms (<acronym>SDP</acronym>s) and <acronym>IP</acronym> Multimedia Subsystems (<acronym>IMS</acronym>s) by leveraging <acronym>J2EE</acronym> to enable the convergence of data and video in Next-Generation
+Intelligent Network (<acronym>NGIN</acronym>) applications.</para>
+			<para>The Mobicents Platform enables the composition of predefined
+Service Building Blocks (<acronym>SBB</acronym>s) such as Call-Control, Billing, User-Provisioning, Administration
+and Presence-Sensing. Out-of-the-box monitoring and management of
+Mobicents components is achieved through <acronym>JMX</acronym> Consoles. <acronym>JSLEE</acronym> allows popular protocol stacks such as <acronym>SIP</acronym> to be plugged in as Resource Adapters (<acronym>RA</acronym>s), and Service Building Blocks—which share many similarities with <acronym>EJB</acronym>s—allow the easy accommodation and integration of enterprise
+applications with end points such as the Web, Customer Relationship
+Management (<acronym>CRM</acronym>) systems and Service-Oriented Architectures (<acronym>SOA</acronym>s). The Mobicents Platform is the natural choice for
+telecommunication Operations Support Systems (OSSs) and Network
+Management Systems (NMSs).</para>
+				<para>In addition to the telecommunication industry, the Mobicents
+Platform is suitable for a variety of problem domains demanding an
+Event-Driven Architecture (<acronym>EDA</acronym>) for high-volume, low-latency signaling, such as financial
+trading, online gaming, (<acronym>RFID</acronym>) sensor network integration, and distributed control.</para></abstract>
+					<corpauthor>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="Common_Content/images/title_logo.svg" format="SVG"/>
+							</imageobject>
+							<textobject>
+								<phrase>Logo</phrase>
+							</textobject>
+						</inlinemediaobject>
+					</corpauthor>
+					<copyright>
+						<year>2009</year>
+						<holder>Red Hat Inc</holder>
+					</copyright>
+					<!-- ORIGINAL:
+	<xi:include
+		href="Common_Content/Legal_Notice.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" /> --><!-- FOR JDOCBOOK: --><!-- <xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="Common_Content/Legal_Notice.xml">
+		<xi:fallback
+			xmlns:xi="http://www.w3.org/2001/XInclude">
+			<xi:include
+				href="../fallback_content/Legal_Notice.xml"
+				xmlns:xi="http://www.w3.org/2001/XInclude"></xi:include>
+		</xi:fallback>
+	</xi:include> --><authorgroup lang="en-US">
+	<author>
+		<firstname>Jared</firstname>
+		<surname>Morgan</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv>Engineering Content Services</orgdiv>
+		</affiliation>
+		<email condition="mobicents">jmorgan@redhat.com</email>
+	</author>
+	<author>
+		<firstname>Douglas</firstname>
+		<surname>Silas</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv>Engineering Content Services</orgdiv>
+		</affiliation>
+		<email condition="mobicents">dhensley@redhat.com</email>
+	</author>
+	<author>
+		<firstname>Ivelin</firstname>
+		<surname>Ivanov</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">ivelin.atanasoff.ivanov@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Vladimir</firstname>
+		<surname>Ralev</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">vladimir.ralev@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Eduardo</firstname>
+		<surname>Martins</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">emmartins@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Jean</firstname>
+		<surname>Deruelle</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">jean.deruelle@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Oleg</firstname>
+		<surname>Kulikov</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">oleg.kulikoff@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Amit</firstname>
+		<surname>Bhayani</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">amit.bhayani@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Luis</firstname>
+		<surname>Barreiro</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">lbbbarreiro@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Alexandre</firstname>
+		<surname>Mendonça</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">brainslog@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Bartosz</firstname>
+		<surname>Baranowski</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">baranowb@gmail.com</email>
+	</author>
+	<author>
+		<firstname>Pavel</firstname>
+		<surname>Šlégr</surname>
+		<affiliation>
+			<orgname>Red Hat, </orgname>
+			<orgdiv condition="mob">Mobicents</orgdiv>
+		</affiliation>
+		<email condition="mob">pavel.slegr@gmail.com</email>
+	</author>
+</authorgroup>
+				</bookinfo>
+	<preface lang="en-US">
+	<title>Preface</title>
+	<para>
+		 
+	</para>
+	<section lang="en-US" xml:base="Common_Content/Conventions.xml">
+	<title>Document Conventions</title>
+	<para>
+		This manual uses several conventions to highlight certain words and phrases and draw attention to specific pieces of information.
+	</para>
+	<para>
+		In PDF and paper editions, this manual uses typefaces drawn from the <ulink url="https://fedorahosted.org/liberation-fonts/">Liberation Fonts</ulink> set. The Liberation Fonts set is also used in HTML editions if the set is installed on your system. If not, alternative but equivalent typefaces are displayed. Note: Red Hat Enterprise Linux 5 and later includes the Liberation Fonts set by default.
+	</para>
+	<section>
+		<title>Typographic Conventions</title>
+		<para>
+			Four typographic conventions are used to call attention to specific words and phrases. These conventions, and the circumstances they apply to, are as follows.
+		</para>
+		<para>
+			<literal>Mono-spaced Bold</literal>
+		</para>
+		<para>
+			Used to highlight system input, including shell commands, file names and paths. Also used to highlight key caps and key-combinations. For example:
+		</para>
+		<blockquote>
+			<para>
+				To see the contents of the file <filename>my_next_bestselling_novel</filename> in your current working directory, enter the <command>cat my_next_bestselling_novel</command> command at the shell prompt and press <keycap>Enter</keycap> to execute the command.
+			</para>
+		</blockquote>
+		<para>
+			The above includes a file name, a shell command and a key cap, all presented in Mono-spaced Bold and all distinguishable thanks to context.
+		</para>
+		<para>
+			Key-combinations can be distinguished from key caps by the hyphen connecting each part of a key-combination. For example:
+		</para>
+		<blockquote>
+			<para>
+				Press <keycap>Enter</keycap> to execute the command.
+			</para>
+			<para>
+				Press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>F1</keycap></keycombo> to switch to the first virtual terminal. Press <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>F7</keycap></keycombo> to return to your X-Windows session.
+			</para>
+		</blockquote>
+		<para>
+			The first sentence highlights the particular key cap to press. The second highlights two sets of three key caps, each set pressed simultaneously.
+		</para>
+		<para>
+			If source code is discussed, class names, methods, functions, variable names and returned values mentioned within a paragraph will be presented as above, in <literal>Mono-spaced Bold</literal>. For example:
+		</para>
+		<blockquote>
+			<para>
+				File-related classes include <classname>filesystem</classname> for file systems, <classname>file</classname> for files, and <classname>dir</classname> for directories. Each class has its own associated set of permissions.
+			</para>
+		</blockquote>
+		<para>
+			<application>Proportional Bold</application>
+		</para>
+		<para>
+			This denotes words or phrases encountered on a system, including application names; dialogue box text; labelled buttons; check-box and radio button labels; menu titles and sub-menu titles. For example:
+		</para>
+		<blockquote>
+			<para>
+				Choose <guimenu>System &gt; Preferences &gt; Mouse</guimenu> from the main menu bar to launch <application>Mouse Preferences</application>. In the <guilabel>Buttons</guilabel> tab, click the <guilabel>Left-handed mouse</guilabel> check box and click <guibutton>Close</guibutton> to switch the primary mouse button from the left to the right (making the mouse suitable for use in the left hand).
+			</para>
+			<para>
+				To insert a special character into a <application>gedit</application> file, choose <guimenu>Applications &gt; Accessories &gt; Character Map</guimenu> from the main menu bar. Next, choose <guimenu>Search &gt; Find…</guimenu> from the <application>Character Map</application> menu bar, type the name of the character in the <guilabel>Search</guilabel> field and click <guibutton>Next</guibutton>. The character you sought will be highlighted in the <guilabel>Character Table</guilabel>. Double-click this highlighted character to place it in the <guilabel>Text to copy</guilabel> field and then click the <guibutton>Copy</guibutton> button. Now switch back to your document and choose <guimenu>Edit &gt; Paste</guimenu> from the <application>gedit</application> menu bar.
+			</para>
+		</blockquote>
+		<para>
+			The above text includes application names; system-wide menu names and items; application-specific menu names; and buttons and text found within a GUI interface, all presented in Proportional Bold and all distinguishable by context.
+		</para>
+		<para>
+			Note the <guimenu>&gt;</guimenu> shorthand used to indicate traversal through a menu and its sub-menus. This is to avoid the difficult-to-follow 'Select <guimenuitem>Mouse</guimenuitem> from the <guimenu>Preferences</guimenu> sub-menu in the <guimenu>System</guimenu> menu of the main menu bar' approach.
+		</para>
+		<para>
+			<command><replaceable>Mono-spaced Bold Italic</replaceable></command> or <application><replaceable>Proportional Bold Italic</replaceable></application>
+		</para>
+		<para>
+			Whether Mono-spaced Bold or Proportional Bold, the addition of Italics indicates replaceable or variable text. Italics denotes text you do not input literally or displayed text that changes depending on circumstance. For example:
+		</para>
+		<blockquote>
+			<para>
+				To connect to a remote machine using ssh, type <command>ssh <replaceable>username</replaceable>@<replaceable>domain.name</replaceable></command> at a shell prompt. If the remote machine is <filename>example.com</filename> and your username on that machine is john, type <command>ssh john@example.com</command>.
+			</para>
+			<para>
+				The <command>mount -o remount <replaceable>file-system</replaceable></command> command remounts the named file system. For example, to remount the <filename>/home</filename> file system, the command is <command>mount -o remount /home</command>.
+			</para>
+			<para>
+				To see the version of a currently installed package, use the <command>rpm -q <replaceable>package</replaceable></command> command. It will return a result as follows: <command><replaceable>package-version-release</replaceable></command>.
+			</para>
+		</blockquote>
+		<para>
+			Note the words in bold italics above — username, domain.name, file-system, package, version and release. Each word is a placeholder, either for text you enter when issuing a command or for text displayed by the system.
+		</para>
+		<para>
+			Aside from standard usage for presenting the title of a work, italics denotes the first use of a new and important term. For example:
+		</para>
+		<blockquote>
+			<para>
+				When the Apache HTTP Server accepts requests, it dispatches child processes or threads to handle them. This group of child processes or threads is known as a <firstterm>server-pool</firstterm>. Under Apache HTTP Server 2.0, the responsibility for creating and maintaining these server-pools has been abstracted to a group of modules called <firstterm>Multi-Processing Modules</firstterm> (<firstterm>MPMs</firstterm>). Unlike other modules, only one module from the MPM group can be loaded by the Apache HTTP Server.
+			</para>
+		</blockquote>
+	</section>
+	
+	<section>
+		<title>Pull-quote Conventions</title>
+		<para>
+			Two, commonly multi-line, data types are set off visually from the surrounding text.
+		</para>
+		<para>
+			Output sent to a terminal is set in <computeroutput>Mono-spaced Roman</computeroutput> and presented thus:
+		</para>
+		
+<screen>
+books        Desktop   documentation  drafts  mss    photos   stuff  svn
+books_tests  Desktop1  downloads      images  notes  scripts  svgs
+</screen>
+		<para>
+			Source-code listings are also set in <computeroutput>Mono-spaced Roman</computeroutput> but are presented and highlighted as follows:
+		</para>
+		
+<programlisting language="java">
+package org.jboss.book.jca.ex1;
+
+import javax.naming.InitialContext;
+
+public class ExClient
+{
+   public static void main(String args[]) 
+       throws Exception
+   {
+      InitialContext iniCtx = new InitialContext();
+      Object         ref    = iniCtx.lookup("EchoBean");
+      EchoHome       home   = (EchoHome) ref;
+      Echo           echo   = home.create();
+
+      System.out.println("Created Echo");
+
+      System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
+   }
+   
+}
+</programlisting>
+	</section>
+	
+	<section>
+		<title>Notes and Warnings</title>
+		<para>
+			Finally, we use three visual styles to draw attention to information that might otherwise be overlooked.
+		</para>
+		<note>
+			<title>Note</title>
+			<para>
+				A note is a tip or shortcut or alternative approach to the task at hand. Ignoring a note should have no negative consequences, but you might miss out on a trick that makes your life easier.
+			</para>
+		</note>
+		<important>
+			<title>Important</title>
+			<para>
+				Important boxes detail things that are easily missed: configuration changes that only apply to the current session, or services that need restarting before an update will apply. Ignoring Important boxes won't cause data loss but may cause irritation and frustration.
+			</para>
+		</important>
+		<warning>
+			<title>Warning</title>
+			<para>
+				A Warning should not be ignored. Ignoring warnings will most likely cause data loss.
+			</para>
+		</warning>
+	</section>
+
+</section>
+	<!-- <xi:include
+		href="Feedback.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude">
+		<xi:fallback
+			xmlns:xi="http://www.w3.org/2001/XInclude">
+			<xi:include
+				href="Common_Content/Feedback.xml"
+				xmlns:xi="http://www.w3.org/2001/XInclude" />
+		</xi:fallback>
+	</xi:include> -->
+</preface>
+	<chapter id="utp-Using_the_Platform" lang="en-US">
+	<!--  chapter id nickname: utp  --><title>Platform Server Components</title>
+	<para>
+		The <application>Mobicents Platform</application> enables the composition of Service Building Blocks (<acronym>SBB</acronym>s) such as call control, billing, user-provisioning, administration, and presence-sensing features. The <acronym>JAIN SLEE</acronym> specification allows popular protocol stacks such as <acronym>SIP</acronym> to be plugged in as resource adapters. The <acronym>SLEE</acronym> Service Building Blocks have many similarities to Enterprise Java Beans (<acronym>EJB</acronym>s), and naturally accommodate integration with enterprise applications, the Web, Customer Relationship Management (<acronym>CRM</acronym>) and Service-Oriented Architecture (<acronym>SOA</acronym>) end points.
+	</para>
+	<para>
+		Out-of-the-box monitoring and management of <application>Mobicents</application> components is achieved via <acronym>SLEE</acronym> standard-based Java Management Extensions (<acronym>JMX</acronym>es) and Simple Network Management Profile (<acronym>SNMP</acronym>) interfaces.
+	</para>
+	<para>
+		Beyond telecommunications, the <application>Mobicents Platform</application> is applicable to a wider variety of problems demanding high-volume, low-latency signaling. Examples include financial trading, online gaming, Radio Frequency Identification (<acronym>RFID</acronym>) sensor network integration, and distributed control.
+	</para>
+	<section>
+		<title>JAIN SLEE Server</title>
+		<para>
+			<application>Mobicents Platform</application> <acronym>JAIN SLEE</acronym> provides a highly-scalable, event-driver application server with a robust component model and a fault-tolerant execution environment. <application>Mobicents Platform</application> <acronym>JSLEE</acronym> is the first and only open source platform certified for <acronym>JSLEE</acronym> 1.0 compliance. It complements <acronym>J2EE</acronym> to enable the convergence of voice, video and data in next-generation intelligent applications. The Web and <acronym>SIP</acronym> can be combined to achieve a more sophisticated and natural user experience.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata align="center" fileref="images/jss-Introduction-dia-JSLEE+J2EEApplicationServer.png" format="PNG" width="410"/>
+			</imageobject>
+			<caption>
+			<para>
+				Overview of JAIN SLEE Server components
+			</para>
+			</caption>
+		</mediaobject>
+	</section>
+	
+	<section>
+		<title>SIP Servlets Server</title>
+		<para>
+			<application>Mobicents</application> SIP (Session Initiation Protocol) Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Java Enterprise Edition services. The <application>Mobicents</application> SIP Servlets Server is a <emphasis>certified</emphasis> implementation of the SIP Servlet v1.1 (JSR 289) specification that can run on top of either the JBoss Application Server or the Tomcat Servlet Container.
+		</para>
+		<para>
+			<application>Mobicents</application> SIP Servlets for JBoss (MSS for JBoss) strives to develop interoperability standards between SIP Servlets and the Java Service Logic Execution Environment (JSLEE) so that applications can exploit the strengths of both. The JAIN-SIP Reference Implementation is leveraged as the SIP stack, and the <application condition="mob">Mobicents</application> JAIN SLEE Server is used as the SLEE implementation.
+		</para>
+	</section>
+	
+	<section>
+		<title>SIP Presence Service</title>
+		<para>
+			The <application>SIP Presence Service</application> provides presence functionalities to SIP-based networks using standards developed by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP), and the European Telecommunications Standards Institute (ETSI).
+		</para>
+	</section>
+	
+	<section>
+		<title>Media Server</title>
+		<para>
+			The Mobicents Media Server is an open source media gateway, whics aims to:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					Deliver competitive, complete, best-of-breed media gateway functionality of the highest quality.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Meet the demands of converged wireless and landline networks, DSL and cable broadband access, and fixed-mobile converged <acronym>VoIP</acronym> networks from a single and singularly-capable media gateway platform.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Increase flexibility with a media gateway that supports a wide variety of call control protocols, with an architecture that can scale to meet the demands of small-carrier providers as well as large enterprises.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+</chapter>
+	<chapter id="itp-Installing_the_Platform" lang="en-US">
+	<!--  chapter id nickname: itp  --><title>Installing the Platform</title>
+	<para>
+		The Platform can be installed by downloading and installing the binary distribution.
+	</para>
+	<para>
+		Alternatively, the source code can be obtained using the Subversion version control system (<acronym>SVN</acronym>) and then can be built from source. Installing the binary distribution is recommended for most users, and obtaining and building the source code distribution is recommended for those who want access to the latest revisions and capabilities. This guide discusses how to install, run and configure the Platform from the binary distribution.
+	</para>
+	<section lang="en-US">
+	<!--  chapter id nickname: jdkicar  --><title>Java Development Kit: Installing, Configuring and Running</title>
+	<para>
+		The <application condition="mob">Mobicents</application> platform is written in Java. A working Java Runtime Environment (<acronym>JRE</acronym>) or Java Development Kit (<acronym>JDK</acronym>) must be installed prior to running the server. The required versiom must be version 5 or higher.
+	</para>
+	<para>
+		It is possible to run most <application condition="mob">Mobicents</application> servers, such as the JAIN SLEE Server, using a Java 6 JRE or JDK. However, the XML Document Management Server does not run on Java 6. Check the <ulink url="http://groups.google.com/group/mobicents-public/topics">public support forum</ulink> and <ulink url="http://www.mobicents.org/roadmap.html">project roadmap</ulink> pages to verify Java 6 support prior to running the XML Document Management Server with Java 6.
+	</para>
+	<formalpara>
+		<title>JRE or JDK?</title>
+		<para>
+			Although <application condition="mob">Mobicents</application> servers are capable of running on the Java Runtime Environment, this guide assumes the audience is mainly developers interested in developing Java-based, <application condition="mob">Mobicents</application>-driven solutions. Therefore, installing the Java Development Kit is covered due to the anticipated audience requirements.
+		</para>
+	</formalpara>
+	<formalpara>
+		<title>32-Bit or 64-Bit JDK</title>
+		<para>
+			If the system uses 64-Bit Linux or Windows architecure, the 64-bit JDK is strongly recommended over the 32-bit version. The following heuristics should be considered in determining whether the 64-bit Java Virtual Machine (JVM) is suitable:
+		</para>
+	</formalpara>
+	<itemizedlist>
+		<listitem>
+			<para>
+				Wider datapath: the pipe between RAM and CPU is doubled, which improves the performance of memory-bound applications when using a 64-bit JVM.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				64-bit memory addressing provides a virtually unlimited (1 exabyte) heap allocation. Note that large heaps can affect garbage collection.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Applications that run with more than 1.5 GB of RAM (including free space for garbage collection optimization) should utilize the 64-bit JVM.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Applications that run on a 32-bit JVM and do not require more than minimal heap sizes will gain nothing from a 64-bit JVM. Excluding memory issues, 64-bit hardware with the same relative clock speed and architecture is not likely to run Java applications faster than the 32-bit version.
+			</para>
+		</listitem>
+	</itemizedlist>
+	<note>
+		<para>
+			The following instructions describe how to download and install the 32-bit JDK, however the steps are nearly identical for installing the 64-bit version.
+		</para>
+	</note>
+	<!--  <formalpara
+			id="jdkicar-binary-Java_Development_Kit-Pre-Install Requirements and Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para></para>
+		</formalpara>  --><!--   <variablelist
+			condition="jdkicar-binary-Java_Development_Kit-Hardware_Requirements">
+			<title>Hardware Requirements</title>
+			<varlistentry>
+				<term>Sufficient Disk Space</term>
+				<listitem>
+					<para></para>
+				</listitem>
+			</varlistentry>
+		</variablelist>   --><!--   <variablelist
+			condition="jdkicar-binary-Java_Development_Kit-Software_Prerequisites">
+			<title>Software Prerequisites</title>
+			<varlistentry>
+				<term></term>
+				<listitem>
+					<para></para>
+				</listitem>
+			</varlistentry>
+		</variablelist>   -->
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Downloading">  --><title>Downloading</title>
+		<para>
+			Download the Sun JDK 5.0 (Java 2 Development Kit) from Sun's website: <ulink url="http://java.sun.com/javase/downloads/index_jdk5.jsp"/>. Click the <guilabel>Download</guilabel> link next to "JDK 5.0 Update <replaceable>&lt;x&gt;</replaceable>" (where <replaceable>&lt;x&gt;</replaceable> is the latest minor version release number).
+		</para>
+	</formalpara>
+	<para>
+		The Sun website offers two download options: 
+		<itemizedlist>
+			<listitem>
+				<para>
+					A self-extracting RPM (for example, <filename>jdk-1_5_0_16-linux-i586-rpm.bin</filename>)
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					A self-extracting file (e.g. <filename>jdk-1_5_0_16-linux-i586.bin</filename>)
+				</para>
+			</listitem>
+		</itemizedlist>
+	</para>
+	<para>
+		If installing the JDK on Red Hat Enterprise Linux, Fedora, or another RPM-based Linux system, it is recommended that the self-extracting file containing the RPM package is selected. This option will set up and use the SysV service scripts in addition to installing the JDK. The RPM option is also recommended if the <application condition="mob">Mobicents</application> platform is being set up in a production environment.
+	</para>
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Installing">  --><title>Installing</title>
+		<para>
+			The following procedures detail how to install the Java Development Kit on both Linux and Windows.
+		</para>
+	</formalpara>
+	<procedure>
+		<title>Installing the JDK on Linux</title>
+		<step>
+			<para>
+				Ensure the file is executable, then run it:
+			</para>
+			<!--   ~]$ chmod +x "jdk-1_5_0_<minor_version>-linux-<architecture>-rpm.bin"
+~]$ ./"jdk-1_5_0_<minor_version>-linux-<architecture>-rpm.bin"   -->
+<screen>~]$ chmod +x "jdk-1_5_0_&lt;minor_version&gt;-linux-&lt;architecture&gt;-rpm.bin"
+~]$ ./"jdk-1_5_0_&lt;minor_version&gt;-linux-&lt;architecture&gt;-rpm.bin"
+</screen>
+		</step>
+	</procedure>
+	
+	<note>
+		<title>Setting up SysV Service Scripts for Non-RPM Files</title>
+		<para>
+			If the non-RPM self-extracting file is selected for an RPM-based system, the SysV service scripts can be configured by downloading and installing one of the <literal>-compat</literal> packages from the JPackage project. Download the <literal>-compat</literal> package that corresponds correctly to the minor release number of the installed JDK. The compat packages are available from <ulink url="ftp://jpackage.hmdc.harvard.edu/JPackage/1.7/generic/RPMS.non-free/"/>.
+		</para>
+	</note>
+	<important>
+		<para>
+			A <literal>-compat</literal> package is not required for RPM installations. The <literal>-compat</literal> package performs the same SysV service script set up that the RPM version of the JDK installer does.
+		</para>
+	</important>
+	<procedure>
+		<title>Installing the JDK on Windows</title>
+		<step>
+			<para>
+				Using Explorer, double-click the downloaded self-extracting installer and follow the instructions to install the JDK.
+			</para>
+		</step>
+	</procedure>
+	
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Configuring">  --><title>Configuring</title>
+		<para>
+			Configuring the system for the JDK consists of two tasks: setting the <envar>JAVA_HOME</envar> environment variable, and ensuring the system is using the proper JDK (or JRE) using the <command>alternatives</command> command. Setting <envar>JAVA_HOME</envar> generally overrides the values for <command>java</command>, <command>javac</command> and <command>java_sdk_1.5.0</command> in <command>alternatives</command>, however it is recommended to specify the value for consistency.
+		</para>
+	</formalpara>
+	<variablelist>
+		<varlistentry>
+			<term>Setting the <envar>JAVA_HOME</envar> Environment Variable on Generic Linux</term>
+			<listitem>
+				<para>
+					After installing the JDK, ensure the <envar>JAVA_HOME</envar> environment variable exists and points to the location of the JDK installation.
+				</para>
+				<formalpara>
+					<title>Setting the <envar>JAVA_HOME</envar> Environment Variable on Linux</title>
+					<para>
+						Determine whether <envar>JAVA_HOME</envar> is set by executing the following command:
+					</para>
+				</formalpara>
+				
+<screen>~]$ echo $JAVA_HOME
+</screen>
+				<para>
+					If <envar>JAVA_HOME</envar> is not set, the value must be set to the location of the JDK installation on the system. This can be achieved by adding two lines to the <filename>~/.bashrc</filename> configuration file. Open <filename>~/.bashrc</filename> (or create it if it does not exist) and add a line similar to the following one anywhere inside the file:
+				</para>
+				
+<programlisting>export JAVA_HOME="/usr/lib/jvm/jdk1.5.0_&lt;version&gt;"
+</programlisting>
+				<para>
+					The changes should also be applied for other users who will be running the <application condition="mob">Mobicents</application> on the machine (any environment variables <command>export</command>ed from <filename>~/.bashrc</filename> files are local to that user).
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Setting <envar>java</envar>, <envar>javac</envar> and <envar>java_sdk_1.5.0</envar> using the <command>alternatives</command> command </term>
+			<listitem>
+				<formalpara>
+					<title>Selecting the Correct System JVM on Linux using <command>alternatives</command></title>
+					<para>
+						On systems with the <command>alternatives</command> command, including Red Hat Enterprise Linux and Fedora, it is possible to choose which JDK (or JRE) installation to use, as well as which <command>java</command> and <command>javac</command> executables should be run when called.
+					</para>
+				</formalpara>
+				<para>
+					<emphasis>As the superuser</emphasis>, call <command>/usr/sbin/alternatives</command> with the <option>--config java</option> option to select between JDKs and JREs installed on your system:
+				</para>
+				
+<programlisting>
+home]$ sudo /usr/sbin/alternatives --config java
+
+There are 3 programs which provide 'java'.
+
+  Selection    Command
+-----------------------------------------------
+   1           /usr/lib/jvm/jre-1.5.0-gcj/bin/java
+   2           /usr/lib/jvm/jre-1.6.0-sun/bin/java
+*+ 3         /usr/lib/jvm/jre-1.5.0-sun/bin/java
+
+Enter to keep the current selection[+], or type selection number:
+</programlisting>
+				<para>
+					The Sun JDK, version 5, is required to run the <command>java</command> executable. In the <command>alternatives</command> information printout above, a plus (<literal>+</literal>) next to a number indicates the option currently being used. Press <keycap>Enter</keycap> to keep the current JVM, or enter the number corresponding to the JVM to select that option.
+				</para>
+				<para>
+					As the superuser, repeat the procedure above for the <command>javac</command> command and the <literal>java_sdk_1.5.0</literal> environment variable:
+				</para>
+				
+<screen>home]$ sudo /usr/sbin/alternatives --config javac
+</screen>
+				
+<screen>home]$ sudo /usr/sbin/alternatives --config java_sdk_1.5.0
+</screen>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+	<formalpara>
+		<title>Setting the <envar>JAVA_HOME</envar> Environment Variable on Windows</title>
+		<para>
+			For information on how to set environment variables in Windows, refer to <ulink url="http://support.microsoft.com/kb/931715"/>.
+		</para>
+	</formalpara>
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Testing">  --><title>Testing</title>
+		<para>
+			To ensure the correct JDK or Java version (5 or higher), and that the java executable is in the <envar>PATH</envar> environment variable, run the <command>java -version</command> command in the terminal from the home directory:
+		</para>
+	</formalpara>
+	
+<programlisting>
+home]$ java -version
+java version "1.5.0_16"
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b03)
+Java HotSpot(TM) Client VM (build 1.5.0_16-b03, mixed mode, sharing)
+</programlisting>
+	<!--  <formalpara
+		id="jdkicar-binary-Java_Development_Kit-Running">
+		<title>Running</title>
+		<para></para>
+	</formalpara>  --><!--   <formalpara
+		id="jdkicar-binary-Java_Development_Kit-Stopping">
+		<title>Stopping</title>
+		<para></para>
+	</formalpara>   -->
+	<formalpara>
+		<!--  id="jdkicar-binary-Java_Development_Kit-Uninstalling">  --><title>Uninstalling</title>
+		<para>
+			It is not necessary to remove a particular JDK from a system, because the JDK and JRE version can be switched as required using the <command>alternatives</command> command, and/or by setting <envar>JAVA_HOME</envar>.
+		</para>
+	</formalpara>
+	<formalpara>
+		<title>Uninstalling the JDK on Linux</title>
+		<para>
+			On RPM-based systems, uninstall the JDK using the <command>yum remove &lt;jdk_rpm_name&gt;</command> command.
+		</para>
+	</formalpara>
+	<formalpara>
+		<title>Uninstalling the JDK on Windows</title>
+		<para>
+			On Windows systems, check the JDK entry in the <literal>Start</literal> menu for an uninstall option, or use <literal>Add/Remove Programs</literal>.
+		</para>
+	</formalpara>
+</section>
+	<section id="itp-binary-Platform-Installing_Configuring_and_Running">
+		<title>Installing, Configuring and Running</title>
+		<section id="itp-binary-Platform-PreInstall_Requirements_and_Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para>
+				Ensure that the following requirements have been met before continuing with the install.
+			</para>
+			<variablelist id="itp-binary-Platform-Hardware_Requirements">
+				<title>Hardware Requirements</title>
+				<varlistentry>
+					<term>Sufficient Disk Space</term>
+					<listitem>
+						<para>
+							Once unzipped, the Platform binary release requires <emphasis>at least</emphasis> 200 MB of free disk space. Keep in mind that disk space requirements may change from release to release.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Anything Java Itself Will Run On</term>
+					<listitem>
+						<para>
+							The Platform, its bundled servers, resource adapters, and demonstration examples are 100% java.. The Platform will run on the same hardware that the JBoss Application Server runs on.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist id="itp-binary-Platform-Software_Prerequisites">
+				<title>Software Prerequisites</title>
+				<varlistentry>
+					<term>JDK 5 or Higher</term>
+					<listitem>
+						<para>
+							A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 5 or higher is required in order to run the Platform's servers. Note that the <application>JBoss Application Server</application> is a runtime dependency of the <application>Platform</application>, and is included in the binary release.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		
+		<section id="itp-binary-Platform-Downloading">
+			<title>Downloading</title>
+			<para>
+				If the platform is going to be deployed into a production environment, it is recommended that the integrity of the zip file is verified. If the platform is being used for testing or evaluation purposes on a local machine, verification is not as important, but is recommended.
+			</para>
+			<procedure>
+				<title>Downloading Without Verifying</title>
+				<step>
+					<para>
+						Open <ulink url="http://www.mobicents.org/jainsleeplatformdownload.html"/>.
+					</para>
+				</step>
+				<step>
+					<para>
+						The top row of the <literal>Files</literal> table holds the latest Stable (recommended) server version. Click the <literal>Download</literal> link to start the download.
+					</para>
+				</step>
+				<step>
+					<para>
+						Click the zip file link to start the download.
+					</para>
+				</step>
+			</procedure>
+			
+			<procedure>
+				<title>Downloading and Verifying</title>
+				<step>
+					<para>
+						Open <ulink url="http://www.mobicents.org/jainsleeplatformdownload.html"/>.
+					</para>
+				</step>
+				<step>
+					<para>
+						The top row of the <literal>Files</literal> table holds the latest Stable (recommended) platform version. Click the <literal>Download</literal> link to start the download.
+					</para>
+				</step>
+				<step>
+					<para>
+						Download both the zip file and its attendant SHA-1 file. For example, to download the latest recommended Platform version, select the following files:
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip.sha1.asc
+							</para>
+						</listitem>
+					</itemizedlist>
+				</step>
+				<step>
+					<para>
+						Check the integrity of the zip file by analysing the SHA1 file using a checksum verification tool. The following command-line tools are suggested to perform this task:
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								Linux: <command>sha1sum</command>
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Windows: <command>sha1sum.exe</command>
+							</para>
+						</listitem>
+					</itemizedlist>
+					<para>
+						To learn the operation of each tool, consult the help documentation available for the specific tool.
+					</para>
+					<para>
+						If the two checksums are identical, then the downloaded binary distribution zip file's integrity is assured, and it is safe to proceed with the installation.
+					</para>
+					<warning>
+						<title>Mismatched Checksums</title>
+						<para>
+							If the checksums are <emphasis>not</emphasis> identical, the downloaded zip file may have been corrupted during download, or has been changed since it was last uploaded to the server. Re-download the two files (the zip file and the SHA-1 file) and verify the file integrity again.
+						</para>
+						<para>
+							If the second attempt at verification results in a mismatch, it could indicate a problem with the zip file. Contact the Mobicents team through the <ulink url="http://groups.google.com/group/mobicents-public/topics">public forum</ulink> for further advice.
+						</para>
+					</warning>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section id="itp-binary-Platform-Installing">
+			<title>Installing</title>
+			<para>
+				Once the requirements and prerequisites have been met, the Platform can be installed onto the system. Follow the instructions below for the operating system on which the server will reside.
+			</para>
+			<procedure>
+				<title>Installing the Platform on Linux</title>
+				<step>
+					<para>
+						Create a subdirectory to extract the files into. For ease of identification, it is recommended that the version number of the binary is included in this directory name.
+					</para>
+					
+<screen>~]$ mkdir <quote>mobicents-&lt;version&gt;</quote>
+</screen>
+				</step>
+				<step>
+					<para>
+						Move the downloaded zip file into the directory:
+					</para>
+					
+<screen>~]$ mv <quote>mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip</quote> <quote>mobicents-&lt;version&gt;</quote>
+</screen>
+				</step>
+				<step>
+					<para>
+						Move into the directory:
+					</para>
+					
+<screen>~]$ cd <quote>mobicents-&lt;version&gt;</quote>
+</screen>
+				</step>
+				<step>
+					<para>
+						Extract the files into the current directory by executing one of the following commands. 
+						<itemizedlist>
+							<listitem>
+								<para>
+									Java: 
+<screen>mobicents-&lt;version&gt;]$ jar -xvf <quote>mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip</quote>
+</screen>
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									Linux: 
+<screen>mobicents-&lt;version&gt;]$ unzip "mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip"
+</screen>
+								</para>
+							</listitem>
+						</itemizedlist>
+						<note>
+							<para>
+								Alternatively, use <command>unzip</command> -d &lt;unzip_to_location&gt; to extract the zip file's contents to a location other than the current directory.
+							</para>
+						</note>
+					</para>
+				</step>
+				<step>
+					<para>
+						Consider deleting the archive, if free disk space is an issue.
+					</para>
+					
+<screen>ms-&lt;version&gt;]$ rm <quote>mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip</quote>
+</screen>
+				</step>
+			</procedure>
+			
+			<procedure>
+				<title>Installing the Platform Binary Distribution on Windows</title>
+				<step>
+					<para>
+						For this procedure, it is assumed that the downloaded archive is saved in the <filename>My Downloads</filename> folder.
+					</para>
+				</step>
+				<step>
+					<para>
+						Create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. For ease of identification, it is recommended that the version number of the binary is included in the folder name. For example, <filename>mobicents-&lt;version&gt;</filename>.
+					</para>
+				</step>
+				<step>
+					<para>
+						Extract the contents of the archive, specifying the destination folder as the one created in the previous step.
+					</para>
+				</step>
+				<step>
+					<para>
+						Alternatively, execute the <command>jar -xvf</command> command to extract the binary distribution files from the zip archive.
+					</para>
+					<orderedlist>
+						<listitem>
+							<para>
+								Move the downloaded zip file from <filename>My Downloads</filename> to the folder created in the previous step.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Open the Windows Command Prompt and navigate to the folder that contains the archive using the <command>cd</command> command
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Execute the <command>jar -xvf</command> command to extract the archive contents into the current folder.
+							</para>
+							
+<screen>C:\Users\&lt;user&gt;\My Downloads\mobicents-&lt;version&gt;\jar -xvf "mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip"
+</screen>
+						</listitem>
+					</orderedlist>
+				</step>
+				<step>
+					<para>
+						It is recommended that the folder holding the platform files (in this example, the folder named <filename>mobicents-&lt;version&gt;</filename>) is moved to a user-defined location for storing executable programs. For example, the <filename>Program Files</filename> folder.
+					</para>
+				</step>
+				<step>
+					<para>
+						Consider deleting the archive, if free disk space is an issue.
+					</para>
+					
+<screen>C:\Users\&lt;user&gt;\My Downloads\mobicents-&lt;version&gt;\delete "mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip"
+</screen>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section lang="en-US">
+	<title>Setting the JBOSS_HOME Environment Variable</title>
+	<para>
+		The <application>Mobicents Platform</application> (<application>Mobicents</application>) is built on top of the <application>JBoss Application Server</application> (<application>JBoss AS</application>). The <envar>JBOSS_HOME</envar> environment variable does not need to be set to run any of the <application>Mobicents Platform</application> servers <emphasis>unless</emphasis> <envar>JBOSS_HOME</envar> is <emphasis>already</emphasis> set.
+	</para>
+	<formalpara>
+		<title>Verifying if JBOSS_HOME is set on Linux</title>
+		<para>
+			To determine whether <envar>JBOSS_HOME</envar> is set, execute the following command in a terminal.
+		</para>
+	</formalpara>
+	
+<screen>~]$ echo $JBOSS_HOME
+</screen>
+	<para>
+		The <application>Mobicents Platform</application>, and its individual servers, are built on top of the <application>JBoss Application Server</application> (<application>JBoss AS</application>). When the <application>Mobicents Platform</application> or servers are built from source, <envar>JBOSS_HOME</envar> <emphasis>must</emphasis> be set.
+	</para>
+	<para>
+		Mobicents files are installed onto a clean <application>JBoss AS</application> installation. The build process assumes that the location referenced in the <envar>JBOSS_HOME</envar> environment variable is the <application>JBoss AS</application> installation into which the Mobicents files must be installed.
+	</para>
+	<para>
+		Building the servers from source is outside the scope of this user guide, however it is useful to understand the role played by <application>JBoss AS</application> and <envar>JBOSS_HOME</envar> in the Mobicents ecosystem.
+	</para>
+	<important>
+		<para>
+			Always check <envar>JBOSS_HOME</envar> to verify if the environment variable is correctly defined for the system on which the server is installed. Potential troubleshooting may be avoided by performing this check.
+		</para>
+	</important>
+	<bridgehead><envar>JBOSS_HOME</envar> does not need to be specified for the following binary packages:</bridgehead>
+	<itemizedlist>
+		<listitem>
+			<para>
+				Mobicents Platform.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Mobicents Server binary distribution <emphasis>that include</emphasis> the JBoss AS.
+			</para>
+		</listitem>
+	</itemizedlist>
+	<bridgehead><envar>JBOSS_HOME</envar> must be specified for the following conditions:</bridgehead>
+	<itemizedlist>
+		<listitem>
+			<para>
+				When installing the <application>Mobicents Platform</application> or any of the Mobicents servers <emphasis>from source</emphasis>.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				When installing any binary that <emphasis>does not</emphasis> bundle <application>JBoss AS</application>.
+			</para>
+		</listitem>
+	</itemizedlist>
+	<para>
+		For information regarding installing the <application>JBoss AS</application>, refer to the <ulink url="http://www.jboss.org/file-access/default/members/jbossas/freezone/docs/Installation_Guide/4/html/index.html"><application>JBoss AS</application> Installation Guide</ulink>.
+	</para>
+	<formalpara>
+		<title>Setting the JBOSS_HOME Environment Variable on Linux</title>
+		<para>
+			The <envar>JBOSS_HOME</envar> environment variable must point to the directory which contains all of the files for the installed <application>Mobicents Platform</application> or individual <application>Mobicents</application> server. In the following procedure, <replaceable>install_directory_path</replaceable> refers to the server directory that contains a <filename>/bin</filename> subdirectory.
+		</para>
+	</formalpara>
+	<para>
+		Setting <envar>JBOSS_HOME</envar> in the <filename>~/.bashrc</filename> startup script sets the environment variable for the current user each time the server starts. It is possible to set <envar>JBOSS_HOME</envar> as a system-wide environment variable, by specifying it in <filename>/etc/bashrc</filename>, but this method is not recommended.
+	</para>
+	<procedure>
+		<title>Seting JBOSS_HOME on Linux</title>
+		<step>
+			<para>
+				Navigate to the <filename>/home</filename> directory, and ensure that hidden files are visible (if using a GUI-based File Manager).
+			</para>
+		</step>
+		<step>
+			<para>
+				Open the <filename>.bashrc</filename> startup script in a text editor.
+			</para>
+		</step>
+		<step>
+			<para>
+				Append the following information on a separate line, ensuring the placeholder install location is substituted with the correct path:
+			</para>
+			
+<screen>export JBOSS_HOME="/home/&lt;username&gt;/&lt;install_directory_path&gt;"
+</screen>
+		</step>
+		<step>
+			<para>
+				Save and close the <filename>.bashrc</filename> startup script.
+			</para>
+		</step>
+		<step>
+			<para>
+				Execute the following command to apply the changes to the environment variable to the current session.
+			</para>
+			<para>
+				Terminals open prior to altering <filename>.bashrc</filename> must have this command excuted within each instance for the changes to take effect.
+			</para>
+			
+<screen>~]$ source ~/.bashrc
+</screen>
+		</step>
+		<step>
+			<para>
+				Execute the following command to verify that <envar>JBOSS_HOME</envar> is set in the current session, and points to the correct location.
+			</para>
+			
+<screen>~]$ echo $JBOSS_HOME
+/home/&lt;username&gt;/mobicents-all-1.2.1.GA-jboss-4.2.3.GA/jboss/
+</screen>
+			<note>
+				<para>
+					In the sample output, <envar>JBOSS_HOME</envar> has been set correctly to the <replaceable>install_directory</replaceable> of the <application>Mobicents</application> installation. The returned path will be similar for standalone <application>Mobicents</application> server binaries.
+				</para>
+			</note>
+		</step>
+	</procedure>
+	
+	<formalpara>
+		<title>Setting the JBOSS_HOME Environment Variable on Windows</title>
+		<para>
+			The <envar>JBOSS_HOME</envar> environment variable must point to the directory which contains all of the files for the installed <application>Mobicents Platform</application> or individual <application>Mobicents</application> server. The target directory refers to the server directory that contains the <filename>/bin</filename> subdirectory.
+		</para>
+	</formalpara>
+	<para>
+		For information on how to set environment variables in recent versions of Windows, refer to <ulink url="http://support.microsoft.com/kb/931715"/>.
+	</para>
+</section>
+		<section id="itjss-binary-Platform_Server-Running">
+			<title>Running</title>
+			<para>
+				In the Linux terminal or Windows command prompt, the Platform has started successfully if the last line of output is similar to the following (ending with <quote>Started in 25s:527ms</quote>):
+			</para>
+			
+<screen>16:29:15,442 INFO  [ManagementConsole] Mobicents Management Console initialized
+16:29:15,551 INFO  [Http11Protocol] Starting Coyote HTTP/1.1 on http-127.0.0.1-8080
+16:29:15,586 INFO  [AjpProtocol] Starting Coyote AJP/1.3 on ajp-127.0.0.1-8009
+16:29:15,622 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 25s:527ms
+</screen>
+			<procedure>
+				<title>Running the Platform on Linux</title>
+				<step>
+					<para>
+						Change the working directory to installation directory (the one in which the zip file's contents was extracted to)
+					</para>
+					
+<screen>downloads]$ cd "mobicents-&lt;version&gt;"
+</screen>
+				</step>
+				<step>
+					<para>
+						(Optional) Ensure that the <filename>bin/run.sh</filename> start script is executable.
+					</para>
+					
+<screen>mobicents-&lt;version&gt;]$ chmod +x bin/run.sh
+</screen>
+				</step>
+				<step>
+					<para>
+						Execute the <filename>run.sh</filename> Bourne shell script.
+					</para>
+					
+<screen>mobicents-&lt;version&gt;]$ ./bin/run.sh
+</screen>
+				</step>
+			</procedure>
+			
+			<note>
+				<para>
+					Instead of executing the Bourne shell script to start the server, the <filename>run.jar</filename> executable Java archive can be executed from the <filename>bin</filename> directory:
+				</para>
+				
+<screen>mobicents-&lt;version&gt;]$ java -jar bin/run.jar
+</screen>
+			</note>
+			<procedure>
+				<title>Running the Platform on <productname>Windows</productname>
+				</title>
+				<step>
+					<para>
+						Using Windows Explorer, navigate to the <filename>bin</filename> subfolder in the installation directory.
+					</para>
+				</step>
+				<step>
+					<para>
+						The preferred way to start the Media Server is from the Command Prompt. The command line interface displays details of the startup process, including any problems encountered during the startup process.
+					</para>
+					<para>
+						Open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:
+					</para>
+					
+<screen>C:\Users\&lt;user&gt;\My Downloads&gt; cd "mobicents-&lt;version&gt;"
+</screen>
+				</step>
+				<step>
+					<para>
+						Start the server by executing one of the following files: 
+						<itemizedlist>
+							<listitem>
+								<para>
+									<filename>run.bat</filename> batch file:
+								</para>
+								
+<screen>C:\Users\&lt;user&gt;\My Downloads\mobicents-&lt;version&gt;&gt;bin\run.bat
+</screen>
+							</listitem>
+							<listitem>
+								<para>
+									<filename>run.jar</filename> executable Java archive:
+								</para>
+								
+<screen>C:\Users\&lt;user&gt;My Downloads\mobicents-&lt;version&gt;&gt;java -jar bin\run.jar
+</screen>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section id="itjss-binary-Platform_Server-Using">
+			<title>Using</title>
+			<para>
+				The Platform can be observed and controlled using the Management Console, which is started along with the server. Refer to the JAIN SLEE Server User Guide for detailed information regarding configuring the Platform with the Management Console.
+			</para>
+		</section>
+		
+		<section id="itjss-binary-Platform_Server-Stopping">
+			<title>Stopping</title>
+			<para>
+				Detailed instructions for stopping the Platform are given below, arranged by platform. If the server is correctly stopped, the following three lines are displayed as the last output in the Linux terminal or Command Prompt:
+			</para>
+			
+<programlisting>16:44:29,745 INFO  [Server] Shutdown complete
+Shutdown complete
+Halting VM
+</programlisting>
+			<procedure>
+				<title>Stopping the Platform on Linux</title>
+				<step>
+					<para>
+						Change the working directory to the binary distribution's install directory.
+					</para>
+					
+<screen>~]$ cd "mobicents-&lt;version&gt;"
+</screen>
+				</step>
+				<step>
+					<para>
+						(Optional) Ensure that the bin/shutdown.sh start script is executable:
+					</para>
+					
+<screen>mobicents-&lt;version&gt;]$ chmod +x bin/shutdown.sh
+</screen>
+				</step>
+				<step>
+					<para>
+						Run the <filename>shutdown.sh</filename> executable Bourne shell script with the <option>-S</option> option (the short option for <option>--shutdown</option>) as a command line argument:
+					</para>
+					
+<screen>mobicents-&lt;version&gt;]$ ./bin/shutdown.sh -S
+</screen>
+				</step>
+			</procedure>
+			
+			<note>
+				<para>
+					The <filename>shutdown.jar</filename> executable Java archive with the <option>-S</option> option can also be used to shut down the server:
+				</para>
+				
+<screen>mobicents-&lt;version&gt;]$ java -jar bin/shutdown.jar -S
+</screen>
+			</note>
+			<procedure>
+				<title>Stopping the Platform on Windows</title>
+				<step>
+					<para>
+						Stopping the Platform on Windows consists of executing either the <filename>shutdown.bat</filename> or the <filename>shutdown.jar</filename> executable file in the <filename>bin</filename> subfolder of the Platform binary distribution. Ensure the <option>-S</option> option (the short option for <option>--shutdown</option>) is included in the command line argument.
+					</para>
+					
+<screen>C:\Users\&lt;user&gt;\My Downloads\mobicents-&lt;version&gt;&gt;bin\shutdown.bat -S
+</screen>
+					<stepalternatives>
+					<step>
+						<para>
+							The <filename>shutdown.jar</filename> executable Java archive with the <option>-S</option> option can also be used to shut down the server:
+						</para>
+						
+<screen>C:\Users\&lt;user&gt;\My Downloads\mobicents-&lt;version&gt;&gt;java -jar bin\shutdown.jar -S
+</screen>
+					</step>
+					</stepalternatives>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section id="itjss-binary-Platform_Server-Testing">
+			<title>Testing</title>
+			<para>
+				 
+			</para>
+		</section>
+		
+		<section id="itjss-binary-Platform_Server-Uninstalling">
+			<title>Uninstalling</title>
+			<para>
+				To uninstall the Platform, delete the directory containing the extracted binary distribution.
+			</para>
+		</section>
+
+	</section>
+
+</chapter>
+	<appendix lang="en-US">
+	<title>Revision History</title>
+	<simpara>
+		<revhistory>
+			<revision>
+				<revnumber>3.0</revnumber>
+				<date>Thu Jun 11 2009</date>
+				<author>
+					<firstname>Jared</firstname>
+					<surname>Morgan</surname>
+					<email>jmorgan@redhat.com</email>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>Second release of the "parameterized" documentation.</member>
+					</simplelist>
+				</revdescription>
+			</revision>
+			<revision>
+				<revnumber>2.0</revnumber>
+				<date>Fri Mar 06 2009</date>
+				<author>
+					<firstname>Douglas</firstname>
+					<surname>Silas</surname>
+					<email>dhensley@redhat.com</email>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>First release of the "parameterized", and much-improved JBCP documentation.</member>
+					</simplelist>
+				</revdescription>
+			</revision>
+		</revhistory>
+	</simpara>
+</appendix>
+</book>

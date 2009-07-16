@@ -1,0 +1,31 @@
+<!-- NOTES ON CHANGING ENTITY FILES
+Important: take care when changing entities for directories
+* Linux path separators must be: "/"
+* Windows path separators must be: "\"
+* Entities which represent directories MUST HAVE a final path separator:
+	my/path/  <- (final separator)
+If this final separator is missing, then the documentation will be wrong. -->
+
+
+<!ENTITY PRODUCT "JBoss Communications Platform">
+<!ENTITY BOOKID "Platform_Installation_Guide">
+<!ENTITY YEAR "2009">
+<!ENTITY HOLDER "Red Hat Inc">
+
+<!-- Shared: Configuring the JBOSS_HOME Environment Variable -->
+<!ENTITY MOB_JBOSS_HOME_LIN "mobicents-all-1.2.1.GA-jboss-4.2.3.GA/jboss/">
+<!ENTITY JBCP_JBOSS_HOME_LIN "jboss-eap-4.3/jboss-as/">
+
+<!-- Platform Installation Guide -->
+<!ENTITY PIG_MOB_PLAT_VERSION "1.2.1 GA">
+<!ENTITY PIG_MOB_PLAT_SIZE "200 MB">
+<!ENTITY PIG_MOB_PLAT_ZIP "mobicents-all-1.2.1.GA-jboss-4.2.3.GA.zip">
+<!ENTITY PIG_MOB_JBOSS_HOME_BIN_LIN "jboss-4.2.3.GA/bin/">
+<!ENTITY PIG_MOB_JBOSS_HOME_BIN_WIN "jboss-4.2.3.GA\bin\">
+
+<!ENTITY PIG_JBCP_PLAT_VERSION "1.2.1">
+<!ENTITY PIG_JBCP_PLAT_SIZE "310 MB">
+<!ENTITY PIG_JBCP_PLAT_ZIP "JBCP-1.2.1.GA-jboss-eap-4.3.zip">
+<!ENTITY PIG_JBCP_JBOSS_HOME_BIN_LIN "jboss-eap-4.3/jboss-as/bin/">
+<!ENTITY PIG_JBCP_JBOSS_HOME_BIN_WIN "jboss-eap-4.3\jboss-as\bin\">
+

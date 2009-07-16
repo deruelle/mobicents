@@ -1,0 +1,49 @@
+﻿<?xml version='1.0' encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]><!-- chapter id nickname: utp -->
+
+<chapter id="utp-Using_the_Platform">
+	<title>Platform Server Components</title>
+	<para>The <application>Mobicents Platform</application> enables the composition of Service Building Blocks (<acronym>SBB</acronym>s) such as call control, billing, user-provisioning, administration, and presence-sensing features. The <acronym>JAIN SLEE</acronym> specification allows popular protocol stacks such as <acronym>SIP</acronym> to be plugged in as resource adapters.  The <acronym>SLEE</acronym> Service Building Blocks have many similarities to Enterprise Java Beans (<acronym>EJB</acronym>s), and naturally accommodate integration with enterprise applications, the Web, Customer Relationship Management (<acronym>CRM</acronym>) and Service-Oriented Architecture (<acronym>SOA</acronym>) end points.</para>
+	<para>Out-of-the-box monitoring and management of <application>Mobicents</application> components is achieved via <acronym>SLEE</acronym> standard-based Java Management Extensions (<acronym>JMX</acronym>es) and Simple Network Management Profile (<acronym>SNMP</acronym>) interfaces.</para>
+	<para>Beyond telecommunications, the <application>Mobicents Platform</application> is applicable to a wider variety of problems demanding high-volume, low-latency signaling.  Examples include financial trading, online gaming, Radio Frequency Identification (<acronym>RFID</acronym>) sensor network integration, and distributed control.</para>
+	
+	<section>
+	  <title>JAIN SLEE Server</title>
+	  <para><application>Mobicents Platform</application> <acronym>JAIN SLEE</acronym> provides a highly-scalable, event-driver application server with a robust component model and a fault-tolerant execution environment.  <application>Mobicents Platform</application> <acronym>JSLEE</acronym> is the first and only open source platform certified for <acronym>JSLEE</acronym> 1.0 compliance.  It complements <acronym>J2EE</acronym> to enable the convergence of voice, video and data in next-generation intelligent applications.  The Web and <acronym>SIP</acronym> can be combined to achieve a more sophisticated and natural user experience.</para>
+	<mediaobject>
+		<imageobject>
+			<imagedata width="410" align="center" fileref="images/jss-Introduction-dia-JSLEE+J2EEApplicationServer.png" format="PNG"/>
+		</imageobject>
+		<caption><para>Overview of JAIN SLEE Server components</para></caption>
+	</mediaobject>
+  </section>
+  
+  <section>
+	  <title>SIP Servlets Server</title>
+	  <para><application>Mobicents</application> SIP (Session Initiation Protocol) Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Java Enterprise Edition services.  The <application>Mobicents</application> SIP Servlets Server is a <emphasis>certified</emphasis> implementation of the SIP Servlet v1.1 (JSR 289) specification that can run on top of either the JBoss Application Server or the Tomcat Servlet Container.</para>
+	<para><application>Mobicents</application> SIP Servlets for JBoss (MSS for JBoss) strives to develop interoperability standards between SIP Servlets and the Java Service Logic Execution Environment (JSLEE) so that applications can exploit the strengths of both. The JAIN-SIP Reference Implementation is leveraged as the SIP stack, and the <application condition="mob">Mobicents</application> JAIN SLEE Server is used as the SLEE implementation.</para>
+  </section>
+  
+  <section>
+	  <title>SIP Presence Service</title>
+	  <para>The <application>SIP Presence Service</application> provides presence functionalities to SIP-based networks using standards developed by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP), and the European Telecommunications Standards Institute (ETSI).</para>
+  </section>
+  
+  <section>
+	  <title>Media Server</title>
+	  <para>The Mobicents Media Server is an open source media gateway, whics aims to:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Deliver competitive, complete, best-of-breed media gateway functionality of the highest quality.</para>
+      </listitem>
+      <listitem>
+        <para>Meet the demands of converged wireless and landline networks, DSL and cable broadband access, and fixed-mobile converged <acronym>VoIP</acronym> networks from a single and singularly-capable media gateway platform.</para>
+      </listitem>
+      <listitem>
+        <para>Increase flexibility with a media gateway that supports a wide variety of call control protocols, with an architecture that can scale to meet the demands of small-carrier providers as well as large enterprises.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</chapter>
+
