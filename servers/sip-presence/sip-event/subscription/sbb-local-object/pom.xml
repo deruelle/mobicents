@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>subscription-parent</artifactId>
 		<groupId>org.mobicents.servers.sipevent</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0.BETA5</version>
 	</parent>
 		
 	<artifactId>sip-event-subscription-control-sbb-local-object</artifactId>
