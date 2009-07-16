@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>server-parent</artifactId>
 		<groupId>org.mobicents.servers.xdm</groupId>
-		<version>1.0.0.BETA5</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>server-appusagecache-ra-DU</artifactId>
