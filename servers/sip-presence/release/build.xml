@@ -19,7 +19,7 @@
 		<format property="time.stamp" pattern="yyyyMMdd-HHmm" />
 	</tstamp>
 
-	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
+	<condition property="mvn.executable" value="mvn.bat" else="mvn">
 		<os family="windows" />
 	</condition>
 	<condition property="default.jboss.config">
