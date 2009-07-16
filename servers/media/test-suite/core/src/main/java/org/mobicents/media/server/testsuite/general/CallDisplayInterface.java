@@ -15,6 +15,9 @@ import javax.sdp.Attribute;
  */
 public interface CallDisplayInterface {
 
+    public static final int _DEFAULT_CPS = 1;
+    public static final int _DEFAULT_CALL_DURATION = 2000;
+    
     //Some methods to get requried fields.
     /**
      * Get client address - this is our address
@@ -30,6 +33,8 @@ public interface CallDisplayInterface {
     public int getRemotePort();
     public int getCallDuration();
     public int getCPS();
+    public int getMaxConcurrentCalls();
+    public long getMaxCalls();
     /**
      * Get codec Vector used to create SDP
      * @return

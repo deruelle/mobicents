@@ -177,97 +177,105 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jSeparator3" pref="528" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jSeparator1" alignment="0" pref="589" max="32767" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                              <Group type="102" alignment="0" attributes="1">
-                                                  <Component id="_labelClientAddress" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                                  <Component id="fieldClientAddress" max="32767" attributes="0"/>
+                                      <Component id="jSeparator1" alignment="0" pref="528" max="32767" attributes="0"/>
+                                      <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="_labelCallDuration" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="_labelCPS" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="_labelServerAddress" alignment="0" min="-2" max="-2" attributes="0"/>
                                               </Group>
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Group type="103" groupAlignment="0" attributes="0">
-                                                      <Component id="_labelCallDuration" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="_labelCPS" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="_labelServerAddress" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                                      <Component id="fieldCallDurrationTextField" alignment="0" pref="108" max="32767" attributes="1"/>
-                                                      <Component id="fieldCPS" alignment="0" max="32767" attributes="1"/>
-                                                      <Component id="fieldServerAddress" alignment="0" min="-2" pref="143" max="-2" attributes="1"/>
-                                                  </Group>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="fieldCallDurrationTextField" linkSize="2" alignment="0" pref="108" max="32767" attributes="1"/>
+                                                  <Component id="fieldCPS" linkSize="2" alignment="0" max="32767" attributes="1"/>
+                                                  <Component id="fieldServerAddress" linkSize="2" alignment="0" min="-2" pref="143" max="-2" attributes="1"/>
                                               </Group>
                                           </Group>
-                                          <EmptySpace min="-2" pref="86" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="_labelServerPort" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="_labelClientPort" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="_labelCodec" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="_labelDumpDir" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                              <Component id="fieldClientPort" max="32767" attributes="1"/>
-                                              <Component id="fieldServerPort" alignment="0" max="32767" attributes="1"/>
-                                              <Component id="fieldDataDumpDir" alignment="0" max="32767" attributes="1"/>
-                                              <Component id="fieldCodecBox" alignment="0" pref="136" max="32767" attributes="1"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="_labelClientAddress" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="fieldMaxCallNumber" pref="143" max="32767" attributes="0"/>
+                                                  <Component id="fieldClientAddress" linkSize="2" alignment="1" pref="142" max="32767" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="_labelServerPort" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="_labelClientPort" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="_labelDumpDir" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="_labelCodec" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="_labelConcurrentCalls" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="fieldConcurrentCalls" max="32767" attributes="1"/>
+                                                  <Component id="fieldClientPort" max="32767" attributes="1"/>
+                                                  <Component id="fieldServerPort" alignment="0" max="32767" attributes="1"/>
+                                                  <Component id="fieldDataDumpDir" alignment="0" max="32767" attributes="1"/>
+                                                  <Component id="fieldCodecBox" alignment="0" pref="136" max="32767" attributes="1"/>
+                                              </Group>
+                                              <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                   </Group>
                               </Group>
-                              <Group type="102" alignment="1" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jSeparator4" pref="589" max="32767" attributes="0"/>
+                                  <Component id="jSeparator4" pref="528" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="_labelOngoingCalls" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="fieldOngoingCalls" linkSize="1" min="-2" pref="105" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="_labelCompletedCalls" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="fieldCompletedCalls" linkSize="1" min="-2" pref="101" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Component id="_labelErrorCalls" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="fieldFailedCalls" linkSize="1" min="-2" pref="92" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="243" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="261" max="-2" attributes="0"/>
                                   <Component id="_labelCalls" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jSeparator3" pref="589" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="buttonStartTest" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="buttonStopTest" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                                   <Component id="buttonIncreseDurrationBy10" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="buttonDecreaseBy10" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                                   <Component id="buttonIncreaseCPSBy1" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="buttonDecreaseCPSBy1" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jSeparator2" pref="589" max="32767" attributes="0"/>
+                                  <Component id="jSeparator2" pref="528" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="labelFileUrl" min="-2" max="-2" attributes="0"/>
+                                  <Component id="_labelMaxCalls" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="fieldAnnFileURL" min="-2" pref="458" max="-2" attributes="0"/>
+                                  <Component id="labelFileUrl" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+                                  <Component id="fieldAnnFileURL" pref="442" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -279,51 +287,81 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="_labelCallDuration" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fieldCallDurrationTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="_labelCPS" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fieldCPS" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="_labelServerAddress" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fieldServerAddress" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="_labelClientAddress" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fieldClientAddress" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="fieldCodecBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="_labelCodec" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="_labelDumpDir" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fieldDataDumpDir" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="_labelServerPort" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fieldServerPort" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="_labelClientPort" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fieldClientPort" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                  <Component id="_labelMaxCalls" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="fieldMaxCallNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                  <Component id="_labelConcurrentCalls" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="fieldConcurrentCalls" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="_labelCallDuration" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="_labelCodec" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldCallDurrationTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldCodecBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="_labelCPS" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="_labelDumpDir" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldCPS" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldDataDumpDir" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="_labelServerAddress" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="_labelServerPort" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldServerAddress" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldServerPort" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="_labelClientAddress" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="_labelClientPort" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldClientAddress" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldClientPort" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="labelFileUrl" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="fieldAnnFileURL" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelFileUrl" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
                           <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="buttonStartTest" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="buttonStopTest" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="buttonIncreseDurrationBy10" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="buttonDecreaseBy10" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="buttonIncreaseCPSBy1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="buttonDecreaseCPSBy1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="buttonStartTest" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="buttonStopTest" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="buttonIncreaseCPSBy1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="buttonDecreaseBy10" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="buttonIncreseDurrationBy10" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="buttonDecreaseCPSBy1" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jSeparator3" min="-2" pref="10" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="_labelCalls" min="-2" max="-2" attributes="0"/>
@@ -333,12 +371,12 @@
                               <Component id="fieldOngoingCalls" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="_labelCompletedCalls" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="fieldCompletedCalls" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="fieldFailedCalls" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="_labelErrorCalls" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="fieldFailedCalls" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jSeparator4" min="-2" pref="10" max="-2" attributes="0"/>
-                          <EmptySpace pref="165" max="32767" attributes="0"/>
+                          <EmptySpace pref="42" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -532,6 +570,9 @@
                     <Property name="enabled" type="boolean" value="false"/>
                     <Property name="name" type="java.lang.String" value="fieldOngoingCalls" noResource="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fieldOngoingCallsActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="_labelCompletedCalls">
                   <Properties>
@@ -583,6 +624,30 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" resourceKey="fieldAnnFileURL.text"/>
                     <Property name="name" type="java.lang.String" value="fieldAnnFileURL" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="_labelMaxCalls">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="_labelMaxCalls.text"/>
+                    <Property name="name" type="java.lang.String" value="_labelMaxCalls" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="fieldMaxCallNumber">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="fieldMaxCallNumber.text"/>
+                    <Property name="name" type="java.lang.String" value="fieldMaxCallNumber" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="_labelConcurrentCalls">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="_labelConcurrentCalls.text"/>
+                    <Property name="name" type="java.lang.String" value="_labelConcurrentCalls" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="fieldConcurrentCalls">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="fieldConcurrentCalls.text"/>
+                    <Property name="name" type="java.lang.String" value="fieldConcurrentCalls" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>

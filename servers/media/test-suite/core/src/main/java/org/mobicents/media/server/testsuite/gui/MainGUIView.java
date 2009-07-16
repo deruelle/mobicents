@@ -160,6 +160,10 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         jSeparator4 = new javax.swing.JSeparator();
         labelFileUrl = new javax.swing.JLabel();
         fieldAnnFileURL = new javax.swing.JTextField();
+        _labelMaxCalls = new javax.swing.JLabel();
+        fieldMaxCallNumber = new javax.swing.JTextField();
+        _labelConcurrentCalls = new javax.swing.JLabel();
+        fieldConcurrentCalls = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -198,7 +202,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         );
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.mobicents.media.server.testsuite.gui.MainGUI.class).getContext().getResourceMap(MainGUIView.class);
-        userDialogPanel.addTab(resourceMap.getString("dataLoadPanel.TabConstraints.tabTitle"), null, dataLoadPanel); // NOI18N
+        userDialogPanel.addTab(resourceMap.getString("dataLoadPanel.TabConstraints.tabTitle"), resourceMap.getIcon("dataLoadPanel.TabConstraints.tabIcon"), dataLoadPanel); // NOI18N
 
         dataPanel.setName("dataPanel"); // NOI18N
 
@@ -246,7 +250,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
         );
 
-        userDialogPanel.addTab(resourceMap.getString("dataPanel.TabConstraints.tabTitle"), null, dataPanel); // NOI18N
+        userDialogPanel.addTab(resourceMap.getString("dataPanel.TabConstraints.tabTitle"), resourceMap.getIcon("dataPanel.TabConstraints.tabIcon"), dataPanel); // NOI18N
 
         testSetupPanel.setName("testSetupPanel"); // NOI18N
 
@@ -302,6 +306,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
 
         jSeparator2.setName("jSeparator2"); // NOI18N
 
+        buttonStartTest.setIcon(resourceMap.getIcon("buttonStartTest.icon")); // NOI18N
         buttonStartTest.setText(resourceMap.getString("buttonStartTest.text")); // NOI18N
         buttonStartTest.setEnabled(false);
         buttonStartTest.setName("buttonStartTest"); // NOI18N
@@ -311,6 +316,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             }
         });
 
+        buttonStopTest.setIcon(resourceMap.getIcon("buttonStopTest.icon")); // NOI18N
         buttonStopTest.setText(resourceMap.getString("buttonStopTest.text")); // NOI18N
         buttonStopTest.setName("buttonStopTest"); // NOI18N
         buttonStopTest.addActionListener(new java.awt.event.ActionListener() {
@@ -360,6 +366,11 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         fieldOngoingCalls.setText(resourceMap.getString("fieldOngoingCalls.text")); // NOI18N
         fieldOngoingCalls.setEnabled(false);
         fieldOngoingCalls.setName("fieldOngoingCalls"); // NOI18N
+        fieldOngoingCalls.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fieldOngoingCallsActionPerformed(evt);
+            }
+        });
 
         _labelCompletedCalls.setText(resourceMap.getString("_labelCompletedCalls.text")); // NOI18N
         _labelCompletedCalls.setName("_labelCompletedCalls"); // NOI18N
@@ -389,89 +400,110 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         fieldAnnFileURL.setText(resourceMap.getString("fieldAnnFileURL.text")); // NOI18N
         fieldAnnFileURL.setName("fieldAnnFileURL"); // NOI18N
 
+        _labelMaxCalls.setText(resourceMap.getString("_labelMaxCalls.text")); // NOI18N
+        _labelMaxCalls.setName("_labelMaxCalls"); // NOI18N
+
+        fieldMaxCallNumber.setText(resourceMap.getString("fieldMaxCallNumber.text")); // NOI18N
+        fieldMaxCallNumber.setName("fieldMaxCallNumber"); // NOI18N
+
+        _labelConcurrentCalls.setText(resourceMap.getString("_labelConcurrentCalls.text")); // NOI18N
+        _labelConcurrentCalls.setName("_labelConcurrentCalls"); // NOI18N
+
+        fieldConcurrentCalls.setText(resourceMap.getString("fieldConcurrentCalls.text")); // NOI18N
+        fieldConcurrentCalls.setName("fieldConcurrentCalls"); // NOI18N
+
         org.jdesktop.layout.GroupLayout testSetupPanelLayout = new org.jdesktop.layout.GroupLayout(testSetupPanel);
         testSetupPanel.setLayout(testSetupPanelLayout);
         testSetupPanelLayout.setHorizontalGroup(
             testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(testSetupPanelLayout.createSequentialGroup()
                 .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, testSetupPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jSeparator3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE))
                     .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE)
-                            .add(testSetupPanelLayout.createSequentialGroup()
-                                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                    .add(testSetupPanelLayout.createSequentialGroup()
-                                        .add(_labelClientAddress)
-                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                        .add(fieldClientAddress))
-                                    .add(testSetupPanelLayout.createSequentialGroup()
-                                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                            .add(_labelCallDuration)
-                                            .add(_labelCPS)
-                                            .add(_labelServerAddress))
-                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                            .add(fieldCallDurrationTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                                            .add(fieldCPS)
-                                            .add(fieldServerAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 143, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                                .add(86, 86, 86)
-                                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(_labelServerPort)
-                                    .add(_labelClientPort)
-                                    .add(_labelCodec)
-                                    .add(_labelDumpDir))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                    .add(fieldClientPort)
-                                    .add(fieldServerPort)
-                                    .add(fieldDataDumpDir)
-                                    .add(fieldCodecBox, 0, 136, Short.MAX_VALUE)))))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, testSetupPanelLayout.createSequentialGroup()
+                            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                            .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                .add(testSetupPanelLayout.createSequentialGroup()
+                                    .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                        .add(_labelCallDuration)
+                                        .add(_labelCPS)
+                                        .add(_labelServerAddress))
+                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                    .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                        .add(fieldCallDurrationTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+                                        .add(fieldCPS)
+                                        .add(fieldServerAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 143, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                .add(testSetupPanelLayout.createSequentialGroup()
+                                    .add(_labelClientAddress)
+                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                    .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                        .add(fieldMaxCallNumber, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                                        .add(org.jdesktop.layout.GroupLayout.TRAILING, fieldClientAddress, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
+                                    .add(17, 17, 17)
+                                    .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                        .add(_labelServerPort)
+                                        .add(_labelClientPort)
+                                        .add(_labelDumpDir)
+                                        .add(_labelCodec)
+                                        .add(_labelConcurrentCalls))
+                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                    .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                        .add(fieldConcurrentCalls)
+                                        .add(fieldClientPort)
+                                        .add(fieldServerPort)
+                                        .add(fieldDataDumpDir)
+                                        .add(fieldCodecBox, 0, 136, Short.MAX_VALUE))
+                                    .add(59, 59, 59)))))
+                    .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jSeparator4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
+                        .add(jSeparator4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE))
                     .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(_labelOngoingCalls)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(fieldOngoingCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(_labelCompletedCalls)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(fieldCompletedCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(39, 39, 39)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(_labelErrorCalls)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(fieldFailedCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 92, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(testSetupPanelLayout.createSequentialGroup()
-                        .add(243, 243, 243)
+                        .add(261, 261, 261)
                         .add(_labelCalls))
-                    .add(testSetupPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jSeparator3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
                     .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(buttonStartTest)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(buttonStopTest)
-                        .add(38, 38, 38)
+                        .add(22, 22, 22)
                         .add(buttonIncreseDurrationBy10)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(buttonDecreaseBy10)
-                        .add(41, 41, 41)
+                        .add(30, 30, 30)
                         .add(buttonIncreaseCPSBy1)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(buttonDecreaseCPSBy1))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, testSetupPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE))
                     .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
-                    .add(testSetupPanelLayout.createSequentialGroup()
+                        .add(_labelMaxCalls))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(labelFileUrl)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(fieldAnnFileURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 458, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(41, 41, 41)
+                        .add(fieldAnnFileURL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        testSetupPanelLayout.linkSize(new java.awt.Component[] {fieldCPS, fieldCallDurrationTextField, fieldClientAddress, fieldServerAddress}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         testSetupPanelLayout.linkSize(new java.awt.Component[] {fieldCompletedCalls, fieldFailedCalls, fieldOngoingCalls}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
@@ -480,45 +512,64 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             .add(testSetupPanelLayout.createSequentialGroup()
                 .add(8, 8, 8)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(testSetupPanelLayout.createSequentialGroup()
+                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(_labelCallDuration)
+                            .add(fieldCallDurrationTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(_labelCPS)
+                            .add(fieldCPS, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(_labelServerAddress)
+                            .add(fieldServerAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(_labelClientAddress)
+                            .add(fieldClientAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(testSetupPanelLayout.createSequentialGroup()
+                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(fieldCodecBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(_labelCodec))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(_labelDumpDir)
+                            .add(fieldDataDumpDir, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(_labelServerPort)
+                            .add(fieldServerPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(_labelClientPort)
+                            .add(fieldClientPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(_labelMaxCalls)
+                        .add(fieldMaxCallNumber, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(_labelConcurrentCalls)
+                        .add(fieldConcurrentCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(_labelCallDuration)
-                    .add(_labelCodec)
-                    .add(fieldCallDurrationTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fieldCodecBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(_labelCPS)
-                    .add(_labelDumpDir)
-                    .add(fieldCPS, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fieldDataDumpDir, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(_labelServerAddress)
-                    .add(_labelServerPort)
-                    .add(fieldServerAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fieldServerPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(_labelClientAddress)
-                    .add(_labelClientPort)
-                    .add(fieldClientAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fieldClientPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(labelFileUrl)
-                    .add(fieldAnnFileURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(21, 21, 21)
+                    .add(fieldAnnFileURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(labelFileUrl))
+                .add(123, 123, 123)
                 .add(jSeparator2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(buttonStartTest)
-                    .add(buttonStopTest)
-                    .add(buttonIncreseDurrationBy10)
-                    .add(buttonDecreaseBy10)
-                    .add(buttonIncreaseCPSBy1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(buttonStartTest)
+                        .add(buttonStopTest)
+                        .add(buttonIncreaseCPSBy1)
+                        .add(buttonDecreaseBy10)
+                        .add(buttonIncreseDurrationBy10))
                     .add(buttonDecreaseCPSBy1))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jSeparator3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(_labelCalls)
@@ -528,14 +579,14 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                     .add(fieldOngoingCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(_labelCompletedCalls)
                     .add(fieldCompletedCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fieldFailedCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(_labelErrorCalls))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(_labelErrorCalls)
+                    .add(fieldFailedCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jSeparator4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(165, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
-        userDialogPanel.addTab(resourceMap.getString("testSetupPanel.TabConstraints.tabTitle"), null, testSetupPanel); // NOI18N
+        userDialogPanel.addTab(resourceMap.getString("testSetupPanel.TabConstraints.tabTitle"), resourceMap.getIcon("testSetupPanel.TabConstraints.tabIcon"), testSetupPanel); // NOI18N
 
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -662,6 +713,8 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             this.fieldServerAddress.setEnabled(false);
             this.fieldServerPort.setEnabled(false);
             this.fieldCPS.setEnabled(false);
+            this.fieldMaxCallNumber.setEnabled(false);
+            this.fieldConcurrentCalls.setEnabled(false);
             this.dirLoadFileChooser.setCurrentDirectory(new File(this.fieldDataDumpDir.getText()));
         }catch(Exception e)
         {
@@ -686,7 +739,8 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             this.fieldServerAddress.setEnabled(true);
             this.fieldServerPort.setEnabled(true);
             this.fieldCPS.setEnabled(true);
-            
+            this.fieldMaxCallNumber.setEnabled(true);
+            this.fieldConcurrentCalls.setEnabled(true);
         }catch(Exception e)
         {
             e.printStackTrace();
@@ -707,7 +761,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     private void buttonDecreaseBy10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDecreaseBy10ActionPerformed
         // TODO add your handling code here:
          long l = Long.valueOf(this.fieldCallDurrationTextField.getText());
-        l+=10;
+        l-=10;
         if(l<5)
         {
             l=10;
@@ -779,6 +833,10 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
   
 }//GEN-LAST:event_fieldLoadedDataDisplayTableMouseClicked
 
+    private void fieldOngoingCallsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldOngoingCallsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fieldOngoingCallsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel _labelCPS;
     private javax.swing.JLabel _labelCallDuration;
@@ -787,8 +845,10 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     private javax.swing.JLabel _labelClientPort;
     private javax.swing.JLabel _labelCodec;
     private javax.swing.JLabel _labelCompletedCalls;
+    private javax.swing.JLabel _labelConcurrentCalls;
     private javax.swing.JLabel _labelDumpDir;
     private javax.swing.JLabel _labelErrorCalls;
+    private javax.swing.JLabel _labelMaxCalls;
     private javax.swing.JLabel _labelOngoingCalls;
     private javax.swing.JLabel _labelServerAddress;
     private javax.swing.JLabel _labelServerPort;
@@ -809,9 +869,11 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     private javax.swing.JTextField fieldClientPort;
     private javax.swing.JComboBox fieldCodecBox;
     private javax.swing.JTextField fieldCompletedCalls;
+    private javax.swing.JTextField fieldConcurrentCalls;
     private javax.swing.JTextField fieldDataDumpDir;
     private javax.swing.JTextField fieldFailedCalls;
     private javax.swing.JTable fieldLoadedDataDisplayTable;
+    private javax.swing.JTextField fieldMaxCallNumber;
     private javax.swing.JTextField fieldOngoingCalls;
     private javax.swing.JTextField fieldServerAddress;
     private javax.swing.JTextField fieldServerPort;
@@ -881,17 +943,35 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     }
 
     public int getCallDuration() {
-        return Integer.valueOf(this.fieldCallDurrationTextField.getText());
+        try{
+            return Integer.valueOf(this.fieldCallDurrationTextField.getText());
+        }catch(NumberFormatException nfe)
+        {
+            nfe.printStackTrace();
+            return _DEFAULT_CALL_DURATION;
+        }
     }
 
     public int getCPS() {
-        return Integer.valueOf(this.fieldCPS.getText());
+        try {
+            return Integer.valueOf(this.fieldCPS.getText());
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            return _DEFAULT_CPS;
+        }
     }
 
     public Vector<Attribute> getCodec() {
         return attributerMap.get(this.fieldCodecBox.getSelectedItem());
     }
 
+    public int getMaxConcurrentCalls() {
+         return Integer.valueOf(this.fieldConcurrentCalls.getText());
+    }
+
+    public long getMaxCalls() {
+       return Long.valueOf(this.fieldMaxCallNumber.getText());
+    }
     public void updateCallView() {
         JFrame fm = this.getFrame();
         fm.invalidate();
@@ -912,6 +992,8 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     public String getFileURL() {
         return this.fieldAnnFileURL.getText();
     }
+
+    
             
     
     

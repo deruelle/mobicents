@@ -60,7 +60,7 @@ public class MainGUI extends SingleFrameApplication {
 		try {
 			propertiesLog4j.load(inStreamLog4j);
 			PropertyConfigurator.configure(propertiesLog4j);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 

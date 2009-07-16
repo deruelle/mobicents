@@ -46,11 +46,10 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
     protected transient Logger logger = Logger.getLogger(this.getClass().getName());
 
-    private enum TestState {
+    
 
-        Stoped, Terminating, Running;
-    }
-    private TestState testState = AbstractTestCase.TestState.Stoped;
+    
+    private TestState testState = TestState.Stoped;
     public transient final static String _CASE_FILE = "testcase.bin";
     //Yes, it would be good thing to ser
     protected transient SdpFactory sdpFactory;
@@ -77,21 +76,22 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
     protected transient final ScheduledExecutorService timeGuard = Executors.newScheduledThreadPool(5);
     //Some getters
     //Some stats
-    protected int ongoingCallNumber;
-    protected int errorCallNumber;
-    protected int completedCallNumber;
-    protected int totalCalls;
+    protected long ongoingCallNumber;
+    protected long errorCallNumber;
+    protected long completedCallNumber;
+    protected long totalCalls;
 
     public AbstractTestCase() {
         this.callSequenceToCall = new HashMap<Long, AbstractCall>();
-    //model = new CallStateTableModel(this.callSequenceToCall);
-
+        //model = new CallStateTableModel(this.callSequenceToCall);
+        AbstractCall.resetSequence();
+        
     }
 
     public AbstractTestCase(CallDisplayInterface cdi) throws UnknownHostException, IllegalStateException {
         setCallDisplay(cdi);
         model = new CallStateTableModel(this.callSequenceToCall);
-
+        AbstractCall.resetSequence();
     }
 
     protected void incrementOngoignCall() {
@@ -144,9 +144,13 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         } else if (callState == CallState.ENDED) {
             this.decrementOngoingCall();
             this.incrementCompletedCall();
+            //as soon as we end one call, we should try to start another.
+            this.checkForCallInit();
         } else if (callState == CallState.IN_ERROR) {
             this.decrementOngoingCall();
             this.incrementErrorCall();
+            //as soon as we end one call, we should try to start another.
+           this.checkForCallInit();
         }
 
         //System.err.println("updateCallView:"+this.ongoingCallNumber);
@@ -165,20 +169,24 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         return this.model;
     }
 
-    public int getCompletedCallNumber() {
+    public long getCompletedCallNumber() {
 
         return this.completedCallNumber;
     }
 
-    public int getErrorCallNumber() {
+    public long getErrorCallNumber() {
         return this.errorCallNumber;
     }
 
-    public int getOngoingCallNumber() {
+    public long getOngoingCallNumber() {
 
         return this.ongoingCallNumber;
     }
 
+    public long getTotalCallNumber()
+    {
+        return this.totalCalls;
+    }
     public void stop() {
 
         switch (this.testState) {
@@ -223,14 +231,15 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
                     //Now lets serialize.
                     serialize();
                 } finally {
-                    this.testState = AbstractTestCase.TestState.Stoped;
+                    this.testState = TestState.Stoped;
                 }
                 break;
             case Running:
-                this.testState = AbstractTestCase.TestState.Terminating;
+                this.testState = TestState.Terminating;
                 break;
 
-
+            default:
+                break;
 
         }
 
@@ -257,6 +266,10 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
     }
 
+    public TestState getTestState()
+    {
+        return this.testState;
+    }
     public void setCallDisplay(CallDisplayInterface cdi) throws UnknownHostException, IllegalStateException {
         this.callDisplay = cdi;
 
@@ -337,6 +350,19 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         //For some twisted reason constructo does not work...
         //model.setCallData(this.callSequenceToCall);
         if (this.testState == TestState.Running) {
+            
+           
+            if(this.callDisplay.getMaxConcurrentCalls()!=-1 && this.ongoingCallNumber>=this.callDisplay.getMaxConcurrentCalls())
+            {
+
+                return;
+            }
+             if(this.callDisplay.getMaxCalls()!=-1 && this.totalCalls == this.callDisplay.getMaxCalls())
+            {
+
+                this.stop();
+                return;
+            }
             try {
 
                 //This creates call, which knows how to estabilish itself and how long it should linger on as active.
@@ -352,6 +378,16 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         }
     }
 
+    private void checkForCallInit() {
+          if (this.callDisplay.getMaxConcurrentCalls()!=-1 && this.callDisplay.getCPS() > 0 ) {
+                try {
+                    run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+    }
+    
     //some handy methods
     public JainMgcpStackProviderImpl getProvider() {
         return this.provider;

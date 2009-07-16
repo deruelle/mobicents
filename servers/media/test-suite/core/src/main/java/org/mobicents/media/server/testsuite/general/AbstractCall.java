@@ -51,6 +51,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     public static final int _READ_PERIOD = 20;
     // Some static vals:
     protected transient static final AtomicLong _GLOBAL_SEQ = new AtomicLong(-1);
+   
     protected final long sequence;
     protected CallState state = CallState.INITIAL;
     protected int avgJitter;
@@ -82,6 +83,13 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     
     protected transient ScheduledFuture<?> timeoutHandle = null;
 
+    
+     public static void resetSequence()
+    {
+        _GLOBAL_SEQ.set(-1);
+    }
+    
+    
     public AbstractCall(AbstractTestCase testCase) throws IOException {
         this.testCase = testCase;
         this.callIdentifier = testCase.getProvider().getUniqueCallIdentifier();
