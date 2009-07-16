@@ -7,7 +7,7 @@
     <property name="docs.dir" location="${ant.file.mobicents.release}/../../docs"/>
 	<property name="mobicents.jainslee.version" value="1.2.6.GA" />
 	<property name="jboss.version" value="4.2.3.GA" />
-	<property name="release.version" value="1.0.0.BETA5-SNAPSHOT" />
+	<property name="release.version" value="1.0.0.BETA5" />
 	<property name="mobicents.distro.zip.path" value="mobicents-jainslee-server-${mobicents.jainslee.version}.zip" />
 	<property name="jboss.home" location="${release.dir}/jboss-${jboss.version}/" />
 	<property name="jboss.config" value="default" />
