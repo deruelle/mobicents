@@ -55,7 +55,7 @@
 	<build>
 	<resources>
 			<resource>
-        		<directory>src/main/resources</directory>
+        		<directory>${basedir}/src/main/resources</directory>
         		<filtering>true</filtering>
       		</resource>
       	</resources>
@@ -96,7 +96,7 @@
 					<sourceDocumentName>SIP_Presence_Service_User_Guide.xml</sourceDocumentName>
 					<sourceDirectory>${project.build.directory}/docbook/resources</sourceDirectory>
 					<imageResource>
-						<directory>src/main/resources/${translation}</directory>
+						<directory>${basedir}/src/main/resources/${translation}</directory>
 						<includes>
 							<include>images/*</include>
 						</includes>
