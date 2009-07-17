@@ -9,7 +9,7 @@
 
 	<groupId>org.mobicents.jain</groupId>
 	<artifactId>mobicents-mgcp-impl</artifactId>
-	<version>2.0.0.RC4</version>
+	<version>2.0.0.RC5-SNAPSHOT</version>
 	<name>Mobicents MGCP Impl</name>
 	<url>http://www.mobicents.org/products_media_server.html</url>
 	<developers>
@@ -89,13 +89,13 @@
 	</dependencies>
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC4
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/jain-mgcp/stack/
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC4
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/jain-mgcp/stack/
 		</developerConnection>
 		<url>
-			http://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC4
+			http://mobicents.googlecode.com/svn/trunk/servers/media/jain-mgcp/stack/
 		</url>
 	</scm>
 
