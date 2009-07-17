@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -24,7 +26,7 @@
 			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.eclipse.version>
 		<mobicents.mgcp.impl.version>
-			2.0.0.RC4-SNAPSHOT
+			2.0.0.RC4
 		</mobicents.mgcp.impl.version>
 	</properties>
 
@@ -61,9 +63,15 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/servers/media/jsr-309</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/servers/media/jsr-309</developerConnection>
-		<url>scm:svn:https://mobicents.googlecode.com/svn/servers/media/jsr-309</url>
+		<connection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/jsr-309
+		</connection>
+		<developerConnection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/jsr-309
+		</developerConnection>
+		<url>
+			http://mobicents.googlecode.com/svn/trunk/servers/media/jsr-309
+		</url>
 	</scm>
 
 	<profiles>
@@ -75,10 +83,12 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-release-plugin</artifactId>
+						<version>2.0-beta-9</version>
 						<configuration>
 							<autoVersionSubmodules>
 								true
 							</autoVersionSubmodules>
+							<remoteTagging>true</remoteTagging>
 							<tagBase>
 								https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jsr-309/
 							</tagBase>
@@ -116,8 +126,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
+				<version>2.0-beta-9</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<remoteTagging>true</remoteTagging>
 					<resume>false</resume>
 					<tagBase>
 						https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jsr-309/
