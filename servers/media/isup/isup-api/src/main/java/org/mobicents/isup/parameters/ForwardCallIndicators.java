@@ -8,6 +8,7 @@
  */
 package org.mobicents.isup.parameters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.mobicents.isup.ParameterRangeInvalidException;
@@ -209,6 +210,13 @@ public class ForwardCallIndicators extends AbstractParameter {
 		// FIXME should we allow here older bytes to pass
 		b[1] |= (this.sccpMethodIndicator & 0x03) << 1;
 		return b;
+	}
+
+	@Override
+	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+		byte[] b = this.encodeElement();
+		bos.write(b);
+		return b.length;
 	}
 
 	public boolean isNationalCallIdentificator() {

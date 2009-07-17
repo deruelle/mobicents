@@ -8,6 +8,7 @@
  */
 package org.mobicents.isup.parameters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.mobicents.isup.ParameterRangeInvalidException;
@@ -202,6 +203,13 @@ public class TransmissionMediumRequirement extends AbstractParameter {
 	 */
 	public byte[] encodeElement() throws IOException {
 		return new byte[] { (byte) this.transimissionMediumRequirement };
+	}
+
+	@Override
+	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+		byte[] b = this.encodeElement();
+		bos.write(b);
+		return b.length;
 	}
 
 	public int getTransimissionMediumRequirement() {

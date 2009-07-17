@@ -88,13 +88,13 @@ public class CallingPartyNumber extends AbstractNAINumber {
 	 */
 	public final static int _SI_NETWORK_PROVIDED = 3;
 
-	protected int numberingPlanIndicator = 0;
+	protected int numberingPlanIndicator;
 
-	protected int numberIncompleteIndicator = 0;
+	protected int numberIncompleteIndicator;
 
-	protected int addressRepresentationREstrictedIndicator = 0;
+	protected int addressRepresentationREstrictedIndicator;
 
-	protected int screeningIndicator = 0;
+	protected int screeningIndicator;
 
 	/**
 	 * 
@@ -172,7 +172,8 @@ public class CallingPartyNumber extends AbstractNAINumber {
 	protected void doAddressPresentationRestricted() {
 
 		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
-			return;
+		{
+			
 		// NOTE 1 – If the parameter is included and the address presentation
 		// restricted indicator indicates
 		// address not available, octets 3 to n( this are digits.) are omitted,
@@ -183,6 +184,7 @@ public class CallingPartyNumber extends AbstractNAINumber {
 		this.natureOfAddresIndicator = 0;
 		this.numberIncompleteIndicator = 0;
 		this.numberingPlanIndicator = 0;
+		}
 	}
 
 	@Override

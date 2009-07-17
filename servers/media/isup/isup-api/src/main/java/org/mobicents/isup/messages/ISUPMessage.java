@@ -2,6 +2,7 @@ package org.mobicents.isup.messages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.mobicents.isup.ISUPComponent;
 import org.mobicents.isup.ParameterRangeInvalidException;
+import org.mobicents.isup.Utils;
 import org.mobicents.isup.parameters.EndOfOptionalParameters;
 import org.mobicents.isup.parameters.ISUPParameter;
 import org.mobicents.isup.parameters.MessageType;
@@ -117,7 +119,6 @@ abstract class ISUPMessage implements ISUPComponent {
 
 	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
 
-		// FIME: add encoding of routing part
 
 		// bos.write(this.circuitIdentificationCode);
 
@@ -143,7 +144,7 @@ abstract class ISUPMessage implements ISUPComponent {
 		// included in the message.
 
 		for (ISUPParameter p : parameters.values()) {
-			
+
 			p.encodeElement(bos);
 		}
 	}
@@ -161,24 +162,31 @@ abstract class ISUPMessage implements ISUPComponent {
 	 * @throws IOException
 	 */
 	protected void encodeMandatoryVariableParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos, boolean isOptionalPartPresent) throws IOException {
+		//bos.write(new byte[4]);
 		byte[] pointers = new byte[parameters.size() + 1];
 		if (parameters != null && parameters.size() == 0) {
+			
 			// This happens if there is no variable mandatory part :)
 			if (isOptionalPartPresent) {
+
 				pointers = new byte[] { 0x01 };
 			} else {
+
 				pointers = new byte[] { 0x00 };
 			}
 			// Nothing else goes there.
 			bos.write(pointers);
 
 		} else {
+			
 			ByteArrayOutputStream parametersBodyBOS = new ByteArrayOutputStream();
 			byte lastParameterLength = 0;
 			byte currentParameterLength = 0;
 			for (int index = 0; index < parameters.size(); index++) {
 				ISUPParameter p = parameters.get(index);
+				
 				byte[] body = p.encodeElement();
+				
 				currentParameterLength = (byte) body.length;
 				if (body.length > 255) {
 					// FIXME: is this check valid?
@@ -225,6 +233,7 @@ abstract class ISUPMessage implements ISUPComponent {
 			
 			if (p == null)
 				continue;
+			
 			byte[] b = p.encodeElement();
 			// FIXME: this can be slow, maybe we shoudl remove that, and code
 			// this explicitly?
@@ -243,7 +252,6 @@ abstract class ISUPMessage implements ISUPComponent {
 
 	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
 		int index = 0;
-		
 		index += this.decodeMandatoryParameters(b, index);
 		index += this.decodeMandatoryVariableParameters(b, index);
 		index += this.decodeOptionalParameters(b, index);
@@ -269,12 +277,15 @@ abstract class ISUPMessage implements ISUPComponent {
 			try {
 				int count = getNumberOfMandatoryVariableLengthParameters();
 				for (int parameterIndex = 0; parameterIndex < count; parameterIndex++) {
-					int parameterLengthIndex = b[index + readCount];
+					int parameterLengthIndex = b[index + readCount]+index;
+					
 					int parameterLength = b[parameterLengthIndex];
 					byte[] parameterBody = new byte[parameterLength];
 					System.arraycopy(b, parameterLengthIndex + 1, parameterBody, 0, parameterLength);
 					decodeMandatoryVariableBody(parameterBody, parameterIndex);
+					readCount++;
 				}
+				
 				optionalOffset = b[index + readCount];
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
 				throw new ParameterRangeInvalidException("Failed to read parameter, to few octets in buffer, parameter index: " + extPIndex, aioobe);
@@ -284,7 +295,7 @@ abstract class ISUPMessage implements ISUPComponent {
 		} else {
 			throw new ParameterRangeInvalidException("To few bytes to decode mandatory variable part. There should be atleast on byte to indicate optional part.");
 		}
-
+		
 		return readCount + optionalOffset;
 	}
 
@@ -300,6 +311,7 @@ abstract class ISUPMessage implements ISUPComponent {
 			// let it rip :)
 			boolean readParameter = true;
 			while (readParameter) {
+				
 				byte extPCode=-1;
 				try {
 				
@@ -308,6 +320,7 @@ abstract class ISUPMessage implements ISUPComponent {
 					byte parameterLength = b[localIndex++];
 					byte[] parameterBody = new byte[parameterLength];
 					//This is bad, we will change this
+					
 					System.arraycopy(b, localIndex, parameterBody, 0, parameterLength);
 					localIndex += parameterLength;
 					readCount += 2 + parameterLength;
@@ -315,7 +328,7 @@ abstract class ISUPMessage implements ISUPComponent {
 					decodeOptionalBody(parameterBody, parameterCode);
 
 					if (b.length - localIndex > 0 && b[localIndex] != 0) {
-
+						readParameter = true;
 					} else {
 						readParameter = false;
 					}

@@ -8,6 +8,7 @@
  */
 package org.mobicents.isup.parameters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.mobicents.isup.ParameterRangeInvalidException;
@@ -103,6 +104,14 @@ public class NatureOfConnectionIndicators extends AbstractParameter {
 		b0 |= (this.continuityCheckIndicator & 0x03) << 2;
 		b0 |= (this.echoControlDeviceIndicator ? _TURN_ON : _TURN_OFF) << 4;
 		return new byte[] { (byte) b0 };
+	}
+
+	@Override
+	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+		byte[] b = this.encodeElement();
+		bos.write(b);
+		return b.length;
+		
 	}
 
 	public int getSatelliteIndicator() {

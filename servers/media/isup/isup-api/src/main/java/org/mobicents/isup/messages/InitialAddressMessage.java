@@ -7,6 +7,12 @@
  */
 package org.mobicents.isup.messages;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.isup.ParameterRangeInvalidException;
@@ -104,6 +110,20 @@ public class InitialAddressMessage extends ISUPMessage {
 	protected static final int _INDEX_O_NetworkManagementControls = 30;
 	protected static final int _INDEX_O_EndOfOptionalParameters = 31;
 
+	protected static final List<Integer> mandatoryParam ;
+	static{
+		List<Integer> tmp = new ArrayList<Integer>();
+		tmp.add(_INDEX_F_MessageType);
+		tmp.add(_INDEX_F_NatureOfConnectionIndicators);
+		tmp.add(_INDEX_F_ForwardCallIndicators);
+		tmp.add(_INDEX_F_CallingPartyCategory);
+		tmp.add(_INDEX_F_TransmissionMediumRequirement);
+		
+		mandatoryParam=Collections.unmodifiableList(tmp);
+		
+	}
+	
+	
 	public InitialAddressMessage(Object source, byte[] b)  throws ParameterRangeInvalidException{
 		super(source);
 		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
@@ -136,6 +156,7 @@ public class InitialAddressMessage extends ISUPMessage {
 	@Override
 	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 		int localIndex = index;
+		
 		if (b.length - index > 1) {
 			
 			// Message Type
@@ -170,18 +191,6 @@ public class InitialAddressMessage extends ISUPMessage {
 				throw new ParameterRangeInvalidException("Failed to parse ForwardCallIndicators due to: ",e);
 			}
 			
-			try{
-				byte[] body = new byte[2];
-				body[0] = b[index++];
-				body[1] = b[index++];
-				
-				ForwardCallIndicators v = new ForwardCallIndicators(body);
-				this.setForwardCallIndicators(v);
-			}catch(Exception e)
-			{
-				//AIOOBE or IllegalArg
-				throw new ParameterRangeInvalidException("Failed to parse ForwardCallIndicators due to: ",e);
-			}
 			
 			try{
 				byte[] body = new byte[1];
@@ -207,6 +216,7 @@ public class InitialAddressMessage extends ISUPMessage {
 				//AIOOBE or IllegalArg
 				throw new ParameterRangeInvalidException("Failed to parse TransmissionMediumRequirement due to: ",e);
 			}
+			
 			return index-localIndex;
 		} else {
 			throw new IllegalArgumentException("byte[] must have atleast two octets");
@@ -237,6 +247,7 @@ public class InitialAddressMessage extends ISUPMessage {
 	 */
 	@Override
 	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
+		
 		// TODO Auto-generated method stub
 		switch ((int) parameterCode) {
 		case TransitNetworkSelection._PARAMETER_CODE:
@@ -392,8 +403,15 @@ public class InitialAddressMessage extends ISUPMessage {
 	 */
 	@Override
 	public boolean hasAllMandatoryParameters() {
-		// TODO Auto-generated method stub
-		return false;
+		if(!super.f_Parameters.keySet().containsAll(mandatoryParam) || super.f_Parameters.values().contains(null))
+		{
+			return false;
+		}
+		if(!super.v_Parameters.containsKey(_INDEX_V_CalledPartyNumber)|| super.v_Parameters.get(_INDEX_V_CalledPartyNumber) ==null)
+		{
+			return false;
+		}
+		return true;
 	}
 
 	public NatureOfConnectionIndicators getNatureOfConnectionIndicators() {

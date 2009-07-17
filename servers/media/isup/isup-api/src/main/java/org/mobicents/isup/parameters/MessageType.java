@@ -24,7 +24,7 @@ import org.mobicents.isup.ParameterRangeInvalidException;
 public class MessageType implements ISUPParameter {
 
 	// not defined, its not a real parameter
-	public final static int _PARAMETER_CODE = 0;
+	public final static int _PARAMETER_CODE = 0xA;
 
 	private int code = 0;
 
