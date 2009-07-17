@@ -9,7 +9,7 @@
 
 	<groupId>org.mobicents.jsr309</groupId>
 	<artifactId>mobicents-jsr309-impl</artifactId>
-	<version>2.0.0.BETA2</version>
+	<version>2.0.0.BETA3-SNAPSHOT</version>
 	<name>Mobicents JSR-309 Impl</name>
 	<url>http://www.mobicents.org/products_media_server.html</url>
 
@@ -62,13 +62,13 @@
 
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jsr-309/mobicents-jsr309-impl-2.0.0.BETA2
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/jsr-309
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jsr-309/mobicents-jsr309-impl-2.0.0.BETA2
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/jsr-309
 		</developerConnection>
 		<url>
-			http://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jsr-309/mobicents-jsr309-impl-2.0.0.BETA2
+			http://mobicents.googlecode.com/svn/trunk/servers/media/jsr-309
 		</url>
 	</scm>
 
