@@ -27,6 +27,17 @@ public class AutomaticCongestionLevel extends AbstractParameter {
 
 	private int automaticCongestionLevel = 0;
 
+	
+	
+	
+	public AutomaticCongestionLevel() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public AutomaticCongestionLevel(byte[] b) throws ParameterRangeInvalidException {
+		super();
+		decodeElement(b);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

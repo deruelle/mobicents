@@ -57,7 +57,7 @@ abstract class ISUPMessage implements ISUPComponent {
 
 	protected Object source;
 
-	public ISUPMessage(Object source) throws IllegalArgumentException{
+	public ISUPMessage(Object source) throws ParameterRangeInvalidException{
 		super();
 		this.source=source;
 
@@ -144,7 +144,7 @@ abstract class ISUPMessage implements ISUPComponent {
 		// included in the message.
 
 		for (ISUPParameter p : parameters.values()) {
-
+			//System.err.println("ENCODE F: "+p.getCode()+"---> "+Utils.toHex(p.encodeElement()));
 			p.encodeElement(bos);
 		}
 	}
@@ -186,7 +186,7 @@ abstract class ISUPMessage implements ISUPComponent {
 				ISUPParameter p = parameters.get(index);
 				
 				byte[] body = p.encodeElement();
-				
+				//System.err.println("ENCODE V: "+p.getCode()+"---> "+Utils.toHex(body));
 				currentParameterLength = (byte) body.length;
 				if (body.length > 255) {
 					// FIXME: is this check valid?
@@ -206,11 +206,11 @@ abstract class ISUPMessage implements ISUPComponent {
 			}
 
 			if (!isOptionalPartPresent) {
-				pointers = new byte[] { 0x00 };
+				//pointers = new byte[] { 0x00 };
 			} else {
 				pointers[pointers.length - 1] = (byte) (pointers[pointers.length - 2] + lastParameterLength);
 			}
-
+			//System.err.println("V POINTER: "+Utils.toHex(pointers));
 			bos.write(pointers);
 			bos.write(parametersBodyBOS.toByteArray());
 
@@ -235,6 +235,7 @@ abstract class ISUPMessage implements ISUPComponent {
 				continue;
 			
 			byte[] b = p.encodeElement();
+			//System.err.println("ENCODE O: "+p.getCode()+"---> "+Utils.toHex(b));
 			// FIXME: this can be slow, maybe we shoudl remove that, and code
 			// this explicitly?
 			if (b.length > 255) {
@@ -304,14 +305,19 @@ abstract class ISUPMessage implements ISUPComponent {
 	protected int decodeOptionalParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 
 		int localIndex = index;
-
+		
 		int readCount = 0;
 		//if not, there are no params.
 		if (b.length - index > 0) {
 			// let it rip :)
 			boolean readParameter = true;
 			while (readParameter) {
-				
+				if (b.length - localIndex > 0 && b[localIndex] != 0) {
+					readParameter = true;
+				} else {
+					readParameter = false;
+					continue;
+				}
 				byte extPCode=-1;
 				try {
 				

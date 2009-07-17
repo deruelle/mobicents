@@ -15,9 +15,7 @@ import org.mobicents.isup.ParameterRangeInvalidException;
  * Start time:12:56:36 2009-07-17<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
- *         </a>
- * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class CCSS extends AbstractParameter {
 
@@ -70,7 +68,6 @@ public class CCSS extends AbstractParameter {
 		return new byte[] { (byte) (this.ccssCall ? _TURN_ON : _TURN_OFF) };
 	}
 
-	
 	public boolean isCcssCall() {
 		return ccssCall;
 	}

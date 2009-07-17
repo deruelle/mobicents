@@ -219,7 +219,7 @@ public class InitialAddressMessage extends ISUPMessage {
 			
 			return index-localIndex;
 		} else {
-			throw new IllegalArgumentException("byte[] must have atleast two octets");
+			throw new ParameterRangeInvalidException("byte[] must have atleast two octets");
 		}
 	}
 

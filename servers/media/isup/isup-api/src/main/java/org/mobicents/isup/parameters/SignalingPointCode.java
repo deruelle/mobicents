@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:23:47 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -25,4 +27,13 @@ public class SignalingPointCode extends AbstractPointCode {
 
 		return _PARAMETER_CODE;
 	}
+		public SignalingPointCode() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+		public SignalingPointCode(byte[] b) throws ParameterRangeInvalidException {
+			super(b);
+			// TODO Auto-generated constructor stub
+		}
+		
 }
