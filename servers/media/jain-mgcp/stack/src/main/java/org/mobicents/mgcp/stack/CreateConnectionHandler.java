@@ -26,7 +26,6 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.DigitMap;
-import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.NotificationRequestParms;
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
@@ -63,7 +62,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 		super(stack, address, port);
 	}
 
-	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
+	public JainMgcpCommandEvent decodeCommand(final String message) throws ParseException {
 		Utils utils = utilsFactory.allocate();
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
@@ -185,18 +184,10 @@ public class CreateConnectionHandler extends TransactionHandler {
 		 *            the header from the message.
 		 */
 		public void header(String header) throws ParseException {
-			String[] tokens = utils.splitStringBySpace(header);
-
-			// String verb = tokens[0].trim();
-			String transactionID = tokens[1].trim();
-			// String version = tokens[3].trim() + " " + tokens[4].trim();
-
-			int tid = Integer.parseInt(transactionID);
-			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
-
-			command = new CreateConnection(getObjectSource(tid), new CallIdentifier("0"), endpoint,
+			
+			command = new CreateConnection(source != null ? source : stack, new CallIdentifier("0"), endpoint,
 					ConnectionMode.Inactive);
-			command.setTransactionHandle(tid);
+			command.setTransactionHandle(remoteTID);
 		}
 
 		/**

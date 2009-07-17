@@ -163,18 +163,10 @@ public class ModifyConnectionHandler extends TransactionHandler {
 		 *            the header from the message.
 		 */
 		public void header(String header) throws ParseException {
-			String[] tokens = utils.splitStringBySpace(header);
 
-			// String verb = tokens[0].trim();
-			String transactionID = tokens[1].trim();
-			// String version = tokens[3].trim() + " " + tokens[4].trim();
-
-			int tid = Integer.parseInt(transactionID);
-			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
-
-			command = new ModifyConnection(getObjectSource(tid), new CallIdentifier("00"), endpoint,
+			command = new ModifyConnection(source != null ? source : stack, new CallIdentifier("00"), endpoint,
 					new ConnectionIdentifier("00"));
-			command.setTransactionHandle(tid);
+			command.setTransactionHandle(remoteTID);
 		}
 
 		/**

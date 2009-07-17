@@ -30,6 +30,12 @@ public class NotifyTest extends MessageFlowHarness {
 	public void testNotify() {
 		this.ca.sendNotify();
 		waitForMessage();
+		waitForMessage();
+		waitForMessage();
+		waitForMessage();
+		waitForMessage();
+		waitForMessage();
+		waitForMessage();waitForMessage();waitForMessage();waitForMessage();
 	}
 
 	public void tearDown() {

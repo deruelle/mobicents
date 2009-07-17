@@ -19,6 +19,7 @@ import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.Notify;
+import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
@@ -139,6 +140,8 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 	private String msgTemp = null;
 
 	protected LinkedList<ActionPerform> actionToPerform = new LinkedList<ActionPerform>();
+
+	protected EndpointIdentifier endpoint = null;
 
 	/**
 	 * Creates a new instance of TransactionHandle
@@ -375,7 +378,7 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 	 *            message
 	 * @return jain mgcp command event object.
 	 */
-	public abstract JainMgcpCommandEvent decodeCommand(String message) throws ParseException;
+	public abstract JainMgcpCommandEvent decodeCommand(final String msg) throws ParseException;
 
 	/**
 	 * Decodes MGCP response message into jain mgcp response event object.
@@ -543,32 +546,6 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 
 	}
 
-	/**
-	 * Used by stack for transmitting received MGCP command message to the
-	 * application.
-	 * 
-	 * @param message
-	 *            receive MGCP command message.
-	 */
-	/*
-	 * public void receiveCommand(String message) {
-	 * 
-	 * JainMgcpCommandEvent event = null; try { event = decodeCommand(message);
-	 * if (logger.isDebugEnabled()) { logger.debug("Event decoded: " + event); } }
-	 * catch (ParseException e) { logger.error("Coud not parse message: ", e);
-	 * return; }
-	 * 
-	 * sent = false; commandEvent = event; // store original transaction handle
-	 * parameter // and populate with local value remoteTID =
-	 * event.getTransactionHandle();
-	 * 
-	 * stack.remoteTxToLocalTxMap.put(new Integer(remoteTID), new
-	 * Integer(localTID)); event.setTransactionHandle(localTID);
-	 * 
-	 * resetLongtranTimer(); // fire event
-	 * stack.provider.processMgcpCommandEvent(event); }
-	 */
-
 	private void cancelLongtranTimer() {
 		if (longtranTimerTask != null) {
 			longtranTimerTask.cancel();
@@ -663,11 +640,12 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 
 	}
 
-	public void receiveRequest(String msg) {
+	public void receiveRequest(final EndpointIdentifier endpoint, final String msg, final Integer remoteTID) {
 
-		JainMgcpCommandEvent event = null;
+		this.remoteTID = remoteTID;
+		this.endpoint = endpoint;
 		try {
-			event = decodeCommand(msg);
+			commandEvent = decodeCommand(msg);
 			// if (logger.isDebugEnabled()) {
 			// logger.debug("Event decoded: \n" + event);
 			// }
@@ -676,15 +654,13 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 			return;
 		}
 		sent = false;
-		commandEvent = event;
 
 		// store original transaction handle parameter
 		// and populate with local value
-		remoteTID = event.getTransactionHandle();
-		stack.getRemoteTxToLocalTxMap().put(new Integer(remoteTID), new Integer(localTID));
-		// XXX:stack.addRemoteTxIDToLocalTxID(new Integer(remoteTID), new
-		// Integer(localTID));
-		event.setTransactionHandle(localTID);
+
+		stack.getRemoteTxToLocalTxMap().put(remoteTID, new Integer(localTID));
+
+		commandEvent.setTransactionHandle(localTID);
 
 		resetLongtranTimer();
 
@@ -721,17 +697,7 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 		 * tx.
 		 */
 		if (this.isProvisional(event.getReturnCode())) {
-			resetLongtranTimer();
-			// Add dumym action
-			// This is required since on message receivel it is scheduled to
-			// execute
-			// this.actionToPerform.add(new ActionPerform() {
-			//
-			// @Override
-			// public void perform() {
-			//
-			// }
-			// });
+			resetLongtranTimer();			
 		}
 		// fire event only if non provisional response
 		// This is done in MessageHandler
@@ -823,7 +789,7 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e);
 			}
 
 		}

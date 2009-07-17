@@ -9,7 +9,6 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.ConnectionParm;
-import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.InfoCode;
 import jain.protocol.ip.mgcp.message.parms.LocalOptionValue;
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
@@ -38,9 +37,8 @@ public class AuditConnectionHandler extends TransactionHandler {
 	private AuditConnection command;
 	private AuditConnectionResponse response;
 	private ConnectionIdentifier connectionIdentifier = null;
-	private EndpointIdentifier endpointId = null;
+
 	private InfoCode[] requestedInfo = null;
-	int tid = 0;
 
 	boolean RCfirst = false;
 
@@ -58,8 +56,8 @@ public class AuditConnectionHandler extends TransactionHandler {
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
-			command = new AuditConnection(getObjectSource(tid), endpointId, connectionIdentifier, requestedInfo);
-			command.setTransactionHandle(tid);
+			command = new AuditConnection(source != null ? source : stack, endpoint, connectionIdentifier, requestedInfo);
+			command.setTransactionHandle(remoteTID);
 		} catch (Exception e) {
 			throw new ParseException(e.getMessage(), -1);
 		} finally {
@@ -211,15 +209,6 @@ public class AuditConnectionHandler extends TransactionHandler {
 		 *            the header from the message.
 		 */
 		public void header(String header) throws ParseException {
-			String[] tokens = utils.splitStringBySpace(header);
-
-			// String verb = tokens[0].trim();
-			String transactionID = tokens[1].trim();
-			// String version = tokens[3].trim() + " " + tokens[4].trim();
-
-			tid = Integer.parseInt(transactionID);
-			endpointId = utils.decodeEndpointIdentifier(tokens[2].trim());
-
 			// Can't create the AuditConnection object here as
 			// ConnectionIdentifier and InfoCode[] is required
 

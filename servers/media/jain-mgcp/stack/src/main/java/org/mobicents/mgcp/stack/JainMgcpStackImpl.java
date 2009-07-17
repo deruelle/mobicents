@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.handlers.EndpointHandlerManager;
 import org.mobicents.mgcp.stack.parser.UtilsFactory;
+import org.mobicents.mgcp.stack.utils.*;
 
 /**
  * 
@@ -84,11 +85,13 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	private int executorPosition = 0;
 
 	private UtilsFactory utilsFactory = null;
+	private PacketRepresentationFactory prFactory = null;
 	private EndpointHandlerFactory ehFactory = null;
-
-	// protected ExecutorService jainMgcpStackImplPool =
-	// Executors.newFixedThreadPool(50,new
-	// JainMgcpStackImpl.ThreadFactoryImpl());
+	
+	//Should we ever get data more than 5000 bytes?
+	private static final int BUFFER_SIZE = 5000;
+	private byte[] buffer = new byte[BUFFER_SIZE];
+	private DatagramPacket packet = null;
 
 	// For now we have only one provider/delete prvider method wont work.
 	public JainMgcpStackProviderImpl provider = null;
@@ -163,6 +166,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 
 		this.provider = new JainMgcpStackProviderImpl(this);
 		this.utilsFactory = new UtilsFactory(25);
+		
+		this.prFactory = new PacketRepresentationFactory(50, BUFFER_SIZE);
 
 		this.messageHandler = new MessageHandler(this);
 		this.eventSchedulerExecutor.execute(new EventSchedulerTask());
@@ -343,12 +348,10 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 		if (logger.isDebugEnabled()) {
 			logger.debug("MGCP stack started successfully on " + this.localAddress + ":" + this.port);
 		}
-
-		byte[] buffer = new byte[86400];
-		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
+		int length = 0;
 		while (!stopped) {
 			try {
+				 packet = new DatagramPacket(buffer, buffer.length);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Waiting for packet delivery");
 				}
@@ -359,28 +362,25 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 				}
 				logger.error("I/O exception occured:", e);
 				continue;
-			}
-
-			// if (logger.isDebugEnabled()) {
-			// logger.debug("Receive " + packet.getLength() + " bytes from " +
-			// packet.getAddress() + ":"
-			// + packet.getPort());
-			// }
+			}			
 
 			// uses now the actual data length from the DatagramPacket
 			// instead of the length of the byte[] buffer
-			byte[] data = new byte[packet.getLength()];
-			System.arraycopy(packet.getData(), 0, data, 0, data.length);
+			length = packet.getLength();
+			
 
-			// MessageHandler handler = new MessageHandler(this, data,
-			// packet.getAddress(), packet.getPort());
-
-			// jainMgcpStackImplPool.execute(handler);
+			
 			synchronized (rawQueue) {
-				rawQueue.add(new PacketRepresentation(data, packet.getAddress(), packet.getPort()));
+				
+				PacketRepresentation pr = this.prFactory.allocate();				
+				System.arraycopy(packet.getData(), 0, pr.getRawData(), 0, length);
+				pr.setLength(length);
+				pr.setRemoteAddress(packet.getAddress());
+				pr.setRemotePort(packet.getPort());
+				
+				rawQueue.add(pr);
 				rawQueue.notify();
 			}
-
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -400,8 +400,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 						try {
 							rawQueue.wait();
 						} catch (InterruptedException e) {
-
-							e.printStackTrace();
+							logger.error(e);
 							return;
 						}
 					}

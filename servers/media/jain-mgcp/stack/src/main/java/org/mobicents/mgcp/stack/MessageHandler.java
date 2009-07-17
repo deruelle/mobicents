@@ -15,13 +15,15 @@
  */
 package org.mobicents.mgcp.stack;
 
+import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.Utils;
+import org.mobicents.mgcp.stack.utils.PacketRepresentation;
 
 /**
  * 
@@ -31,11 +33,6 @@ public class MessageHandler {
 
 	private JainMgcpStackImpl stack;
 	private static Logger logger = Logger.getLogger(MessageHandler.class);
-
-	// private static final Pattern p = Pattern.compile("[\\w]{4}(\\s|\\S)*");
-	//
-	// private static final String pb = "\r?\n\\.\r?\n";
-	// private static final Pattern piggyDismountPattern = Pattern.compile(pb);
 
 	private Utils utils = null;
 
@@ -57,21 +54,21 @@ public class MessageHandler {
 	 *            the packet to split
 	 * @return array of all separate messages
 	 */
-	public static String[] piggyDismount(byte[] msgBuffer) {
+	public static String[] piggyDismount(byte[] msgBuffer, int length) {
 		try {
 			int msgStart = 0;
 			int msgLength = 0;
 			String currentLine = null;
 
-			for (int i = 0; i < msgBuffer.length - 1; i++) {
+			for (int i = 0; i < length - 1; i++) {
 				if ((msgBuffer[i] == '\n' || msgBuffer[i] == '\r') && msgBuffer[i + 1] == '.') {
 					msgLength = i - msgStart;
 
 					try {
-						currentLine = new String(msgBuffer, msgStart, msgLength, "UTF-8");
+						currentLine = new String(msgBuffer, msgStart, msgLength + 1, "UTF-8");
 						mList.add(currentLine);
 					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
+						logger.error(e);
 					}
 					i = i + 3;
 					msgStart = i;
@@ -79,7 +76,7 @@ public class MessageHandler {
 				}
 			}
 			try {
-				msgLength = msgBuffer.length - msgStart;
+				msgLength = length - msgStart;
 				currentLine = new String(msgBuffer, msgStart, msgLength, "UTF-8");
 				mList.add(currentLine);
 			} catch (UnsupportedEncodingException e) {
@@ -92,25 +89,6 @@ public class MessageHandler {
 		}
 
 	}
-
-
-//	public static String[] piggyDismount(String packet) {
-//
-//		try {
-//			int idx = 0;
-//
-//			Matcher m = piggyDismountPattern.matcher(packet);
-//			while (m.find()) {
-//				mList.add(packet.substring(idx, m.start()) + "\n");
-//				idx = m.end();
-//			}
-//			mList.add(packet.substring(idx));
-//			String[] result = new String[mList.size()];
-//			return (String[]) mList.toArray(result);
-//		} finally {
-//			mList.clear();
-//		}
-//	}
 
 	public boolean isRequest(String header) {
 		header = header.trim();
@@ -129,128 +107,128 @@ public class MessageHandler {
 	}
 
 	public void scheduleMessages(PacketRepresentation pr) {
+		try {
+			final InetAddress address = pr.getRemoteAddress();
+			final int port = pr.getRemotePort();
+			for (String msg : piggyDismount(pr.getRawData(), pr.getLength())) {
 
-		final InetAddress address = pr.getRemoteAddress();
-		final int port = pr.getRemotePort();
-		for (String msg : piggyDismount(pr.getRawData())) {
+				int pos = msg.indexOf("\n");
 
-			int pos = msg.indexOf("\n");
-			// System.out.println(" --- RECEIVING:"+msg);
-			// extract message header to determine transaction handle parameter
-			// and type of the received message
-			String header = msg.substring(0, pos).trim();
-			if (logger.isDebugEnabled()) {
-				logger.debug("Message header: " + header);
-			}
-
-			// check message type
-			// if this message is command then create new transaction handler
-			// for specified type of this message.
-			// if received message is a response then try to find corresponded
-			// transaction to handle this message
-			String tokens[] = utils.splitStringBySpace(header);
-			if (isRequest(header)) {
-
-				String verb = tokens[0];
-				String remoteTxIdString = tokens[1];
-
+				// extract message header to determine transaction handle
+				// parameter and type of the received message
+				String header = msg.substring(0, pos).trim();
 				if (logger.isDebugEnabled()) {
-					logger.debug("Processing command message = " + verb + " remote Tx = " + remoteTxIdString);
+					logger.debug("Message header: " + header);
 				}
 
-				Integer remoteTxIdIntegere = new Integer(remoteTxIdString);
+				// check message type if this message is command then create new
+				// transaction handler for specified type of this message. if
+				// received message is a response then try to find corresponded
+				// transaction to handle this message
+				String tokens[] = utils.splitStringBySpace(header);
+				if (isRequest(header)) {
 
-				// Check if the Response still in responseTx Map
-				// FIXME: baranowb: this checks seems bad, why do we itterate
-				// and than get value for key?
-
-				TransactionHandler completedTxHandler = stack.getCompletedTransactions().get(remoteTxIdIntegere);
-				if (completedTxHandler != null) {
-
-					EndpointHandler eh = completedTxHandler.getEndpointHandler();
-					completedTxHandler.markRetransmision();
-					eh.scheduleTransactionHandler(completedTxHandler);
+					final String verb = tokens[0];
+					final String remoteTxIdString = tokens[1];
+					final EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("Received Command for which stack has already sent response Tx = " + verb + " "
-								+ remoteTxIdIntegere);
+						logger.debug("Processing command message = " + verb + " remote Tx = " + remoteTxIdString);
 					}
 
-					return;
-				}
+					Integer remoteTxIdIntegere = new Integer(remoteTxIdString);
 
-				Integer tmpLoaclTID = stack.getRemoteTxToLocalTxMap().get(remoteTxIdIntegere);
-				if (tmpLoaclTID != null) {
-					TransactionHandler ongoingTxHandler = stack.getLocalTransactions().get(tmpLoaclTID);
-					ongoingTxHandler.sendProvisionalResponse();
-					if (logger.isDebugEnabled()) {
-						logger.debug("Received Command for ongoing Tx = " + remoteTxIdIntegere);
+					// Check if the Response still in responseTx Map
+					TransactionHandler completedTxHandler = stack.getCompletedTransactions().get(remoteTxIdIntegere);
+					if (completedTxHandler != null) {
+
+						EndpointHandler eh = completedTxHandler.getEndpointHandler();
+						completedTxHandler.markRetransmision();
+						eh.scheduleTransactionHandler(completedTxHandler);
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Received Command for which stack has already sent response Tx = " + verb
+									+ " " + remoteTxIdIntegere);
+						}
+
+						return;
 					}
-					return;
-				}
 
-				// If we are here, it means this is new TX, we have to create
-				// TxH and EH
+					Integer tmpLoaclTID = stack.getRemoteTxToLocalTxMap().get(remoteTxIdIntegere);
+					if (tmpLoaclTID != null) {
+						TransactionHandler ongoingTxHandler = stack.getLocalTransactions().get(tmpLoaclTID);
+						ongoingTxHandler.sendProvisionalResponse();
+						if (logger.isDebugEnabled()) {
+							logger.debug("Received Command for ongoing Tx = " + remoteTxIdIntegere);
+						}
+						return;
+					}
 
-				TransactionHandler handler;
-				if (verb.equalsIgnoreCase("crcx")) {
-					handler = new CreateConnectionHandler(stack, address, port);
-				} else if (verb.equalsIgnoreCase("mdcx")) {
-					handler = new ModifyConnectionHandler(stack, address, port);
-				} else if (verb.equalsIgnoreCase("dlcx")) {
-					handler = new DeleteConnectionHandler(stack, address, port);
-				} else if (verb.equalsIgnoreCase("epcf")) {
-					handler = new EndpointConfigurationHandler(stack, address, port);
-				} else if (verb.equalsIgnoreCase("rqnt")) {
-					handler = new NotificationRequestHandler(stack, address, port);
-				} else if (verb.equalsIgnoreCase("ntfy")) {
-					handler = new NotifyHandler(stack, address, port);
-				} else if (verb.equalsIgnoreCase("rsip")) {
-					handler = new RestartInProgressHandler(stack, address, port);
-				} else if (verb.equalsIgnoreCase("auep")) {
-					handler = new AuditEndpointHandler(stack, address, port);
-				} else if (verb.equalsIgnoreCase("aucx")) {
-					handler = new AuditConnectionHandler(stack, address, port);
+					// If we are here, it means this is new TX, we have to
+					// create TxH and EH
+
+					TransactionHandler handler;
+					if (verb.equalsIgnoreCase("crcx")) {
+						handler = new CreateConnectionHandler(stack, address, port);
+					} else if (verb.equalsIgnoreCase("mdcx")) {
+						handler = new ModifyConnectionHandler(stack, address, port);
+					} else if (verb.equalsIgnoreCase("dlcx")) {
+						handler = new DeleteConnectionHandler(stack, address, port);
+					} else if (verb.equalsIgnoreCase("epcf")) {
+						handler = new EndpointConfigurationHandler(stack, address, port);
+					} else if (verb.equalsIgnoreCase("rqnt")) {
+						handler = new NotificationRequestHandler(stack, address, port);
+					} else if (verb.equalsIgnoreCase("ntfy")) {
+						handler = new NotifyHandler(stack, address, port);
+					} else if (verb.equalsIgnoreCase("rsip")) {
+						handler = new RestartInProgressHandler(stack, address, port);
+					} else if (verb.equalsIgnoreCase("auep")) {
+						handler = new AuditEndpointHandler(stack, address, port);
+					} else if (verb.equalsIgnoreCase("aucx")) {
+						handler = new AuditConnectionHandler(stack, address, port);
+					} else {
+						logger.warn("Unsupported message verbose " + verb);
+						return;
+					}
+
+					// This makes this command to be set in queue to process
+					handler.receiveRequest(endpoint, msg, remoteTxIdIntegere);
+					boolean useFakeOnWildcard = false;
+					if (handler instanceof CreateConnectionHandler) {
+						useFakeOnWildcard = EndpointHandler.isAnyOfWildcard(handler.getEndpointId());
+					}
+					EndpointHandler eh = stack.getEndpointHandler(handler.getEndpointId(), useFakeOnWildcard);
+					eh.addTransactionHandler(handler);
+
+					eh.scheduleTransactionHandler(handler);
+					// handle.receiveCommand(msg);
 				} else {
-					logger.warn("Unsupported message verbose " + verb);
-					return;
-				}
+					// RESPONSE HANDLING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Processing response message");
+					}
+					// String domainName = address.getHostName();
+					String tid = tokens[1];
 
-				// This makes this command to be set in queue to process
-				handler.receiveRequest(msg);
-				boolean useFakeOnWildcard = false;
-				if (handler instanceof CreateConnectionHandler) {
-					useFakeOnWildcard = EndpointHandler.isAnyOfWildcard(handler.getEndpointId());
-				}
-				EndpointHandler eh = stack.getEndpointHandler(handler.getEndpointId(), useFakeOnWildcard);
-				eh.addTransactionHandler(handler);
+					// XXX:TransactionHandler handler = (TransactionHandler)
+					// stack.getLocalTransaction(Integer.valueOf(tid));
+					TransactionHandler handler = (TransactionHandler) stack.getLocalTransactions().get(
+							Integer.valueOf(tid));
+					if (handler == null) {
+						logger.warn("---  Address:" + address + "\nPort:" + port + "\nID:" + this.hashCode()
+								+ "\n Unknown transaction: " + tid);
+						return;
+					}
+					handler.receiveResponse(msg);
+					// EndpointHandler
+					// eh=stack.getEndpointHandler(handler.getEndpointId());
+					EndpointHandler eh = handler.getEndpointHandler();
+					eh.scheduleTransactionHandler(handler);
 
-				eh.scheduleTransactionHandler(handler);
-				// handle.receiveCommand(msg);
-			} else {
-				// RESPONSE HANDLING
-				if (logger.isDebugEnabled()) {
-					logger.debug("Processing response message");
 				}
-				// String domainName = address.getHostName();
-				String tid = tokens[1];
-
-				// XXX:TransactionHandler handler = (TransactionHandler)
-				// stack.getLocalTransaction(Integer.valueOf(tid));
-				TransactionHandler handler = (TransactionHandler) stack.getLocalTransactions()
-						.get(Integer.valueOf(tid));
-				if (handler == null) {
-					logger.warn("---  Address:" + address + "\nPort:" + port + "\nID:" + this.hashCode()
-							+ "\n Unknown transaction: " + tid);
-					return;
-				}
-				handler.receiveResponse(msg);
-				// EndpointHandler
-				// eh=stack.getEndpointHandler(handler.getEndpointId());
-				EndpointHandler eh = handler.getEndpointHandler();
-				eh.scheduleTransactionHandler(handler);
-
 			}
+		} finally {
+			pr.release();
 		}
 
 	}

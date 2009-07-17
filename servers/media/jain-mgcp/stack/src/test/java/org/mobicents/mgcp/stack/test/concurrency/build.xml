@@ -22,16 +22,15 @@
 
 
 	<target name="mgw" depends="make" description="run the example UAs.">
-		<delete file="shootistdebug.txt" />
-		<delete file="shootistlog.txt" />
+		<delete file="log4j-mgw.log" />
 		<java classname="${packageprefix}.MGW" fork="true" maxmemory="128m" classpathref="project.class.path" >
-			
+			<jvmarg value="-Dfile.name=log4j-mgw.log"/>
 		</java>
 	</target>
 	<target name="ca" depends="make" description="run the example UAs.">
-		<delete file="shootistdebug.txt" />
-		<delete file="shootistlog.txt" />
+		<delete file="log4j-ca.log" />
 		<java classname="${packageprefix}.CA" fork="true" maxmemory="128m" classpathref="project.class.path">
+			<jvmarg value="-Dfile.name=log4j-ca.log"/>
 			<arg value="10000" />
 			<arg value="100" />
 		</java>
@@ -39,8 +38,7 @@
 
 	<target name="clean" description="clean the logs">
 		<delete failonerror="0">
-			<fileset file="*debug.txt" />
-			<fileset file="*log.txt" />
+			<fileset file="*.log" />
 		</delete>
 	</target>
 

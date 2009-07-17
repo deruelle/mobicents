@@ -71,17 +71,13 @@ import org.mobicents.jain.protocol.ip.mgcp.pkg.AUPackage;
 public class Utils {
 
 	private static final Logger logger = Logger.getLogger(Utils.class);
+	
+	private static final char AMPERSAND = '@';
 
 	private static final String REGEX_EMBEDDED_COMMAND = "\\(E\\(.*\\)\\)";
 	private static final Pattern pattern = Pattern.compile(REGEX_EMBEDDED_COMMAND);
 
-	private static final Pattern spacePattern = Pattern.compile("\\s");
-
 	private static final Pattern commaPattern = Pattern.compile(",");
-
-	private static final Pattern forwardSlashPattern = Pattern.compile("/");
-
-	private static final Pattern ampersandPattern = Pattern.compile("@");
 
 	private static final Pattern equalsPattern = Pattern.compile("=");
 
@@ -96,6 +92,7 @@ public class Utils {
 
 	StringBuilder decdReqEveStrBuilder = new StringBuilder();
 
+	List<String> list = new ArrayList<String>();
 	List<String> decdEventName = new ArrayList<String>();
 	List<String> decdReqtEventList = new ArrayList<String>();
 
@@ -809,7 +806,7 @@ public class Utils {
 			if (size == 1) {
 				return new EventName(PackageName.AllPackages, MgcpEvent.factory(decdEventName.get(0)).withParm(param));
 			} else if (size == 2) {
-				int pos = decdEventName.get(1).indexOf('@');
+				int pos = decdEventName.get(1).indexOf(AMPERSAND);
 				if (pos > 0) {
 					String cid = (decdEventName.get(1).substring(pos + 1)).trim();
 					ConnectionIdentifier connectionIdentifier = null;
@@ -827,7 +824,7 @@ public class Utils {
 							decdEventName.get(1)).withParm(param));
 				}
 			} else if (size == 3) {
-				int pos = decdEventName.get(2).indexOf('@');
+				int pos = decdEventName.get(2).indexOf(AMPERSAND);
 				if (pos < 0) {
 					throw new ParseException("Invalid token " + decdEventName.get(2), 0);
 				}
@@ -1428,7 +1425,7 @@ public class Utils {
 		StringBuffer s = new StringBuffer("");
 		s.append(e.getPackageName().toString()).append('/').append(e.getEventIdentifier().getName());
 		if (e.getConnectionIdentifier() != null) {
-			s.append('@').append(e.getConnectionIdentifier().toString());
+			s.append(AMPERSAND).append(e.getConnectionIdentifier().toString());
 		}
 		if (e.getEventIdentifier().getParms() != null) {
 			s.append('(').append(e.getEventIdentifier().getParms()).append(')');
@@ -1444,8 +1441,14 @@ public class Utils {
 	 * @return EdnpointIdentifier object.
 	 */
 	public EndpointIdentifier decodeEndpointIdentifier(String name) {
-		String[] s = ampersandPattern.split(name, 0);
-		return new EndpointIdentifier(s[0], s[1]);
+		try {
+			this.split(AMPERSAND, name, list);
+			String[] s = new String[list.size()];
+			list.toArray(s);
+			return new EndpointIdentifier(s[0], s[1]);
+		} finally {
+			list.clear();
+		}
 	}
 
 	public String encodeEndpointIdentifier(EndpointIdentifier e) {
@@ -1606,7 +1609,7 @@ public class Utils {
 				evt.getEventName().getEventIdentifier().getName());
 
 		if (evt.getEventName().getConnectionIdentifier() != null) {
-			s.append('@').append(evt.getEventName().getConnectionIdentifier().toString());
+			s.append(AMPERSAND).append(evt.getEventName().getConnectionIdentifier().toString());
 		}
 		String parms = evt.getEventName().getEventIdentifier().getParms();
 		RequestedAction[] actions = evt.getRequestedActions();
@@ -1758,7 +1761,15 @@ public class Utils {
 		String domainAndPort[] = null;
 
 		try {
-			String tokens[] = ampersandPattern.split(value, 0);
+			String tokens[] = null;
+
+			try {
+				this.split(AMPERSAND, value, list);
+				tokens = new String[list.size()];
+				list.toArray(tokens);
+			} finally {
+				list.clear();
+			}
 
 			if (tokens.length == 2) {
 				localName = tokens[0];
@@ -1803,5 +1814,17 @@ public class Utils {
 			s.append(":").append(n.getPortNumber());
 		}
 		return s.toString();
+	}
+
+	public static void main(String args[]) {
+		Utils u = new Utils();
+		String text = "blllablaa@whatever.com";
+		EndpointIdentifier edId = null;
+		long currentTime = System.currentTimeMillis();
+		for (int i = 0; i < 10000; i++) {
+			edId = u.decodeEndpointIdentifier(text);
+		}
+		long opeTime = System.currentTimeMillis() - currentTime;
+		System.out.println("took " + opeTime);
 	}
 }
