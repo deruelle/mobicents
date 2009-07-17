@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CalledDirectoryNumber;
 import org.mobicents.isup.parameters.CalledINNumber;
 
@@ -59,7 +60,7 @@ public class CalledINNumberTest extends ParameterHarness {
 		return bos.toByteArray();
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		CalledINNumber bci = new CalledINNumber(getBody1());
 	
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
@@ -67,7 +68,7 @@ public class CalledINNumberTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		CalledINNumber bci = new CalledINNumber(getBody2());
 
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };

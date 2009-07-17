@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:14:48:06 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
@@ -24,7 +26,7 @@ public class CallReference extends AbstractParameter {
 	private int callIdentity = 0;
 	private int signalingPointCode = 0;
 
-	public CallReference(byte[] b) {
+	public CallReference(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -40,9 +42,9 @@ public class CallReference extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 5) {
-			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
+			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
 		}
 		for (int i = 0; i < 3; i++) {
 			this.callIdentity |= (b[i] << (i * 8));

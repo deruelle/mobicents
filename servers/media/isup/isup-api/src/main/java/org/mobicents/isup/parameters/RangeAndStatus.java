@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:14:44:16 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -26,7 +28,7 @@ public class RangeAndStatus extends AbstractParameter {
 	// FIXME:
 	// private Status[] status = null;
 
-	public RangeAndStatus(byte[] b) {
+	public RangeAndStatus(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -42,7 +44,7 @@ public class RangeAndStatus extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 
 		this.range = b[0];
 		this.status = new byte[b.length - 1];

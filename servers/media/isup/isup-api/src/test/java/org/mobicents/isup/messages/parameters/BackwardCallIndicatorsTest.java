@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.BackwardCallIndicators;
 
 /**
@@ -56,7 +57,7 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 		return body;
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ParameterRangeInvalidException {
 		BackwardCallIndicators bci = new BackwardCallIndicators(getBody1());
 
 		String[] methodNames = { "getChargeIndicator", "getCalledPartysStatusIndicator", "getCalledPartysCategoryIndicator", "getEndToEndMethodIndicator", "isInterworkingIndicator",
@@ -86,7 +87,7 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 		body[1] = (byte) 0xBD;
 		return body;
 	}
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ParameterRangeInvalidException {
 		BackwardCallIndicators bci = new BackwardCallIndicators(getBody2());
 
 		String[] methodNames = { "getChargeIndicator", "getCalledPartysStatusIndicator", "getCalledPartysCategoryIndicator", "getEndToEndMethodIndicator", "isInterworkingIndicator",
@@ -103,7 +104,7 @@ public class BackwardCallIndicatorsTest extends ParameterHarness {
 	 * ()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		return new org.mobicents.isup.parameters.BackwardCallIndicators(new byte[2]);
 	}
 

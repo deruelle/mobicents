@@ -9,6 +9,7 @@
 package org.mobicents.isup.messages.parameters;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.EchoControlInformation;
 
 /**
@@ -37,7 +38,7 @@ public class EchoControlInformationTest extends ParameterHarness {
 		return b;
 	}
 
-	public void testBody1EncodedValues() {
+	public void testBody1EncodedValues() throws ParameterRangeInvalidException {
 		EchoControlInformation eci = new EchoControlInformation(getBody(EchoControlInformation._OUTGOING_ECHO_CDII_NINA, EchoControlInformation._INCOMING_ECHO_CDII_INCLUDED,
 				EchoControlInformation._INCOMING_ECHO_CDRI_AR, EchoControlInformation._OUTGOING_ECHO_CDRI_NOINFO));
 
@@ -56,7 +57,7 @@ public class EchoControlInformationTest extends ParameterHarness {
 	 * ()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		return new EchoControlInformation(new byte[1]);
 	}
 

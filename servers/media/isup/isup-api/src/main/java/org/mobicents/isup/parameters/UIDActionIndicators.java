@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:49:42 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -48,7 +50,7 @@ public class UIDActionIndicators extends AbstractParameter {
 	public static final boolean _T9_TII_SDNST9T = false;
 	public static final int _PARAMETER_CODE = 0x74;
 
-	public UIDActionIndicators(byte[] udiActionIndicators) {
+	public UIDActionIndicators(byte[] udiActionIndicators) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(udiActionIndicators);
 	}
@@ -58,9 +60,13 @@ public class UIDActionIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
-
-		setUdiActionIndicators(b);
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
+		try{
+			setUdiActionIndicators(b);
+		}catch(Exception e)
+		{
+			throw new ParameterRangeInvalidException(e);
+		}
 		return b.length;
 	}
 

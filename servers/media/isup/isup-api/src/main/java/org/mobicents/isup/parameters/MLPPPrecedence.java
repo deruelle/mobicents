@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:08:42:25 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -63,7 +65,7 @@ public class MLPPPrecedence extends AbstractParameter {
 	// FIXME: ensure zero in first digit.?
 	private byte[] niDigits ;
 
-	public MLPPPrecedence(byte[] b) {
+	public MLPPPrecedence(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -81,9 +83,9 @@ public class MLPPPrecedence extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 6) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be 6");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 6");
 		}
 
 		this.precedenceLevel = (byte) (b[0] & 0x0F);

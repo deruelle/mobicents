@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:17:24:08 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -19,15 +21,15 @@ import java.io.IOException;
  */
 public class RemoteOperations extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x32;
-aa
+//FIXME: Impl
 
 
-	public RemoteOperations(byte[] b) {
+	public RemoteOperations(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
 
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		// TODO Auto-generated method stub
 		return 0;
 	}

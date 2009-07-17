@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:17:31:22 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
@@ -25,7 +27,7 @@ public class ClosedUserGroupInterlockCode extends AbstractParameter {
 	private byte[] niDigits = null;
 	private int binaryCode = 0;
 
-	public ClosedUserGroupInterlockCode(byte[] b) {
+	public ClosedUserGroupInterlockCode(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -51,9 +53,9 @@ public class ClosedUserGroupInterlockCode extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 4) {
-			throw new IllegalArgumentException("byte[] must not be null and must have length of 4");
+			throw new ParameterRangeInvalidException("byte[] must not be null and must have length of 4");
 		}
 		int v = 0;
 		this.niDigits = new byte[4];

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CalledDirectoryNumber;
 import org.mobicents.isup.parameters.CalledINNumber;
 import org.mobicents.isup.parameters.CalledPartyNumber;
@@ -60,7 +61,7 @@ public class CalledPartyNumberTest extends ParameterHarness {
 		return bos.toByteArray();
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		CalledPartyNumber bci = new CalledPartyNumber(getBody1());
 	
 		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
@@ -68,7 +69,7 @@ public class CalledPartyNumberTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		CalledPartyNumber bci = new CalledPartyNumber(getBody2());
 	
 		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };

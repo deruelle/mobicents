@@ -12,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:09:37:50 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -49,7 +51,7 @@ public class NetworkSpecificFacility extends AbstractParameter {
 	private byte[] networkIdentification;
 	private byte[] networkSpecificaFacilityIndicator;
 
-	public NetworkSpecificFacility(byte[] b) {
+	public NetworkSpecificFacility(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -69,9 +71,9 @@ public class NetworkSpecificFacility extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length < 1) {
-			throw new IllegalArgumentException("byte[] must nto be null or have length greater than 1");
+			throw new ParameterRangeInvalidException("byte[] must nto be null or have length greater than 1");
 		}
 		// try {
 		int shift = 0;
@@ -100,7 +102,7 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		}
 
 		if (shift + 1 == b.length) {
-			throw new IllegalArgumentException("There is no facility indicator. This part is mandatory!!!");
+			throw new ParameterRangeInvalidException("There is no facility indicator. This part is mandatory!!!");
 		}
 		byte[] _facility = new byte[b.length - shift - 1];
 		// -1 cause shift counts from 0

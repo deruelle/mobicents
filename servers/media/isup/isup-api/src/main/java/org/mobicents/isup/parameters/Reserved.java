@@ -20,12 +20,12 @@ import java.io.IOException;
 public class Reserved extends AbstractParameter {
 	
 	public static final int _PARAMETER_CODE = 0;
-aa
+
 //FIXME?
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		// TODO Auto-generated method stub
 		return 0;
 	}

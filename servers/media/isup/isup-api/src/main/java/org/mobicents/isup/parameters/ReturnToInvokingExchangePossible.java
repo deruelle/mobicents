@@ -19,12 +19,12 @@ import java.io.IOException;
  */
 public class ReturnToInvokingExchangePossible extends AbstractParameter {
 	
-	aaa
+	//FIXME: impl
 	public static final int _PARAMETER_CODE = 0;
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		// TODO Auto-generated method stub
 		return 0;
 	}

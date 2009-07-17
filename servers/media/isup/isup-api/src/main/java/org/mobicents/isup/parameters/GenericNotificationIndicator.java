@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:44:22 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
@@ -124,7 +126,7 @@ public class GenericNotificationIndicator extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x2C;
 	private int[] notificationIndicator;
 
-	public GenericNotificationIndicator(byte[] b) {
+	public GenericNotificationIndicator(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -139,9 +141,9 @@ public class GenericNotificationIndicator extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length < 2) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must be 1 or greater");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must be 1 or greater");
 		}
 
 		this.notificationIndicator = new int[b.length];
@@ -149,7 +151,7 @@ public class GenericNotificationIndicator extends AbstractParameter {
 		for (int i = 0; i < b.length; i++) {
 			int extFlag = (b[i] >> 7) & 0x01;
 			if (extFlag == 0x01 && (b.length - 1 > i)) {
-				throw new IllegalArgumentException("Extenstion flag idnicates end of data, however byte[] has more octets. Index: " + i);
+				throw new ParameterRangeInvalidException("Extenstion flag idnicates end of data, however byte[] has more octets. Index: " + i);
 			}
 			this.notificationIndicator[i] = b[i] & 0x7F;
 		}

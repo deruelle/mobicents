@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:15:04 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
@@ -21,7 +23,7 @@ public class BackwardGVNS extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x4D;
 	private byte[] backwardGVNS = null;
 
-	public BackwardGVNS(byte[] backwardGVNS) {
+	public BackwardGVNS(byte[] backwardGVNS) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(backwardGVNS);
 	}
@@ -31,9 +33,9 @@ public class BackwardGVNS extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length == 0) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be greater than 0");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be greater than 0");
 		}
 		this.backwardGVNS = b;
 		return b.length;

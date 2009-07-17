@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:14:20:15 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -21,7 +23,7 @@ public class PropagationDelayCounter extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x31;
 	private int propagationDelay;
 
-	public PropagationDelayCounter(byte[] b) {
+	public PropagationDelayCounter(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -36,10 +38,10 @@ public class PropagationDelayCounter extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		// This one is other way around, as Eduardo might say.
 		if (b == null || b.length != 2) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must be 2");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must be 2");
 		}
 
 		this.propagationDelay = b[0] << 8;

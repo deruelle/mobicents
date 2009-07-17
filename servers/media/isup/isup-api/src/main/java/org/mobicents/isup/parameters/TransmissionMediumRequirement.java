@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:17:55:13 2009-04-03<br>
  * Project: mobicents-isup-stack<br>
@@ -169,7 +171,7 @@ public class TransmissionMediumRequirement extends AbstractParameter {
 		this.transimissionMediumRequirement = transimissionMediumRequirement;
 	}
 
-	public TransmissionMediumRequirement(byte[] b) {
+	public TransmissionMediumRequirement(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -183,9 +185,9 @@ public class TransmissionMediumRequirement extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.transimissionMediumRequirement = b[0];

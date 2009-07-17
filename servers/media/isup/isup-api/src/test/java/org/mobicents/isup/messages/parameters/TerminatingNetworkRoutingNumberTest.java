@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CalledINNumber;
 import org.mobicents.isup.parameters.TerminatingNetworkRoutingNumber;
 
@@ -36,7 +37,7 @@ public class TerminatingNetworkRoutingNumberTest extends ParameterHarness {
 		super.goodBodies.add(getBody(true, TerminatingNetworkRoutingNumber._NPI_ISDN, TerminatingNetworkRoutingNumber._NAI_NATIONAL_SN, new byte[8],8));
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		TerminatingNetworkRoutingNumber bci = new TerminatingNetworkRoutingNumber(getBody(false, TerminatingNetworkRoutingNumber._NPI_ISDN, TerminatingNetworkRoutingNumber._NAI_NATIONAL_SN,
 				getSixDigits(),getSixDigits().length));
 

@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.ByteArrayInputStream;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:06:26 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -22,7 +24,7 @@ public class CalledINNumber extends CalledNumber {
 	/**
 	 * @param representation
 	 */
-	public CalledINNumber(byte[] representation) {
+	public CalledINNumber(byte[] representation) throws ParameterRangeInvalidException{
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
@@ -30,7 +32,7 @@ public class CalledINNumber extends CalledNumber {
 	/**
 	 * @param bis
 	 */
-	public CalledINNumber(ByteArrayInputStream bis) {
+	public CalledINNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}

@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:39:34 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -27,7 +29,7 @@ public class ParameterCompatibilityInformation extends AbstractParameter {
 	private List<Byte> parameterCodes = new ArrayList<Byte>();
 	private List<InstructionIndicators> instructionIndicators = new ArrayList<InstructionIndicators>();
 
-	public ParameterCompatibilityInformation(byte[] b) {
+	public ParameterCompatibilityInformation(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -42,10 +44,10 @@ public class ParameterCompatibilityInformation extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 
 		if (b == null || b.length < 2) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  greater than 1");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  greater than 1");
 		}
 
 		

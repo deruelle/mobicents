@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:18:44:18 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -53,12 +55,12 @@ public class NetworkRoutingNumber extends AbstractNumber {
 		// TODO Auto-generated constructor stub
 	}
 
-	public NetworkRoutingNumber(byte[] representation) {
+	public NetworkRoutingNumber(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public NetworkRoutingNumber(ByteArrayInputStream bis) {
+	public NetworkRoutingNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}

@@ -9,6 +9,7 @@
 package org.mobicents.isup.messages.parameters;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.EchoControlInformation;
 import org.mobicents.isup.parameters.EventInformation;
 
@@ -38,7 +39,7 @@ public class EventInformationTest extends ParameterHarness {
 		return b;
 	}
 
-	public void testBody1EncodedValues() {
+	public void testBody1EncodedValues() throws ParameterRangeInvalidException {
 		EventInformation eci = new EventInformation(getBody(EventInformation._EVENT_INDICATOR_CFONNR, EventInformation._EVENT_PRESENTATION_IPR));
 
 		String[] methodNames = { "getEventIndicator", "isEventPresentationRestrictedIndicator" };
@@ -54,7 +55,7 @@ public class EventInformationTest extends ParameterHarness {
 	 * ()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		return new EventInformation(new byte[1]);
 	}
 

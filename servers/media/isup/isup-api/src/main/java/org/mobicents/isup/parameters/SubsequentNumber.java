@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:17:32:06 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -22,12 +24,12 @@ public class SubsequentNumber extends AbstractNAINumber {
 
 	public static final int _PARAMETER_CODE = 0x05;
 	
-	public SubsequentNumber(byte[] representation) {
+	public SubsequentNumber(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public SubsequentNumber(ByteArrayInputStream bis) {
+	public SubsequentNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}

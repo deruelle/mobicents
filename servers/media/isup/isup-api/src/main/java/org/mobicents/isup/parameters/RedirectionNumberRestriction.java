@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:16:55:01 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -37,7 +39,7 @@ public class RedirectionNumberRestriction extends AbstractParameter {
 		this.presentationRestrictedIndicator = presentationRestrictedIndicator;
 	}
 
-	public RedirectionNumberRestriction(byte[] b) {
+	public RedirectionNumberRestriction(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -47,9 +49,9 @@ public class RedirectionNumberRestriction extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.presentationRestrictedIndicator = (byte) (b[0] & 0x03);

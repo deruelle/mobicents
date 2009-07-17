@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:11:25:13 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
@@ -71,7 +73,7 @@ public class EventInformation extends AbstractParameter {
 	private int eventIndicator ;
 	private boolean eventPresentationRestrictedIndicator;
 
-	public EventInformation(byte[] b) {
+	public EventInformation(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -86,9 +88,9 @@ public class EventInformation extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
+			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
 		}
 		
 		this.eventIndicator = b[0] & 0x7F;

@@ -12,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:58:48 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
@@ -29,12 +31,12 @@ public class GVNSUserGroup extends AbstractNumber {
 
 	}
 
-	public GVNSUserGroup(byte[] representation) {
+	public GVNSUserGroup(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public GVNSUserGroup(ByteArrayInputStream bis) {
+	public GVNSUserGroup(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}
@@ -49,7 +51,7 @@ public class GVNSUserGroup extends AbstractNumber {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		return super.decodeElement(b);
 	}
 
@@ -100,7 +102,7 @@ public class GVNSUserGroup extends AbstractNumber {
 	}
 
 	@Override
-	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException, ParameterRangeInvalidException {
 		return super.decodeDigits(bis, this.gugLengthIndicator);
 	}
 

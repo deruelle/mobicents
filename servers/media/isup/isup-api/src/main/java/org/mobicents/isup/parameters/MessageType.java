@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:14:56:41 2009-04-20<br>
  * Project: mobicents-isup-stack<br>
@@ -26,7 +28,7 @@ public class MessageType implements ISUPParameter {
 
 	private int code = 0;
 
-	public MessageType(byte[] code) {
+	public MessageType(byte[] code) throws ParameterRangeInvalidException {
 		super();
 		this.decodeElement(code);
 	}
@@ -52,9 +54,9 @@ public class MessageType implements ISUPParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1)
-			throw new IllegalArgumentException();
+			throw new ParameterRangeInvalidException();
 		return 1;
 	}
 

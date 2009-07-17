@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:16:14:51 2009-03-29<br>
  * Project: mobicents-isup-stack<br>
@@ -97,8 +99,9 @@ public class CallingPartyNumber extends AbstractNAINumber {
 	/**
 	 * 
 	 * @param representation
+	 * @throws ParameterRangeInvalidException 
 	 */
-	public CallingPartyNumber(byte[] representation) {
+	public CallingPartyNumber(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
@@ -106,8 +109,9 @@ public class CallingPartyNumber extends AbstractNAINumber {
 	/**
 	 * 
 	 * @param bis
+	 * @throws ParameterRangeInvalidException 
 	 */
-	public CallingPartyNumber(ByteArrayInputStream bis) {
+	public CallingPartyNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}

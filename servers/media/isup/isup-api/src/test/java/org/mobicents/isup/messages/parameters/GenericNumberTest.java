@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CalledDirectoryNumber;
 import org.mobicents.isup.parameters.CalledINNumber;
 import org.mobicents.isup.parameters.GenericNumber;
@@ -57,7 +58,7 @@ public class GenericNumberTest extends ParameterHarness {
 		return bos.toByteArray();
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		GenericNumber bci = new GenericNumber(getBody(GenericNumber._NQIA_CONNECTED_NUMBER, false, GenericNumber._NAI_INTERNATIONAL, GenericNumber._NI_COMPLETE, GenericNumber._NPI_ISDN,
 				GenericNumber._APRI_NOT_AVAILABLE, GenericNumber._SI_USER_PROVIDED_VERIFIED_FAILED, getSixDigits()));
 

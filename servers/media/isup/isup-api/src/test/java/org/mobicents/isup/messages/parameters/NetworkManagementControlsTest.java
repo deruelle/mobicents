@@ -11,6 +11,7 @@ package org.mobicents.isup.messages.parameters;
 import java.io.IOException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.MLPPPrecedence;
 import org.mobicents.isup.parameters.NatureOfConnectionIndicators;
 import org.mobicents.isup.parameters.NetworkManagementControls;
@@ -32,7 +33,7 @@ public class NetworkManagementControlsTest extends ParameterHarness {
 		super.goodBodies.add(new byte[] { 0x0E, 32, 45, 0x0A });
 	}
 
-	public void testBody1EncodedValues() throws IOException {
+	public void testBody1EncodedValues() throws IOException, ParameterRangeInvalidException {
 
 		boolean[] bools = new boolean[] { true, true, false, true, false, true, true };
 		NetworkManagementControls eci = new NetworkManagementControls(getBody1(bools));
@@ -67,7 +68,7 @@ public class NetworkManagementControlsTest extends ParameterHarness {
 	 * ()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		return new NetworkManagementControls(new byte[1]);
 	}
 

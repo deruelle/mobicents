@@ -12,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:39:30 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
@@ -34,7 +36,7 @@ public class ForwardGVNS extends AbstractParameter {
 		this.tnRoutingNumber = tnRoutingNumber;
 	}
 
-	public ForwardGVNS(byte[] b) {
+	public ForwardGVNS(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -44,10 +46,10 @@ public class ForwardGVNS extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		// Add kength ? || b.length != xxx
 		if (b == null) {
-			throw new IllegalArgumentException("byte[] must  not be null");
+			throw new ParameterRangeInvalidException("byte[] must  not be null");
 		}
 		ByteArrayInputStream bis = new ByteArrayInputStream(b);
 		this.opServiceProvider = new OriginatingParticipatingServiceProvider();

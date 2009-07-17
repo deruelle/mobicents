@@ -1,9 +1,8 @@
 /**
- * Start time:15:44:56 2009-04-05<br>
+ * Start time:12:56:36 2009-07-17<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
 package org.mobicents.isup.parameters;
@@ -13,13 +12,14 @@ import java.io.IOException;
 import org.mobicents.isup.ParameterRangeInvalidException;
 
 /**
- * Start time:15:44:56 2009-04-05<br>
+ * Start time:12:56:36 2009-07-17<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
-public class CCNRPossibleIndicator extends AbstractParameter {
+public class CCSS extends AbstractParameter {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -27,21 +27,21 @@ public class CCNRPossibleIndicator extends AbstractParameter {
 	/**
 	 * See Q.763 3.83 CCNR possible indicator : not possible
 	 */
-	public static final boolean _CCNR_PI_NOT_POSSIBLE = false;
+	public static final boolean _NOT_CCSS_CALL = false;
 	/**
 	 * See Q.763 3.83 CCNR possible indicator : possible
 	 */
-	public static final boolean _CCNR_PI_POSSIBLE = true;
-	public static final int _PARAMETER_CODE = 0x7A;
+	public static final boolean _CCSS_CALL = true;
+	public static final int _PARAMETER_CODE = 0x4B;
 
-	private boolean ccnrPossible = false;
+	private boolean ccssCall = false;
 
-	public CCNRPossibleIndicator(boolean ccnrPossible) {
+	public CCSS(boolean ccssCall) {
 		super();
-		this.ccnrPossible = ccnrPossible;
+		this.ccssCall = ccssCall;
 	}
 
-	public CCNRPossibleIndicator(byte[] b) throws ParameterRangeInvalidException {
+	public CCSS(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -56,7 +56,7 @@ public class CCNRPossibleIndicator extends AbstractParameter {
 			throw new ParameterRangeInvalidException("byte[] must not be null and length must be 1");
 		}
 
-		this.ccnrPossible = (b[0] & 0x01) == _TURN_ON;
+		this.ccssCall = (b[0] & 0x01) == _TURN_ON;
 
 		return 1;
 	}
@@ -67,15 +67,16 @@ public class CCNRPossibleIndicator extends AbstractParameter {
 	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
 	 */
 	public byte[] encodeElement() throws IOException {
-		return new byte[] { (byte) (this.ccnrPossible ? _TURN_ON : _TURN_OFF) };
+		return new byte[] { (byte) (this.ccssCall ? _TURN_ON : _TURN_OFF) };
 	}
 
-	public boolean isCcnrPossible() {
-		return ccnrPossible;
+	
+	public boolean isCcssCall() {
+		return ccssCall;
 	}
 
-	public void setCcnrPossible(boolean ccnrPossible) {
-		this.ccnrPossible = ccnrPossible;
+	public void setCcssCall(boolean ccssCall) {
+		this.ccssCall = ccssCall;
 	}
 
 	public int getCode() {

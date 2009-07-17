@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:17:10:53 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
@@ -94,7 +96,7 @@ public class CircuitStateIndicator extends AbstractParameter {
 
 	private byte[] circuitState = null;
 
-	public CircuitStateIndicator(byte[] circuitState) {
+	public CircuitStateIndicator(byte[] circuitState) throws ParameterRangeInvalidException {
 		super();
 		this.decodeElement(circuitState);
 	}
@@ -104,8 +106,13 @@ public class CircuitStateIndicator extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		setCircuitState(b);
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
+		try{
+			setCircuitState(b);
+		}catch(Exception e)
+		{
+			throw new ParameterRangeInvalidException(e);
+		}
 		return b.length;
 	}
 
@@ -122,7 +129,7 @@ public class CircuitStateIndicator extends AbstractParameter {
 		return circuitState;
 	}
 
-	public void setCircuitState(byte[] circuitState) {
+	public void setCircuitState(byte[] circuitState) throws IllegalArgumentException {
 		if (circuitState == null || circuitState.length == 0) {
 			throw new IllegalArgumentException("byte[] must nto be null and length must be greater than 0");
 		}

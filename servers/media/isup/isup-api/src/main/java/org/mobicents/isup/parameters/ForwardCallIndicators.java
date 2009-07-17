@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:11:58:42 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
@@ -140,7 +142,7 @@ public class ForwardCallIndicators extends AbstractParameter {
 	 */
 	public static final int _ISDN_UPRI_RATW = 2;
 
-	public ForwardCallIndicators(byte[] b) {
+	public ForwardCallIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -163,7 +165,7 @@ public class ForwardCallIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 2) {
 			throw new IllegalArgumentException("byte[] must not be null or have different size than 2");
 		}

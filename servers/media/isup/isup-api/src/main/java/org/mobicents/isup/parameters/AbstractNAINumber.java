@@ -12,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:14:02:37 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
@@ -52,12 +54,12 @@ public abstract class AbstractNAINumber extends AbstractNumber {
 	 */
 	protected int natureOfAddresIndicator;
 
-	public AbstractNAINumber(byte[] representation) {
+	public AbstractNAINumber(byte[] representation) throws ParameterRangeInvalidException{
 		super(representation);
 
 	}
 
-	public AbstractNAINumber(ByteArrayInputStream bis) {
+	public AbstractNAINumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException{
 		super(bis);
 
 	}
@@ -67,13 +69,13 @@ public abstract class AbstractNAINumber extends AbstractNumber {
 		this.natureOfAddresIndicator = natureOfAddresIndicator;
 	}
 
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(b);
 
 		return this.decodeElement(bis);
 	}
 
-	protected int decodeElement(ByteArrayInputStream bis) throws IllegalArgumentException {
+	protected int decodeElement(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("[" + this.getClass().getSimpleName() + "]Decoding header");
 		}
@@ -191,10 +193,10 @@ public abstract class AbstractNAINumber extends AbstractNumber {
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
-	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		if(bis.available()==0)
 		{
-			throw new IllegalArgumentException("No more data to read.");
+			throw new ParameterRangeInvalidException("No more data to read.");
 		}
 		int b = bis.read() & 0xff;
 		

@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:08:17:06 2009-04-06<br>
  * Project: mobicents-isup-stack<br>
@@ -36,12 +38,12 @@ public class HTRInformation extends AbstractNAINumber {
 
 	private int numberingPlanIndicator;
 
-	public HTRInformation(byte[] representation) {
+	public HTRInformation(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public HTRInformation(ByteArrayInputStream bis) {
+	public HTRInformation(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}

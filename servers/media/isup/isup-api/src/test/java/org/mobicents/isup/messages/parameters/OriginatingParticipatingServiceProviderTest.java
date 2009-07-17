@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CalledDirectoryNumber;
 import org.mobicents.isup.parameters.CalledINNumber;
 import org.mobicents.isup.parameters.OriginatingParticipatingServiceProvider;
@@ -50,7 +51,7 @@ public class OriginatingParticipatingServiceProviderTest extends ParameterHarnes
 
 	
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		OriginatingParticipatingServiceProvider bci = new OriginatingParticipatingServiceProvider(getBody1());
 	
 		String[] methodNames = { "isOddFlag", "getAddress", "getOpspLengthIndicator" };
@@ -71,7 +72,7 @@ public class OriginatingParticipatingServiceProviderTest extends ParameterHarnes
 
 	
 
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		OriginatingParticipatingServiceProvider bci = new OriginatingParticipatingServiceProvider(getBody2());
 	
 		String[] methodNames = { "isOddFlag", "getAddress", "getOpspLengthIndicator" };

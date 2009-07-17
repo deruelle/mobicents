@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:09:49:43 2009-04-06<br>
  * Project: mobicents-isup-stack<br>
@@ -36,7 +38,7 @@ public class RedirectStatus extends AbstractParameter {
 
 	private byte[] status;
 
-	public RedirectStatus(byte[] b) {
+	public RedirectStatus(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -46,9 +48,13 @@ public class RedirectStatus extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
-
-		setStatus(b);
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
+		try{
+			setStatus(b);
+		}catch(Exception e)
+		{
+			throw new ParameterRangeInvalidException(e);
+		}
 		return b.length;
 	}
 

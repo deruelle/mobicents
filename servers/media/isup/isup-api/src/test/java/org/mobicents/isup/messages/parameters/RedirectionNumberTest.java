@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.RedirectionNumber;
 
 /**
@@ -33,7 +34,7 @@ public class RedirectionNumberTest extends ParameterHarness {
 	}
 
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		RedirectionNumber bci = new RedirectionNumber(getBody(false, RedirectionNumber._NAI_NETWORK_SPECIFIC, RedirectionNumber._INN_ROUTING_ALLOWED, RedirectionNumber._NPI_TELEX, getSixDigits()));
 
 		String[] methodNames = { "isOddFlag", 

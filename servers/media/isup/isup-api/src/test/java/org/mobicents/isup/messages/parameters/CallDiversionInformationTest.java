@@ -9,6 +9,7 @@
 package org.mobicents.isup.messages.parameters;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CallDiversionInformation;
 
 /**
@@ -37,7 +38,7 @@ public class CallDiversionInformationTest extends ParameterHarness {
 	}
 	
 	
-	public void testBody1EncodedValues()
+	public void testBody1EncodedValues() throws ParameterRangeInvalidException
 	{
 		CallDiversionInformation cdi = new CallDiversionInformation(getBody1());
 		String[] methodNames = { "getNotificationSubscriptionOptions", "getRedirectingReason"};
@@ -48,7 +49,7 @@ public class CallDiversionInformationTest extends ParameterHarness {
 	 * @see org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		return new CallDiversionInformation(new byte[1]);
 	}
 

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CalledDirectoryNumber;
 
 import junit.framework.TestCase;
@@ -106,7 +107,7 @@ public abstract class ParameterHarness extends TestCase {
 
 		return out;
 	}
-	public void testDecodeEncode() throws IOException {
+	public void testDecodeEncode() throws IOException, ParameterRangeInvalidException {
 
 		for (int index = 0; index < this.goodBodies.size(); index++) {
 			byte[] goodBody = this.goodBodies.get(index);
@@ -128,7 +129,7 @@ public abstract class ParameterHarness extends TestCase {
 
 	}
 
-	public abstract ISUPComponent getTestedComponent();
+	public abstract ISUPComponent getTestedComponent() throws ParameterRangeInvalidException;
 
 	protected void doTestDecode(byte[] presumableBody, boolean shouldPass, ISUPComponent component, int index) {
 		try {

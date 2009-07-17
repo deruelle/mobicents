@@ -37,6 +37,7 @@ public interface ISUPComponent extends Serializable {
 	 */
 	int decodeElement(byte[] b) throws ParameterRangeInvalidException;
 
+
 	/**
 	 * Encodes elements as byte[].it contains body. (tag, length and Contents.
 	 * See B.4/Q.763 - page 119)

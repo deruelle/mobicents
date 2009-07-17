@@ -10,12 +10,13 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:15:18:18 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class RedirectionInformation extends AbstractParameter {
 
@@ -114,7 +115,7 @@ public class RedirectionInformation extends AbstractParameter {
 	private int redirectionCounter;
 	private int redirectionReason;
 
-	public RedirectionInformation(byte[] b) throws IllegalArgumentException {
+	public RedirectionInformation(byte[] b) throws IllegalArgumentException, ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -132,15 +133,18 @@ public class RedirectionInformation extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 2) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be 2");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 2");
 		}
-
-		this.setRedirectingIndicator((b[0] & 0x07));
-		this.setOriginalRedirectionReason(((b[0] >> 4) & 0x0F));
-		this.setRedirectionCounter((b[1] & 0x07));
-		this.setRedirectionReason(((b[1] >> 4) & 0x0F));
+		try {
+			this.setRedirectingIndicator((b[0] & 0x07));
+			this.setOriginalRedirectionReason(((b[0] >> 4) & 0x0F));
+			this.setRedirectionCounter((b[1] & 0x07));
+			this.setRedirectionReason(((b[1] >> 4) & 0x0F));
+		} catch (Exception e) {
+			throw new ParameterRangeInvalidException(e);
+		}
 		return 2;
 	}
 
@@ -181,7 +185,7 @@ public class RedirectionInformation extends AbstractParameter {
 	public void setRedirectionCounter(int redirectionCounter) throws IllegalArgumentException {
 		if (redirectionCounter < 1 || redirectionCounter > 5) {
 			throw new IllegalArgumentException("Out of range - must be between 1 and 5");
-		} 
+		}
 		this.redirectionCounter = redirectionCounter & 0x07;
 	}
 

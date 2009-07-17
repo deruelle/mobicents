@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CalledPartyNumber;
 import org.mobicents.isup.parameters.InstructionIndicators;
 import org.mobicents.isup.parameters.ParameterCompatibilityInformation;
@@ -93,7 +94,7 @@ public class ParameterCompatibilityInformationTest extends ParameterHarness{
 	}
 
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		ParameterCompatibilityInformation bci = new ParameterCompatibilityInformation(getBody1());
 	
 		assertEquals("Wrong number of instructions. ",4, bci.size());

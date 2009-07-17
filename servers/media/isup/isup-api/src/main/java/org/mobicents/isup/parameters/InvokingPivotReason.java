@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:09:11:07 2009-04-06<br>
  * Project: mobicents-isup-stack<br>
@@ -40,7 +42,7 @@ public class InvokingPivotReason extends AbstractParameter {
 
 	private byte[] reasons = null;
 
-	public InvokingPivotReason(byte[] reasons) {
+	public InvokingPivotReason(byte[] reasons) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(reasons);
 	}
@@ -50,8 +52,13 @@ public class InvokingPivotReason extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		this.setReasons(b);
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
+		try{
+			this.setReasons(b);
+		}catch(Exception e)
+		{
+			throw new ParameterRangeInvalidException(e);
+		}
 		return b.length;
 	}
 
@@ -73,7 +80,7 @@ public class InvokingPivotReason extends AbstractParameter {
 		return reasons;
 	}
 
-	public void setReasons(byte[] reasons) {
+	public void setReasons(byte[] reasons) throws IllegalArgumentException {
 		if (reasons == null || reasons.length == 0) {
 			throw new IllegalArgumentException("byte[] must not be null and length must be greater than 0");
 		}

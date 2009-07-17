@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.CalledPartyNumber;
 import org.mobicents.isup.parameters.RedirectionInformation;
 
@@ -40,7 +41,7 @@ public class RedirectionInformationTest extends ParameterHarness {
 	}
 
 	
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		RedirectionInformation bci = new RedirectionInformation(getBody(RedirectionInformation._RI_CALL_D_RNPR,RedirectionInformation._ORR_UNA,1,RedirectionInformation._RR_DEFLECTION_IE));
 	
 		String[] methodNames = { "getRedirectingIndicator", 
@@ -73,7 +74,7 @@ public class RedirectionInformationTest extends ParameterHarness {
 	 * @see org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws IllegalArgumentException, ParameterRangeInvalidException {
 		return new RedirectionInformation(new byte[]{0,1});
 	}
 

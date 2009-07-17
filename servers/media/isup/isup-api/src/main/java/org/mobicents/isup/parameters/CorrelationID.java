@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:48:19 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -22,7 +24,7 @@ public class CorrelationID extends GenericDigits {
 
 	public static final int _PARAMETER_CODE = 0x65;
 
-	public CorrelationID(byte[] b) {
+	public CorrelationID(byte[] b) throws ParameterRangeInvalidException {
 		super(b);
 		// TODO Auto-generated constructor stub
 	}

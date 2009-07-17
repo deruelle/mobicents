@@ -363,12 +363,12 @@ public class AddressCompleteMessage extends ISUPMessage {
 		
 		return 0;
 	}
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex)
+	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException
 	{
 		//we dont have those.
 	}
 	
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws IllegalArgumentException {
+	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
 
 
 		switch ((int) parameterCode) {

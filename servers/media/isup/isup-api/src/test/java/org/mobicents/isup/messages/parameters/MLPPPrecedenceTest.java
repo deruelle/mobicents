@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.MCIDResponseIndicators;
 import org.mobicents.isup.parameters.MLPPPrecedence;
 
@@ -38,7 +39,7 @@ public class MLPPPrecedenceTest extends ParameterHarness {
 
 	
 	
-	public void testBody1EncodedValues() throws IOException {
+	public void testBody1EncodedValues() throws IOException, ParameterRangeInvalidException {
 		//FIXME: This one fails....
 		int serDomain = 15;
 		MLPPPrecedence eci = new MLPPPrecedence(getBody(MLPPPrecedence._LFB_INDICATOR_ALLOWED,MLPPPrecedence._PLI_PRIORITY,new byte[]{3,4}, serDomain));
@@ -74,7 +75,7 @@ public class MLPPPrecedenceTest extends ParameterHarness {
 	 * @see org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		MLPPPrecedence component = new MLPPPrecedence(new byte[6]);
 		return component;
 	}

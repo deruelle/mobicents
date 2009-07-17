@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:42:38 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -40,7 +42,7 @@ public class ConferenceTreatmentIndicators extends AbstractParameter {
 
 	private byte[] conferenceAcceptance = null;
 
-	public ConferenceTreatmentIndicators(byte[] b) {
+	public ConferenceTreatmentIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -50,9 +52,9 @@ public class ConferenceTreatmentIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length == 0) {
-			throw new IllegalArgumentException("byte[] must not be null and length must be greater than 0");
+			throw new ParameterRangeInvalidException("byte[] must not be null and length must be greater than 0");
 		}
 		setConferenceAcceptance(b);
 		return b.length;

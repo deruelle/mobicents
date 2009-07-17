@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:18:28:42 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
@@ -35,7 +37,7 @@ public class ContinuitiyIndicators extends AbstractParameter {
 
 	private boolean continuityCheck = false;
 
-	public ContinuitiyIndicators(byte[] b) {
+	public ContinuitiyIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -50,9 +52,9 @@ public class ContinuitiyIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
+			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
 		}
 		this.continuityCheck = (b[0] & 0x01) == _TURN_ON;
 		return 1;

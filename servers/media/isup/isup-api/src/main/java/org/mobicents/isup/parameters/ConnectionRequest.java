@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:17:59:38 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
@@ -27,7 +29,7 @@ public class ConnectionRequest extends AbstractParameter {
 	private boolean creditSet = false;
 	private int credit;
 
-	public ConnectionRequest(byte[] b) {
+	public ConnectionRequest(byte[] b) throws ParameterRangeInvalidException {
 		decodeElement(b);
 	}
 
@@ -44,17 +46,17 @@ public class ConnectionRequest extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null) {
-			throw new IllegalArgumentException("byte[] must not be null");
+			throw new ParameterRangeInvalidException("byte[] must not be null");
 		}
 
 		if (_PROTOCOL_VERSION == 1 && b.length != 7) {
-			throw new IllegalArgumentException("For protocol version 1 length of this parameter must be 7 octets");
+			throw new ParameterRangeInvalidException("For protocol version 1 length of this parameter must be 7 octets");
 		}
 
 		if (b.length < 5 || b.length > 7) {
-			throw new IllegalArgumentException("byte[] length must be <5,7>");
+			throw new ParameterRangeInvalidException("byte[] length must be <5,7>");
 		}
 
 		// FIXME: This is not mentioned, is it inverted as usually or not ?

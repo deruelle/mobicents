@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:15:14:32 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
@@ -86,7 +88,7 @@ public class CauseIndicators extends AbstractParameter {
 	private int causeValue = 0;
 	private byte[] diagnostics = null;
 
-	public CauseIndicators(byte[] b) {
+	public CauseIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -104,14 +106,14 @@ public class CauseIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 
 		// FIXME: there are ext bits, does this mean this param can be from 1 to
 		// 3+ bytes?
 		// but trace shows that extension bit is always on... does this mean
 		// that we can have mutliptle indicators?
 		if (b == null || b.length < 2) {
-			throw new IllegalArgumentException("byte[] must not be null or has size less than 2");
+			throw new ParameterRangeInvalidException("byte[] must not be null or has size less than 2");
 		}
 		//Used because of Q.850 - we must ignore recomendation
 		int index = 0;
@@ -135,7 +137,7 @@ public class CauseIndicators extends AbstractParameter {
 			return 2;
 		} else {
 			if ((b.length - 2) % 3 != 0) {
-				throw new IllegalArgumentException("Diagnostics part  must have 3xN bytes, it has: " + (b.length - 2));
+				throw new ParameterRangeInvalidException("Diagnostics part  must have 3xN bytes, it has: " + (b.length - 2));
 			}
 
 			int byteCounter = 2;

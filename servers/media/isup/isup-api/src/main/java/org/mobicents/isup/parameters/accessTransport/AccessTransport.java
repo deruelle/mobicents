@@ -11,6 +11,7 @@ package org.mobicents.isup.parameters.accessTransport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.AbstractParameter;
 
 /**
@@ -21,7 +22,7 @@ import org.mobicents.isup.parameters.AbstractParameter;
  *         </a>
  */
 public class AccessTransport extends AbstractParameter {
-a
+
 //FIXME: Q763 3.3
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
@@ -34,12 +35,12 @@ public AccessTransport() {
 
 }
 
-	public AccessTransport(byte[] b) {
+	public AccessTransport(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
 
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -56,6 +57,14 @@ public AccessTransport() {
 	 * @see org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream)
 	 */
 	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.isup.parameters.ISUPParameter#getCode()
+	 */
+	public int getCode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

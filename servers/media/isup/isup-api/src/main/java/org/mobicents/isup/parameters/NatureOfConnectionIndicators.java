@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:09:12:26 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -71,7 +73,7 @@ public class NatureOfConnectionIndicators extends AbstractParameter {
 	private int continuityCheckIndicator = 0;
 	private boolean echoControlDeviceIndicator = false;
 
-	public NatureOfConnectionIndicators(byte[] b) {
+	public NatureOfConnectionIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -83,9 +85,9 @@ public class NatureOfConnectionIndicators extends AbstractParameter {
 		this.echoControlDeviceIndicator = echoControlDeviceIndicator;
 	}
 
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must not be null and must have length of 1");
+			throw new ParameterRangeInvalidException("byte[] must not be null and must have length of 1");
 		}
 		this.satelliteIndicator = (byte) (b[0] & 0x03);
 		this.continuityCheckIndicator = (byte) ((b[0] >> 2) & 0x03);

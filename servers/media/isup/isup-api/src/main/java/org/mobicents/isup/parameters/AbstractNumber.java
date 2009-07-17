@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.isup.ParameterRangeInvalidException;
 
 /**
  * Start time:18:44:10 2009-03-27<br>
@@ -39,8 +40,7 @@ import org.apache.log4j.Logger;
  * information. Length part of information component is computed from length of
  * this element. See section (B1, B2 and B3 of Q.763)
  * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public abstract class AbstractNumber extends AbstractParameter {
 
@@ -71,14 +71,14 @@ public abstract class AbstractNumber extends AbstractParameter {
 
 	}
 
-	public AbstractNumber(byte[] representation) {
+	public AbstractNumber(byte[] representation) throws ParameterRangeInvalidException {
 		super();
 
 		decodeElement(representation);
 
 	}
 
-	public AbstractNumber(ByteArrayInputStream bis) {
+	public AbstractNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super();
 
 		this.decodeElement(bis);
@@ -93,13 +93,13 @@ public abstract class AbstractNumber extends AbstractParameter {
 		this.setAddress(address);
 	}
 
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(b);
 
 		return this.decodeElement(bis);
 	}
 
-	protected int decodeElement(ByteArrayInputStream bis) throws IllegalArgumentException {
+	protected int decodeElement(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("[" + this.getClass().getSimpleName() + "]Decoding header");
 		}
@@ -189,10 +189,9 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
-	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
-		if(bis.available()==0)
-		{
-			throw new IllegalArgumentException("No more data to read.");
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
+		if (bis.available() == 0) {
+			throw new ParameterRangeInvalidException("No more data to read.");
 		}
 		int b = bis.read() & 0xff;
 
@@ -213,7 +212,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
-	public abstract int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException;
+	public abstract int decodeBody(ByteArrayInputStream bis) throws ParameterRangeInvalidException;
 
 	/**
 	 * This method is used in constructor that takes byte[] or
@@ -225,35 +224,37 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
-	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeDigits(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 
-		if(bis.available()==0)
-		{
-			throw new IllegalArgumentException("No more data to read.");
+		if (bis.available() == 0) {
+			throw new ParameterRangeInvalidException("No more data to read.");
 		}
 		// FIXME: we could spare time by passing length arg - or getting it from
 		// bis??
 		int count = 0;
-		address = "";
-		int b = 0;
-		while (bis.available() - 1 > 0) {
-			b = (byte) bis.read();
+		try {
+			address = "";
+			int b = 0;
+			while (bis.available() - 1 > 0) {
+				b = (byte) bis.read();
 
-			int d1 = b & 0x0f;
-			int d2 = (b & 0xf0) >> 4;
+				int d1 = b & 0x0f;
+				int d2 = (b & 0xf0) >> 4;
 
-			address += Integer.toHexString(d1) + Integer.toHexString(d2);
+				address += Integer.toHexString(d1) + Integer.toHexString(d2);
 
+			}
+
+			b = bis.read() & 0xff;
+			address += Integer.toHexString((b & 0x0f));
+
+			if (oddFlag != _FLAG_ODD) {
+				address += Integer.toHexString((b & 0xf0) >> 4);
+			}
+			this.setAddress(address);
+		} catch (Exception e) {
+			throw new ParameterRangeInvalidException(e);
 		}
-
-		b = bis.read() & 0xff;
-		address += Integer.toHexString((b & 0x0f));
-		
-		if (oddFlag != _FLAG_ODD) {
-			address += Integer.toHexString((b & 0xf0) >> 4);
-		}
-		this.setAddress(address);
-		
 		return count;
 	}
 
@@ -268,35 +269,38 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
-	public int decodeDigits(ByteArrayInputStream bis, int octetsCount) throws IllegalArgumentException {
-		if(bis.available()==0)
-		{
+	public int decodeDigits(ByteArrayInputStream bis, int octetsCount) throws ParameterRangeInvalidException {
+		if (bis.available() == 0) {
 			throw new IllegalArgumentException("No more data to read.");
 		}
 		int count = 0;
-		address = "";
-		int b = 0;
-		while (octetsCount != count - 1 && bis.available() - 1 > 0) {
-			b = (byte) bis.read();
+		try {
+			address = "";
+			int b = 0;
+			while (octetsCount != count - 1 && bis.available() - 1 > 0) {
+				b = (byte) bis.read();
+				count++;
+
+				int d1 = b & 0x0f;
+				int d2 = (b & 0xf0) >> 4;
+
+				address += Integer.toHexString(d1) + Integer.toHexString(d2);
+
+			}
+
+			b = bis.read() & 0xff;
 			count++;
-			
-			int d1 = b & 0x0f;
-			int d2 = (b & 0xf0) >> 4;
+			address += Integer.toHexString((b & 0x0f));
 
-			address += Integer.toHexString(d1) + Integer.toHexString(d2);
-			
+			if (oddFlag != _FLAG_ODD) {
+				address += Integer.toHexString((b & 0xf0) >> 4);
+			}
+			this.setAddress(address);
+		} catch (Exception e) {
+			throw new ParameterRangeInvalidException(e);
 		}
-
-		b = bis.read() & 0xff;
-		count++;
-		address += Integer.toHexString((b & 0x0f));
-		
-		if (oddFlag != _FLAG_ODD) {
-			address += Integer.toHexString((b & 0xf0) >> 4);
-		}
-		this.setAddress(address);
 		if (octetsCount != count) {
-			throw new IllegalArgumentException("Failed to read [" + octetsCount + "], encountered only [" + count + "]");
+			throw new ParameterRangeInvalidException("Failed to read [" + octetsCount + "], encountered only [" + count + "]");
 		}
 		return count;
 	}
@@ -340,7 +344,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 */
 	public int encodeDigits(ByteArrayOutputStream bos) {
 		boolean isOdd = this.oddFlag == _FLAG_ODD;
-		
+
 		byte b = 0;
 		int count = (!isOdd) ? address.length() : address.length() - 1;
 		int bytesCount = 0;

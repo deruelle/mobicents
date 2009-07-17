@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:42:55 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -114,7 +116,7 @@ public class InstructionIndicators extends AbstractParameter {
 	private byte[] raw;
 	private boolean useAsRaw ;
 
-	public InstructionIndicators(byte[] b) {
+	public InstructionIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -125,8 +127,9 @@ public class InstructionIndicators extends AbstractParameter {
 	 * 
 	 * @param b
 	 * @param userAsRaw
+	 * @throws ParameterRangeInvalidException 
 	 */
-	public InstructionIndicators(byte[] b, boolean userAsRaw) {
+	public InstructionIndicators(byte[] b, boolean userAsRaw) throws ParameterRangeInvalidException {
 		super();
 		this.raw = b;
 		this.useAsRaw = userAsRaw;
@@ -166,9 +169,9 @@ public class InstructionIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length < 1) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be greater than  0");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be greater than  0");
 		}
 	
 		
@@ -200,7 +203,7 @@ public class InstructionIndicators extends AbstractParameter {
 			}while((((v >> 7) & 0x01) != 0));
 		} catch (ArrayIndexOutOfBoundsException aioobe) {
 			aioobe.printStackTrace();
-			throw new IllegalArgumentException("Failed to parse passed value due to wrong encoding.", aioobe);
+			throw new ParameterRangeInvalidException("Failed to parse passed value due to wrong encoding.", aioobe);
 		}
 		return b.length;
 	}

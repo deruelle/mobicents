@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:24:47 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
@@ -65,7 +67,7 @@ public class GenericDigits extends AbstractParameter {
 	private int typeOfDigits;
 	private int[] digits;
 
-	public GenericDigits(byte[] b) {
+	public GenericDigits(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -82,9 +84,9 @@ public class GenericDigits extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length < 2) {
-			throw new IllegalArgumentException("byte[] must not be null or has size less than 2");
+			throw new ParameterRangeInvalidException("byte[] must not be null or has size less than 2");
 		}
 		this.typeOfDigits = b[0] & 0x1F;
 		this.encodignScheme = (b[0] >> 5) & 0x07;

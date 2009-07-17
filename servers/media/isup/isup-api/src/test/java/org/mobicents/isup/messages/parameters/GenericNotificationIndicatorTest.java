@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.EchoControlInformation;
 import org.mobicents.isup.parameters.EventInformation;
 import org.mobicents.isup.parameters.GenericNotificationIndicator;
@@ -35,7 +36,7 @@ public class GenericNotificationIndicatorTest extends ParameterHarness {
 		return super.goodBodies.get(0);
 	}
 
-	public void testBody1EncodedValues() throws IOException {
+	public void testBody1EncodedValues() throws IOException, ParameterRangeInvalidException {
 		GenericNotificationIndicator eci = new GenericNotificationIndicator(getBody());
 		byte[] body = getBody();
 		byte[] encoded = eci.encodeElement();
@@ -52,7 +53,7 @@ public class GenericNotificationIndicatorTest extends ParameterHarness {
 	 * ()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		return new GenericNotificationIndicator(new byte[2]);
 	}
 

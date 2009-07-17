@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:31:04 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
@@ -56,7 +58,7 @@ public class CallingPartyCategory extends AbstractParameter {
 		this.callingPartyCategory = callingPartyCategory;
 	}
 
-	public CallingPartyCategory(byte[] representation) {
+	public CallingPartyCategory(byte[] representation) throws ParameterRangeInvalidException {
 		super();
 		this.decodeElement(representation);
 	}
@@ -66,9 +68,9 @@ public class CallingPartyCategory extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
+			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
 		}
 		this.callingPartyCategory = b[0];
 

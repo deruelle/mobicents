@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.TransitNetworkSelection;
 import org.mobicents.isup.parameters.UserTeleserviceInformation;
 
@@ -35,7 +36,7 @@ public class UserTeleserviceInformationTest extends ParameterHarness {
 				UserTeleserviceInformation._HLCI_AUDIO_VID_LOW_RANGE, UserTeleserviceInformation._EACI_CSIC_AA_3_1_CALL));
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		UserTeleserviceInformation bci = new UserTeleserviceInformation(getBody(UserTeleserviceInformation._PRESENTATION_METHOD_HLPP, UserTeleserviceInformation._INTERPRETATION_FHGCI,
 				UserTeleserviceInformation._CODING_STANDARD_ISO_IEC, UserTeleserviceInformation._HLCI_IVTI));
 
@@ -45,7 +46,7 @@ public class UserTeleserviceInformationTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		UserTeleserviceInformation bci = new UserTeleserviceInformation(getBody(UserTeleserviceInformation._PRESENTATION_METHOD_HLPP, UserTeleserviceInformation._INTERPRETATION_FHGCI,
 				UserTeleserviceInformation._CODING_STANDARD_ISO_IEC, UserTeleserviceInformation._HLCI_AUDIO_VID_LOW_RANGE, UserTeleserviceInformation._EACI_CSIC_AA_3_1_CALL));
 

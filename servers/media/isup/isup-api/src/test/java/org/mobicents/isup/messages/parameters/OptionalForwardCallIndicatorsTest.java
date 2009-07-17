@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.NetworkRoutingNumber;
 import org.mobicents.isup.parameters.OptionalBakwardCallIndicators;
 import org.mobicents.isup.parameters.OptionalForwardCallIndicators;
@@ -34,7 +35,7 @@ public class OptionalForwardCallIndicatorsTest extends ParameterHarness {
 		super.badBodies.add(new byte[] { 8, 8 });
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		OptionalForwardCallIndicators bci = new OptionalForwardCallIndicators(getBody(OptionalForwardCallIndicators._CUGCI_CUG_CALL_OAL,
 																					  OptionalForwardCallIndicators._SSI_ADDITIONAL_INFO,
 																					  OptionalForwardCallIndicators._CLIRI_REQUESTED));
@@ -65,7 +66,7 @@ public class OptionalForwardCallIndicatorsTest extends ParameterHarness {
 	 * ()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		return new OptionalForwardCallIndicators(new byte[1]);
 	}
 

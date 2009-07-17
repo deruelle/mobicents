@@ -8,6 +8,8 @@
  */
 package org.mobicents.isup.parameters;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:31:58 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -27,7 +29,7 @@ public class OriginatingISCPointCode extends AbstractPointCode {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public OriginatingISCPointCode(byte[] b) {
+	public OriginatingISCPointCode(byte[] b) throws ParameterRangeInvalidException {
 		super(b);
 		
 	}

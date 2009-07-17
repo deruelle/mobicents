@@ -11,6 +11,7 @@ import java.util.TreeMap;
 
 import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.BackwardCallIndicators;
+import org.mobicents.isup.parameters.CCSS;
 import org.mobicents.isup.parameters.CallReference;
 import org.mobicents.isup.parameters.CalledPartyNumber;
 import org.mobicents.isup.parameters.CallingPartyCategory;
@@ -22,6 +23,7 @@ import org.mobicents.isup.parameters.ForwardGVNS;
 import org.mobicents.isup.parameters.GenericDigits;
 import org.mobicents.isup.parameters.GenericNotificationIndicator;
 import org.mobicents.isup.parameters.GenericNumber;
+import org.mobicents.isup.parameters.GenericReference;
 import org.mobicents.isup.parameters.ISUPParameter;
 import org.mobicents.isup.parameters.LocationNumber;
 import org.mobicents.isup.parameters.MLPPPrecedence;
@@ -79,23 +81,28 @@ public class InitialAddressMessage extends ISUPMessage {
 	protected static final int _INDEX_O_ConnectionRequest = 7;
 	protected static final int _INDEX_O_OriginalCalledNumber = 8;
 	protected static final int _INDEX_O_UserToUserInformation = 9;
-	protected static final int _INDEX_O_UserServiceInformation = 10;
-	protected static final int _INDEX_O_NetworkSPecificFacility = 11;
-	protected static final int _INDEX_O_GenericDigits = 12;
-	protected static final int _INDEX_O_OriginatingISCPointCode = 13;
-	protected static final int _INDEX_O_UserTeleserviceInformation = 14;
-	protected static final int _INDEX_O_RemoteOperations = 15;
-	protected static final int _INDEX_O_ParameterCompatibilityInformation = 16;
-	protected static final int _INDEX_O_GenericNotificationIndicator = 17;
-	protected static final int _INDEX_O_ServiceActivation = 18;
-	protected static final int _INDEX_O_GenericReference = 19;
-	protected static final int _INDEX_O_MLPPPrecedence = 20;
-	protected static final int _INDEX_O_TransimissionMediumRequierementPrime = 21;
-	protected static final int _INDEX_O_LocationNumber = 22;
-	protected static final int _INDEX_O_ForwardGVNS = 23;
-	protected static final int _INDEX_O_CCSS = 24;
-	protected static final int _INDEX_O_NetworkManagementControls = 25;
-	protected static final int _INDEX_O_EndOfOptionalParameters = 26;
+	protected static final int _INDEX_O_AccessTransport = 10;
+	protected static final int _INDEX_O_UserServiceInformation = 11;
+	protected static final int _INDEX_O_User2UIndicators = 12;
+	protected static final int _INDEX_O_GenericNumber = 13;
+	protected static final int _INDEX_O_PropagationDelayCounter = 14;
+	protected static final int _INDEX_O_UserServiceInformationPrime = 15;
+	protected static final int _INDEX_O_NetworkSPecificFacility = 16;
+	protected static final int _INDEX_O_GenericDigits = 17;
+	protected static final int _INDEX_O_OriginatingISCPointCode = 18;
+	protected static final int _INDEX_O_UserTeleserviceInformation = 19;
+	protected static final int _INDEX_O_RemoteOperations = 20;
+	protected static final int _INDEX_O_ParameterCompatibilityInformation = 21;
+	protected static final int _INDEX_O_GenericNotificationIndicator = 22;
+	protected static final int _INDEX_O_ServiceActivation = 23;
+	protected static final int _INDEX_O_GenericReference = 24;
+	protected static final int _INDEX_O_MLPPPrecedence = 25;
+	protected static final int _INDEX_O_TransimissionMediumRequierementPrime = 26;
+	protected static final int _INDEX_O_LocationNumber = 27;
+	protected static final int _INDEX_O_ForwardGVNS = 28;
+	protected static final int _INDEX_O_CCSS = 29;
+	protected static final int _INDEX_O_NetworkManagementControls = 30;
+	protected static final int _INDEX_O_EndOfOptionalParameters = 31;
 
 	public InitialAddressMessage(Object source, byte[] b)  throws ParameterRangeInvalidException{
 		super(source);
@@ -211,15 +218,16 @@ public class InitialAddressMessage extends ISUPMessage {
 	/**
 	 * @param parameterBody
 	 * @param parameterCode
+	 * @throws ParameterRangeInvalidException 
 	 */
-	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) {
+	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
 		switch (parameterIndex) {
 		case _INDEX_V_CalledPartyNumber:
 			CalledPartyNumber cpn = new CalledPartyNumber(parameterBody);
 			this.setCalledPartyNumber(cpn);
 			break;
 		default:
-			throw new IllegalArgumentException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
+			throw new ParameterRangeInvalidException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
 		}
 
 	}
@@ -228,133 +236,135 @@ public class InitialAddressMessage extends ISUPMessage {
 	 * @see org.mobicents.isup.messages.ISUPMessage#decodeOptionalBody(byte[], byte)
 	 */
 	@Override
-	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws IllegalArgumentException {
+	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
 		// TODO Auto-generated method stub
-		switch ( (int)parameterCode) {
-case TransitNetworkSelection._PARAMETER_CODE:
+		switch ((int) parameterCode) {
+		case TransitNetworkSelection._PARAMETER_CODE:
 			TransitNetworkSelection v = new TransitNetworkSelection(parameterBody);
 			setTransitNetworkSelection(v);
 			break;
-case CallReference._PARAMETER_CODE:
-	CallReference cr = new CallReference(parameterBody);
-	this.setCallReference(cr);
-	break;
-case CallingPartyNumber._PARAMETER_CODE:
-	CallingPartyNumber cpn = new CallingPartyNumber(parameterBody);
-	this.setCallingPartyNumber(cpn);
-	break;
-case OptionalForwardCallIndicators._PARAMETER_CODE:
-	OptionalForwardCallIndicators ofci = new OptionalForwardCallIndicators(parameterBody);
-	this.setOptForwardCallIndicators(ofci);
-	break;
-case RedirectingNumber._PARAMETER_CODE:
-	RedirectingNumber rn = new RedirectingNumber(parameterBody);
-	this.setRedirectingNumber(rn);
-break;
-case RedirectionInformation._PARAMETER_CODE:
-	RedirectionInformation ri = new RedirectionInformation(parameterBody);
-	this.setRedirectionInformation(ri);
-break;
-case ClosedUserGroupInterlockCode._PARAMETER_CODE:
-	ClosedUserGroupInterlockCode cugic = new ClosedUserGroupInterlockCode(parameterBody);
-	this.setCUserGroupInterlockCode(cugic);
-	break;
-case ConnectionRequest._PARAMETER_CODE:
-    ConnectionRequest cr2 = new ConnectionRequest(parameterBody);
-    this.setConnectionRequest(cr2);
-break;
-case OriginalCalledNumber._PARAMETER_CODE:
-	OriginalCalledNumber orn = new OriginalCalledNumber(parameterBody);
-	this.setOriginalCalledNumber(orn);
-break;
-case UserToUserInformation._PARAMETER_CODE:
-	UserToUserInformation u2ui = new UserToUserInformation(parameterBody);
-	this.setU2UInformation(u2ui);
-break;
-case AccessTransport._PARAMETER_CODE:
-    AccessTransport at = new AccessTransport(parameterBody);
-    this.setAccessTransport(at);
-break;
-case UserServiceInformation._PARAMETER_CODE:
-	UserServiceInformation usi = new UserServiceInformation(parameterBody);
-	this.setUserServiceInformation(usi);
-	break;
-case UserToUserIndicators._PARAMETER_CODE:
-	UserToUserIndicators utui = new UserToUserIndicators(parameterBody);
-	this.setU2UIndicators(utui);
-	break;
-case GenericNumber._PARAMETER_CODE:
-	GenericNumber gn = new GenericNumber(parameterBody);
-	this.setGenericNumber(gn);
-	break;
-case PropagationDelayCounter._PARAMETER_CODE:
-	PropagationDelayCounter pdc = new PropagationDelayCounter(parameterBody);
-	this.setPropagationDelayCounter(pdc);
-break;
-case UserServiceInformationPrime._PARAMETER_CODE:
-	UserServiceInformationPrime usip = new UserServiceInformationPrime(parameterBody);
-	this.setUserServiceInformationPrime(usip);
-break;
-case NetworkSpecificFacility._PARAMETER_CODE:
-	NetworkSpecificFacility nsf = new NetworkSpecificFacility(parameterBody);
-	this.setNetworkSpecificFacility(nsf);
-break;
-case GenericDigits._PARAMETER_CODE:
-	GenericDigits gd = new GenericDigits(parameterBody);
-	this.setGenericDigits(gd);
-break;
-case OriginatingISCPointCode._PARAMETER_CODE:
-	OriginatingISCPointCode vv = new OriginatingISCPointCode(parameterBody);
-	this.setOriginatingISCPointCode(vv);
-break;
-case UserTeleserviceInformation._PARAMETER_CODE:
-	UserTeleserviceInformation uti = new UserTeleserviceInformation(parameterBody);
-	this.setUserTeleserviceInformation(uti);
-break;
-case RemoteOperations._PARAMETER_CODE:
-	RemoteOperations ro = new RemoteOperations(parameterBody);
-	this.setRemoteOperations(ro);
-break;
-case ParameterCompatibilityInformation._PARAMETER_CODE:
-	ParameterCompatibilityInformation pci = new ParameterCompatibilityInformation(parameterBody);
-	this.setParameterCompatibilityInformation(pci);
-break;
-case GenericNotificationIndicator._PARAMETER_CODE:
-	GenericNotificationIndicator gni = new GenericNotificationIndicator(parameterBody);
-	this.setGenericNotificationIndicator(gni);
-break;
-case ServiceActivation._PARAMETER_CODE:
-	ServiceActivation sa = new ServiceActivation(parameterBody);
-	this.setServiceActivation(sa);
-break;
-case GenericReference._PARAMETER_CODE:
-	GenericReference gr = new GenericReference(parameterBody);
-	this.setGenericReference(gr);
-break;
-case MLPPPrecedence._PARAMETER_CODE:
-	MLPPPrecedence mlpp = new MLPPPrecedence(parameterBody);
-	this.setMLPPPrecedence(mlpp);
-	
-case TransmissionMediumRequirement._PARAMETER_CODE:
-	TransmissionMediumRequirement tmr = new TransmissionMediumRequirement(parameterBody);
-	this.setTransmissionMediumRequirement(tmr);
-case LocationNumber._PARAMETER_CODE:
-	LocationNumber ln = new LocationNumber(parameterBody);
-	this.setLocationNumber(ln);
-case ForwardGVNS._PARAMETER_CODE:
-	ForwardGVNS fgvns = new ForwardGVNS(parameterBody);
-	this.setForwardGVNS(fgvns);
-case CCSS._PARAMETER_CODE:
-	CCSS ccss = new CCSS(parameterBody);
-	this.setCCSS(ccss);
-case MLPPPrecedence._PARAMETER_CODE:
-	MLPPPrecedence mlpp = new MLPPPrecedence(parameterBody);
-	this.setMLPPPrecedence(mlpp);
-break;
-			default:
-				throw new IllegalArgumentException("Unrecognized parameter code for optional part: "+parameterCode);
+		case CallReference._PARAMETER_CODE:
+			CallReference cr = new CallReference(parameterBody);
+			this.setCallReference(cr);
+			break;
+		case CallingPartyNumber._PARAMETER_CODE:
+			CallingPartyNumber cpn = new CallingPartyNumber(parameterBody);
+			this.setCallingPartyNumber(cpn);
+			break;
+		case OptionalForwardCallIndicators._PARAMETER_CODE:
+			OptionalForwardCallIndicators ofci = new OptionalForwardCallIndicators(parameterBody);
+			this.setOptForwardCallIndicators(ofci);
+			break;
+		case RedirectingNumber._PARAMETER_CODE:
+			RedirectingNumber rn = new RedirectingNumber(parameterBody);
+			this.setRedirectingNumber(rn);
+			break;
+		case RedirectionInformation._PARAMETER_CODE:
+			RedirectionInformation ri = new RedirectionInformation(parameterBody);
+			this.setRedirectionInformation(ri);
+			break;
+		case ClosedUserGroupInterlockCode._PARAMETER_CODE:
+			ClosedUserGroupInterlockCode cugic = new ClosedUserGroupInterlockCode(parameterBody);
+			this.setCUserGroupInterlockCode(cugic);
+			break;
+		case ConnectionRequest._PARAMETER_CODE:
+			ConnectionRequest cr2 = new ConnectionRequest(parameterBody);
+			this.setConnectionRequest(cr2);
+			break;
+		case OriginalCalledNumber._PARAMETER_CODE:
+			OriginalCalledNumber orn = new OriginalCalledNumber(parameterBody);
+			this.setOriginalCalledNumber(orn);
+			break;
+		case UserToUserInformation._PARAMETER_CODE:
+			UserToUserInformation u2ui = new UserToUserInformation(parameterBody);
+			this.setU2UInformation(u2ui);
+			break;
+		case AccessTransport._PARAMETER_CODE:
+			AccessTransport at = new AccessTransport(parameterBody);
+			this.setAccessTransport(at);
+			break;
+		case UserServiceInformation._PARAMETER_CODE:
+			UserServiceInformation usi = new UserServiceInformation(parameterBody);
+			this.setUserServiceInformation(usi);
+			break;
+		case UserToUserIndicators._PARAMETER_CODE:
+			UserToUserIndicators utui = new UserToUserIndicators(parameterBody);
+			this.setU2UIndicators(utui);
+			break;
+		case GenericNumber._PARAMETER_CODE:
+			GenericNumber gn = new GenericNumber(parameterBody);
+			this.setGenericNumber(gn);
+			break;
+		case PropagationDelayCounter._PARAMETER_CODE:
+			PropagationDelayCounter pdc = new PropagationDelayCounter(parameterBody);
+			this.setPropagationDelayCounter(pdc);
+			break;
+		case UserServiceInformationPrime._PARAMETER_CODE:
+			UserServiceInformationPrime usip = new UserServiceInformationPrime(parameterBody);
+			this.setUserServiceInformationPrime(usip);
+			break;
+		case NetworkSpecificFacility._PARAMETER_CODE:
+			NetworkSpecificFacility nsf = new NetworkSpecificFacility(parameterBody);
+			this.setNetworkSpecificFacility(nsf);
+			break;
+		case GenericDigits._PARAMETER_CODE:
+			GenericDigits gd = new GenericDigits(parameterBody);
+			this.setGenericDigits(gd);
+			break;
+		case OriginatingISCPointCode._PARAMETER_CODE:
+			OriginatingISCPointCode vv = new OriginatingISCPointCode(parameterBody);
+			this.setOriginatingISCPointCode(vv);
+			break;
+		case UserTeleserviceInformation._PARAMETER_CODE:
+			UserTeleserviceInformation uti = new UserTeleserviceInformation(parameterBody);
+			this.setUserTeleserviceInformation(uti);
+			break;
+		case RemoteOperations._PARAMETER_CODE:
+			RemoteOperations ro = new RemoteOperations(parameterBody);
+			this.setRemoteOperations(ro);
+			break;
+		case ParameterCompatibilityInformation._PARAMETER_CODE:
+			ParameterCompatibilityInformation pci = new ParameterCompatibilityInformation(parameterBody);
+			this.setParameterCompatibilityInformation(pci);
+			break;
+		case GenericNotificationIndicator._PARAMETER_CODE:
+			GenericNotificationIndicator gni = new GenericNotificationIndicator(parameterBody);
+			this.setGenericNotificationIndicator(gni);
+			break;
+		case ServiceActivation._PARAMETER_CODE:
+			ServiceActivation sa = new ServiceActivation(parameterBody);
+			this.setServiceActivation(sa);
+			break;
+		case GenericReference._PARAMETER_CODE:
+			GenericReference gr = new GenericReference(parameterBody);
+			this.setGenericReference(gr);
+			break;
+		case MLPPPrecedence._PARAMETER_CODE:
+			MLPPPrecedence mlpp = new MLPPPrecedence(parameterBody);
+			this.setMLPPPrecedence(mlpp);
+
+		case TransmissionMediumRequirement._PARAMETER_CODE:
+			TransmissionMediumRequirement tmr = new TransmissionMediumRequirement(parameterBody);
+			this.setTransmissionMediumRequirement(tmr);
+		case LocationNumber._PARAMETER_CODE:
+			LocationNumber ln = new LocationNumber(parameterBody);
+			this.setLocationNumber(ln);
+		case ForwardGVNS._PARAMETER_CODE:
+			ForwardGVNS fgvns = new ForwardGVNS(parameterBody);
+			this.setForwardGVNS(fgvns);
+		case CCSS._PARAMETER_CODE:
+			CCSS ccss = new CCSS(parameterBody);
+			this.setCCSS(ccss);
+		case NetworkManagementControls._PARAMETER_CODE:
+			NetworkManagementControls nmc = new NetworkManagementControls(parameterBody);
+			this.setNetworkManagementControls(nmc);
+			break;
+		default:
+			throw new IllegalArgumentException("Unrecognized parameter code for optional part: " + parameterCode);
 		}
 	}
+
+	
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.messages.ISUPMessage#getNumberOfMandatoryVariableLengthParameters()
@@ -586,14 +596,13 @@ break;
 	public void setServiceActivation(ServiceActivation v) {
 		super.o_Parameters.put(_INDEX_O_ServiceActivation, v);
 	}
-	//Not defined yet... FIXME: XXX
-//	public GenericReference getGenericReference() {
-//		return (GenericReference) super.o_Parameters.get(_INDEX_O_GenericReference);
-//	}
-//
-//	public void setGenericReference(GenericReference v) {
-//		super.o_Parameters.put(_INDEX_O_GenericReference, v);
-//	}
+	public GenericReference getGenericReference() {
+		return (GenericReference) super.o_Parameters.get(_INDEX_O_GenericReference);
+	}
+
+	public void setGenericReference(GenericReference v) {
+		super.o_Parameters.put(_INDEX_O_GenericReference, v);
+	}
 	
 	
 	public MLPPPrecedence getMLPPPrecedence() {
@@ -628,13 +637,13 @@ break;
 		super.o_Parameters.put(_INDEX_O_ForwardGVNS, v);
 	}
 	
-//	public CCSS getCCSS() {
-//		return (CCSS) super.o_Parameters.get(_INDEX_O_CCSS);
-//	}
-//
-//	public void setCCSS(CCSS v) {
-//		super.o_Parameters.put(_INDEX_O_CCSS, v);
-//	}
+	public CCSS getCCSS() {
+		return (CCSS) super.o_Parameters.get(_INDEX_O_CCSS);
+	}
+
+	public void setCCSS(CCSS v) {
+		super.o_Parameters.put(_INDEX_O_CCSS, v);
+	}
 	
 	public NetworkManagementControls getNetworkManagementControls() {
 		return (NetworkManagementControls) super.o_Parameters.get(_INDEX_O_NetworkManagementControls);
@@ -645,6 +654,54 @@ break;
 	}
 
 	
+	/**
+	 * @param usip
+	 */
+	public void setUserServiceInformationPrime(UserServiceInformationPrime v) {
+		super.o_Parameters.put(_INDEX_O_UserServiceInformationPrime, v);
+	}
+	public UserServiceInformationPrime getUserServiceInformationPrime() {
+		return (UserServiceInformationPrime) super.o_Parameters.get(_INDEX_O_UserServiceInformationPrime);
+	}
 
-
+	/**
+	 * @param pdc
+	 */
+	public void setPropagationDelayCounter(PropagationDelayCounter v) {
+		super.o_Parameters.put(_INDEX_O_PropagationDelayCounter, v);
+		
+	}
+	public PropagationDelayCounter getPropagationDelayCounter() {
+		return (PropagationDelayCounter) super.o_Parameters.get(_INDEX_O_PropagationDelayCounter);
+	}
+	/**
+	 * @param gn
+	 */
+	public void setGenericNumber(GenericNumber v) {
+		super.o_Parameters.put(_INDEX_O_GenericNumber, v);
+		
+	}
+	public GenericNumber getGenericNumber() {
+		return (GenericNumber) super.o_Parameters.get(_INDEX_O_GenericNumber);
+	}
+	/**
+	 * @param utui
+	 */
+	public void setU2UIndicators(UserToUserIndicators v) {
+		super.o_Parameters.put(_INDEX_O_User2UIndicators, v);
+		
+	}
+	public UserToUserIndicators getU2UIndicators() {
+		return (UserToUserIndicators) super.o_Parameters.get(_INDEX_O_User2UIndicators);
+	}
+	/**
+	 * @param at
+	 */
+	public void setAccessTransport(AccessTransport v) {
+		super.o_Parameters.put(_INDEX_O_AccessTransport, v);
+		
+	}
+	public AccessTransport getAccessTransport() {
+		return (AccessTransport) super.o_Parameters.get(_INDEX_O_AccessTransport);
+	}
 }

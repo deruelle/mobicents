@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.RedirectionNumber;
 import org.mobicents.isup.parameters.TransitNetworkSelection;
 
@@ -33,7 +34,7 @@ public class TransitNetworkSelectionTest extends ParameterHarness {
 
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		TransitNetworkSelection bci = new TransitNetworkSelection(getBody(false, TransitNetworkSelection._NIP_PDNIC, TransitNetworkSelection._TONI_ITU_T, getSixDigits()));
 
 		String[] methodNames = { "isOddFlag", "getNetworkIdentificationPlan", "getTypeOfNetworkIdentification",  "getAddress" };

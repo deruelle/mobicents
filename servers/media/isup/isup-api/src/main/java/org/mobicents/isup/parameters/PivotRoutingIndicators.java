@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:16:16:18 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -43,7 +45,7 @@ public class PivotRoutingIndicators extends AbstractParameter {
 
 	private byte[] pivotRoutingIndicators;
 
-	public PivotRoutingIndicators(byte[] pivotRoutingIndicators) {
+	public PivotRoutingIndicators(byte[] pivotRoutingIndicators) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(pivotRoutingIndicators);
 	}
@@ -67,7 +69,7 @@ public class PivotRoutingIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 
 		setPivotRoutingIndicators(b);
 		return b.length;

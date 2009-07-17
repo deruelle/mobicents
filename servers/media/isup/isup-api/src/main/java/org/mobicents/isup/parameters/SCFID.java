@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:48:19 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -28,12 +30,12 @@ public class SCFID extends NetworkRoutingNumber {
 		// TODO Auto-generated constructor stub
 	}
 
-	public SCFID(byte[] representation) {
+	public SCFID(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public SCFID(ByteArrayInputStream bis) {
+	public SCFID(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}

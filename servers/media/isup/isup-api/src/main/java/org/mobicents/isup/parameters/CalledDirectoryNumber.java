@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:16:42:16 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -47,7 +49,7 @@ public class CalledDirectoryNumber extends AbstractNAINumber {
 	/**
 	 * @param representation
 	 */
-	public CalledDirectoryNumber(byte[] representation) {
+	public CalledDirectoryNumber(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 		getNumberingPlanIndicator();
@@ -57,7 +59,7 @@ public class CalledDirectoryNumber extends AbstractNAINumber {
 	 * 
 	 * @param bis
 	 */
-	public CalledDirectoryNumber(ByteArrayInputStream bis) {
+	public CalledDirectoryNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}

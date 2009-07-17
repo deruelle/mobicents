@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:15:04:29 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
@@ -19,11 +21,12 @@ import java.io.IOException;
  *         </a>
  */
 public class CallHistoryInformation extends AbstractParameter {
+	//FIXME: add code?
 	public static final int _PARAMETER_CODE = 0;
 	// XXX: again this goes aganist usuall way.
 	private int callHistory;
 
-	public CallHistoryInformation(byte[] b) {
+	public CallHistoryInformation(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -38,7 +41,7 @@ public class CallHistoryInformation extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		// This one is other way around, as Eduardo might say.
 		if (b == null || b.length != 2) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must be 2");

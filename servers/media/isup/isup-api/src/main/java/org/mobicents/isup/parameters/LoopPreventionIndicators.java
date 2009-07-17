@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:11:31:36 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -49,7 +51,7 @@ public class LoopPreventionIndicators extends AbstractParameter {
 		this.responseIndicator = responseIndicator;
 	}
 
-	public LoopPreventionIndicators(byte[] b) {
+	public LoopPreventionIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -59,9 +61,9 @@ public class LoopPreventionIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.response = (b[0] & 0x01) == _TURN_ON;

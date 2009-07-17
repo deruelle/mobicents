@@ -12,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:15:16:34 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
@@ -66,12 +68,12 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 		// TODO Auto-generated constructor stub
 	}
 
-	public TerminatingNetworkRoutingNumber(byte[] representation) {
+	public TerminatingNetworkRoutingNumber(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public TerminatingNetworkRoutingNumber(ByteArrayInputStream bis) {
+	public TerminatingNetworkRoutingNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}
@@ -103,7 +105,7 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		return super.decodeElement(b);
 	}
 
@@ -117,9 +119,9 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	}
 
 	@Override
-	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		if (bis.available() == 0) {
-			throw new IllegalArgumentException("No more data to read.");
+			throw new ParameterRangeInvalidException("No more data to read.");
 		}
 		int b = bis.read() & 0xff;
 
@@ -144,10 +146,10 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	}
 
 	@Override
-	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeBody(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		if (this.tnrnLengthIndicator> 0) {
 			if (bis.available() == 0) {
-				throw new IllegalArgumentException("No more data to read.");
+				throw new ParameterRangeInvalidException("No more data to read.");
 			}
 			this.setNatureOfAddressIndicator(bis.read()) ;
 			return 1;
@@ -168,10 +170,10 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	}
 
 	@Override
-	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeDigits(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		if (this.tnrnLengthIndicator-1> 0) {
 			if (bis.available() == 0) {
-				throw new IllegalArgumentException("No more data to read.");
+				throw new ParameterRangeInvalidException("No more data to read.");
 			}
 			return super.decodeDigits(bis, this.tnrnLengthIndicator-1);
 		} else {

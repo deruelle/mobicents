@@ -11,12 +11,13 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:43:13 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class UserTeleserviceInformation extends AbstractParameter {
 	// NOTE: Q.931 4.5.17 High layer compatibility --> it has the same structure
@@ -162,19 +163,23 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	 * in reserved range
 	 */
 	public static final int _HLCI_AUDIO_VID_HIGH_RANGE2 = 0x6F;
-	
+
 	/**
-	 * See Q.931 4.5.17 Extended High layer characteristics identification : Capability set of initial channel associated with an active 3.1 kHz audio or speech call
+	 * See Q.931 4.5.17 Extended High layer characteristics identification :
+	 * Capability set of initial channel associated with an active 3.1 kHz audio
+	 * or speech call
 	 */
 	public static final int _EACI_CSIC_AA_3_1_CALL = 0x21;
-	
+
 	/**
-	 * See Q.931 4.5.17 Extended High layer characteristics identification : Capability set of initial channel of H.221
+	 * See Q.931 4.5.17 Extended High layer characteristics identification :
+	 * Capability set of initial channel of H.221
 	 */
 	public static final int _EACI_CSIC_H221 = 0x01;
-	
+
 	/**
-	 * See Q.931 4.5.17 Extended High layer characteristics identification : Capability set of subsequent channel of H.221
+	 * See Q.931 4.5.17 Extended High layer characteristics identification :
+	 * Capability set of subsequent channel of H.221
 	 */
 	public static final int _EACI_CSSC_H221 = 0x02;
 	private int codingStandard;
@@ -216,7 +221,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 		this.setEHighLayerCharIdentification(eHighLayerCharIdentification);
 	}
 
-	public UserTeleserviceInformation(byte[] b) {
+	public UserTeleserviceInformation(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		// FIXME: this is only elementID
 
@@ -228,18 +233,22 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length < 2) {
-			throw new IllegalArgumentException("byte[] must not be null and length must be greater than  1");
+			throw new ParameterRangeInvalidException("byte[] must not be null and length must be greater than  1");
 		}
 
-		this.setPresentationMethod(b[0]);
-		this.setInterpretation((b[0] >> 2));
-		this.setCodingStandard((b[0] >> 5));
-		this.setHighLayerCharIdentification(b[1]);
+		try {
+			this.setPresentationMethod(b[0]);
+			this.setInterpretation((b[0] >> 2));
+			this.setCodingStandard((b[0] >> 5));
+			this.setHighLayerCharIdentification(b[1]);
+		} catch (Exception e) {
+			throw new ParameterRangeInvalidException(e);
+		}
 		boolean ext = ((b[1] >> 7) & 0x01) == 0;
 		if (ext && b.length != 3) {
-			throw new IllegalArgumentException("byte[] indicates extension to high layer cahracteristic indicator, however there isnt enough bytes");
+			throw new ParameterRangeInvalidException("byte[] indicates extension to high layer cahracteristic indicator, however there isnt enough bytes");
 		}
 		if (!ext) {
 			// ??
@@ -253,7 +262,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 				|| (this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE2 && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
 			this.setEVidedoTelephonyCharIdentification(b[2] & 0x7F);
 		} else {
-			logger.warning("HLCI indicates avlue which does not allow for extension, but its present....");
+			logger.warning("HLCI indicates value which does not allow for extension, but its present....");
 		}
 		return b.length;
 	}
@@ -275,8 +284,8 @@ public class UserTeleserviceInformation extends AbstractParameter {
 		v = this.presentationMethod & 0x03;
 		v |= (this.interpretation & 0x07) << 2;
 		v |= (this.codingStandard & 0x03) << 5;
-		v|=0x80;
-		
+		v |= 0x80;
+
 		b[0] = (byte) v;
 		b[1] = (byte) (this.highLayerCharIdentification & 0x7F);
 		if (this.eHighLayerCharIdentificationPresent || this.eVidedoTelephonyCharIdentificationPresent) {

@@ -12,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:58:48 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
@@ -29,12 +31,12 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 
 	}
 
-	public OriginatingParticipatingServiceProvider(byte[] representation) {
+	public OriginatingParticipatingServiceProvider(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public OriginatingParticipatingServiceProvider(ByteArrayInputStream bis) {
+	public OriginatingParticipatingServiceProvider(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}
@@ -49,7 +51,7 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		return super.decodeElement(b);
 	}
 
@@ -63,9 +65,9 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 	}
 
 	@Override
-	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		if (bis.available() == 0) {
-			throw new IllegalArgumentException("No more data to read.");
+			throw new ParameterRangeInvalidException("No more data to read.");
 		}
 		int b = bis.read() & 0xff;
 
@@ -87,22 +89,22 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 	}
 
 	@Override
-	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeBody(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 
 		return 0;
 	}
 
 	@Override
-	public int encodeBody(ByteArrayOutputStream bos) {
+	public int encodeBody(ByteArrayOutputStream bos){
 
 		return 0;
 	}
 
 	@Override
-	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeDigits(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		if (this.opspLengthIndicator > 0) {
 			if (bis.available() == 0) {
-				throw new IllegalArgumentException("No more data to read.");
+				throw new ParameterRangeInvalidException("No more data to read.");
 			}
 			return super.decodeDigits(bis, this.opspLengthIndicator);
 		} else {

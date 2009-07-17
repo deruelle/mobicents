@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:15:02:53 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -39,7 +41,7 @@ public class CollectCallRequest extends AbstractParameter {
 		this.collectCallRequested = collectCallRequested;
 	}
 
-	public CollectCallRequest(byte[] b) {
+	public CollectCallRequest(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -49,9 +51,9 @@ public class CollectCallRequest extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must not be null and length must be 1");
+			throw new ParameterRangeInvalidException("byte[] must not be null and length must be 1");
 		}
 		this.collectCallRequested = (b[0] & 0x01) == _TURN_ON;
 

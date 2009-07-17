@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:02:43 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -25,7 +27,7 @@ public class NetworkManagementControls extends AbstractParameter {
 	//FIXME - should we switch to boolean[] - its a slight perf loss :P
 	private byte[] networkManagementControls = null;
 
-	public NetworkManagementControls(byte[] b) {
+	public NetworkManagementControls(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -35,9 +37,13 @@ public class NetworkManagementControls extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
-
-		setNetworkManagementControls(b);
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
+		try{
+			setNetworkManagementControls(b);
+		}catch(Exception e)
+		{
+			throw new ParameterRangeInvalidException(e);
+		}
 		return b.length;
 	}
 
@@ -68,7 +74,7 @@ public class NetworkManagementControls extends AbstractParameter {
 		return networkManagementControls;
 	}
 
-	public void setNetworkManagementControls(byte[] networkManagementControls) {
+	public void setNetworkManagementControls(byte[] networkManagementControls) throws IllegalArgumentException {
 		if (networkManagementControls == null || networkManagementControls.length == 0) {
 			throw new IllegalArgumentException("byte[] must not be null and length must be greater than 0");
 		}

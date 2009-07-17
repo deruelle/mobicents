@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.NetworkRoutingNumber;
 
 /**
@@ -39,7 +40,7 @@ public class NetworkRoutingNumberTest extends ParameterHarness {
 
 
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		NetworkRoutingNumber bci = new NetworkRoutingNumber(getBody(false,getSixDigits(), NetworkRoutingNumber._NPI_ISDN_NP, NetworkRoutingNumber._NAI_NRNI_NETWORK_SNF));
 
 		String[] methodNames = { "isOddFlag", "getNumberingPlanIndicator", "getNatureOfAddressIndicator",  "getAddress" };
@@ -47,7 +48,7 @@ public class NetworkRoutingNumberTest extends ParameterHarness {
 		super.testValues(bci, methodNames, expectedValues);
 	}
 	
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		NetworkRoutingNumber bci = new NetworkRoutingNumber(getBody(true,getFiveDigits(), NetworkRoutingNumber._NPI_ISDN_NP, NetworkRoutingNumber._NAI_NRNI_NETWORK_SNF));
 
 		String[] methodNames = { "isOddFlag", "getNumberingPlanIndicator", "getNatureOfAddressIndicator",  "getAddress" };

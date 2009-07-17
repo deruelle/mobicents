@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:13:47:48 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
@@ -23,7 +25,7 @@ public class DisplayInformation extends AbstractParameter {
 
 	private byte[] info;
 
-	public DisplayInformation(byte[] info) {
+	public DisplayInformation(byte[] info) throws ParameterRangeInvalidException {
 		super();
 		// FIXME: this is only elementID
 		super.tag = new byte[] { 0x28 };
@@ -35,8 +37,13 @@ public class DisplayInformation extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		setInfo(b);
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
+		try{
+			setInfo(b);
+		}catch(Exception e)
+		{
+			throw new ParameterRangeInvalidException(e);
+		}
 		return b.length;
 	}
 
@@ -58,7 +65,7 @@ public class DisplayInformation extends AbstractParameter {
 		return info;
 	}
 
-	public void setInfo(byte[] info) {
+	public void setInfo(byte[] info) throws IllegalArgumentException {
 		if (info == null || info.length == 0) {
 			throw new IllegalArgumentException("byte[] must not be null and length must be greater than 0");
 		}

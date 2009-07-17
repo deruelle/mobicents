@@ -141,7 +141,7 @@ abstract class ISUPMessage implements ISUPComponent {
 		// defined by the message type; thus, the names of the parameters and
 		// the length indicators are not
 		// included in the message.
-		// FIXME: check if there are params of vadiable length here.
+
 		for (ISUPParameter p : parameters.values()) {
 			
 			p.encodeElement(bos);
@@ -335,7 +335,7 @@ abstract class ISUPMessage implements ISUPComponent {
 	 * @param parameterBody
 	 * @param parameterIndex
 	 */
-	protected abstract void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) ;
-	protected abstract void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws IllegalArgumentException ;
+	protected abstract void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException;
+	protected abstract void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException ;
 	protected abstract int getNumberOfMandatoryVariableLengthParameters();
 }

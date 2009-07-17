@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:17:36:23 2009-03-29<br>
  * Project: mobicents-isup-stack<br>
@@ -129,12 +131,12 @@ public class GenericNumber extends AbstractNAINumber {
 		this.screeningIndicator = screeningIndicator;
 	}
 
-	public GenericNumber(byte[] representation) {
+	public GenericNumber(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 
 	}
 
-	public GenericNumber(ByteArrayInputStream bis) {
+	public GenericNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}
@@ -197,7 +199,7 @@ public class GenericNumber extends AbstractNAINumber {
 	}
 
 	@Override
-	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+	public int decodeHeader(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		this.numberQualifierIndicator = bis.read() & 0xff;
 		return super.decodeHeader(bis) + 1;
 	}

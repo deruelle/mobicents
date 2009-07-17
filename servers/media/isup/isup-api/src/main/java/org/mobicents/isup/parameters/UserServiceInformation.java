@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:36:18 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
@@ -20,11 +22,11 @@ import java.io.IOException;
 public class UserServiceInformation extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x1D;
 //FIXME Q.931
-	aa
+	
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -45,7 +47,7 @@ public class UserServiceInformation extends AbstractParameter {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public UserServiceInformation(byte[] b) {
+	public UserServiceInformation(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		this.decodeElement(b);
 	}

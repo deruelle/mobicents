@@ -10,12 +10,13 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:44:04 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class UserToUserIndicators extends AbstractParameter {
 	private static final int _TURN_ON = 1;
@@ -66,7 +67,7 @@ public class UserToUserIndicators extends AbstractParameter {
 	private int serviceThree;
 	private boolean networkDiscardIndicator;
 
-	public UserToUserIndicators(byte[] b) {
+	public UserToUserIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -85,15 +86,19 @@ public class UserToUserIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
 		}
-		this.setResponse((b[0] & 0x01) == _TURN_ON);
-		this.setServiceOne((b[0] >> 1) );
-		this.setServiceTwo((b[0] >> 3) );
-		this.setServiceThree((b[0] >> 5)) ;
-		this.setNetworkDiscardIndicator(( (b[0] >> 7) & 0x01) == _TURN_ON);
+		try {
+			this.setResponse((b[0] & 0x01) == _TURN_ON);
+			this.setServiceOne((b[0] >> 1));
+			this.setServiceTwo((b[0] >> 3));
+			this.setServiceThree((b[0] >> 5));
+			this.setNetworkDiscardIndicator(((b[0] >> 7) & 0x01) == _TURN_ON);
+		} catch (Exception e) {
+			throw new ParameterRangeInvalidException(e);
+		}
 		return 1;
 	}
 

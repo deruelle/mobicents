@@ -41,7 +41,7 @@ public class EndOfOptionalParameters extends AbstractParameter {
 	 */
 	public static final int _PARAMETER_CODE = 0;
 
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 
 		return 0;
 	}

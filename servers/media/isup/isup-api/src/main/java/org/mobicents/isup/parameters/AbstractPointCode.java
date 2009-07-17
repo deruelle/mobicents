@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:12:23:47 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -28,9 +30,9 @@ public abstract class AbstractPointCode extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
 		}
 
 		this.signalingPointCode = b[0];
@@ -57,7 +59,7 @@ public abstract class AbstractPointCode extends AbstractParameter {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public AbstractPointCode(byte[] b) {
+	public AbstractPointCode(byte[] b) throws ParameterRangeInvalidException{
 		super();
 		decodeElement(b);
 	}

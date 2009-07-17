@@ -11,6 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:16:41:45 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -47,12 +49,12 @@ public class RedirectionNumber extends AbstractNAINumber {
 
 	protected int internalNetworkNumberIndicator;
 
-	public RedirectionNumber(byte[] representation) {
+	public RedirectionNumber(byte[] representation) throws ParameterRangeInvalidException {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public RedirectionNumber(ByteArrayInputStream bis) {
+	public RedirectionNumber(ByteArrayInputStream bis) throws ParameterRangeInvalidException {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}

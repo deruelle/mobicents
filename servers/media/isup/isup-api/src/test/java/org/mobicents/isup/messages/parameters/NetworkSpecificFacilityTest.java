@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.NetworkSpecificFacility;
 
 /**
@@ -29,7 +30,7 @@ public class NetworkSpecificFacilityTest extends ParameterHarness {
 		// super.goodBodies.add(new byte[] { 1, (byte) 0x80, 11, 1, 2, 3, 4 });
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		NetworkSpecificFacility bci = new NetworkSpecificFacility(getBody(NetworkSpecificFacility._TNI_NNI, 1, new byte[] { 1, 2, 3, 4, 5, (byte) 0xAA }, new byte[10]));
 
 		String[] methodNames = { "isIncludeNetworkIdentification", "getLengthOfNetworkIdentification", "getTypeOfNetworkIdentification", "getNetworkIdentificationPlan" };
@@ -85,7 +86,7 @@ public class NetworkSpecificFacilityTest extends ParameterHarness {
 	 * ()
 	 */
 	@Override
-	public ISUPComponent getTestedComponent() {
+	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
 		return new NetworkSpecificFacility(new byte[] { 1, (byte) 0xFF, 1, 2, 2 });
 	}
 

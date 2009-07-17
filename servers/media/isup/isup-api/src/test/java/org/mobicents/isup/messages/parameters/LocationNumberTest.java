@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.ParameterRangeInvalidException;
 
 import org.mobicents.isup.parameters.LocationNumber;
 import org.mobicents.isup.parameters.GenericNumber;
@@ -56,7 +57,7 @@ public class LocationNumberTest extends ParameterHarness {
 		return bos.toByteArray();
 	}
 
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		LocationNumber bci = new LocationNumber(getBody( false, LocationNumber._NAI_INTERNATIONAL, LocationNumber._INN_ROUTING_ALLOWED, LocationNumber._NPI_ISDN,
 				LocationNumber._APRI_NOT_AVAILABLE, LocationNumber._SI_NETWORK_PROVIDED, getSixDigits()));
 

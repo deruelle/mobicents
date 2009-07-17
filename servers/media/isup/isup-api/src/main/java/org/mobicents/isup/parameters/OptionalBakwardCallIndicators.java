@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:11:38:33 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
@@ -68,7 +70,7 @@ public class OptionalBakwardCallIndicators extends AbstractParameter {
 	private boolean simpleSegmentationIndicator;
 	private boolean mllpUserIndicator;
 
-	public OptionalBakwardCallIndicators(byte[] b) {
+	public OptionalBakwardCallIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -86,9 +88,9 @@ public class OptionalBakwardCallIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 1) {
-			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
+			throw new ParameterRangeInvalidException("byte[] must  not be null and length must  be 1");
 		}
 		this.inbandInformationIndicator = (b[0] & 0x01) == _TURN_ON;
 		this.callDiversionMayOccurIndicator = ((b[0] >> 1) & 0x01) == _TURN_ON;

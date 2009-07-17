@@ -10,6 +10,8 @@ package org.mobicents.isup.parameters;
 
 import java.io.IOException;
 
+import org.mobicents.isup.ParameterRangeInvalidException;
+
 /**
  * Start time:14:20:07 2009-04-01<br>
  * Project: mobicents-isup-stack<br>
@@ -42,7 +44,7 @@ public class InformationRequestIndicators extends AbstractParameter {
 	// FIXME: should we carre about this?
 	private int reserved;
 
-	public InformationRequestIndicators(byte[] b) {
+	public InformationRequestIndicators(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
@@ -63,7 +65,7 @@ public class InformationRequestIndicators extends AbstractParameter {
 	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws org.mobicents.isup.ParameterRangeInvalidException {
 		if (b == null || b.length != 2) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  be 2");
 		}

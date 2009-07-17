@@ -8,22 +8,20 @@
  */
 package org.mobicents.isup.messages;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Vector;
 
 /**
  * Start time:09:26:46 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
- * Test for ACM 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
- *         </a>
+ * Test for ACM
+ * 
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class ACMTest extends MessageHarness {
 
 	
 	
-	public void testOne() throws IOException
+	public void testOne() throws Exception
 	{
 		//FIXME: for now we strip MTP part
 		byte[] message={
