@@ -2,7 +2,7 @@
  * Start time:13:29:12 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -14,7 +14,7 @@ import java.io.IOException;
  * Start time:13:29:12 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public class CallTransferReference extends AbstractParameter {

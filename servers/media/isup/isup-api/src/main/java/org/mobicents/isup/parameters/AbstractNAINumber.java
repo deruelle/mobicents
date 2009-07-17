@@ -2,7 +2,7 @@
  * Start time:14:02:37 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -17,7 +17,7 @@ import java.io.IOException;
  * Project: mobicents-isup-stack<br>
  * This is number representation that has NAI field
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public abstract class AbstractNAINumber extends AbstractNumber {

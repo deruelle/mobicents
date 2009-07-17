@@ -2,7 +2,7 @@
  * Start time:17:10:53 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -14,7 +14,7 @@ import java.io.IOException;
  * Start time:17:10:53 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public class CircuitStateIndicator extends AbstractParameter {

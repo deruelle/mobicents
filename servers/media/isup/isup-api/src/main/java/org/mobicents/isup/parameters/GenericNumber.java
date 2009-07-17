@@ -2,7 +2,7 @@
  * Start time:17:36:23 2009-03-29<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
  * Start time:17:36:23 2009-03-29<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author Oleg Kulikoff
  */

@@ -1,11 +1,3 @@
-/**
- * Start time:14:09:04 2009-04-20<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
- *         </a>
- * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
- */
 package org.mobicents.isup.messages;
 
 import java.io.ByteArrayOutputStream;
@@ -31,8 +23,7 @@ import org.mobicents.isup.parameters.SignalingPointCode;
  * This is super message class for all messages that we have. It defines some
  * methods that need to be implemented
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 abstract class ISUPMessage implements ISUPComponent {
 
@@ -46,32 +37,27 @@ abstract class ISUPMessage implements ISUPComponent {
 	 * F = mandatory fixed length parameter;<br>
 	 * for type F parameters: the length, in octets, of the parameter content;
 	 */
-	protected Map<Integer,ISUPParameter> f_Parameters = null;
+	protected Map<Integer, ISUPParameter> f_Parameters;
 	/**
 	 * V = mandatory variable length parameter;<br>
 	 * for type V parameters: the length, in octets, of the length indicator and
 	 * of the parameter content. The minimum and the maximum length are
 	 * indicated;
 	 */
-	protected Map<Integer,ISUPParameter> v_Parameters = null;
+	protected Map<Integer, ISUPParameter> v_Parameters;
 	/**
 	 * O = optional parameter of fixed or variable length; for type O
 	 * parameters: the length, in octets, of the parameter name, length
 	 * indicator and parameter content. For variable length parameters the
 	 * minimum and maximum length is indicated.
 	 */
-	protected Map<Integer,ISUPParameter> o_Parameters = null;
-	
-	protected SignalingPointCode destinationPointCode, originatingPointCode;
+	protected Map<Integer, ISUPParameter> o_Parameters;
 
-	protected Object source = null;
-	protected byte signalingLinkSelection = 0;
-	protected int circuitIdentificationCode = 0;
-	protected byte congestionPriority = 0;
+	protected Object source;
 
-	public ISUPMessage(Object source, byte[] b) {
+	public ISUPMessage(Object source) throws IllegalArgumentException{
 		super();
-		this.source = source;
+		this.source=source;
 
 	}
 
@@ -90,20 +76,10 @@ abstract class ISUPMessage implements ISUPComponent {
 	 *            - circuit identification code in the event
 	 * @param congestionPriority
 	 *            - priority of the ISUP message
-	 * @throws ParameterRangeInvalidException
-	 *             - thrown when value is out of range
 	 */
-	protected ISUPMessage(java.lang.Object source, SignalingPointCode dpc, SignalingPointCode opc, byte sls, int cic, byte congestionPriority) throws ParameterRangeInvalidException {
+	protected ISUPMessage() {
 
-		if (source == null || dpc == null || opc == null) {
-			throw new ParameterRangeInvalidException("Parameters must not be null");
-		}
-		this.source = source;
-		this.signalingLinkSelection = sls;
-		this.circuitIdentificationCode = cic;
-		this.congestionPriority = congestionPriority;
-		this.destinationPointCode = dpc;
-		this.originatingPointCode = opc;
+	
 		prepareMessage();
 	}
 
@@ -122,146 +98,9 @@ abstract class ISUPMessage implements ISUPComponent {
 	 * @return
 	 */
 	public abstract MessageType getMessageType();
+	//FIXME: above will be changed
 
-	/**
-	 * Gets the destination point code. The destination point code is a
-	 * signaling point code, the format for the signaling point code is
-	 * described in IsupUserAddress class. Refer to Signaling Point Code for a
-	 * full description of destination point code.
-	 * 
-	 * @return the destination point code in an ISUP event
-	 */
-	public SignalingPointCode getDestinationPointCode() {
-		return destinationPointCode;
-	}
 
-	/**
-	 * Gets the origination point code. The origination point code is a
-	 * signaling point code, the format for the signaling point code is
-	 * described in IsupUserAddress class. Refer to Signaling Point Code for a
-	 * full description of origination point code.
-	 * 
-	 * @return the origination point code in an ISUP event
-	 */
-	public SignalingPointCode getOriginatingPointCode() {
-		return originatingPointCode;
-	}
-
-	public Object getSource() {
-		return source;
-	}
-
-	/**
-	 * Gets the signaling link selection field in the ISUP event. The SLS has a
-	 * range of 0-15 in ITU and 0-127 in ANSI.
-	 * 
-	 * @return the Signaling Link Selection in an ISUP event.
-	 */
-	public byte getSignalingLinkSelection() {
-		return signalingLinkSelection;
-	}
-
-	/**
-	 * Gets the Circuit Identification Code Circuit Identification Code
-	 * identifies a voice circuit between two nodes in the SS7 network. Refer to
-	 * CIC range for a full description.
-	 * 
-	 * @return
-	 */
-	public int getCircuitIdentificationCode() {
-		return circuitIdentificationCode;
-	}
-
-	/**
-	 * Gets the congestion priority value of the message. The congestion
-	 * priority indicates the priority with which the ISUP message is to be
-	 * given to MTP3 in the MTP TRANSFER primitive call. The congestion priority
-	 * field will be used by MTP3 during congestion control procedures wherein
-	 * only those User Part Messages that have greater congestion priority than
-	 * the congestion level reported for a link/signaling point code, are sent
-	 * to the network, while the ISUP messages with a priority less than the
-	 * congestion level are discarded by MTP3. The congestion control procedure
-	 * is only specified for national networks and it is an optional procedure.
-	 * Hence this field may be used only when the Network Indicator indicates a
-	 * national network. i.e. when the network indicator is 2 or 3. For
-	 * international network indicator values, congestion priority field is to
-	 * be coded as 0. This field also does not have any signficance at the
-	 * incoming end. So the priority field in an IsupEvent from Provider to
-	 * Listener has no relevance.
-	 * 
-	 * @return the congestion priority of the message being sent to MTP3. The
-	 *         value ranges from 0 to 3, 0 being the lowest priority and 3 the
-	 *         highest.
-	 */
-	public byte getCongestionPriority() {
-		return congestionPriority;
-	}
-
-	/**
-	 * Sets the destination point code. The destination point code is a
-	 * signaling point code, the format of the signaling point is described in
-	 * the IsupUserAddress class. Refer to Signaling Point Code for a full
-	 * description of destination point code.
-	 * 
-	 * @throws ParameterRangeInvalidException
-	 * 
-	 * @param destinationPointCode
-	 */
-	public void setDestinationPointCode(SignalingPointCode destinationPointCode) throws ParameterRangeInvalidException {
-		this.destinationPointCode = destinationPointCode;
-	}
-
-	/**
-	 * Sets the origination point code. The origination point code is a
-	 * signaling point code, the format of the signaling point is described in
-	 * the IsupUserAddress class. Refer to Signaling Point Code for a full
-	 * description of origination point code.
-	 * 
-	 * @param originatingPointCode
-	 *            - the origination point code in an ISUP event
-	 * @throws ParameterRangeInvalidException
-	 */
-	public void setOriginatingPointCode(SignalingPointCode originatingPointCode) throws ParameterRangeInvalidException {
-		this.originatingPointCode = originatingPointCode;
-	}
-
-	/**
-	 * Sets the signaling link selection field in the ISUP event. The SLS has a
-	 * range of 0-15 in ITU and 0-31 in ANSI isls the SLS value in the ISUP
-	 * event
-	 * 
-	 * @param signalingLinkSelection
-	 * @throws ParameterRangeInvalidException
-	 */
-	public void setSignalingLinkSelection(byte signalingLinkSelection) throws ParameterRangeInvalidException {
-		this.signalingLinkSelection = signalingLinkSelection;
-	}
-
-	/**
-	 * Gets the Circuit Identification Code Circuit Identification Code
-	 * identifies a voice circuit between two nodes in the SS7 network. Refer to
-	 * CIC range for a full description.
-	 * 
-	 * @param circuitIdentificationCode
-	 * @throws ParameterRangeInvalidException
-	 */
-	public void setCircuitIdentificationCode(int circuitIdentificationCode) throws ParameterRangeInvalidException {
-		this.circuitIdentificationCode = circuitIdentificationCode;
-	}
-
-	/**
-	 * sets the congestion priority value of the ISUP message being sent to
-	 * MTP3. Refer to getMessagePriority for more detail on congestion priority
-	 * field of IsupEvent class.
-	 * 
-	 * @param congestionPriority
-	 *            - congestion priority of the ISUP message. Value ranges from 0
-	 *            to 3, 0 being the lowest priority and 3 the highest.
-	 * @throws ParameterRangeInvalidException
-	 */
-	public void setCongestionPriority(byte congestionPriority) throws ParameterRangeInvalidException {
-		this.congestionPriority = congestionPriority;
-	}
 
 	protected void prepareMessage() {
 		if (this.o_Parameters.size() > 0)
@@ -280,8 +119,8 @@ abstract class ISUPMessage implements ISUPComponent {
 
 		// FIME: add encoding of routing part
 
-		//bos.write(this.circuitIdentificationCode);
-		
+		// bos.write(this.circuitIdentificationCode);
+
 		boolean optionalPresent = this.o_Parameters.size() > 1;
 		this.encodeMandatoryParameters(f_Parameters, bos);
 		this.encodeMandatoryVariableParameters(v_Parameters, bos, optionalPresent);
@@ -293,7 +132,7 @@ abstract class ISUPMessage implements ISUPComponent {
 	}
 
 	// NOTE: those methods are more or less generic.
-	protected void encodeMandatoryParameters(Map<Integer,ISUPParameter> parameters, ByteArrayOutputStream bos) throws IOException {
+	protected void encodeMandatoryParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos) throws IOException {
 		// 1.5 Mandatory fixed part
 		// Those parameters that are mandatory and of fixed length for a
 		// particular message type will be
@@ -303,9 +142,8 @@ abstract class ISUPMessage implements ISUPComponent {
 		// the length indicators are not
 		// included in the message.
 		// FIXME: check if there are params of vadiable length here.
-		for (ISUPParameter p : parameters.values())
-		{
-			System.err.println("Encode: "+p);
+		for (ISUPParameter p : parameters.values()) {
+			
 			p.encodeElement(bos);
 		}
 	}
@@ -322,7 +160,7 @@ abstract class ISUPMessage implements ISUPComponent {
 	 *            of optional part, otherwise it will encode this octet as zeros
 	 * @throws IOException
 	 */
-	protected void encodeMandatoryVariableParameters(Map<Integer,ISUPParameter> parameters, ByteArrayOutputStream bos, boolean isOptionalPartPresent) throws IOException {
+	protected void encodeMandatoryVariableParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos, boolean isOptionalPartPresent) throws IOException {
 		byte[] pointers = new byte[parameters.size() + 1];
 		if (parameters != null && parameters.size() == 0) {
 			// This happens if there is no variable mandatory part :)
@@ -333,7 +171,7 @@ abstract class ISUPMessage implements ISUPComponent {
 			}
 			// Nothing else goes there.
 			bos.write(pointers);
-			
+
 		} else {
 			ByteArrayOutputStream parametersBodyBOS = new ByteArrayOutputStream();
 			byte lastParameterLength = 0;
@@ -380,12 +218,12 @@ abstract class ISUPMessage implements ISUPComponent {
 	 * @param bos
 	 * @throws IOException
 	 */
-	protected void encodeOptionalParameters(Map<Integer,ISUPParameter> parameters, ByteArrayOutputStream bos) throws IOException {
+	protected void encodeOptionalParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos) throws IOException {
 
 		// NOTE: parameters MUST have as last endOfOptionalParametersParameter
 		for (ISUPParameter p : parameters.values()) {
-			System.err.println("ENCODE O: "+p);
-			if(p==null)
+			
+			if (p == null)
 				continue;
 			byte[] b = p.encodeElement();
 			// FIXME: this can be slow, maybe we shoudl remove that, and code
@@ -403,24 +241,101 @@ abstract class ISUPMessage implements ISUPComponent {
 
 	}
 
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
+	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
 		int index = 0;
-		// FIME: add decoding of routing part
-
-		// this.circuitIdentificationCode = b[index++];
-		// This is for message type code
-		// index++;
+		
 		index += this.decodeMandatoryParameters(b, index);
 		index += this.decodeMandatoryVariableParameters(b, index);
 		index += this.decodeOptionalParameters(b, index);
 
 		return index;
 	}
+	
+	
+	//Unfortunelty this cant be generic, can it?
+	protected abstract int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException;
 
-	protected abstract int decodeMandatoryParameters(byte[] b, int index) throws IllegalArgumentException;
+	protected int decodeMandatoryVariableParameters(byte[] b, int index) throws ParameterRangeInvalidException
+	{
+		int readCount = 0;
+		int optionalOffset = 0;
+		
+		
+		
+		
+		if (b.length - index > 0) {
 
-	protected abstract int decodeMandatoryVariableParameters(byte[] b, int index) throws IllegalArgumentException;
+			byte extPIndex = -1;
+			try {
+				int count = getNumberOfMandatoryVariableLengthParameters();
+				for (int parameterIndex = 0; parameterIndex < count; parameterIndex++) {
+					int parameterLengthIndex = b[index + readCount];
+					int parameterLength = b[parameterLengthIndex];
+					byte[] parameterBody = new byte[parameterLength];
+					System.arraycopy(b, parameterLengthIndex + 1, parameterBody, 0, parameterLength);
+					decodeMandatoryVariableBody(parameterBody, parameterIndex);
+				}
+				optionalOffset = b[index + readCount];
+			} catch (ArrayIndexOutOfBoundsException aioobe) {
+				throw new ParameterRangeInvalidException("Failed to read parameter, to few octets in buffer, parameter index: " + extPIndex, aioobe);
+			} catch (IllegalArgumentException e) {
+				throw new ParameterRangeInvalidException("Failed to parse, paramet index: " + extPIndex, e);
+			}
+		} else {
+			throw new ParameterRangeInvalidException("To few bytes to decode mandatory variable part. There should be atleast on byte to indicate optional part.");
+		}
 
-	// FIXME: this possibly could be generic?
-	protected abstract int decodeOptionalParameters(byte[] b, int index) throws IllegalArgumentException;
+		return readCount + optionalOffset;
+	}
+
+	
+
+	protected int decodeOptionalParameters(byte[] b, int index) throws ParameterRangeInvalidException {
+
+		int localIndex = index;
+
+		int readCount = 0;
+		//if not, there are no params.
+		if (b.length - index > 0) {
+			// let it rip :)
+			boolean readParameter = true;
+			while (readParameter) {
+				byte extPCode=-1;
+				try {
+				
+					byte parameterCode = b[localIndex++];
+					extPCode = parameterCode;
+					byte parameterLength = b[localIndex++];
+					byte[] parameterBody = new byte[parameterLength];
+					//This is bad, we will change this
+					System.arraycopy(b, localIndex, parameterBody, 0, parameterLength);
+					localIndex += parameterLength;
+					readCount += 2 + parameterLength;
+
+					decodeOptionalBody(parameterBody, parameterCode);
+
+					if (b.length - localIndex > 0 && b[localIndex] != 0) {
+
+					} else {
+						readParameter = false;
+					}
+
+				} catch (ArrayIndexOutOfBoundsException aioobe) {
+					throw new ParameterRangeInvalidException("Failed to read parameter, to few octets in buffer", aioobe);
+				} catch(IllegalArgumentException e)
+				{
+					throw new ParameterRangeInvalidException("Failed to parse paramet: "+extPCode, e);
+				}
+			}
+		}
+
+		return readCount;
+	}
+	/**
+	 * @param parameterBody
+	 * @param parameterIndex
+	 */
+	protected abstract void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) ;
+	protected abstract void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws IllegalArgumentException ;
+	protected abstract int getNumberOfMandatoryVariableLengthParameters();
 }

@@ -2,7 +2,7 @@
  * Start time:13:39:50 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -17,7 +17,7 @@ import org.mobicents.isup.parameters.AbstractParameter;
  * Start time:13:39:50 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public class AccessTransport extends AbstractParameter {

@@ -2,7 +2,7 @@
  * Start time:11:21:05 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -16,7 +16,7 @@ import java.io.IOException;
  * Project: mobicents-isup-stack<br>
  * This class represent element that encodes end of parameters
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public class EndOfOptionalParameters extends AbstractParameter {

@@ -2,7 +2,7 @@
  * Start time:18:44:10 2009-03-27<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
  * information. Length part of information component is computed from length of
  * this element. See section (B1, B2 and B3 of Q.763)
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public abstract class AbstractNumber extends AbstractParameter {

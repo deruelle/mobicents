@@ -2,7 +2,7 @@
  * Start time:12:36:18 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -14,7 +14,7 @@ import java.io.IOException;
  * Start time:12:36:18 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public class UserServiceInformationPrime extends AbstractParameter {
@@ -41,4 +41,15 @@ public class UserServiceInformationPrime extends AbstractParameter {
 
 		return _PARAMETER_CODE;
 	}
+
+	public UserServiceInformationPrime() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public UserServiceInformationPrime(byte[] b) {
+		super();
+		decodeElement(b);
+	}
+	
 }

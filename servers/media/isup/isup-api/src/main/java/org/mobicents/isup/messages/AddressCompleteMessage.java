@@ -2,21 +2,13 @@
  * Start time:14:30:39 2009-04-20<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
 package org.mobicents.isup.messages;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import org.mobicents.isup.ParameterRangeInvalidException;
 import org.mobicents.isup.parameters.AccessDeliveryInformation;
@@ -42,7 +34,6 @@ import org.mobicents.isup.parameters.RedirectionNumber;
 import org.mobicents.isup.parameters.RedirectionNumberRestriction;
 import org.mobicents.isup.parameters.RemoteOperations;
 import org.mobicents.isup.parameters.ServiceActivation;
-import org.mobicents.isup.parameters.SignalingPointCode;
 import org.mobicents.isup.parameters.TransmissionMediumUsed;
 import org.mobicents.isup.parameters.UIDActionIndicators;
 import org.mobicents.isup.parameters.UserToUserIndicators;
@@ -54,7 +45,7 @@ import org.mobicents.isup.parameters.accessTransport.AccessTransport;
  * Project: mobicents-isup-stack<br>
  * See Table 21/Q.763
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public class AddressCompleteMessage extends ISUPMessage {
@@ -93,8 +84,8 @@ public class AddressCompleteMessage extends ISUPMessage {
 	protected static final int _INDEX_O_RedirectStatus = 23;
 	protected static final int _INDEX_O_EndOfOptionalParameters = 24;
 
-	public AddressCompleteMessage(Object source, byte[] b) {
-		super(source, b);
+	public AddressCompleteMessage(Object source, byte[] b) throws  ParameterRangeInvalidException{
+		super(source);
 		super.f_Parameters = new TreeMap<Integer,ISUPParameter>();
 		super.v_Parameters = new TreeMap<Integer,ISUPParameter>();
 		super.o_Parameters = new TreeMap<Integer,ISUPParameter>();
@@ -105,8 +96,8 @@ public class AddressCompleteMessage extends ISUPMessage {
 
 	}
 
-	public AddressCompleteMessage(Object source, SignalingPointCode dpc, SignalingPointCode opc, byte sls, int cic, byte congestionPriority) throws ParameterRangeInvalidException {
-		super(source, dpc, opc, sls, cic, congestionPriority);
+	public AddressCompleteMessage() {
+		
 		super.f_Parameters = new TreeMap<Integer,ISUPParameter>();
 		super.v_Parameters = new TreeMap<Integer,ISUPParameter>();
 		super.o_Parameters = new TreeMap<Integer,ISUPParameter>();
@@ -143,7 +134,7 @@ public class AddressCompleteMessage extends ISUPMessage {
 
 	public void setOptionalBakwardCallIndicators(OptionalBakwardCallIndicators value) {
 		super.o_Parameters.put(_INDEX_O_OptionalBakwardCallIndicators, value);
-		System.err.println("PUT OBI: "+Arrays.toString(super.o_Parameters.values().toArray()));
+		
 	}
 
 	public OptionalBakwardCallIndicators getOptionalBakwardCallIndicators() {
@@ -160,7 +151,7 @@ public class AddressCompleteMessage extends ISUPMessage {
 
 	public void setCauseIndicators(CauseIndicators value) {
 		super.o_Parameters.put(_INDEX_O_CauseIndicators, value);
-		System.err.println("PUT CAUSE: "+Arrays.toString(super.o_Parameters.values().toArray()));
+		
 	}
 
 	public CauseIndicators getCauseIndicators() {
@@ -336,17 +327,31 @@ public class AddressCompleteMessage extends ISUPMessage {
 	}
 
 	@Override
-	protected int decodeMandatoryParameters(byte[] b, int index) throws IllegalArgumentException {
+	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
+		int localIndex = index;
 		if (b.length - index > 1) {
+			
 			// Message Type
+			if(b[index]!=this._MESSAGE_CODE)
+			{
+				throw new ParameterRangeInvalidException("Message code is not: "+this._MESSAGE_CODE);
+			}
 			index++;
 			// this.circuitIdentificationCode = b[index++];
-			byte[] backwardCallIndicator = new byte[2];
-			backwardCallIndicator[0] = b[index++];
-			backwardCallIndicator[1] = b[index++];
-			BackwardCallIndicators bci = new BackwardCallIndicators(backwardCallIndicator);
-			this.setBackwardCallIndicators(bci);
-			return 3;
+			try{
+				byte[] backwardCallIndicator = new byte[2];
+				backwardCallIndicator[0] = b[index++];
+				backwardCallIndicator[1] = b[index++];
+				BackwardCallIndicators bci = new BackwardCallIndicators(backwardCallIndicator);
+				this.setBackwardCallIndicators(bci);
+			}catch(Exception e)
+			{
+				//AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse BackwardCallIndicators due to: ",e);
+			}
+			
+			//return 3;
+			return index-localIndex;
 		} else {
 			throw new IllegalArgumentException("byte[] must have atleast two octets");
 		}
@@ -354,59 +359,18 @@ public class AddressCompleteMessage extends ISUPMessage {
 	}
 
 	@Override
-	protected int decodeMandatoryVariableParameters(byte[] b, int index) throws IllegalArgumentException {
-		if (b.length - index > 1) {
-
-		} else {
-			throw new IllegalArgumentException("byte[] must have atleast one octet in mandatory variable part to indicate wheather optional parameters are present");
-		}
-
-		return 1;
+	protected int getNumberOfMandatoryVariableLengthParameters() {
+		
+		return 0;
 	}
-
-	@Override
-	protected int decodeOptionalParameters(byte[] b, int index) throws IllegalArgumentException {
-
-		int localIndex = index;
-
-		int readCount = 0;
-		if (b.length - index > 0) {
-			// let it rip :)
-			boolean readParameter = true;
-			while (readParameter) {
-
-				try {
-				
-					byte parameterCode = b[localIndex++];
-					byte parameterLength = b[localIndex++];
-					byte[] parameterBody = new byte[parameterLength];
-					System.arraycopy(b, localIndex, parameterBody, 0, parameterLength);
-					localIndex += parameterLength;
-					readCount += 2 + parameterLength;
-
-					decodeOptionalBody(parameterBody, parameterCode);
-
-					if (b.length - localIndex > 0 && b[localIndex] != 0) {
-
-					} else {
-						readParameter = false;
-					}
-
-				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					throw new IllegalArgumentException("Failed to read parameter, to few octets in buffer", aioobe);
-				}
-			}
-		}
-
-		return readCount;
+	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex)
+	{
+		//we dont have those.
 	}
+	
+	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws IllegalArgumentException {
 
-	private void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws IllegalArgumentException {
 
-		System.err.println("CODE[" + Integer.toHexString(parameterCode) + "]");
-		for (byte b : parameterBody) {
-			System.err.println("B[" + Integer.toHexString(b) + "]");
-		}
 		switch ((int) parameterCode) {
 		case OptionalBakwardCallIndicators._PARAMETER_CODE:
 			OptionalBakwardCallIndicators obi = new OptionalBakwardCallIndicators(parameterBody);
@@ -510,8 +474,13 @@ public class AddressCompleteMessage extends ISUPMessage {
 			break;
 
 		default:
-			throw new IllegalArgumentException("Received wrong parameter code for ACM.");
+			throw new IllegalArgumentException("Unrecognized parameter code for optional part: "+parameterCode);
 		}
 
 	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.isup.messages.ISUPMessage#getNumberOfMandatoryVariableLengthParameters()
+	 */
+	
 }

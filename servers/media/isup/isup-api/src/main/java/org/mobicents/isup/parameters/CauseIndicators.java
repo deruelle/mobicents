@@ -2,7 +2,7 @@
  * Start time:15:14:32 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -15,7 +15,7 @@ import java.io.IOException;
  * Start time:15:14:32 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public class CauseIndicators extends AbstractParameter {
@@ -148,10 +148,7 @@ public class CauseIndicators extends AbstractParameter {
 
 			this.diagnostics = bos.toByteArray();
 
-			System.err.println("Decode CASE IND");
-			for (byte bb : b) {
-				System.err.println(Integer.toHexString(bb));
-			}
+			
 
 			return byteCounter;
 		}
@@ -172,10 +169,7 @@ public class CauseIndicators extends AbstractParameter {
 		if (this.diagnostics != null)
 			bos.write(this.diagnostics);
 		byte[] b = bos.toByteArray();
-		System.err.println("Enecode CASE IND");
-		for (byte bb : b) {
-			System.err.println(Integer.toHexString(bb));
-		}
+		
 		return b;
 	}
 

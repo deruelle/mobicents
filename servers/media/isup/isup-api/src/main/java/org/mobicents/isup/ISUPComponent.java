@@ -2,7 +2,7 @@
  * Start time:13:34:05 2009-03-29<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -18,7 +18,7 @@ import java.io.Serializable;
  * This is super interface for all components that can be parsed/encoded by ISUP
  * stack. It provides two essential methods that abtract decoding/encoding.
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public interface ISUPComponent extends Serializable {
@@ -35,7 +35,7 @@ public interface ISUPComponent extends Serializable {
 	 * @param b
 	 * @return
 	 */
-	int decodeElement(byte[] b) throws IllegalArgumentException;
+	int decodeElement(byte[] b) throws ParameterRangeInvalidException;
 
 	/**
 	 * Encodes elements as byte[].it contains body. (tag, length and Contents.

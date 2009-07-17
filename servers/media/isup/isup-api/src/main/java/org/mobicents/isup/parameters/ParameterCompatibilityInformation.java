@@ -2,7 +2,7 @@
  * Start time:12:39:34 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
@@ -18,7 +18,7 @@ import java.util.List;
  * Project: mobicents-isup-stack<br>
  * This is composed param ?
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
 public class ParameterCompatibilityInformation extends AbstractParameter {
