@@ -97,7 +97,7 @@
 			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/jain-mgcp/stack/
 		</developerConnection>
 		<url>
-			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/jain-mgcp/stack/
+			http://mobicents.googlecode.com/svn/trunk/servers/media/jain-mgcp/stack/
 		</url>
 	</scm>
 
