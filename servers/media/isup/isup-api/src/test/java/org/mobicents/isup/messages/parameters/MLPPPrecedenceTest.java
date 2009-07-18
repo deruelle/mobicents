@@ -43,9 +43,9 @@ public class MLPPPrecedenceTest extends ParameterHarness {
 		//FIXME: This one fails....
 		int serDomain = 15;
 		MLPPPrecedence eci = new MLPPPrecedence(getBody(MLPPPrecedence._LFB_INDICATOR_ALLOWED,MLPPPrecedence._PLI_PRIORITY,new byte[]{3,4}, serDomain));
-
+		
 		String[] methodNames = { "getLfb", "getPrecedenceLevel","getMllpServiceDomain" };
-		Object[] expectedValues = { MLPPPrecedence._LFB_INDICATOR_ALLOWED,MLPPPrecedence._PLI_PRIORITY, serDomain };
+		Object[] expectedValues = { (byte)MLPPPrecedence._LFB_INDICATOR_ALLOWED,(byte)MLPPPrecedence._PLI_PRIORITY, serDomain };
 	
 		super.testValues(eci, methodNames, expectedValues);
 	}
