@@ -5,8 +5,8 @@
   <parent>
     <groupId>org.mobicents</groupId>
     <artifactId>mobicents</artifactId>
-    <version>7</version>
-    <relativePath>../../../../pom.xml</relativePath>
+    <version>12</version>
+    <relativePath>../../parent/pom.xml</relativePath>
   </parent>
   
   <groupId>org.mobicents.tools</groupId>
@@ -45,7 +45,7 @@
 
   <developers>
     <developer>
-      <name>Alexandre Mendonça</name>
+      <name>Alexandre Mendonï¿½a</name>
       <email>brainslog[at]gmail.com</email>
     </developer>
   </developers>
