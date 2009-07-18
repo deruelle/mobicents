@@ -57,7 +57,7 @@ public class ConnectionRequestTest extends ParameterHarness {
 		bos.write(69);
 		return bos.toByteArray();
 	}
-
+	
 	private byte[] getBody2() throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -78,7 +78,7 @@ public class ConnectionRequestTest extends ParameterHarness {
 		localRef|=120<<8;
 		localRef|=38<<16;
 		int signalingPointCode = 120;
-		signalingPointCode |= 12<<8;
+		signalingPointCode |= 45<<8;
 		
 		int protocolClass = 120;
 		int credit = 69;
