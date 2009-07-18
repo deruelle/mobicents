@@ -28,8 +28,7 @@ import org.mobicents.mtp.MTPProvider;
  * Start time:09:18:14 2009-07-18<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 class ISUPProviderImpl implements ISUPProvider, MTPPayloadListener {
 
