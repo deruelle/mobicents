@@ -67,4 +67,57 @@ public class IAMTest extends MessageHarness{
 		assertTrue(super.makeCompare(message, encodedBody),equal);
 	}
 	
+	public void testTwo_Parameters() throws Exception
+	{
+		//FIXME: for now we strip MTP part
+		byte[] message={
+//	MTP PART	E5,
+//				9B,
+//				22,
+//				C5,
+//				46,
+//				37,
+//				C0,
+//				8D,
+//				08,
+//				00,
+				0x01,
+				0x10,
+				0x00,
+				0x01,
+				0x0A,
+				0x03,
+				0x02,
+				0x0A,
+				0x08,
+				0x03,
+				0x10,
+				(byte) 0x83,
+				0x60,
+				0x38,
+				0x04,
+				0x10,
+				0x65,
+				0x0A,
+				0x07,
+				0x03,
+				0x13,
+				0x09,
+				0x32,
+				0x36,
+				0x11,
+				0x37,
+				0x00
+
+		};
+
+		InitialAddressMessage iam=new InitialAddressMessage(this,message);
+		assertNotNull(iam.getNatureOfConnectionIndicators());
+		assertNotNull(iam.getForwardCallIndicators());
+		assertNotNull(iam.getCallingPartCategory());
+		assertNotNull(iam.getTransmissionMediumRequirement());
+		assertNotNull(iam.getCalledPartyNumber());
+		assertNotNull(iam.getCallingPartyNumber());
+		
+	}
 }

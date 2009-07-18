@@ -149,7 +149,7 @@ public class ReleaseMessage extends ISUPMessage {
 	/**
 	 * @param parameterBody
 	 * @param parameterCode
-	 * @throws ParameterRangeInvalidException 
+	 * @throws ParameterRangeInvalidException
 	 */
 	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
 		switch (parameterIndex) {
@@ -171,7 +171,7 @@ public class ReleaseMessage extends ISUPMessage {
 	 */
 	@Override
 	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
-		
+
 		switch ((int) parameterCode) {
 		case RedirectionNumber._PARAMETER_CODE:
 			RedirectionNumber rn = new RedirectionNumber(parameterBody);
@@ -233,13 +233,10 @@ public class ReleaseMessage extends ISUPMessage {
 			RedirectCounter rc = new RedirectCounter(parameterBody);
 			this.setRedirectCounter(rc);
 			break;
-		
-			
-		
+
 		default:
 			throw new IllegalArgumentException("Unrecognized parameter code for optional part: " + parameterCode);
 		}
-
 
 	}
 
@@ -250,6 +247,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setCauseIndicators(CauseIndicators v) {
 		super.v_Parameters.put(_INDEX_V_CauseIndicators, v);
 	}
+
 	public RedirectionInformation getRedirectionInformation() {
 		return (RedirectionInformation) super.o_Parameters.get(_INDEX_O_RedirectionInformation);
 	}
@@ -257,6 +255,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setRedirectionInformation(RedirectionInformation v) {
 		super.o_Parameters.put(_INDEX_O_RedirectionInformation, v);
 	}
+
 	public RedirectionNumber getRedirectionNumber() {
 		return (RedirectionNumber) super.o_Parameters.get(_INDEX_O_RedirectionNumber);
 	}
@@ -264,6 +263,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setRedirectionNumber(RedirectionNumber v) {
 		super.o_Parameters.put(_INDEX_O_RedirectionNumber, v);
 	}
+
 	public AccessTransport getAccessTransport() {
 		return (AccessTransport) super.o_Parameters.get(_INDEX_O_AccessTransport);
 	}
@@ -271,6 +271,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setAccessTransport(AccessTransport v) {
 		super.o_Parameters.put(_INDEX_O_AccessTransport, v);
 	}
+
 	public SignalingPointCode getSignalingPointCode() {
 		return (SignalingPointCode) super.o_Parameters.get(_INDEX_O_SignalingPointCode);
 	}
@@ -278,6 +279,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setSignalingPointCode(SignalingPointCode v) {
 		super.o_Parameters.put(_INDEX_O_SignalingPointCode, v);
 	}
+
 	public UserToUserInformation getU2UInformation() {
 		return (UserToUserInformation) super.o_Parameters.get(_INDEX_O_U2UInformation);
 	}
@@ -285,6 +287,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setU2UInformation(UserToUserInformation v) {
 		super.o_Parameters.put(_INDEX_O_U2UInformation, v);
 	}
+
 	public AutomaticCongestionLevel getAutomaticCongestionLevel() {
 		return (AutomaticCongestionLevel) super.o_Parameters.get(_INDEX_O_AutomaticCongestionLevel);
 	}
@@ -292,6 +295,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setAutomaticCongestionLevel(AutomaticCongestionLevel v) {
 		super.o_Parameters.put(_INDEX_O_AutomaticCongestionLevel, v);
 	}
+
 	public NetworkSpecificFacility getNetworkSpecificFacility() {
 		return (NetworkSpecificFacility) super.o_Parameters.get(_INDEX_O_NetworkSpecificFacility);
 	}
@@ -299,6 +303,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setNetworkSpecificFacility(NetworkSpecificFacility v) {
 		super.o_Parameters.put(_INDEX_O_NetworkSpecificFacility, v);
 	}
+
 	public AccessDeliveryInformation getAccessDeliveryInformation() {
 		return (AccessDeliveryInformation) super.o_Parameters.get(_INDEX_O_AccessDeliveryInformation);
 	}
@@ -306,6 +311,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setAccessDeliveryInformation(AccessDeliveryInformation v) {
 		super.o_Parameters.put(_INDEX_O_AccessDeliveryInformation, v);
 	}
+
 	public ParameterCompatibilityInformation getParameterCompatibilityInformation() {
 		return (ParameterCompatibilityInformation) super.o_Parameters.get(_INDEX_O_ParameterCompatibilityInformation);
 	}
@@ -313,6 +319,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setParameterCompatibilityInformation(ParameterCompatibilityInformation v) {
 		super.o_Parameters.put(_INDEX_O_ParameterCompatibilityInformation, v);
 	}
+
 	public UserToUserIndicators getU2UIndicators() {
 		return (UserToUserIndicators) super.o_Parameters.get(_INDEX_O_U2UIndicators);
 	}
@@ -320,6 +327,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setU2UIndicators(UserToUserIndicators v) {
 		super.o_Parameters.put(_INDEX_O_U2UIndicators, v);
 	}
+
 	public DisplayInformation getDisplayInformation() {
 		return (DisplayInformation) super.o_Parameters.get(_INDEX_O_DisplayInformation);
 	}
@@ -327,6 +335,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setDisplayInformation(DisplayInformation v) {
 		super.o_Parameters.put(_INDEX_O_DisplayInformation, v);
 	}
+
 	public RemoteOperations getRemoteOperations() {
 		return (RemoteOperations) super.o_Parameters.get(_INDEX_O_RemoteOperations);
 	}
@@ -334,6 +343,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setRemoteOperations(RemoteOperations v) {
 		super.o_Parameters.put(_INDEX_O_RemoteOperations, v);
 	}
+
 	public HTRInformation getHTRInformation() {
 		return (HTRInformation) super.o_Parameters.get(_INDEX_O_HTRInformation);
 	}
@@ -341,6 +351,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setHTRInformation(HTRInformation v) {
 		super.o_Parameters.put(_INDEX_O_HTRInformation, v);
 	}
+
 	public RedirectCounter getRedirectCounter() {
 		return (RedirectCounter) super.o_Parameters.get(_INDEX_O_RedirectCounter);
 	}
@@ -348,6 +359,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setRedirectCounter(RedirectCounter v) {
 		super.o_Parameters.put(_INDEX_O_RedirectCounter, v);
 	}
+
 	public RedirectBackwardInformation getRedirectBackwardInformation() {
 		return (RedirectBackwardInformation) super.o_Parameters.get(_INDEX_O_RedirectBackwardInformation);
 	}
@@ -355,8 +367,7 @@ public class ReleaseMessage extends ISUPMessage {
 	public void setRedirectBackwardInformation(RedirectBackwardInformation v) {
 		super.o_Parameters.put(_INDEX_O_RedirectBackwardInformation, v);
 	}
-	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -375,7 +386,7 @@ public class ReleaseMessage extends ISUPMessage {
 	 */
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
-		
+
 		return _MANDATORY_VAR_COUNT;
 	}
 
@@ -386,12 +397,10 @@ public class ReleaseMessage extends ISUPMessage {
 	 */
 	@Override
 	public boolean hasAllMandatoryParameters() {
-		if(this.f_Parameters.get(_INDEX_F_MessageType)==null || this.f_Parameters.get(_INDEX_F_MessageType).getCode() != this.getMessageType().getCode())
-		{
+		if (this.f_Parameters.get(_INDEX_F_MessageType) == null || this.f_Parameters.get(_INDEX_F_MessageType).getCode() != this.getMessageType().getCode()) {
 			return false;
 		}
-		if(this.v_Parameters.get(_INDEX_V_CauseIndicators)==null )
-		{
+		if (this.v_Parameters.get(_INDEX_V_CauseIndicators) == null) {
 			return false;
 		}
 		return true;

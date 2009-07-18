@@ -27,7 +27,7 @@ import org.mobicents.isup.parameters.SignalingPointCode;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-abstract class ISUPMessage implements ISUPComponent {
+public abstract class ISUPMessage implements ISUPComponent {
 
 	/**
 	 * To use one when encoding, created, possibly when decoding

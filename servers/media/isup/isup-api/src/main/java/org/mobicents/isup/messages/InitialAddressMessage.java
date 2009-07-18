@@ -440,7 +440,7 @@ public class InitialAddressMessage extends ISUPMessage {
 	}
 	
 	public TransmissionMediumRequirement getTransmissionMediumRequirement() {
-		return (TransmissionMediumRequirement) super.f_Parameters.get(_INDEX_V_CalledPartyNumber);
+		return (TransmissionMediumRequirement) super.f_Parameters.get(_INDEX_F_TransmissionMediumRequirement);
 	}
 
 	public void setTransmissionMediumRequirement(TransmissionMediumRequirement v) {

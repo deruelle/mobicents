@@ -10,6 +10,8 @@ package org.mobicents.isup.messages;
 
 import java.util.Arrays;
 
+import org.mobicents.isup.parameters.BackwardCallIndicators;
+
 /**
  * Start time:09:26:46 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
@@ -86,11 +88,21 @@ public class ACMTest extends MessageHarness {
 		};
 
 		AddressCompleteMessage acm=new AddressCompleteMessage(this,message);
-		byte[] encodedBody = acm.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
+	
 		assertNotNull("BackwardCallIndicator is null", acm.getBackwardCallIndicators());
 		assertNotNull("OptionalBackwardCallIndicator is null", acm.getOptionalBakwardCallIndicators());
 		assertNotNull("Cause Indicator is null", acm.getCauseIndicators());
+		
+		BackwardCallIndicators bci = acm.getBackwardCallIndicators();
+		assertEquals("BackwardCallIndicator charge indicator does not match",bci.getChargeIndicator(), 1);
+		assertEquals("BackwardCallIndicator called party status does not match",bci.getCalledPartysStatusIndicator(), 0);
+		assertEquals("BackwardCallIndicator called party category does not match",bci.getCalledPartysCategoryIndicator(), 0);
+		assertFalse(bci.isInterworkingIndicator());
+		assertFalse(bci.isEndToEndInformationIndicator());
+		assertFalse(bci.isIsdnAccessIndicator());
+		assertFalse(bci.isHoldingIndicator());
+		assertTrue(bci.isEchoControlDeviceIndicator());
+		assertEquals("BackwardCallIndicator sccp method does not match",bci.getSccpMethodIndicator(), 0);
 		
 	}
 	
