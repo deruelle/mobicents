@@ -143,7 +143,13 @@ public abstract class ParameterHarness extends TestCase {
 				fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae + ".Passed data: " + dumpData(presumableBody));
 				iae.printStackTrace();
 			}
-		} catch (Exception e) {
+		} catch (ParameterRangeInvalidException iae) {
+			if (shouldPass) {
+				fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae + ".Passed data: " + dumpData(presumableBody));
+				iae.printStackTrace();
+			}
+		}
+		catch (Exception e) {
 			fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "]." + e + ". Passed data: " + dumpData(presumableBody));
 			e.printStackTrace();
 		}
