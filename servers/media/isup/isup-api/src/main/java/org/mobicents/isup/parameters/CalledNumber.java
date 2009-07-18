@@ -92,7 +92,7 @@ public abstract class CalledNumber extends AbstractNAINumber {
 
 		this.numberingPlanIndicator = (b & 0x70) >> 4;
 		this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
-
+		
 		return 1;
 	}
 
@@ -104,7 +104,7 @@ public abstract class CalledNumber extends AbstractNAINumber {
 	 */
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
-		int c = (this.natureOfAddresIndicator & 0x07) << 4;
+		int c = (this.numberingPlanIndicator & 0x07) << 4;
 		c |= ((this.addressRepresentationRestrictedIndicator & 0x03) << 2);
 
 		bos.write(c);

@@ -271,7 +271,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 */
 	public int decodeDigits(ByteArrayInputStream bis, int octetsCount) throws ParameterRangeInvalidException {
 		if (bis.available() == 0) {
-			throw new IllegalArgumentException("No more data to read.");
+			throw new ParameterRangeInvalidException("No more data to read.");
 		}
 		int count = 0;
 		try {

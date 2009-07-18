@@ -31,11 +31,12 @@ public class OriginatingParticipatingServiceProviderTest extends ParameterHarnes
 	 * @throws IOException
 	 */
 	public OriginatingParticipatingServiceProviderTest() throws IOException {
-		super.badBodies.add(new byte[1]);
+		
 		super.badBodies.add(getBody3());
 		super.badBodies.add(getBody4());
 		super.badBodies.add(getBody5());
 
+		super.goodBodies.add(new byte[1]);
 		super.goodBodies.add(getBody1());
 	
 	}
