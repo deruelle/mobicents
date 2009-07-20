@@ -20,7 +20,10 @@
       <para>Editing</para>
     </listitem>
     <listitem>
-      <para>Closure</para>
+      <para>Fixed</para>
+    </listitem>
+    <listitem>
+      <para>Verified</para>
     </listitem>
   </orderedlist>
   <section>
@@ -41,6 +44,10 @@
       <step>
         <title>Open a New Issue</title>
         <para>If you can not find a duplicate ticket, navigate to the Mobicents GCode <guimenu>Issues</guimenu> tab, and click the <guibutton>New Issue</guibutton> link.</para>
+      </step>
+      <step>
+        <title>Select the Docs Enhancement Template</title>
+        <para>From the <guilabel>Issue Template</guilabel> field, select the <guimenuitem>Docs Enhancement</guimenuitem> template type.</para>
       </step>
       <step>
         <title>Complete the Summary field</title>
@@ -65,15 +72,15 @@
       </step>
       <step>
         <title>Complete the Description Field</title>
-        <para>The description field should contain specific details about the defect.  The more detailed the information, the easier it will be for the assignee to complete the ticket with minimal assistance.  </para>
-        <para>Include website links to content for the enhancement in this field.</para>
-        <para>Include the developer ticket to which the enhancement relates.  If the ticket isn&apos;t related to a code change, include a link to the discussion history surrounding the enhancement.</para>
-        <para>Include a Chapter/Section reference to the affected area in  the user guide.</para>
+        <para>The description field must contain specific details about the defect.  The more detailed the information, the easier it will be for the assignee to complete the ticket with minimal assistance.   Follow the headings in the Docs Enhancement template and provide the necessary information.</para>
+        <para>Include website links to content for the enhancement.</para>
+        <para>Include the developer ticket to which the enhancement relates.  If the ticket isn&apos;t related to a code change, include a link to the forum discussion history surrounding the enhancement.</para>
+        <para>Include a Chapter/Section reference (including the name) to the affected area in  the user guide.</para>
       </step>
       <step>
         <title>Change the Initial Ticket Status</title>
-        <para>If you are raising a ticket for a development change you made, change the status to <userinput>Accepted</userinput>.</para>
         <para>If you are raising a ticket for another user guide, or you are not a developer, change the status to <userinput>New</userinput>.</para>
+        <para>If you are raising a ticket for a development change you made, change the status to <userinput>Accepted</userinput>.</para>
       </step>
       <step>
         <title>Complete the Cc field.</title>
@@ -83,16 +90,13 @@
       <step>
         <title>Append Labels</title>
         <para>Labels are critical in a ticket, because they enable the ticket to be searched using consistent tags.</para>
-        <para>You will notice that two lables are automatically added; <literal>Type-Defect</literal> and <literal>Priority-Medium</literal>.  These categories are acceptable by default.</para>
+        <para>You will notice that two lables are automatically added; <literal>Type-Enhancement</literal>, <literal>Priority-Medium </literal>and <literal>Component-Docs</literal>.   These categories are acceptable by default.</para>
         <para>Append the following extra categories at a minimum to the <guilabel>Labels</guilabel> field:<itemizedlist>
             <listitem>
               <para><literal>Component-&amp;lt;server_name&amp;gt;</literal> - specifies the server to which the ticket relates.</para>
             </listitem>
             <listitem>
               <para><literal>Version-&amp;lt;version_number&amp;gt;</literal> - specifies the base version number affected by this ticket.</para>
-            </listitem>
-            <listitem>
-              <para><literal>Component-Documentation</literal> - specifies that this ticket is a documentation only ticket.  This label is not in the pick-list, and must be manually typed in.</para>
             </listitem>
           </itemizedlist></para>
       </step>
@@ -285,7 +289,7 @@
           <para>Save and close all open XML files.</para>
         </step>
       </procedure>
-      <para><xref linkend="procedure-Create_Review_Document"/> requires the XML changes to be published to HTML-Single format using the mkbk script, the Publican Toolchain, and Maven JDocBook.  For this procedure, you must have <xref linkend="pam-Publican_and_Maven"/>configured.</para>
+      <para><xref linkend="procedure-Create_Review_Document"/> requires the XML changes to be published to HTML-Single format using the mkbk script, the Publican Toolchain, and Maven JDocBook.  For this procedure, you must have <xref linkend="pam-Publican_and_Maven"/> configured.</para>
       <para><xref linkend="procedure-Create_Review_Document"/> assumes that you are using Fedora or RHEL, which are the currently supported Linux distributions for Publican.</para>
       <procedure id="procedure-Create_Review_Document">
         <title>Create Review Document</title>
@@ -316,8 +320,8 @@
       <title>Request Review</title>
       <para>After completing the review preparation tasks, you are ready to send your changes to a project member for review.</para>
       <para>The GCode Documentation Ticket contains the review request, and any files that will be required by the reviewer.</para>
-      <para>describes the process to request a documentation review through the GCode Documentation Ticket.</para>
-      <procedure>
+      <para><xref linkend="procedure-Revew_Request_Using_GCode_Ticket"/> describes the process to request a documentation review.</para>
+      <procedure id="procedure-Revew_Request_Using_GCode_Ticket">
         <title>Requesting Review using GCode Ticket</title>
         <step>
           <title>Open Original GCode Ticket</title>
@@ -327,9 +331,81 @@
         <step>
           <title>Add the Request to the Ticket</title>
           <para>In the Comment field, request that the ticket is ready for review and that the files are attached.</para>
-          <para>Ensure that you included the affected sections in the attachment, to save the reviewer time, and let them focus on the actual changes.</para>
+          <para>Ensure the reviewer&apos;s name, or email address, is specified in the <guilabel>Cc:</guilabel> field of the ticket.</para>
+          <para>Be as specific as possible with the areas requiring review.  If the changes were correctly recorded in the ticket, you can refer the reviewer to the sections that were previously marked as changed.</para>
+        </step>
+        <step>
+          <title>Provide Direct Links to All Changes</title>
+          <para>Hudson allows you to copy and paste direct links to  published sections in the online User Guide. </para>
+          <para>Pasting direct links to the section will greatly assist the peer reviewer with locating your changes.  </para>
+          <para>To assist the reviewer,  copy the absolute link to the affected section for each change.</para>
+        </step>
+        <step>
+          <title>Save and Close</title>
+          <para>After ensuring all required information is present, save and close the ticket.</para>
         </step>
       </procedure>
+    </section>
+    <section>
+      <title>Review Ticket</title>
+      <para>After the review request has been sent, the peer reviewer  is notified that a review is waiting through an email notification from GCode.  Thorough ticket review is key contributor to fantastic user documentation because other team members can use the opportunity to read the changes from a customer perspective.  The content can be evaluated for techincal accuracy and readability before being sent to the editing phase.</para>
+      <para>describes the process to follow when a review request is received.</para>
+      <procedure id="procedure-Peer_Reviewing_Documentation_Changes">
+        <title>Peer Reviewing Documentation Changes</title>
+        <step>
+          <title>Open the Ticket</title>
+          <para>In the email notification, click the link in the ticket to take you to the GCode Documentation Ticket.</para>
+        </step>
+        <step>
+          <title>Open the </title>
+          <para>The ticket should  contain a direct link to the affected section of the user guide hosted on the Hudson build server.</para>
+          <para>Click each link to be taken to the closest section containing each enhancement.</para>
+          <para>Refer to the details in the ticket to verify what you should be reviewing.</para>
+        </step>
+        <step>
+          <title>Review the Enhancements</title>
+          <para>For each specified enhancement, ask the following questions:</para>
+          <variablelist>
+            <title>Peer Review Questions</title>
+            <varlistentry>
+              <term>Does It Make Sense?</term>
+              <listitem>
+                <para>Look at readability of the documented enhancement.  Does it make sense when you read it?  If not, what needs to be changed?</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Is the Information Structured Correctly?</term>
+              <listitem>
+                <para>Is the incorporated information  included in the correct position in the  User Guide?   If not, where should the info be moved to?</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Are the Identified Changes Correctly Incorporated?</term>
+              <listitem>
+                <para>Do the incorporated changes cover the details identified in the Enhancement?  If not, what&apos;s missing and where should it be incorporated?</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Is Information Missing?</term>
+              <listitem>
+                <para>Is all relevant  information incorporated for the particular enhancement?  If not, what&apos;s missing and where should it be incorporated?</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Is a Diagram or Screenshot Really Needed?</term>
+              <listitem>
+                <para>Diagrams should be present only if the information contained within them is essential for the reader to grasp a concept, or user interface.   Well written procedures generally don&apos;t require supporting screen shots if the procedure describes the fields a user must complete.  Excluding unnecessary screenshots increases the  maintainability of the UDS.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </step>
+        <step>
+          <title>Comment on the Enhancements</title>
+          <para>It is important to understand that feedback can sometimes be percieved as criticism.  For this reason, it is important to provide only constructive feedback to the contributing content author.  </para>
+          <para>The goal of Peer Review is to  discuss why your suggestions should be considered by the content author.      The better your reasons for suggesting an improvement, the better the chances of having the content incorporated, or reaching a compromise.</para>
+        </step>
+      </procedure>
+      <para>   </para>
     </section>
   </section>
 </chapter>
