@@ -8,7 +8,7 @@
     </parent>
 	<groupId>org.mobicents.tools</groupId>
 	<artifactId>sip-balancer-jopr-plugin</artifactId>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Jopr Mobicents Sip Balancer Plugin</name>
@@ -147,10 +147,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-  <scm>
-    <connection>scm:svn:https://mobicents.googlecode.com/svn/tags/tools/sip-balancer-jopr-plugin/sip-balancer-jopr-plugin-1.0</connection>
-    <developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/tools/sip-balancer-jopr-plugin/sip-balancer-jopr-plugin-1.0</developerConnection>
-    <url>http://mobicents.googlecode.com/svn/tags/tools/sip-balancer-jopr-plugin/sip-balancer-jopr-plugin-1.0</url>
-  </scm>
 </project>
