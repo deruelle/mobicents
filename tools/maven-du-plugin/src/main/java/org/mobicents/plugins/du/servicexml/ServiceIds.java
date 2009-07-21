@@ -2,15 +2,17 @@ package org.mobicents.plugins.du.servicexml;
 
 import java.util.ArrayList;
 
+import javax.slee.ServiceID;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class ServiceIds {
 
-	private final ArrayList<String> ids;
+	private final ArrayList<ServiceID> ids;
 	
 	public static ServiceIds parse(Element element) {
-		ArrayList<String> ids = new ArrayList<String>();
+		ArrayList<ServiceID> ids = new ArrayList<ServiceID>();
 		
 		/*
 		 <service-xml>
@@ -28,16 +30,16 @@ public class ServiceIds {
 			String name = ((Element)service.getElementsByTagName("service-name").item(0)).getTextContent();
 			String vendor = ((Element)service.getElementsByTagName("service-vendor").item(0)).getTextContent();
 			String version = ((Element)service.getElementsByTagName("service-version").item(0)).getTextContent();
-			ids.add(name+"#"+vendor+"#"+version);
+			ids.add(new ServiceID(name, vendor, version));
 		}
 		return new ServiceIds(ids);
 	}
 	
-	public ServiceIds(ArrayList<String> ids) {
+	public ServiceIds(ArrayList<ServiceID> ids) {
 		this.ids = ids;
 	}
 	
-	public ArrayList<String> getIds() {
+	public ArrayList<ServiceID> getIds() {
 		return ids;
 	}
 }

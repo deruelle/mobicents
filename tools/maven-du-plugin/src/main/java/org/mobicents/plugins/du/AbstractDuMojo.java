@@ -40,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.slee.ServiceID;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -921,7 +922,7 @@ public abstract class AbstractDuMojo extends AbstractMojo {
             // parse dom into service ids
             ServiceIds serviceIds = ServiceIds.parse(document.getDocumentElement());
 
-            for (String serviceId : serviceIds.getIds()) {
+            for (ServiceID serviceId : serviceIds.getIds()) {
 
               String xml = "\r\n\t\t<antcall target=\"activate-service\">\r\n"
                 + "\t\t\t<param name=\"service.id\" value=\""+ serviceId + "\" />\r\n"

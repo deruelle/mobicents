@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents</artifactId>
-		<version>7</version>
+		<version>12</version>
 		<relativePath>../../../../pom.xml</relativePath>
 	</parent>
 	
@@ -116,27 +116,16 @@
 			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>javax.slee</groupId>
+			<artifactId>jain-slee</artifactId>
+			<version>1.1</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-   				<groupId>org.mobicents.tools</groupId>
-    			<version>1.0.0.BETA2</version>
-				<inherited>false</inherited>
-				<executions />
-				<configuration>
-					<classpathExcludes>
-						<exclude>xml-apis:xml-apis</exclude>
-						<exclude>jtidy:jtidy</exclude>
-					</classpathExcludes>
-					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
-					<eclipseProjectName>maven-du-plugin</eclipseProjectName>
-				</configuration>
-			</plugin>
-             <!--Site -->
-             <plugin>
+			 <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-site-plugin</artifactId>
                  <version>2.0-beta-5</version>

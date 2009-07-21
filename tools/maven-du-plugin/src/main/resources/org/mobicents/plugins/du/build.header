@@ -71,7 +71,7 @@
 		<property name="ra.entity.properties.url" value="${file_url}${ra.props}" />
 		<echo>Activating ${ra.entity} with properties: file=${ra.entity.properties.filename} fileURL=${ra.entity.properties.url}</echo>
 		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
-			<createraentity resourceadaptorid="${ra.id}" entityname="${ra.entity}" properties="${ra.entity.properties.url}" />
+			<createraentity componentid="${ra.id}" entityname="${ra.entity}" properties="${ra.entity.properties.url}" />
 			<activateraentity entityname="${ra.entity}" />
 		</slee-management>
 
@@ -80,7 +80,7 @@
 	<target name="activate-raentity-without-properties" depends="create-deploy-urls" unless="ra.entity.properties.filename">
 		<echo>Activating ${ra.entity} without properties file.</echo>
 		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
-			<createraentity resourceadaptorid="${ra.id}" entityname="${ra.entity}" />
+			<createraentity componentid="${ra.id}" entityname="${ra.entity}" />
 			<activateraentity entityname="${ra.entity}" />
 		</slee-management>
 	</target>
@@ -116,13 +116,13 @@
 		
 	<target name="activate-service">		
 		<slee-management host="${jnpHost}" jnpport="${jnpPort}">
-			<activateservice serviceid="${service.id}"/>
+			<activateservice componentid="${service.id}"/>
 		</slee-management>
     </target>
 	
 	<target name="deactivate-service">		
 		<slee-management host="${jnpHost}" jnpport="${jnpPort}">
-			<deactivateservice serviceid="${service.id}"/>
+			<deactivateservice componentid="${service.id}"/>
 		</slee-management>
 	</target>
 	

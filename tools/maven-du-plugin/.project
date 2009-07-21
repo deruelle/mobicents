@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>maven-du-plugin</name>
-  <comment/>
+  <comment>Mobicent Maven2 plugin to build JAIN SLEE deployable units.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
-      <arguments/>
     </buildCommand>
   </buildSpec>
   <natures>
