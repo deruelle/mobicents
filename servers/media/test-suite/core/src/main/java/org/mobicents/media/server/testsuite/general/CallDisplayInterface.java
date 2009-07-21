@@ -35,6 +35,7 @@ public interface CallDisplayInterface {
     public int getCPS();
     public int getMaxConcurrentCalls();
     public long getMaxCalls();
+    public int getMaxFailCalls();
     /**
      * Get codec Vector used to create SDP
      * @return

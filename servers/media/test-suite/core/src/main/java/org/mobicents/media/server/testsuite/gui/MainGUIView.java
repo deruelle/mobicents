@@ -164,6 +164,8 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         fieldMaxCallNumber = new javax.swing.JTextField();
         _labelConcurrentCalls = new javax.swing.JLabel();
         fieldConcurrentCalls = new javax.swing.JTextField();
+        _labelMaxFailCalls = new javax.swing.JLabel();
+        fieldMaxFailCalls = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -412,6 +414,12 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         fieldConcurrentCalls.setText(resourceMap.getString("fieldConcurrentCalls.text")); // NOI18N
         fieldConcurrentCalls.setName("fieldConcurrentCalls"); // NOI18N
 
+        _labelMaxFailCalls.setText(resourceMap.getString("_labelMaxFailCalls.text")); // NOI18N
+        _labelMaxFailCalls.setName("_labelMaxFailCalls"); // NOI18N
+
+        fieldMaxFailCalls.setText(resourceMap.getString("fieldMaxFailCalls.text")); // NOI18N
+        fieldMaxFailCalls.setName("fieldMaxFailCalls"); // NOI18N
+
         org.jdesktop.layout.GroupLayout testSetupPanelLayout = new org.jdesktop.layout.GroupLayout(testSetupPanel);
         testSetupPanel.setLayout(testSetupPanelLayout);
         testSetupPanelLayout.setHorizontalGroup(
@@ -420,11 +428,11 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                 .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jSeparator3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE))
+                        .add(jSeparator3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
                     .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE)
                             .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                 .add(testSetupPanelLayout.createSequentialGroup()
                                     .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -448,18 +456,20 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                                         .add(_labelClientPort)
                                         .add(_labelDumpDir)
                                         .add(_labelCodec)
-                                        .add(_labelConcurrentCalls))
+                                        .add(_labelConcurrentCalls)
+                                        .add(_labelMaxFailCalls))
                                     .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                     .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                         .add(fieldConcurrentCalls)
                                         .add(fieldClientPort)
                                         .add(fieldServerPort)
                                         .add(fieldDataDumpDir)
-                                        .add(fieldCodecBox, 0, 136, Short.MAX_VALUE))
+                                        .add(fieldCodecBox, 0, 136, Short.MAX_VALUE)
+                                        .add(fieldMaxFailCalls))
                                     .add(59, 59, 59)))))
                     .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jSeparator4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE))
+                        .add(jSeparator4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
                     .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(_labelOngoingCalls)
@@ -491,7 +501,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                         .add(buttonDecreaseCPSBy1))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE))
+                        .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
                     .add(testSetupPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(_labelMaxCalls))
@@ -499,7 +509,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                         .addContainerGap()
                         .add(labelFileUrl)
                         .add(41, 41, 41)
-                        .add(fieldAnnFileURL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)))
+                        .add(fieldAnnFileURL, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -554,11 +564,15 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                     .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                         .add(_labelConcurrentCalls)
                         .add(fieldConcurrentCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(fieldMaxFailCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(_labelMaxFailCalls))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(fieldAnnFileURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(labelFileUrl))
-                .add(123, 123, 123)
+                .add(106, 106, 106)
                 .add(jSeparator2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(testSetupPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
@@ -583,7 +597,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                     .add(fieldFailedCalls, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jSeparator4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         userDialogPanel.addTab(resourceMap.getString("testSetupPanel.TabConstraints.tabTitle"), resourceMap.getIcon("testSetupPanel.TabConstraints.tabIcon"), testSetupPanel); // NOI18N
@@ -715,6 +729,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             this.fieldCPS.setEnabled(false);
             this.fieldMaxCallNumber.setEnabled(false);
             this.fieldConcurrentCalls.setEnabled(false);
+            this.fieldMaxFailCalls.setEnabled(false);
             this.dirLoadFileChooser.setCurrentDirectory(new File(this.fieldDataDumpDir.getText()));
         }catch(Exception e)
         {
@@ -729,7 +744,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         if(this.currentTest!=null);
         try{
             
-            this.currentTest.stop();
+            this.currentTest.stop(false);
             this.buttonStartTest.setEnabled(true);
             this.fieldCallDurrationTextField.setEnabled(true);
             this.fieldClientAddress.setEnabled(true);
@@ -741,6 +756,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             this.fieldCPS.setEnabled(true);
             this.fieldMaxCallNumber.setEnabled(true);
             this.fieldConcurrentCalls.setEnabled(true);
+            this.fieldMaxFailCalls.setEnabled(true);
         }catch(Exception e)
         {
             e.printStackTrace();
@@ -812,7 +828,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         try{
             if(this.currentTest!=null)
             {
-                this.currentTest.stop();
+                this.currentTest.stop(true);
             }
         
             this.currentTest= new AnnouncementTest();
@@ -849,6 +865,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     private javax.swing.JLabel _labelDumpDir;
     private javax.swing.JLabel _labelErrorCalls;
     private javax.swing.JLabel _labelMaxCalls;
+    private javax.swing.JLabel _labelMaxFailCalls;
     private javax.swing.JLabel _labelOngoingCalls;
     private javax.swing.JLabel _labelServerAddress;
     private javax.swing.JLabel _labelServerPort;
@@ -874,6 +891,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     private javax.swing.JTextField fieldFailedCalls;
     private javax.swing.JTable fieldLoadedDataDisplayTable;
     private javax.swing.JTextField fieldMaxCallNumber;
+    private javax.swing.JTextField fieldMaxFailCalls;
     private javax.swing.JTextField fieldOngoingCalls;
     private javax.swing.JTextField fieldServerAddress;
     private javax.swing.JTextField fieldServerPort;
@@ -972,6 +990,9 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     public long getMaxCalls() {
        return Long.valueOf(this.fieldMaxCallNumber.getText());
     }
+     public int getMaxFailCalls() {
+       return Integer.valueOf(this.fieldMaxFailCalls.getText());
+    }
     public void updateCallView() {
         JFrame fm = this.getFrame();
         fm.invalidate();
@@ -993,15 +1014,6 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         return this.fieldAnnFileURL.getText();
     }
 
-    
-            
-    
-    
-    
-    
-    
-    
-    
     
     
 }

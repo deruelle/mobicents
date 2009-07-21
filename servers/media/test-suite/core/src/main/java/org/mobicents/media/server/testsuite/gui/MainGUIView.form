@@ -179,12 +179,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jSeparator3" pref="528" max="32767" attributes="0"/>
+                                  <Component id="jSeparator3" pref="589" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jSeparator1" alignment="0" pref="528" max="32767" attributes="0"/>
+                                      <Component id="jSeparator1" alignment="0" pref="589" max="32767" attributes="0"/>
                                       <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
@@ -213,6 +213,7 @@
                                                   <Component id="_labelDumpDir" alignment="0" min="-2" max="-2" attributes="0"/>
                                                   <Component id="_labelCodec" min="-2" max="-2" attributes="0"/>
                                                   <Component id="_labelConcurrentCalls" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="_labelMaxFailCalls" min="-2" max="-2" attributes="0"/>
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -221,6 +222,7 @@
                                                   <Component id="fieldServerPort" alignment="0" max="32767" attributes="1"/>
                                                   <Component id="fieldDataDumpDir" alignment="0" max="32767" attributes="1"/>
                                                   <Component id="fieldCodecBox" alignment="0" pref="136" max="32767" attributes="1"/>
+                                                  <Component id="fieldMaxFailCalls" alignment="0" max="32767" attributes="1"/>
                                               </Group>
                                               <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                                           </Group>
@@ -229,7 +231,7 @@
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jSeparator4" pref="528" max="32767" attributes="0"/>
+                                  <Component id="jSeparator4" pref="589" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
@@ -265,7 +267,7 @@
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jSeparator2" pref="528" max="32767" attributes="0"/>
+                                  <Component id="jSeparator2" pref="589" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
@@ -275,7 +277,7 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="labelFileUrl" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-                                  <Component id="fieldAnnFileURL" pref="442" max="32767" attributes="0"/>
+                                  <Component id="fieldAnnFileURL" pref="503" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -343,12 +345,17 @@
                                   <Component id="fieldConcurrentCalls" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="fieldMaxFailCalls" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="_labelMaxFailCalls" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="fieldAnnFileURL" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="labelFileUrl" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="106" max="-2" attributes="0"/>
                           <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
@@ -376,7 +383,7 @@
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jSeparator4" min="-2" pref="10" max="-2" attributes="0"/>
-                          <EmptySpace pref="42" max="32767" attributes="0"/>
+                          <EmptySpace pref="33" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -648,6 +655,18 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" resourceKey="fieldConcurrentCalls.text"/>
                     <Property name="name" type="java.lang.String" value="fieldConcurrentCalls" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="_labelMaxFailCalls">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="_labelMaxFailCalls.text"/>
+                    <Property name="name" type="java.lang.String" value="_labelMaxFailCalls" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="fieldMaxFailCalls">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="fieldMaxFailCalls.text"/>
+                    <Property name="name" type="java.lang.String" value="fieldMaxFailCalls" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>

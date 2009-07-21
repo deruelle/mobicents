@@ -138,7 +138,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependency-jar</id>
-						<phase>install</phase>
+						<phase>process-resources</phase>
 						<goals>
 							<goal>copy</goal>
 						</goals>
@@ -550,7 +550,7 @@
 		<profile>
 			<id>run</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<build>
 				<plugins>
