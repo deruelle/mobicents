@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Mobicents Community Documentation</title><link rel="stylesheet" href="./Common_Content/css/default.css" type="text/css" /><meta name="generator" content="publican" /><meta name="package" content="" /><meta name="description" content="The guide contains information relating to the ongoing maintenance of the Mobicents Community Documentation Suite. The guide discusses the current state of the documentation, explains the writing standards currently used in the guides, the structure of the guides in the GCode SVN repository, and provides some quick-start help for community authors in getting accustomed to XML authoring." /></head><body class=""><div class="book" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div class="producttitle"><span class="productname">Mobicents User Documentation</span> <span class="productnumber">0.1</span></div><div><h1 id="id2813671" class="title">Mobicents Community Documentation</h1></div><div><h2 class="subtitle">Self-Managing Mobicents Community Documentation</h2></div><p class="edition">Edition 0</p><div><h3 class="corpauthor">
+				<span class="inlinemediaobject"><object data="Common_Content/images/title_logo.svg" type="image/svg+xml"> Logo</object></span>
+			</h3></div><div><div class="authorgroup"><div class="author"><h3 class="author"><span class="firstname">Jared</span> <span class="surname">Morgan</span></h3><div class="affiliation"><span class="orgname">Red Hat, Inc</span> <span class="orgdiv">Engineering Content Service</span></div><code class="email"><a class="email" href="mailto:jmorgan@redhat.com">jmorgan@redhat.com</a></code></div></div></div><div><p class="copyright">Copyright © 2009 Red Hat Inc.</p></div><hr /><div><div id="id2914672" class="legalnotice"><h1 class="legalnotice">Legal Notice</h1><div class="para">
+		Copyright <span class="trademark"></span>© 2009 Red Hat Inc. This material may only be distributed subject to the terms and conditions set forth in the GNU Free Documentation License (GFDL), V1.2 or later (the latest version is presently available at <a href="http://www.gnu.org/licenses/fdl.txt">http://www.gnu.org/licenses/fdl.txt</a>).
+	</div></div></div><div><div class="abstract"><h6>Abstract</h6><div class="para">The guide contains information relating to the ongoing maintenance
+of the Mobicents Community Documentation Suite. The guide discusses
+the current state of the documentation, explains the writing
+standards currently used in the guides, the structure of the guides
+in the GCode SVN repository, and provides some quick-start help for
+community authors in getting accustomed to XML authoring.</div></div></div></div><hr /></div><div class="toc"><dl><dt><span class="preface"><a href="#Mobicents_Community_Documentation-Preface">Preface</a></span></dt><dd><dl><dt><span class="section"><a href="#id2895493">1. Document Conventions</a></span></dt><dd><dl><dt><span class="section"><a href="#id2894140">1.1. Typographic Conventions</a></span></dt><dt><span class="section"><a href="#id2898891">1.2. Pull-quote Conventions</a></span></dt><dt><span class="section"><a href="#id2831343">1.3. Notes and Warnings</a></span></dt></dl></dd><dt><span class="section"><a href="#id2932440">2. We Need Feedback!</a></span></dt></dl></dd><dt><span class="chapter"><a href="#Introduction">1. Introduction</a></span></dt><dt><span class="chapter"><a href="#rs-Repository_Structure">2. Documentation Repository</a></span></dt><dt><span class="chapter"><a href="#Book_Structure">3. Book Structure</a></span></dt><dt><span class="chapter"><a href="#ap-Authoring_Procedures">4. Authoring Procedures</a></span></dt><dd><dl><dt><span class="section"><a href="#id2920498">4.1. GCode Documentation Ticket</a></span></dt><dt><span class="section"><a href="#ap-Authoring">4.2. Authoring</a></span></dt><dd><dl><dt><span class="section"><a href="#ap-Check_Out_GCode_SVN_Repository">4.2.1. Check Out GCode SVN Repository</a></span></dt><dt><span class="section"><a href="#ap-Update_XML">4.2.2. Update XML</a></span></dt><dt><span class="section"><a href="#ap-Update_GCode_Ticket">4.2.3. Update GCode Ticket</a></span></dt></dl></dd><dt><span class="section"><a href="#r-Review">4.3. Review</a></span></dt><dd><dl><dt><span class="section"><a href="#id2955699">4.3.1. Review Preparation</a></span></dt><dt><span class="section"><a href="#id2922299">4.3.2. Request Review</a></span></dt><dt><span class="section"><a href="#id2912851">4.3.3. Review Ticket</a></span></dt></dl></dd><dt><span class="section"><a href="#id2928413">4.4. Editing</a></span></dt><dt><span class="section"><a href="#id2928425">4.5. Fixed</a></span></dt><dt><span class="section"><a href="#id2975442">4.6. Verified</a></span></dt></dl></dd><dt><span class="chapter"><a href="#pam-Publican_and_Maven">5. Publican and Maven</a></span></dt><dt><span class="chapter"><a href="#bs-XML_Authoring_Resources">6. XML Authoring Resources</a></span></dt><dt><span class="appendix"><a href="#app-Revision_History">A. Revision History</a></span></dt></dl></div><div class="preface" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h1 id="Mobicents_Community_Documentation-Preface" class="title">Preface</h1></div></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="id2895493">1. Document Conventions</h2></div></div></div><div class="para">
+		This manual uses several conventions to highlight certain words and phrases and draw attention to specific pieces of information.
+	</div><div class="para">
+		In PDF and paper editions, this manual uses typefaces drawn from the <a href="https://fedorahosted.org/liberation-fonts/">Liberation Fonts</a> set. The Liberation Fonts set is also used in HTML editions if the set is installed on your system. If not, alternative but equivalent typefaces are displayed. Note: Red Hat Enterprise Linux 5 and later includes the Liberation Fonts set by default.
+	</div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="id2894140">1.1. Typographic Conventions</h3></div></div></div><div class="para">
+			Four typographic conventions are used to call attention to specific words and phrases. These conventions, and the circumstances they apply to, are as follows.
+		</div><div class="para">
+			<code class="literal">Mono-spaced Bold</code>
+		</div><div class="para">
+			Used to highlight system input, including shell commands, file names and paths. Also used to highlight key caps and key-combinations. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para">
+				To see the contents of the file <code class="filename">my_next_bestselling_novel</code> in your current working directory, enter the <code class="command">cat my_next_bestselling_novel</code> command at the shell prompt and press <span class="keycap"><strong>Enter</strong></span> to execute the command.
+			</div></blockquote></div><div class="para">
+			The above includes a file name, a shell command and a key cap, all presented in Mono-spaced Bold and all distinguishable thanks to context.
+		</div><div class="para">
+			Key-combinations can be distinguished from key caps by the hyphen connecting each part of a key-combination. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para">
+				Press <span class="keycap"><strong>Enter</strong></span> to execute the command.
+			</div><div class="para">
+				Press <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F1</strong></span> to switch to the first virtual terminal. Press <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F7</strong></span> to return to your X-Windows session.
+			</div></blockquote></div><div class="para">
+			The first sentence highlights the particular key cap to press. The second highlights two sets of three key caps, each set pressed simultaneously.
+		</div><div class="para">
+			If source code is discussed, class names, methods, functions, variable names and returned values mentioned within a paragraph will be presented as above, in <code class="literal">Mono-spaced Bold</code>. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para">
+				File-related classes include <code class="classname">filesystem</code> for file systems, <code class="classname">file</code> for files, and <code class="classname">dir</code> for directories. Each class has its own associated set of permissions.
+			</div></blockquote></div><div class="para">
+			<span class="application"><strong>Proportional Bold</strong></span>
+		</div><div class="para">
+			This denotes words or phrases encountered on a system, including application names; dialogue box text; labelled buttons; check-box and radio button labels; menu titles and sub-menu titles. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para">
+				Choose <span class="guimenu"><strong>System &gt; Preferences &gt; Mouse</strong></span> from the main menu bar to launch <span class="application"><strong>Mouse Preferences</strong></span>. In the <span class="guilabel"><strong>Buttons</strong></span> tab, click the <span class="guilabel"><strong>Left-handed mouse</strong></span> check box and click <span class="guibutton"><strong>Close</strong></span> to switch the primary mouse button from the left to the right (making the mouse suitable for use in the left hand).
+			</div><div class="para">
+				To insert a special character into a <span class="application"><strong>gedit</strong></span> file, choose <span class="guimenu"><strong>Applications &gt; Accessories &gt; Character Map</strong></span> from the main menu bar. Next, choose <span class="guimenu"><strong>Search &gt; Find…</strong></span> from the <span class="application"><strong>Character Map</strong></span> menu bar, type the name of the character in the <span class="guilabel"><strong>Search</strong></span> field and click <span class="guibutton"><strong>Next</strong></span>. The character you sought will be highlighted in the <span class="guilabel"><strong>Character Table</strong></span>. Double-click this highlighted character to place it in the <span class="guilabel"><strong>Text to copy</strong></span> field and then click the <span class="guibutton"><strong>Copy</strong></span> button. Now switch back to your document and choose <span class="guimenu"><strong>Edit &gt; Paste</strong></span> from the <span class="application"><strong>gedit</strong></span> menu bar.
+			</div></blockquote></div><div class="para">
+			The above text includes application names; system-wide menu names and items; application-specific menu names; and buttons and text found within a GUI interface, all presented in Proportional Bold and all distinguishable by context.
+		</div><div class="para">
+			Note the <span class="guimenu"><strong>&gt;</strong></span> shorthand used to indicate traversal through a menu and its sub-menus. This is to avoid the difficult-to-follow 'Select <span class="guimenuitem"><strong>Mouse</strong></span> from the <span class="guimenu"><strong>Preferences</strong></span> sub-menu in the <span class="guimenu"><strong>System</strong></span> menu of the main menu bar' approach.
+		</div><div class="para">
+			<code class="command"><em class="replaceable"><code>Mono-spaced Bold Italic</code></em></code> or <span class="application"><strong><em class="replaceable"><code>Proportional Bold Italic</code></em></strong></span>
+		</div><div class="para">
+			Whether Mono-spaced Bold or Proportional Bold, the addition of Italics indicates replaceable or variable text. Italics denotes text you do not input literally or displayed text that changes depending on circumstance. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para">
+				To connect to a remote machine using ssh, type <code class="command">ssh <em class="replaceable"><code>username</code></em>@<em class="replaceable"><code>domain.name</code></em></code> at a shell prompt. If the remote machine is <code class="filename">example.com</code> and your username on that machine is john, type <code class="command">ssh john@example.com</code>.
+			</div><div class="para">
+				The <code class="command">mount -o remount <em class="replaceable"><code>file-system</code></em></code> command remounts the named file system. For example, to remount the <code class="filename">/home</code> file system, the command is <code class="command">mount -o remount /home</code>.
+			</div><div class="para">
+				To see the version of a currently installed package, use the <code class="command">rpm -q <em class="replaceable"><code>package</code></em></code> command. It will return a result as follows: <code class="command"><em class="replaceable"><code>package-version-release</code></em></code>.
+			</div></blockquote></div><div class="para">
+			Note the words in bold italics above — username, domain.name, file-system, package, version and release. Each word is a placeholder, either for text you enter when issuing a command or for text displayed by the system.
+		</div><div class="para">
+			Aside from standard usage for presenting the title of a work, italics denotes the first use of a new and important term. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para">
+				When the Apache HTTP Server accepts requests, it dispatches child processes or threads to handle them. This group of child processes or threads is known as a <em class="firstterm">server-pool</em>. Under Apache HTTP Server 2.0, the responsibility for creating and maintaining these server-pools has been abstracted to a group of modules called <em class="firstterm">Multi-Processing Modules</em> (<em class="firstterm">MPMs</em>). Unlike other modules, only one module from the MPM group can be loaded by the Apache HTTP Server.
+			</div></blockquote></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="id2898891">1.2. Pull-quote Conventions</h3></div></div></div><div class="para">
+			Two, commonly multi-line, data types are set off visually from the surrounding text.
+		</div><div class="para">
+			Output sent to a terminal is set in <code class="computeroutput">Mono-spaced Roman</code> and presented thus:
+		</div><pre class="screen">
+books        Desktop   documentation  drafts  mss    photos   stuff  svn
+books_tests  Desktop1  downloads      images  notes  scripts  svgs
+</pre><div class="para">
+			Source-code listings are also set in <code class="computeroutput">Mono-spaced Roman</code> but are presented and highlighted as follows:
+		</div><pre class="programlisting">
+package org.jboss.book.jca.ex1;
+
+import javax.naming.InitialContext;
+
+public class ExClient
+{
+   public static void main(String args[]) 
+       throws Exception
+   {
+      InitialContext iniCtx = new InitialContext();
+      Object         ref    = iniCtx.lookup("EchoBean");
+      EchoHome       home   = (EchoHome) ref;
+      Echo           echo   = home.create();
+
+      System.out.println("Created Echo");
+
+      System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
+   }
+   
+}
+</pre></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="id2831343">1.3. Notes and Warnings</h3></div></div></div><div class="para">
+			Finally, we use three visual styles to draw attention to information that might otherwise be overlooked.
+		</div><div class="note"><h2>Note</h2><div class="para">
+				A note is a tip or shortcut or alternative approach to the task at hand. Ignoring a note should have no negative consequences, but you might miss out on a trick that makes your life easier.
+			</div></div><div class="important"><h2>Important</h2><div class="para">
+				Important boxes detail things that are easily missed: configuration changes that only apply to the current session, or services that need restarting before an update will apply. Ignoring Important boxes won't cause data loss but may cause irritation and frustration.
+			</div></div><div class="warning"><h2>Warning</h2><div class="para">
+				A Warning should not be ignored. Ignoring warnings will most likely cause data loss.
+			</div></div></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="id2932440">2. We Need Feedback!</h2></div></div></div><a id="id2929608" class="indexterm"></a><div class="para">
+		You should over ride this by creating your own local Feedback.xml file.
+	</div></div></div><div class="chapter" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="Introduction">Chapter 1. Introduction</h2></div></div></div><div class="para">
+		The Mobicents User Documentation Suite (UDS) is the formalized source of product user documentaton for the Mobicents Community Project. Within the UDS, a user can learn how to install the platform, or individual servers. Server-specific features are located within each server guide and include examples that can help new users become accustomed to the functionality offered by the product suite.
+	</div><div class="para">
+		The UDS is written in eXtensible Markup Language (XML) and uses the DocBook DTD to control guide structure. The documentation is published to HTML-Single format using the Publican Toolchain and Maven JDocBook, and subsequenty hosted on the Hudson Build Server for public viewing and comment.
+	</div><div class="formalpara"><h5 class="formalpara" id="id2961022">UDS History</h5>
+			Originally, the UDS was delivered to the user through multiple sources such as Wiki pages and static documents. The information was hosted in different locations.
+		</div><div class="para">
+		The separate information sources were merged into a single wiki source, hosted on the mobicents-public Google group. Once the information was merged into mobicent-public, the developers had a single place to communicate with the end users of the platform.
+	</div><div class="para">
+		As the Mobicents product matured, the requirement for formalised single-source documentation became apparent. When Red Hat acquired the project, the process of merging the content into a single XML repository began.
+	</div><div class="para">
+		During the conversion process from Wiki to XML, the UDS was managed by Red Hat Technical Writers. Red Hat writers took the developer content and converted it into XML user documentation, adding to the existing content where the need existed. Those areas under development in the UDS were linked back to the mobicents-public forum, so readers weren't presented wtih an information dead-end.
+	</div><div class="para">
+		The documentation suite evolved to a point where the Mobicents Community Project team expressed interest in self-managing the community documentation, and hosting it on the GCode SVN repository. This decision simplified the way the team controlled the versioning of user guide content, and allowed the documentation to be branched when the development cycle dictated. It also assisted the Red Hat Technical Writers in developing the product documentation for the JBoss Communication Platform.
+	</div><div class="formalpara"><h5 class="formalpara" id="id2927120">Current UDS Status</h5>
+			Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to internal Red Hat customers. The Mobicents UDS forms the backbone of the JBCP Product Documentation. The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.
+		</div></div><div class="chapter" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="rs-Repository_Structure">Chapter 2. Documentation Repository</h2></div></div></div><div class="para">
+		The Mobicents User Documentation Suite (UDS) is stored in the <a href="http://code.google.com/p/mobicents/source/browse/">Mobicents Google Code Subversion repository(GCode SVN)</a> .
+	</div><div class="para">
+		Because the GCode SVN contains the source code for the Mobicents Platform, the repository is available to the public in read-only format. For contributors to make changes to the repository in any way, the Mobicents project must grant specific read-write permissions to the contributor's nominated Google account.
+	</div><div class="tip"><h2>Tip</h2><div class="para">
+		To obtain read-write access, notify one of the project owners listed on the Google Code Project Home Page. Ensure the Google account information is included in the request.
+	</div></div><div class="para">
+		The most recent commit of the User Guide is located in the <code class="filename">/trunk</code> directory. Within this directory, each user guide is separated into the server folder to which it belongs. Click on the links in the list to inspect the document repository structure.
+	</div><div class="itemizedlist"><ul><li><div class="para">
+				<a href="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/jain-slee/jain-slee-docs">JAIN SLEE Server</a>
+			</div></li><li><div class="para">
+				<a href="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/media/media-server-docs">Media Server</a>
+			</div></li><li><div class="para">
+				<a href="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/sip-presence/sip-presence-docs">SIP Presence Server</a>
+			</div></li><li><div class="para">
+				<a href="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/sip-servlets/sip-servlets-docs">SIP Servlets Server</a>
+			</div></li></ul></div><div class="para">
+		In all docs directories, there is an en-US folder. This folder contains all the XML files that are required for the User Guide.
+	</div><div class="para">
+		The exception to this is the single XML file prefixed with <code class="filename">all-</code>. For example, in the sip-servlets-docs repository, the file is named <code class="filename">all-SIP_Servlets_Server_User_Guide.xml</code>. This file is used by Maven JDocBook to produce the documentation that is hosted on the Hudson Build Server.
+	</div><div class="important"><h2>Do Not Update the all-*.xml File</h2><div class="para">
+			Never incorporate changes directly into the <code class="filename">all-&lt;user guide name&gt;.xml</code> file. Updating this file with documentation changes will result in lost work.
+		</div><div class="para">
+			Update the individual XML files that comprise the User Guide. The changes made in individual files will eventually be merged into the all-*.xml file.
+		</div></div></div><div class="chapter" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="Book_Structure">Chapter 3. Book Structure</h2></div></div></div><div class="para">
+		The structure of each user guide in the Mobicents User Documentation Suite (UDS) is controlled by the DocBook XML Document Type Definition (DTD). Before updating any user guide in the GCode SVN, it is very important to understand the way each user guide is constructed.
+	</div><div class="para">
+		As previously discussed, the Publican Toolchain requires a set of XML files to be present in the directory in order to publish a book to an output format. <a class="xref" href="#table-Book-Structure" title="Table 3.1. Book Components">Table 3.1, “Book Components”</a>describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide.
+	</div><div class="table" id="table-Book-Structure"><div class="table-contents"><table summary="Book Components" width="100%" border="1"><colgroup><col align="left" /><col align="left" /><col align="left" /></colgroup><thead><tr><th align="center">
+						XML Book Component
+					</th><th align="center">
+						Description
+					</th><th align="left">
+						Order of Component in the Book
+					</th></tr></thead><tbody><tr><td align="left">
+						<code class="filename"><em class="replaceable"><code>&lt;Book_Name&gt;</code></em>.xml</code>
+					</td><td align="left">
+						Contains the structure of the user guide, represented by xi:include references to each chapter-<em class="replaceable"><code>&lt;Chapter_Name&gt;</code></em>.xml component, and other mandatory components in this table.
+					</td><td align="left">
+						Top Level (or Parent) component of any user guide.
+					</td></tr><tr><td align="left">
+						<code class="filename">Book_Info.xml</code>
+					</td><td align="left">
+						Contains information about the book title, book verson number, abstract and copyright information.
+					</td><td align="left">
+						1st Child. This is the opening information a reader will see in the user guide.
+					</td></tr><tr><td align="left">
+						<code class="filename">Author_Group.xml</code>
+					</td><td align="left">
+						Contains contact information about the authors that contributed to the content of the book.
+					</td><td align="left">
+						2nd Child. This component is included in the <code class="filename">Book_Info.xml</code> component.
+					</td></tr><tr><td align="left">
+						<code class="filename">Preface.xml</code>
+					</td><td align="left">
+						Contains pre-defined content explaining the typographical standards used in the guide, and other information that will assist the reader with using the guide.
+					</td><td align="left">
+						3rd Child. This component is included after the <code class="filename">Book_Info.xml</code> content.
+					</td></tr><tr><td align="left">
+						<code class="filename">chapter-<em class="replaceable"><code>&lt;Chapter_Name&gt;</code></em>.xml</code>
+					</td><td align="left">
+						Contains XML markup and content included at a Chapter level in the document. The XML file is named only for human-readability.
+					</td><td align="left">
+						4th. This is the top level element for each chapter in the user guide. The order of these files in the <code class="filename"><em class="replaceable"><code>&lt;Book_Name&gt;</code></em>.xml</code> file determines the structure of the guide.
+					</td></tr><tr><td align="left">
+						<code class="filename">section-<em class="replaceable"><code>&lt;Section_Name&gt;</code></em>.xml</code>
+					</td><td align="left">
+						Contains XML markup and content included at a Section level in the document. The XML file is named only for human-readability.
+					</td><td align="left">
+						5th. This component is included in <code class="filename">chapter-<em class="replaceable"><code>&lt;Chapter_Name&gt;</code></em>.xml</code> files by xi:include reference.
+					</td></tr><tr><td align="left">
+						<code class="filename">Revision History.xml</code>
+					</td><td align="left">
+						Contains a record of the revisions made to the document over time. Top-level information about changes in the guide are provided to the reader.
+					</td><td align="left">
+						6th.
+					</td></tr></tbody></table></div><h6>Table 3.1. Book Components</h6></div><br class="table-break" /><div class="para">
+		To ensure Maven JDocBook can publish the content generated by the Publican Toolchain, additonal XML content is required. Maven JDocBook does not have access to the Publican Toolchain common_content directory, therefore, the required XML files must be included as xi:fallback references in the <code class="filename">preface.xml</code> and <code class="filename">book_info.xml</code> files.
+	</div><div class="table" id="table-Maven_JDocBook_Content"><div class="table-contents"><table summary="Maven JDocBook Content" width="100%" border="1"><colgroup><col align="left" /><col align="left" /><col align="left" /></colgroup><thead><tr><th align="center">
+						XML Component
+					</th><th align="center">
+						Description
+					</th><th align="left">
+						Order of Component in the Book
+					</th></tr></thead><tbody><tr><td align="left">
+						<code class="filename">Conventions.xml</code>
+					</td><td align="left">
+						Contains typographical standards used within the guide.
+					</td><td align="left">
+						Inserted by xi:fallback reference at the end of the <code class="filename">Preface.xml</code> file.
+					</td></tr><tr><td align="left">
+						<code class="filename">Feedback.xml</code>
+					</td><td align="left">
+						Contains information about how to raise a bug against the user documentation.
+					</td><td align="left">
+						Inserted by xi:fallback reference at the end of the <code class="filename">Preface.xml</code> file.
+					</td></tr><tr><td align="left">
+						<code class="filename">Legal_Notice.xml</code>
+					</td><td align="left">
+						Contains standardized Red Hat legal information.
+					</td><td align="left">
+						Inserted by xi:fallback reference at the end of the <code class="filename">Book_Info.xml</code> file
+					</td></tr></tbody></table></div><h6>Table 3.2. Maven JDocBook Content</h6></div><br class="table-break" /><div class="para">
+		The content is contained within XML files in the fallback_content directory of each user guide repository. The fallback_content directory contains copies of the XML files located in the <code class="filename">/usr/share/publican/Common_Content</code> directory.
+	</div><div class="note"><h2>Fallback Content Accuracy Check</h2><div class="para">
+			The front-matter information located in the fallback_content directory of each user guide repository, is not maintained by the Publican Toolchain Team, or upgraded when Publican updates are installed. Therefore, manually verify that the information contained in these files are kept curent with the standards present in the latest Publican Toolchain version.
+		</div></div><div class="para">
+		Fallback content is added to each xi:include element that Maven JDocBook does not have access to. The structure described in the following XML sample is for the <code class="filename">Legal_Notice.xml</code> information in the <code class="filename">Book_Info.xml</code> file.
+	</div><div class="para">
+		The xi:include element can have any number of xi:fallback elements defined. However, in the Mobicents UDS only one fallback is required.
+	</div><pre class="programlisting XML">&lt;!--FOR PUBLICAN --&gt;
+&lt;xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+ href="Common_Content/Legal_Notice.xml"&gt;
+    &lt;!--FOR JDOCBOOK:--&gt;
+    &lt;xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude"&gt;
+        &lt;xi:include href="fallback_content/Legal_Notice.xml"
+         xmlns:xi="http://www.w3.org/2001/XInclude"&gt;&lt;/xi:include&gt;
+    &lt;/xi:fallback&gt;
+&lt;/xi:include&gt;
+</pre></div><div class="chapter" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="ap-Authoring_Procedures">Chapter 4. Authoring Procedures</h2></div></div></div><div class="toc"><dl><dt><span class="section"><a href="#id2920498">4.1. GCode Documentation Ticket</a></span></dt><dt><span class="section"><a href="#ap-Authoring">4.2. Authoring</a></span></dt><dd><dl><dt><span class="section"><a href="#ap-Check_Out_GCode_SVN_Repository">4.2.1. Check Out GCode SVN Repository</a></span></dt><dt><span class="section"><a href="#ap-Update_XML">4.2.2. Update XML</a></span></dt><dt><span class="section"><a href="#ap-Update_GCode_Ticket">4.2.3. Update GCode Ticket</a></span></dt></dl></dd><dt><span class="section"><a href="#r-Review">4.3. Review</a></span></dt><dd><dl><dt><span class="section"><a href="#id2955699">4.3.1. Review Preparation</a></span></dt><dt><span class="section"><a href="#id2922299">4.3.2. Request Review</a></span></dt><dt><span class="section"><a href="#id2912851">4.3.3. Review Ticket</a></span></dt></dl></dd><dt><span class="section"><a href="#id2928413">4.4. Editing</a></span></dt><dt><span class="section"><a href="#id2928425">4.5. Fixed</a></span></dt><dt><span class="section"><a href="#id2975442">4.6. Verified</a></span></dt></dl></div><div class="para">
+		To ensure that multiple authors can work on different sections of a single guide, procedures governing the way authors contribute content to the guide must be clearly communicated and understood by all contributors.
+	</div><div class="para">
+		The following sections detail the procedures that must be followed by all community content authors. Failure to follow these procedures consistently will likely result in wasted writing effort and failed GCode SVN commits.
+	</div><div class="para">
+		The process of writing Mobicents documentation changes can be described in the following main phases:
+	</div><div class="orderedlist"><ol><li><div class="para">
+				GCode Documentation Ticket
+			</div></li><li><div class="para">
+				Authoring
+			</div></li><li><div class="para">
+				Review
+			</div></li><li><div class="para">
+				Editing
+			</div></li><li><div class="para">
+				Fixed
+			</div></li><li><div class="para">
+				Verified
+			</div></li></ol></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="id2920498">4.1. GCode Documentation Ticket</h2></div></div></div><div class="para">
+			All documentation changes must originate from a documentation ticket. Documentation tickets allows changes associated with a product enhancement to be tracked easily from the origins of the enhancement to the completed changes.
+		</div><div class="para">
+			When a documentation ticket is closed in the final phase, the ticket remains in the GCode Ticket system for posterity.
+		</div><div class="para">
+			The following procedure details how to create a documentation ticket as a result of a product enhancement.
+		</div><div class="procedure" id="ap-procedure-Creating_A_Documentation_Ticket"><h6>Procedure 4.1. Creating a Documentation Ticket</h6><ol class="1"><li><p class="title"><b>Search Before Opening a New Issue</b></p><div class="para">
+					On the <span class="guilabel"><strong>Issues</strong></span> page, enter a search query that reflects the issue you have discovered.
+				</div><div class="para">
+					Search <span class="guilabel"><strong>Open Issues</strong></span> for <em class="replaceable"><code>[search query]</code></em>. Click <span class="guibutton"><strong>Search</strong></span> to retrieve the results.
+				</div><div class="para">
+					If a suitable match is found, check with the person assigned to the ticket to see if the defect can be appended to the existing ticket.
+				</div><div class="para">
+					If the existing ticket has been closed, raise a new ticket to capture the information.
+				</div><div class="para">
+					Be thorough in your searches; it will save duplicating tickets and unnecessary admin time spent on ticket management.
+				</div></li><li><p class="title"><b>Open a New Issue</b></p><div class="para">
+					If you can not find a duplicate ticket, navigate to the Mobicents GCode <span class="guimenu"><strong>Issues</strong></span> tab, and click the <span class="guibutton"><strong>New Issue</strong></span> link.
+				</div></li><li><p class="title"><b>Select the Docs Enhancement Template</b></p><div class="para">
+					From the <span class="guilabel"><strong>Issue Template</strong></span> field, select the <span class="guimenuitem"><strong>Docs Enhancement</strong></span> template type.
+				</div></li><li><p class="title"><b>Complete the Summary field</b></p><div class="para">
+					Prefix the summary with one of the following codes to clearly identify the affected user guide:
+					<div class="itemizedlist"><ul><li><div class="para">
+								[JSS Guide] - JAIN SLEE Server User Guide
+							</div></li><li><div class="para">
+								[MSS Guide] - SIP Servlets Server User Guide
+							</div></li><li><div class="para">
+								[MMS Guide] - Media Server User Guide
+							</div></li><li><div class="para">
+								[SPS Guide] - SIP Presence Service User Guide
+							</div></li><li><div class="para">
+								[PLAT Guide] - Platform User Guide
+							</div></li></ul></div>
+				</div><div class="para">
+					Include a descriptive (but short) summary of the enhancement in the <span class="guilabel"><strong>Summary</strong></span> field.
+				</div></li><li><p class="title"><b>Complete the Description Field</b></p><div class="para">
+					The description field must contain specific details about the defect. The more detailed the information, the easier it will be for the assignee to complete the ticket with minimal assistance. Follow the headings in the Docs Enhancement template and provide the necessary information.
+				</div><div class="para">
+					Include website links to content for the enhancement.
+				</div><div class="para">
+					Include the developer ticket to which the enhancement relates. If the ticket isn't related to a code change, include a link to the forum discussion history surrounding the enhancement.
+				</div><div class="para">
+					Include a Chapter/Section reference (including the name) to the affected area in the user guide.
+				</div></li><li><p class="title"><b>Change the Initial Ticket Status</b></p><div class="para">
+					If you are raising a ticket for another user guide, or you are not a developer, change the status to <strong class="userinput"><code>New</code></strong>.
+				</div><div class="para">
+					If you are raising a ticket for a development change you made, change the status to <strong class="userinput"><code>Accepted</code></strong>.
+				</div></li><li><p class="title"><b>Complete the Cc field.</b></p><div class="para">
+					Add the email address of the current Red Hat Technical Writer (RHTW) assigned to the project. The RHTW will be required to edit your work in a later phase.
+				</div><div class="para">
+					If you know the email address of the people responsible for maintaining each guide, include them in the <span class="guilabel"><strong>Cc</strong></span> field.
+				</div></li><li><p class="title"><b>Append Labels</b></p><div class="para">
+					Labels are critical in a ticket, because they enable the ticket to be searched using consistent tags.
+				</div><div class="para">
+					You will notice that two lables are automatically added; <code class="literal">Type-Enhancement</code>, <code class="literal">Priority-Medium </code>and <code class="literal">Component-Docs</code>. These categories are acceptable by default.
+				</div><div class="para">
+					Append the following extra categories at a minimum to the <span class="guilabel"><strong>Labels</strong></span> field:
+					<div class="itemizedlist"><ul><li><div class="para">
+								<code class="literal">Component-&lt;server_name&gt;</code> - specifies the server to which the ticket relates.
+							</div></li><li><div class="para">
+								<code class="literal">Version-&lt;version_number&gt;</code> - specifies the base version number affected by this ticket.
+							</div></li></ul></div>
+				</div></li><li><p class="title"><b>Save the Ticket</b></p><div class="para">
+					Click <span class="guibutton"><strong>Save changes</strong></span>.
+				</div></li></ol></div><div class="para">
+			The ticket is now saved in the system, and the people in the Owner and Cc fields have been sent a link to the ticket for comment.
+		</div><div class="para">
+			Part of effective ticket management requires the developers responsible for each server to review new tickets to approve the enhancement and add supplementary information to the ticket.
+		</div><div class="procedure" id="id2924875"><h6>Procedure 4.2. Developer Ticket Approval</h6><ol class="1"><li><p class="title"><b>Review Raised Tickets</b></p><div class="para">
+					Developers must regularly check the GCode ticket queue for new issues. To do this, search for the server prefix (for example <strong class="userinput"><code>[MSS Guide]</code></strong> for the SIP Servlets Server User Guide) in the Sumary field.
+				</div><div class="para">
+					For tickets that been incorrectly created, the previous search will not return the correct results. Search for the Component-&lt;server name&gt; Label, and ensure the server prefix is added to the ticket.
+				</div></li><li><p class="title"><b>Review Ticket Fields</b></p><div class="para">
+					Ensure that the ticket contains the information specified in <a class="xref" href="#ap-procedure-Creating_A_Documentation_Ticket" title="Procedure 4.1. Creating a Documentation Ticket">Procedure 4.1, “Creating a Documentation Ticket”</a> .
+				</div></li><li><p class="title"><b>Verify or Add Version Information</b></p><div class="para">
+					Check that the affected product version number (if specified) is correct for the proposed documentation enhancement.
+				</div><div class="para">
+					Append the correct product version number, or change the version number and add a comment explaining why the version was incorrect.
+				</div><div class="para">
+					If the ticket was raised by a non-developer, ensure the ticket is changed from <strong class="userinput"><code>New</code></strong> to <strong class="userinput"><code>Accepted</code></strong> status.
+				</div></li></ol></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="ap-Authoring">4.2. Authoring</h2></div></div></div><div class="para">
+			Authoring can begin after the GCode ticket has been accepted by the developer/s responsible for the affected server. The Mobicents User Documentation Suite (UDS) is written in XML, and stored in the GCode SVN.
+		</div><div class="para">
+			The audience of this guide is primarily Mobicents developers who should already be familiar with SVN usage. The specifics of SVN operation are therefore not described in detail.
+		</div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="ap-Check_Out_GCode_SVN_Repository">4.2.1. Check Out GCode SVN Repository</h3></div></div></div><div class="para">
+				The GCode SVN Documentation Repository must be checked out as a working copy prior to making any changes.
+			</div><div class="procedure" id="id2949824"><h6>Procedure 4.3. Check Out Server Repository</h6><ol class="1"><li><p class="title"><b>Trunk or Branch</b></p><div class="para">
+						Determine what version of the server the enhancement relates to. The <code class="filename">/trunk</code> directory contains the latest version of the server currently in development.
+					</div><div class="para">
+						Most documentation changes will occur in <code class="filename">/trunk</code>, however there may be instances where an enhancement must be appended to previous server releases.
+					</div><div class="para">
+						The GCode Documentation Ticket will indicate which release the changes belongs to from the information added to the <span class="guilabel"><strong>Labels</strong></span> section of the ticket.
+					</div><div class="para">
+						For GCode Repository Structure, refer to <a class="xref" href="#rs-Repository_Structure" title="Chapter 2. Documentation Repository">Chapter 2, <i>Documentation Repository</i></a>
+					</div></li><li><p class="title"><b>Check Out a Working Copy</b></p><div class="para">
+						Check out a working copy of the affected server release to your local hard drive.
+					</div><div class="note"><h2>Note</h2><div class="para">
+							If you have a working copy of the directory checked-out in another working folder (for example, a server code repository working copy), execute SVN Update on the documentation folder in this directory before changing any XML content.
+						</div></div><div class="para">
+						The working copy will usually be the <code class="filename">/trunk</code> version. If the ticket requires the change to be made in <code class="filename">/trunk</code> as well as a<code class="filename"> /branch</code>, then make the changes in <code class="filename">/trunk</code> first and backport into each affected <code class="filename">/branch</code>.
+					</div></li><li><p class="title"><b>Open the Working Directory</b></p><div class="para">
+						Navigate to the en-US directory, and open the directory to display the files.
+					</div></li></ol></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="ap-Update_XML">4.2.2. Update XML</h3></div></div></div><div class="para">
+				Once a working copy is checked out of the GCode SVN repository, making the changes specified in the GCode Documentation Ticket can begin. <a class="xref" href="#procedure-Updating_The_XML" title="Procedure 4.4. Updating the XML">Procedure 4.4, “Updating the XML”</a> details the steps to updating an existing section in a book. The process is the same for any documentation updates.
+			</div><div class="procedure" id="procedure-Updating_The_XML"><h6>Procedure 4.4. Updating the XML</h6><ol class="1"><li><p class="title"><b>Updated the GCode Ticket</b></p><div class="para">
+						Change the <span class="guilabel"><strong>Status</strong></span> field of the GCode Documentation Ticket to <strong class="userinput"><code>Started</code></strong>. This informs other content authors that the ticket is no longer available in the ticket queue.
+					</div></li><li><p class="title"><b>Open the Chapter or Section XML File</b></p><div class="para">
+						Navigate to the <code class="literal">en-US</code> directory in the User Guide repository.
+					</div><div class="para">
+						Select the XML file to edit, and open it in your preferred XML Authoring Tool.
+					</div></li><li><p class="title"><b>Locate the Area to Update</b></p><div class="para">
+						The easiest way to locate the area in an XML file is to search for keywords. Use the information in the GCode Ticket to search for the affected area that requires updating.
+					</div></li><li><p class="title"><b>Check the XML Comment for the Authoring Status</b></p><div class="para">
+						To allow other content authors to see what sections of the guide can be edited, XML comments are used.
+					</div><div class="para">
+						Before making a change, you must ensure that the affected area is not being worked on (or 'claimed') by another author.
+					</div><div class="para">
+						Each content author is responsible for updating and maintaining the XML Comment Block at each stage of the authoring process.
+					</div><div class="para">
+						XML comments must be placed at the parent XML level. For example, if a change is required to content contained in a <span class="markup">&lt;para&gt;</span> tag within a <span class="markup">&lt;section&gt;</span>, the XML comment must be inserted at the <span class="markup">&lt;section&gt;</span> level. The XML comment uses the following structure:
+					</div><pre class="programlisting XML">
+&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Closure  SUMMARY: [Brief summary of change] --&gt;
+</pre></li><li><p class="title"><b>Claim the Section for Editing </b></p><div class="para">
+						If the section is not marked as being changed by another content author, you can proceed to 'claim' the section for editing.
+					</div><div class="para">
+						Change the XML comment to reflect the following information:
+					</div><pre class="programlisting XML">&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Closure  SUMMARY: [Brief summary of change]--&gt;
+</pre><div class="variablelist"><dl><dt><span class="term">AUTHOR:</span></dt><dd><div class="para">
+									Your name must be consistent so you can search for other instances within the XML. Consider using your Red Hat email username for the AUTHOR. For example, jmorgan (for Jared Morgan).
+								</div></dd><dt><span class="term">STATUS:</span></dt><dd><div class="para">
+									Change the Status to Authoring.
+								</div></dd></dl></div></li><li><p class="title"><b>Make Changes</b></p><div class="para">
+						Incorporate the information from the GCode Documentation Ticket. When making changes, follow these recommendations.
+					</div><div class="variablelist"><h6>Authoring Recommendations</h6><dl><dt><span class="term">Validate XML Regularly</span></dt><dd><div class="para">
+									It is easy to make XML structure errors if you are not using an XML Editing program that controls structure for you. Regularly validating your content will identify structure issues early. You will have a better idea about what section might contain the error, based on what section you have recently edited.
+								</div><div class="para">
+									If your XML does not validate, refer to <a class="xref" href="#pam-Publican_and_Maven" title="Chapter 5. Publican and Maven">Chapter 5, <i>Publican and Maven</i></a> for troubleshooting information.
+								</div></dd><dt><span class="term">Smaller Changes Result In Trouble-free Commits</span></dt><dd><div class="para">
+									Make smaller, consecutive changes to existing XML chapters, rather than large structural changes. Commit your validated changes regularly.
+								</div><div class="para">
+									GCode SVN can merge small changes from multiple authors effectively. However, larger changes may result in SVN mismatches. You must manually resolve the SVN mismatch conflict. This is often very time consuming, and annoying.
+								</div></dd><dt><span class="term">Strict Validation</span></dt><dd><div class="para">
+									If you are using an XML Authoring Tool to author changes, always enable "Strict Validation". Strict Validation will prevent the introduction of invalid mark-up to your work.
+								</div></dd></dl></div></li><li><p class="title"><b>Spell Check Changes</b></p><div class="para">
+						All changes must be spell checked. The English (US) language is used throughout the Mobicents UDS. Ensure your XML Authoring Tool has the English (US) dictionary set as the default spell checker language.
+					</div></li><li><p class="title"><b>Publish and Review</b></p><div class="para">
+						Publish your changes to HTML-Single using Publican and Maven JDocBook.
+					</div><div class="para">
+						Review your changes to check if the display and presentation meets the existing standards of the Mobicents UDS.
+					</div><div class="note"><h2>Note</h2><div class="para">
+							If you are not using the Publican Toolchain in your daily XML editing tasks, you can still test publish using your XML Authoring tool's <code class="function">Publish</code> feature to get an idea of what the publish might look like.
+						</div><div class="para">
+							The operation will vary between editors, but the main thing is that the book will not publish if it is not structurally valid.
+						</div></div></li><li><p class="title"><b>Commit Changes to GCode SVN</b></p><div class="para">
+						Commit structurally valid XML back into the GCode SVN regularly throughout the day.
+					</div><div class="para">
+						For each commit, make a note of the SVN commit number so it can be added to the GCode Ticket at the end of the
+					</div><div class="important"><h2>Commit Regularly</h2><div class="para">
+							For documentation, the risk of SVN merge failure increases the longer you wait between commits. It is much easier to commit regularly than to manually merge your changes into someone else's changes.
+						</div></div></li></ol></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="ap-Update_GCode_Ticket">4.2.3. Update GCode Ticket</h3></div></div></div><div class="para">
+				After the changes have been made to the affected XML file, the GCode Ticket must be updated with a summary of the changes.
+			</div><div class="para">
+				While this may seem like an administration overhead, it is vitally important that a history of changes is kept with the ticket.
+			</div><div class="para">
+				Often, questions are raised about why a feature was removed from user documentation. Having a thorough history in the ticket will help to justify the reason why the feature was removed, and help other content authors and project managers to understand the issue in greater detail.
+			</div><div class="para">
+				Update the GCode Documentation Ticket with the following information:
+			</div><div class="itemizedlist"><ul><li><div class="para">
+						The GCode SVN commit numbers involved with the changes.
+					</div></li><li><div class="para">
+						A description of what has changed in the XML.
+					</div></li><li><div class="para">
+						Chapter-section references to the new content in the HTML Publish. For example:
+					</div><div class="para">
+						<strong class="userinput"><code>Section 3.2. Procedure 3.2.1 - Steps 1 to 6 added to clarify process.</code></strong>
+					</div></li></ul></div></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="r-Review">4.3. Review</h2></div></div></div><div class="para">
+			The Review phase involves another team member peer reviewing the changes made by the original content author. This important phase provides the opportunity to review the changes for technical accuracy.
+		</div><div class="para">
+			Additionally, it provides a chance for your peers to comment on how user-friendly the information is. After all, if the content is not user friendly, then a user probably won't use it.
+		</div><div class="para">
+			The Review phase involves the content author and the reviewer in that the content author must discuss and incorporate any feedback provided by the reviewer.
+		</div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="id2955699">4.3.1. Review Preparation</h3></div></div></div><div class="para">
+				Before sending off the changes for review, there are a few administration tasks that must be attended to.
+			</div><div class="procedure" id="id2955711"><h6>Procedure 4.5. Update XML Comments to Review </h6><ol class="1"><li><p class="title"><b>Open Affected XML Files </b></p><div class="para">
+						From the information contained in the GCode Ticket, open each affected XML file.
+					</div></li><li><p class="title"><b>Edit XML Comments</b></p><div class="para">
+						In each affected section, update the XML Comment STATUS to <code class="literal">Review</code>.
+					</div><div class="para">
+						The information in the GCode Ticket should help you to determine which sections are changed.
+					</div></li><li><p class="title"><b>Save and Close</b></p><div class="para">
+						Save and close all open XML files.
+					</div></li></ol></div><div class="para">
+				<a class="xref" href="#procedure-Create_Review_Document" title="Procedure 4.6. Create Review Document">Procedure 4.6, “Create Review Document”</a> requires the XML changes to be published to HTML-Single format using the mkbk script, the Publican Toolchain, and Maven JDocBook. For this procedure, you must have Publican and Maven JDocBook configured according to the information in <a class="xref" href="#pam-Publican_and_Maven" title="Chapter 5. Publican and Maven">Chapter 5, <i>Publican and Maven</i></a>.
+			</div><div class="para">
+				<a class="xref" href="#procedure-Create_Review_Document" title="Procedure 4.6. Create Review Document">Procedure 4.6, “Create Review Document”</a> assumes that you are using Fedora or RHEL, which are the currently supported Linux distributions for Publican.
+			</div><div class="procedure" id="procedure-Create_Review_Document"><h6>Procedure 4.6. Create Review Document</h6><ol class="1"><li><p class="title"><b>Navigate to the User Guide Directory</b></p><div class="para">
+						Open a terminal, and navigate to the directory that contains the <code class="filename">en-US</code> documentation directory.
+					</div></li><li><p class="title"><b>Create Combined XML File</b></p><div class="para">
+						Run the <code class="literal">mkbk</code> script and create the all-[server name].xml file.
+					</div><div class="para">
+						For command-line usage, refer to <a class="xref" href="#pam-Publican_and_Maven" title="Chapter 5. Publican and Maven">Chapter 5, <i>Publican and Maven</i></a>.
+					</div></li><li><p class="title"><b>Commit all-[server name].xml to GCode SVN</b></p><div class="para">
+						Commit the file to GCode SVN, so the Hudson Build Server builds the doc from the correct file version.
+					</div></li><li><p class="title"><b>Request Hudson to Build a HTML-Single </b></p><div class="para">
+						Generate the review document by instructing the Hudson Build Server to create a HTML-Single book.
+					</div></li><li><p class="title"><b>Record the Build ID Number</b></p><div class="para">
+						After Hudson has successfully published the XML book to HTML-Single format, copy the direct link to the file and paste it into the ticket.
+					</div></li><li><p class="title"><b>Save and Close the GCode Ticket</b></p><div class="para">
+						Click <span class="guibutton"><strong>Save changes</strong></span> once the link to the review document has been appended to the ticket.
+					</div></li></ol></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="id2922299">4.3.2. Request Review</h3></div></div></div><div class="para">
+				After completing the review preparation tasks, you are ready to send your changes to a project member for review.
+			</div><div class="para">
+				The GCode Documentation Ticket contains the review request, and provides the reviewer with the information they need to complete the review.
+			</div><div class="para">
+				<a class="xref" href="#procedure-Revew_Request_Using_GCode_Ticket" title="Procedure 4.7. Requesting Review using GCode Ticket">Procedure 4.7, “Requesting Review using GCode Ticket”</a> describes the process to request a documentation review.
+			</div><div class="procedure" id="procedure-Revew_Request_Using_GCode_Ticket"><h6>Procedure 4.7. Requesting Review using GCode Ticket</h6><ol class="1"><li><p class="title"><b>Open Original GCode Ticket</b></p><div class="para">
+						If the ticket is not already open, navigate and open the GCode Documentation Ticket that relates to the documentation review.
+					</div><div class="para">
+						Click in the Comment box to display the full details of the ticket, including the Labels.
+					</div></li><li><p class="title"><b>Add the Request to the Ticket</b></p><div class="para">
+						In the Comment field, request that the ticket is ready for review.
+					</div><div class="para">
+						Ensure the reviewer's name, or email address, is specified in the <span class="guilabel"><strong>Cc:</strong></span> field of the ticket.
+					</div></li><li><p class="title"><b>Provide Direct Links to All Published Changes</b></p><div class="para">
+						Hudson allows you to copy and paste direct links to published sections of the online User Guide. Pasting direct links to the section will greatly assist the peer reviewer with locating your changes.
+					</div><div class="orderedlist"><h6>Including Direct Links</h6><ol><li><div class="para">
+								Navigate to the section you changed as part of the enhancement.
+							</div></li><li><div class="para">
+								Copy the absoulte link to the section from the URL field of the Web browser.
+							</div><div class="para">
+								You will know it is an absolute link because it will have a #[chapter/section name] as the last part of the URL.
+							</div></li><li><div class="para">
+								Paste the direct link into the ticket.
+							</div></li><li><div class="para">
+								Repeat the procedure for all other changes.
+							</div></li></ol></div><div class="para">
+						Be as specific as possible with the areas requiring review. The more information you provide your reviewer, the easier it will be to efficiently complete the review.
+					</div></li><li><p class="title"><b>Save and Close</b></p><div class="para">
+						After ensuring all required information is present, save and close the ticket.
+					</div></li></ol></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h3 class="title" id="id2912851">4.3.3. Review Ticket</h3></div></div></div><div class="para">
+				After the review request has been sent, the peer reviewer is notified that a review is waiting through an email notification from GCode. Thorough ticket review is key contributor to fantastic user documentation because other team members can use the opportunity to read the changes from a customer perspective. The content can be evaluated for techincal accuracy and readability before being sent to the editing phase.
+			</div><div class="para">
+				The goal of Peer Review is to discuss why your suggestions should be considered by the content author. The better your reasons for suggesting an improvement, the better the chances of having the content incorporated, or reaching a compromise.
+			</div><div class="para">
+				<a class="xref" href="#procedure-Peer_Reviewing_Documentation_Changes" title="Procedure 4.8. Peer Reviewing Documentation Changes">Procedure 4.8, “Peer Reviewing Documentation Changes”</a> describes the process to follow when a review request is received from the GCode Ticket System.
+			</div><div class="procedure" id="procedure-Peer_Reviewing_Documentation_Changes"><h6>Procedure 4.8. Peer Reviewing Documentation Changes</h6><ol class="1"><li><p class="title"><b>Open the Ticket</b></p><div class="para">
+						In the email notification, click the link in the ticket to take you to the GCode Documentation Ticket.
+					</div></li><li><p class="title"><b>Open the HTML Document</b></p><div class="para">
+						The ticket should contain a direct link to the affected build version and section of the user guide hosted on the Hudson Build Server.
+					</div><div class="para">
+						Click each link to be taken to the closest section containing each enhancement.
+					</div><div class="para">
+						Refer to the details in the ticket to verify what you should be reviewing.
+					</div></li><li><p class="title"><b>Review the Enhancements</b></p><div class="para">
+						For each specified enhancement, ask the following questions:
+					</div><div class="variablelist"><h6>Peer Review Questions</h6><dl><dt><span class="term">Does It Make Sense?</span></dt><dd><div class="para">
+									Look at readability of the documented enhancement. Does it make sense when you read it? If not, what needs to be changed?
+								</div></dd><dt><span class="term">Is the Information Structured Correctly?</span></dt><dd><div class="para">
+									Is the incorporated information included in the correct position in the User Guide? If not, where should the info be moved to?
+								</div></dd><dt><span class="term">Are the Identified Changes Correctly Incorporated?</span></dt><dd><div class="para">
+									Do the incorporated changes cover the details identified in the Enhancement? If not, what's missing and where should it be incorporated?
+								</div></dd><dt><span class="term">Is Information Missing?</span></dt><dd><div class="para">
+									Is all relevant information incorporated for the particular enhancement? If not, what's missing and where should it be incorporated?
+								</div></dd><dt><span class="term">Is a Diagram or Screenshot Really Needed?</span></dt><dd><div class="para">
+									Diagrams should be present only if the information contained within them is essential for the reader to grasp a concept, or user interface. Well written procedures generally don't require supporting screen shots if the procedure describes the fields a user must complete. Excluding unnecessary screenshots increases the maintainability of the UDS.
+								</div></dd></dl></div></li><li><p class="title"><b>Comment on the Enhancements</b></p><div class="para">
+						When you encounter an area that requires improvement, you must document your suggestions in the XML file so the content author can review your suggestions in context.
+					</div><div class="para">
+						XML comments are used to document Peer Review comments.
+					</div><pre class="programlisting XML">&lt;!--Issue #[GCode Issue Number] PR Comment - [describe what needs to be changed or clarified by the content author.]
+</pre><div class="para">
+						In the comment, be as detailed as possible so the content author can effectively evaluate your suggestions.
+					</div><div class="note"><h2>Note</h2><div class="para">
+							Feedback can sometimes be percieved as criticism. For this reason, it is important to provide only constructive feedback to the contributing content author.
+						</div></div></li><li><p class="title"><b>Update the Review Block Information for the Section</b></p><div class="para">
+						Update the XML Status Block for the Chapter or Section you are reviewing.
+					</div><div class="para">
+						Change STATUS to <strong class="userinput"><code>Review</code></strong>, and update the DATE CHANGED to the date of your review.
+					</div></li><li><p class="title"><b>Commit Comments to GCode SVN</b></p><div class="para">
+						Once you have finished providing feedback, commit your changes to GCode SVN.
+					</div><div class="para">
+						Include a meaningful commit message to indicate what was done. For example:
+					</div><div class="para">
+						<strong class="userinput"><code>Issue #666 - PR - Commited comments made as part of Peer Review for this ticket.</code></strong>
+					</div><div class="para">
+						Make note of the commit number.
+					</div></li><li><p class="title"><b>Update the GCode Ticket</b></p><div class="para">
+						Once the XML files are committed, you must update the GCode ticket with the following information:
+					</div><div class="itemizedlist"><ul><li><div class="para">
+								Gcode SVN commit number.
+							</div></li><li><div class="para">
+								Brief summary of suggestions for the content author.
+							</div></li><li><div class="para">
+								The Peer Review comment syntax you used to mark any changes.
+							</div><div class="para">
+								For example, "I've used "Issue #666 - PR" to mark my review comments"
+							</div></li></ul></div></li><li><p class="title"><b>Re-review, or Straight to Editing?</b></p><div class="para">
+						TODO - add info here about re-review before editing if requried.
+					</div></li></ol></div></div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="id2928413">4.4. Editing</h2></div></div></div><div class="para">
+			TODO - Add information about the role the editor plays in the process
+		</div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="id2928425">4.5. Fixed</h2></div></div></div><div class="para">
+			TODO - Add info about what happens when editor and content author are happy with the changes.
+		</div></div><div class="section" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="id2975442">4.6. Verified</h2></div></div></div><div class="para">
+			TODO - describe what verified means in the docs lifecycle.
+		</div></div></div><div class="chapter" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="pam-Publican_and_Maven">Chapter 5. Publican and Maven</h2></div></div></div><div class="para">
+		This is a test paragraph
+	</div></div><div class="chapter" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h2 class="title" id="bs-XML_Authoring_Resources">Chapter 6. XML Authoring Resources</h2></div></div></div><div class="para">
+		This is a test paragraph
+	</div></div><div class="appendix" lang="en-US" xml:lang="en-US"><div class="titlepage"><div><div><h1 id="app-Revision_History" class="title">Revision History</h1></div></div></div><div class="para">
+		<div class="revhistory"><table border="0" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="3"><b>Revision History</b></th></tr><tr><td align="left">Revision 1.0</td><td align="left"></td><td align="left"><span class="author"><span class="firstname"></span> <span class="surname"></span></span></td></tr><tr><td align="left" colspan="3">
+					<table class="simplelist" border="0" summary="Simple list"><tr><td></td></tr></table>
+				</td></tr></table></div>
+	</div></div></div></body></html>

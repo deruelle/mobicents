@@ -1,0 +1,835 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Mobicents_Community_Documentation.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="ap-Authoring_Procedures" lang="en-US">
+	<!--  This document was created with Syntext Serna Free.  --><title>Authoring Procedures</title>
+	<para>
+		To ensure that multiple authors can work on different sections of a single guide, procedures governing the way authors contribute content to the guide must be clearly communicated and understood by all contributors.
+	</para>
+	<para>
+		The following sections detail the procedures that must be followed by all community content authors. Failure to follow these procedures consistently will likely result in wasted writing effort and failed GCode SVN commits.
+	</para>
+	<para>
+		The process of writing Mobicents documentation changes can be described in the following main phases:
+	</para>
+	<orderedlist>
+		<listitem>
+			<para>
+				GCode Documentation Ticket
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Authoring
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Review
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Editing
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Fixed
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Verified
+			</para>
+		</listitem>
+	</orderedlist>
+	<section>
+		<title>GCode Documentation Ticket</title>
+		<para>
+			All documentation changes must originate from a documentation ticket. Documentation tickets allows changes associated with a product enhancement to be tracked easily from the origins of the enhancement to the completed changes.
+		</para>
+		<para>
+			When a documentation ticket is closed in the final phase, the ticket remains in the GCode Ticket system for posterity.
+		</para>
+		<para>
+			The following procedure details how to create a documentation ticket as a result of a product enhancement.
+		</para>
+		<procedure id="ap-procedure-Creating_A_Documentation_Ticket">
+			<title>Creating a Documentation Ticket</title>
+			<step>
+				<title>Search Before Opening a New Issue</title>
+				<para>
+					On the <guilabel>Issues</guilabel> page, enter a search query that reflects the issue you have discovered.
+				</para>
+				<para>
+					Search <guilabel>Open Issues</guilabel> for <replaceable>[search query]</replaceable>. Click <guibutton>Search</guibutton> to retrieve the results.
+				</para>
+				<para>
+					If a suitable match is found, check with the person assigned to the ticket to see if the defect can be appended to the existing ticket.
+				</para>
+				<para>
+					If the existing ticket has been closed, raise a new ticket to capture the information.
+				</para>
+				<para>
+					Be thorough in your searches; it will save duplicating tickets and unnecessary admin time spent on ticket management.
+				</para>
+			</step>
+			<step>
+				<title>Open a New Issue</title>
+				<para>
+					If you can not find a duplicate ticket, navigate to the Mobicents GCode <guimenu>Issues</guimenu> tab, and click the <guibutton>New Issue</guibutton> link.
+				</para>
+			</step>
+			<step>
+				<title>Select the Docs Enhancement Template</title>
+				<para>
+					From the <guilabel>Issue Template</guilabel> field, select the <guimenuitem>Docs Enhancement</guimenuitem> template type.
+				</para>
+			</step>
+			<step>
+				<title>Complete the Summary field</title>
+				<para>
+					Prefix the summary with one of the following codes to clearly identify the affected user guide:
+					<itemizedlist>
+						<listitem>
+							<para>
+								[JSS Guide] - JAIN SLEE Server User Guide
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								[MSS Guide] - SIP Servlets Server User Guide
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								[MMS Guide] - Media Server User Guide
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								[SPS Guide] - SIP Presence Service User Guide
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								[PLAT Guide] - Platform User Guide
+							</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Include a descriptive (but short) summary of the enhancement in the <guilabel>Summary</guilabel> field.
+				</para>
+			</step>
+			<step>
+				<title>Complete the Description Field</title>
+				<para>
+					The description field must contain specific details about the defect. The more detailed the information, the easier it will be for the assignee to complete the ticket with minimal assistance. Follow the headings in the Docs Enhancement template and provide the necessary information.
+				</para>
+				<para>
+					Include website links to content for the enhancement.
+				</para>
+				<para>
+					Include the developer ticket to which the enhancement relates. If the ticket isn&#39;t related to a code change, include a link to the forum discussion history surrounding the enhancement.
+				</para>
+				<para>
+					Include a Chapter/Section reference (including the name) to the affected area in the user guide.
+				</para>
+			</step>
+			<step>
+				<title>Change the Initial Ticket Status</title>
+				<para>
+					If you are raising a ticket for another user guide, or you are not a developer, change the status to <userinput>New</userinput>.
+				</para>
+				<para>
+					If you are raising a ticket for a development change you made, change the status to <userinput>Accepted</userinput>.
+				</para>
+			</step>
+			<step>
+				<title>Complete the Cc field.</title>
+				<para>
+					Add the email address of the current Red Hat Technical Writer (RHTW) assigned to the project. The RHTW will be required to edit your work in a later phase.
+				</para>
+				<para>
+					If you know the email address of the people responsible for maintaining each guide, include them in the <guilabel>Cc</guilabel> field.
+				</para>
+			</step>
+			<step>
+				<title>Append Labels</title>
+				<para>
+					Labels are critical in a ticket, because they enable the ticket to be searched using consistent tags.
+				</para>
+				<para>
+					You will notice that two lables are automatically added; <literal>Type-Enhancement</literal>, <literal>Priority-Medium </literal>and <literal>Component-Docs</literal>. These categories are acceptable by default.
+				</para>
+				<para>
+					Append the following extra categories at a minimum to the <guilabel>Labels</guilabel> field:
+					<itemizedlist>
+						<listitem>
+							<para>
+								<literal>Component-&lt;server_name&gt;</literal> - specifies the server to which the ticket relates.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								<literal>Version-&lt;version_number&gt;</literal> - specifies the base version number affected by this ticket.
+							</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</step>
+			<step>
+				<title>Save the Ticket</title>
+				<para>
+					Click <guibutton>Save changes</guibutton>.
+				</para>
+			</step>
+		</procedure>
+		
+		<para>
+			The ticket is now saved in the system, and the people in the Owner and Cc fields have been sent a link to the ticket for comment.
+		</para>
+		<para>
+			Part of effective ticket management requires the developers responsible for each server to review new tickets to approve the enhancement and add supplementary information to the ticket.
+		</para>
+		<procedure>
+			<title>Developer Ticket Approval</title>
+			<step>
+				<title>Review Raised Tickets</title>
+				<para>
+					Developers must regularly check the GCode ticket queue for new issues. To do this, search for the server prefix (for example <userinput>[MSS Guide]</userinput> for the SIP Servlets Server User Guide) in the Sumary field.
+				</para>
+				<para>
+					For tickets that been incorrectly created, the previous search will not return the correct results. Search for the Component-&lt;server name&gt; Label, and ensure the server prefix is added to the ticket.
+				</para>
+			</step>
+			<step>
+				<title>Review Ticket Fields</title>
+				<para>
+					Ensure that the ticket contains the information specified in <xref linkend="ap-procedure-Creating_A_Documentation_Ticket" /> .
+				</para>
+			</step>
+			<step>
+				<title>Verify or Add Version Information</title>
+				<para>
+					Check that the affected product version number (if specified) is correct for the proposed documentation enhancement.
+				</para>
+				<para>
+					Append the correct product version number, or change the version number and add a comment explaining why the version was incorrect.
+				</para>
+				<para>
+					If the ticket was raised by a non-developer, ensure the ticket is changed from <userinput>New</userinput> to <userinput>Accepted</userinput> status.
+				</para>
+			</step>
+		</procedure>
+
+	</section>
+	
+	<section id="ap-Authoring">
+		<title>Authoring</title>
+		<para>
+			Authoring can begin after the GCode ticket has been accepted by the developer/s responsible for the affected server. The Mobicents User Documentation Suite (UDS) is written in XML, and stored in the GCode SVN.
+		</para>
+		<para>
+			The audience of this guide is primarily Mobicents developers who should already be familiar with SVN usage. The specifics of SVN operation are therefore not described in detail.
+		</para>
+		<section id="ap-Check_Out_GCode_SVN_Repository">
+			<title>Check Out GCode SVN Repository</title>
+			<para>
+				The GCode SVN Documentation Repository must be checked out as a working copy prior to making any changes.
+			</para>
+			<procedure>
+				<title>Check Out Server Repository</title>
+				<step>
+					<title>Trunk or Branch</title>
+					<para>
+						Determine what version of the server the enhancement relates to. The <filename>/trunk</filename> directory contains the latest version of the server currently in development.
+					</para>
+					<para>
+						Most documentation changes will occur in <filename>/trunk</filename>, however there may be instances where an enhancement must be appended to previous server releases.
+					</para>
+					<para>
+						The GCode Documentation Ticket will indicate which release the changes belongs to from the information added to the <guilabel>Labels</guilabel> section of the ticket.
+					</para>
+					<para>
+						For GCode Repository Structure, refer to <xref linkend="rs-Repository_Structure" />
+					</para>
+				</step>
+				<step>
+					<title>Check Out a Working Copy</title>
+					<para>
+						Check out a working copy of the affected server release to your local hard drive.
+					</para>
+					<note>
+						<para>
+							If you have a working copy of the directory checked-out in another working folder (for example, a server code repository working copy), execute SVN Update on the documentation folder in this directory before changing any XML content.
+						</para>
+					</note>
+					<para>
+						The working copy will usually be the <filename>/trunk</filename> version. If the ticket requires the change to be made in <filename>/trunk</filename> as well as a<filename> /branch</filename>, then make the changes in <filename>/trunk</filename> first and backport into each affected <filename>/branch</filename>.
+					</para>
+				</step>
+				<step>
+					<title>Open the Working Directory</title>
+					<para>
+						Navigate to the en-US directory, and open the directory to display the files.
+					</para>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section id="ap-Update_XML">
+			<title>Update XML</title>
+			<para>
+				Once a working copy is checked out of the GCode SVN repository, making the changes specified in the GCode Documentation Ticket can begin. <xref linkend="procedure-Updating_The_XML" /> details the steps to updating an existing section in a book. The process is the same for any documentation updates.
+			</para>
+			<procedure id="procedure-Updating_The_XML">
+				<title>Updating the XML</title>
+				<step>
+					<title>Updated the GCode Ticket</title>
+					<para>
+						Change the <guilabel>Status</guilabel> field of the GCode Documentation Ticket to <userinput>Started</userinput>. This informs other content authors that the ticket is no longer available in the ticket queue.
+					</para>
+				</step>
+				<step>
+					<title>Open the Chapter or Section XML File</title>
+					<para>
+						Navigate to the <literal>en-US</literal> directory in the User Guide repository.
+					</para>
+					<para>
+						Select the XML file to edit, and open it in your preferred XML Authoring Tool.
+					</para>
+				</step>
+				<step>
+					<title>Locate the Area to Update</title>
+					<para>
+						The easiest way to locate the area in an XML file is to search for keywords. Use the information in the GCode Ticket to search for the affected area that requires updating.
+					</para>
+				</step>
+				<step>
+					<title>Check the XML Comment for the Authoring Status</title>
+					<para>
+						To allow other content authors to see what sections of the guide can be edited, XML comments are used.
+					</para>
+					<para>
+						Before making a change, you must ensure that the affected area is not being worked on (or &#39;claimed&#39;) by another author.
+					</para>
+					<para>
+						Each content author is responsible for updating and maintaining the XML Comment Block at each stage of the authoring process.
+					</para>
+					<para>
+						XML comments must be placed at the parent XML level. For example, if a change is required to content contained in a <markup>&lt;para&gt;</markup> tag within a <markup>&lt;section&gt;</markup>, the XML comment must be inserted at the <markup>&lt;section&gt;</markup> level. The XML comment uses the following structure:
+					</para>
+					
+<programlisting role="XML">
+&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Closure  SUMMARY: [Brief summary of change] --&gt;
+</programlisting>
+				</step>
+				<step>
+					<title>Claim the Section for Editing </title>
+					<para>
+						If the section is not marked as being changed by another content author, you can proceed to &#39;claim&#39; the section for editing.
+					</para>
+					<para>
+						Change the XML comment to reflect the following information:
+					</para>
+					
+<programlisting role="XML">&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Closure  SUMMARY: [Brief summary of change]--&gt;
+</programlisting>
+					<variablelist>
+						<varlistentry>
+							<term>AUTHOR:</term>
+							<listitem>
+								<para>
+									Your name must be consistent so you can search for other instances within the XML. Consider using your Red Hat email username for the AUTHOR. For example, jmorgan (for Jared Morgan).
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>STATUS:</term>
+							<listitem>
+								<para>
+									Change the Status to Authoring.
+								</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</step>
+				<step>
+					<title>Make Changes</title>
+					<para>
+						Incorporate the information from the GCode Documentation Ticket. When making changes, follow these recommendations.
+					</para>
+					<variablelist>
+						<title>Authoring Recommendations</title>
+						<varlistentry>
+							<term>Validate XML Regularly</term>
+							<listitem>
+								<para>
+									It is easy to make XML structure errors if you are not using an XML Editing program that controls structure for you. Regularly validating your content will identify structure issues early. You will have a better idea about what section might contain the error, based on what section you have recently edited.
+								</para>
+								<para>
+									If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven" /> for troubleshooting information.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Smaller Changes Result In Trouble-free Commits</term>
+							<listitem>
+								<para>
+									Make smaller, consecutive changes to existing XML chapters, rather than large structural changes. Commit your validated changes regularly.
+								</para>
+								<para>
+									GCode SVN can merge small changes from multiple authors effectively. However, larger changes may result in SVN mismatches. You must manually resolve the SVN mismatch conflict. This is often very time consuming, and annoying.
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Strict Validation</term>
+							<listitem>
+								<para>
+									If you are using an XML Authoring Tool to author changes, always enable "Strict Validation". Strict Validation will prevent the introduction of invalid mark-up to your work.
+								</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</step>
+				<step>
+					<title>Spell Check Changes</title>
+					<para>
+						All changes must be spell checked. The English (US) language is used throughout the Mobicents UDS. Ensure your XML Authoring Tool has the English (US) dictionary set as the default spell checker language.
+					</para>
+				</step>
+				<step>
+					<title>Publish and Review</title>
+					<para>
+						Publish your changes to HTML-Single using Publican and Maven JDocBook.
+					</para>
+					<para>
+						Review your changes to check if the display and presentation meets the existing standards of the Mobicents UDS.
+					</para>
+					<note>
+						<para>
+							If you are not using the Publican Toolchain in your daily XML editing tasks, you can still test publish using your XML Authoring tool&#39;s <function>Publish</function> feature to get an idea of what the publish might look like.
+						</para>
+						<para>
+							The operation will vary between editors, but the main thing is that the book will not publish if it is not structurally valid.
+						</para>
+					</note>
+				</step>
+				<step>
+					<title>Commit Changes to GCode SVN</title>
+					<para>
+						Commit structurally valid XML back into the GCode SVN regularly throughout the day.
+					</para>
+					<para>
+						For each commit, make a note of the SVN commit number so it can be added to the GCode Ticket at the end of the
+					</para>
+					<important>
+						<title>Commit Regularly</title>
+						<para>
+							For documentation, the risk of SVN merge failure increases the longer you wait between commits. It is much easier to commit regularly than to manually merge your changes into someone else&#39;s changes.
+						</para>
+					</important>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section id="ap-Update_GCode_Ticket">
+			<title>Update GCode Ticket</title>
+			<para>
+				After the changes have been made to the affected XML file, the GCode Ticket must be updated with a summary of the changes.
+			</para>
+			<para>
+				While this may seem like an administration overhead, it is vitally important that a history of changes is kept with the ticket.
+			</para>
+			<para>
+				Often, questions are raised about why a feature was removed from user documentation. Having a thorough history in the ticket will help to justify the reason why the feature was removed, and help other content authors and project managers to understand the issue in greater detail.
+			</para>
+			<para>
+				Update the GCode Documentation Ticket with the following information:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						The GCode SVN commit numbers involved with the changes.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						A description of what has changed in the XML.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Chapter-section references to the new content in the HTML Publish. For example:
+					</para>
+					<para>
+						<userinput>Section 3.2. Procedure 3.2.1 - Steps 1 to 6 added to clarify process.</userinput>
+					</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+
+	</section>
+	
+	<section id="r-Review">
+		<title>Review</title>
+		<para>
+			The Review phase involves another team member peer reviewing the changes made by the original content author. This important phase provides the opportunity to review the changes for technical accuracy.
+		</para>
+		<para>
+			Additionally, it provides a chance for your peers to comment on how user-friendly the information is. After all, if the content is not user friendly, then a user probably won&#39;t use it.
+		</para>
+		<para>
+			The Review phase involves the content author and the reviewer in that the content author must discuss and incorporate any feedback provided by the reviewer.
+		</para>
+		<section>
+			<title>Review Preparation</title>
+			<para>
+				Before sending off the changes for review, there are a few administration tasks that must be attended to.
+			</para>
+			<procedure>
+				<title>Update XML Comments to Review </title>
+				<step>
+					<title>Open Affected XML Files </title>
+					<para>
+						From the information contained in the GCode Ticket, open each affected XML file.
+					</para>
+				</step>
+				<step>
+					<title>Edit XML Comments</title>
+					<para>
+						In each affected section, update the XML Comment STATUS to <literal>Review</literal>.
+					</para>
+					<para>
+						The information in the GCode Ticket should help you to determine which sections are changed.
+					</para>
+				</step>
+				<step>
+					<title>Save and Close</title>
+					<para>
+						Save and close all open XML files.
+					</para>
+				</step>
+			</procedure>
+			
+			<para>
+				<xref linkend="procedure-Create_Review_Document" /> requires the XML changes to be published to HTML-Single format using the mkbk script, the Publican Toolchain, and Maven JDocBook. For this procedure, you must have Publican and Maven JDocBook configured according to the information in <xref linkend="pam-Publican_and_Maven" />.
+			</para>
+			<para>
+				<xref linkend="procedure-Create_Review_Document" /> assumes that you are using Fedora or RHEL, which are the currently supported Linux distributions for Publican.
+			</para>
+			<procedure id="procedure-Create_Review_Document">
+				<title>Create Review Document</title>
+				<step>
+					<title>Navigate to the User Guide Directory</title>
+					<para>
+						Open a terminal, and navigate to the directory that contains the <filename>en-US</filename> documentation directory.
+					</para>
+				</step>
+				<step>
+					<title>Create Combined XML File</title>
+					<para>
+						Run the <literal>mkbk</literal> script and create the all-[server name].xml file.
+					</para>
+					<para>
+						For command-line usage, refer to <xref linkend="pam-Publican_and_Maven" />.
+					</para>
+				</step>
+				<step>
+					<title>Commit all-[server name].xml to GCode SVN</title>
+					<para>
+						Commit the file to GCode SVN, so the Hudson Build Server builds the doc from the correct file version.
+					</para>
+				</step>
+				<step>
+					<title>Request Hudson to Build a HTML-Single </title>
+					<para>
+						Generate the review document by instructing the Hudson Build Server to create a HTML-Single book.
+					</para>
+				</step>
+				<step>
+					<title>Record the Build ID Number</title>
+					<para>
+						After Hudson has successfully published the XML book to HTML-Single format, copy the direct link to the file and paste it into the ticket.
+					</para>
+				</step>
+				<step>
+					<title>Save and Close the GCode Ticket</title>
+					<para>
+						Click <guibutton>Save changes</guibutton> once the link to the review document has been appended to the ticket.
+					</para>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section>
+			<title>Request Review</title>
+			<para>
+				After completing the review preparation tasks, you are ready to send your changes to a project member for review.
+			</para>
+			<para>
+				The GCode Documentation Ticket contains the review request, and provides the reviewer with the information they need to complete the review.
+			</para>
+			<para>
+				<xref linkend="procedure-Revew_Request_Using_GCode_Ticket" /> describes the process to request a documentation review.
+			</para>
+			<procedure id="procedure-Revew_Request_Using_GCode_Ticket">
+				<title>Requesting Review using GCode Ticket</title>
+				<step>
+					<title>Open Original GCode Ticket</title>
+					<para>
+						If the ticket is not already open, navigate and open the GCode Documentation Ticket that relates to the documentation review.
+					</para>
+					<para>
+						Click in the Comment box to display the full details of the ticket, including the Labels.
+					</para>
+				</step>
+				<step>
+					<title>Add the Request to the Ticket</title>
+					<para>
+						In the Comment field, request that the ticket is ready for review.
+					</para>
+					<para>
+						Ensure the reviewer&#39;s name, or email address, is specified in the <guilabel>Cc:</guilabel> field of the ticket.
+					</para>
+				</step>
+				<step>
+					<title>Provide Direct Links to All Published Changes</title>
+					<para>
+						Hudson allows you to copy and paste direct links to published sections of the online User Guide. Pasting direct links to the section will greatly assist the peer reviewer with locating your changes.
+					</para>
+					<orderedlist>
+						<title>Including Direct Links</title>
+						<listitem>
+							<para>
+								Navigate to the section you changed as part of the enhancement.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Copy the absoulte link to the section from the URL field of the Web browser.
+							</para>
+							<para>
+								You will know it is an absolute link because it will have a #[chapter/section name] as the last part of the URL.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Paste the direct link into the ticket.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Repeat the procedure for all other changes.
+							</para>
+						</listitem>
+					</orderedlist>
+					<para>
+						Be as specific as possible with the areas requiring review. The more information you provide your reviewer, the easier it will be to efficiently complete the review.
+					</para>
+				</step>
+				<step>
+					<title>Save and Close</title>
+					<para>
+						After ensuring all required information is present, save and close the ticket.
+					</para>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section>
+			<title>Review Ticket</title>
+			<para>
+				After the review request has been sent, the peer reviewer is notified that a review is waiting through an email notification from GCode. Thorough ticket review is key contributor to fantastic user documentation because other team members can use the opportunity to read the changes from a customer perspective. The content can be evaluated for techincal accuracy and readability before being sent to the editing phase.
+			</para>
+			<para>
+				The goal of Peer Review is to discuss why your suggestions should be considered by the content author. The better your reasons for suggesting an improvement, the better the chances of having the content incorporated, or reaching a compromise.
+			</para>
+			<para>
+				<xref linkend="procedure-Peer_Reviewing_Documentation_Changes" /> describes the process to follow when a review request is received from the GCode Ticket System.
+			</para>
+			<procedure id="procedure-Peer_Reviewing_Documentation_Changes">
+				<title>Peer Reviewing Documentation Changes</title>
+				<step>
+					<title>Open the Ticket</title>
+					<para>
+						In the email notification, click the link in the ticket to take you to the GCode Documentation Ticket.
+					</para>
+				</step>
+				<step>
+					<title>Open the HTML Document</title>
+					<para>
+						The ticket should contain a direct link to the affected build version and section of the user guide hosted on the Hudson Build Server.
+					</para>
+					<para>
+						Click each link to be taken to the closest section containing each enhancement.
+					</para>
+					<para>
+						Refer to the details in the ticket to verify what you should be reviewing.
+					</para>
+				</step>
+				<step>
+					<title>Review the Enhancements</title>
+					<para>
+						For each specified enhancement, ask the following questions:
+					</para>
+					<variablelist>
+						<title>Peer Review Questions</title>
+						<varlistentry>
+							<term>Does It Make Sense?</term>
+							<listitem>
+								<para>
+									Look at readability of the documented enhancement. Does it make sense when you read it? If not, what needs to be changed?
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Is the Information Structured Correctly?</term>
+							<listitem>
+								<para>
+									Is the incorporated information included in the correct position in the User Guide? If not, where should the info be moved to?
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Are the Identified Changes Correctly Incorporated?</term>
+							<listitem>
+								<para>
+									Do the incorporated changes cover the details identified in the Enhancement? If not, what&#39;s missing and where should it be incorporated?
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Is Information Missing?</term>
+							<listitem>
+								<para>
+									Is all relevant information incorporated for the particular enhancement? If not, what&#39;s missing and where should it be incorporated?
+								</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Is a Diagram or Screenshot Really Needed?</term>
+							<listitem>
+								<para>
+									Diagrams should be present only if the information contained within them is essential for the reader to grasp a concept, or user interface. Well written procedures generally don&#39;t require supporting screen shots if the procedure describes the fields a user must complete. Excluding unnecessary screenshots increases the maintainability of the UDS.
+								</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</step>
+				<step>
+					<title>Comment on the Enhancements</title>
+					<para>
+						When you encounter an area that requires improvement, you must document your suggestions in the XML file so the content author can review your suggestions in context.
+					</para>
+					<para>
+						XML comments are used to document Peer Review comments.
+					</para>
+					
+<programlisting role="XML">&lt;!--Issue #[GCode Issue Number] PR Comment - [describe what needs to be changed or clarified by the content author.]
+</programlisting>
+					<para>
+						In the comment, be as detailed as possible so the content author can effectively evaluate your suggestions.
+					</para>
+					<note>
+						<para>
+							Feedback can sometimes be percieved as criticism. For this reason, it is important to provide only constructive feedback to the contributing content author.
+						</para>
+					</note>
+				</step>
+				<step>
+					<title>Update the Review Block Information for the Section</title>
+					<para>
+						Update the XML Status Block for the Chapter or Section you are reviewing.
+					</para>
+					<para>
+						Change STATUS to <userinput>Review</userinput>, and update the DATE CHANGED to the date of your review.
+					</para>
+				</step>
+				<step>
+					<title>Commit Comments to GCode SVN</title>
+					<para>
+						Once you have finished providing feedback, commit your changes to GCode SVN.
+					</para>
+					<para>
+						Include a meaningful commit message to indicate what was done. For example:
+					</para>
+					<para>
+						<userinput>Issue #666 - PR - Commited comments made as part of Peer Review for this ticket.</userinput>
+					</para>
+					<para>
+						Make note of the commit number.
+					</para>
+				</step>
+				<step>
+					<title>Update the GCode Ticket</title>
+					<para>
+						Once the XML files are committed, you must update the GCode ticket with the following information:
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								Gcode SVN commit number.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Brief summary of suggestions for the content author.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								The Peer Review comment syntax you used to mark any changes.
+							</para>
+							<para>
+								For example, "I&#39;ve used "Issue #666 - PR" to mark my review comments"
+							</para>
+						</listitem>
+					</itemizedlist>
+				</step>
+				<step>
+					<title>Re-review, or Straight to Editing?</title>
+					<para>
+						TODO - add info here about re-review before editing if requried.
+					</para>
+				</step>
+			</procedure>
+
+		</section>
+
+	</section>
+	
+	<section>
+		<title>Editing</title>
+		<para>
+			TODO - Add information about the role the editor plays in the process
+		</para>
+	</section>
+	
+	<section>
+		<title>Fixed</title>
+		<para>
+			TODO - Add info about what happens when editor and content author are happy with the changes.
+		</para>
+	</section>
+	
+	<section>
+		<title>Verified</title>
+		<para>
+			TODO - describe what verified means in the docs lifecycle.
+		</para>
+	</section>
+
+</chapter>
+
