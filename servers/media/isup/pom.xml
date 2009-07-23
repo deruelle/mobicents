@@ -24,7 +24,7 @@
 
 	<name>Mobicents ISDN User Part Stack :: ${pom.artifactId}</name>
 	<properties>
-		<maven.test.skip>true</maven.test.skip>
+		<maven.test.skip>false</maven.test.skip>
 		<release.name>
 			${release.name.prefix}${parent.version}${release.name.suffix}
 		</release.name>
