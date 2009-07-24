@@ -51,7 +51,10 @@ import org.mobicents.media.server.spi.Timer;
 public class DtmfTransitionTest {
 
     private Timer timer;
-    private Hashtable<String, RtpFactory> rtpFactories;
+    private Hashtable<String, RtpFactory> rtpFactories1, rtpFactories2;
+
+    private int localPort1 = 9201;
+    private int localPort2 = 9202;
     
     private EndpointImpl sender,  receiver;
     private EndpointImpl packetRelayEnp;
@@ -66,7 +69,7 @@ public class DtmfTransitionTest {
     private Semaphore semaphore;
 
     private DspFactory dspFactory;
-    private RtpFactory rtpFactory;
+    private RtpFactory rtpFactory1, rtpFactory2;
     private EncoderFactory encoderFactory;
     private DecoderFactory decoderFactory;
     private ArrayList list;
@@ -108,15 +111,27 @@ public class DtmfTransitionTest {
         rtpmap.put(97, AVProfile.SPEEX);
         rtpmap.put(101, AVProfile.DTMF);
 
-        rtpFactory = new RtpFactory();
-        rtpFactory.setBindAddress("localhost");
-        rtpFactory.setPortRange("1024-65535");
-        rtpFactory.setJitter(60);
-        rtpFactory.setTimer(timer);
-        rtpFactory.setFormatMap(rtpmap);
+        rtpFactory1 = new RtpFactory();
+        rtpFactory1.setBindAddress("localhost");
+        rtpFactory1.setLocalPort(localPort1);
+        rtpFactory1.setTimer(timer);
+        rtpFactory1.setFormatMap(rtpmap);
+        rtpFactory1.start();
 
-        rtpFactories = new Hashtable();
-        rtpFactories.put("audio", rtpFactory);
+        rtpFactory2 = new RtpFactory();
+        rtpFactory2.setBindAddress("localhost");
+        rtpFactory2.setLocalPort(localPort2);
+        rtpFactory2.setTimer(timer);
+        rtpFactory2.setFormatMap(rtpmap);
+        rtpFactory2.start();
+        
+        
+        rtpFactories1 = new Hashtable();
+        rtpFactories1.put("audio", rtpFactory1);
+
+        rtpFactories2 = new Hashtable();
+        rtpFactories2.put("audio", rtpFactory2);
+
     }
 
     private void setupDSP() throws Exception {
@@ -155,7 +170,7 @@ public class DtmfTransitionTest {
         genFactory.setName("test-source");
 
         sender.setSourceFactory(genFactory);
-        sender.setRtpFactory(rtpFactories);
+        sender.setRtpFactory(rtpFactories1);
         sender.start();
     }
     
@@ -257,7 +272,7 @@ public class DtmfTransitionTest {
         packetRelayEnp.setTimer(timer);
         packetRelayEnp.setTxChannelFactory(prChannelFactory);
         packetRelayEnp.setRxChannelFactory(prChannelFactory);
-        packetRelayEnp.setRtpFactory(rtpFactories);
+        packetRelayEnp.setRtpFactory(rtpFactories2);
 
         // strating packet relay endpoint
         packetRelayEnp.start();
@@ -398,7 +413,13 @@ public class DtmfTransitionTest {
             buffer.setData(new byte[320]);
             buffer.setLength(4);
             buffer.setOffset(0);
-            otherParty.receive(buffer);
+            if (otherParty != null) {
+                System.out.println("Sending to " + otherParty);
+                try {
+                    otherParty.receive(buffer);
+                } catch (Exception e) {
+                }
+            }
         }
 
         @Override
@@ -409,6 +430,11 @@ public class DtmfTransitionTest {
         @Override
         public void disconnect(MediaSink otherParty) {
             super.disconnect(otherParty);
+        }
+
+        @Override
+        public void evolve(Buffer buffer, long sequenceNumber) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 
@@ -429,6 +455,11 @@ public class DtmfTransitionTest {
 
         public void receive(Buffer buffer) {
             list.add(buffer);
+        }
+
+        @Override
+        public void onMediaTransfer(Buffer buffer) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 }

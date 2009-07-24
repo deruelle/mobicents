@@ -26,6 +26,7 @@
  */
 package org.mobicents.media.server.impl.resource.cnf;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import org.mobicents.media.Buffer;
@@ -58,7 +59,6 @@ public class CnfLocalSink extends AbstractSink {
     
     @Override
     public void connect(MediaSource source) {
-        System.out.println("Connection" + source + " to endpoint sink for " + source.getConnection()) ;
         Demultiplexer demux = new Demultiplexer("demux." + source.getName());
         splitters.put(source.getId(), demux);
         demux.setConnection(source.getConnection());
@@ -101,7 +101,7 @@ public class CnfLocalSink extends AbstractSink {
         return format.matches(ConferenceBridge.FORMATS[0]);
     }
 
-    public void receive(Buffer buffer) {
+    public void onMediaTransfer(Buffer buffer) throws IOException {
         System.out.println("Receive  " + buffer);
     }
 }

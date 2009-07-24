@@ -1,12 +1,32 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
-
 package org.mobicents.media.server.impl.resource.audio;
 
-import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.Component;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -15,36 +35,19 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public class AudioPlayerEvent implements NotifyEvent {
 
-    public final static int STARTED = 1;
-    public final static int END_OF_MEDIA = 2;
-    public final static int FAILED = 3;
-    
-    private Endpoint endpoint;
-    private Connection connection;
-    private String resourceType;
     private int eventID;
 
     public AudioPlayerEvent(AudioPlayerImpl player, int eventID) {
-        this.endpoint = player.getEndpoint();
-        this.connection = player.getConnection();
-        this.resourceType = player.getName();
         this.eventID = eventID;
     }
         
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
 
     public int getEventID() {
         return eventID;
     }
 
-    public String getResourceName() {
-        return resourceType;
+    public Component getSource() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

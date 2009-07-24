@@ -444,8 +444,16 @@ public class ChanneWithPipesTest {
             buffer.setSequenceNumber(count++);
             
             if (this.otherParty != null) {
-                otherParty.receive(buffer);
+                try {
+                    otherParty.receive(buffer);
+                } catch (Exception e) {
+                }
             }
+        }
+
+        @Override
+        public void evolve(Buffer buffer, long sequenceNumber) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 
@@ -469,6 +477,11 @@ public class ChanneWithPipesTest {
 
         public MediaSource getOtherParty() {
             return otherParty;
+        }
+
+        @Override
+        public void onMediaTransfer(Buffer buffer) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 
@@ -499,6 +512,11 @@ public class ChanneWithPipesTest {
                 output.send(buffer);
             }
 
+            @Override
+            public void onMediaTransfer(Buffer buffer) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
             
         }
         
@@ -527,8 +545,16 @@ public class ChanneWithPipesTest {
             
             public void send(Buffer buffer) {
                 if (otherParty != null) {
-                    otherParty.receive(buffer);
+                    try {
+                        otherParty.receive(buffer);
+                    } catch (Exception e) {
+                    }
                 }
+            }
+
+            @Override
+            public void evolve(Buffer buffer, long sequenceNumber) {
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         }
         
@@ -545,6 +571,14 @@ public class ChanneWithPipesTest {
 
         public MediaSource getOutput() {
             return output;
+        }
+
+        public void start() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void stop() {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
     }

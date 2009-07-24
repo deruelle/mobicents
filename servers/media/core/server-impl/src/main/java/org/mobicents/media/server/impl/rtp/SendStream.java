@@ -39,96 +39,91 @@ import org.mobicents.media.server.impl.AbstractSink;
  */
 public class SendStream extends AbstractSink {
 
-	// payload type
-	private int pt = 0;
-	// sequence number
-	private int seq = 0;
-	// source synchronization
-	private final long ssrc = System.currentTimeMillis();
-	// packetizer
-	// private Packetizer packetizer;
-	private RtpPacketizer packetizer;
-	// the amount of ticks in one milliseconds
-	int ticks;
-	protected Format[] formats;
-	private RtpSocket rtpSocket;
-	private RtpHeader header = new RtpHeader();
+    // payload type
+    private int pt = 0;
+    // sequence number
+    private int seq = 0;
+    // source synchronization
+    private final long ssrc = System.currentTimeMillis();
+    // packetizer
+    // private Packetizer packetizer;
+    private RtpPacketizer packetizer;
+    // the amount of ticks in one milliseconds
+    int ticks;
+    protected Format[] formats;
+    private RtpSocket rtpSocket;
+    private RtpHeader header = new RtpHeader();
+    private int payloadType;
+    private Format format;
 
-	private int payloadType;
-	private Format format;
+    public SendStream(RtpSocket rtpSocket) {
+        super("SendStream");
+        this.rtpSocket = rtpSocket;
+        packetizer = new RtpPacketizer();
+        
+        Collection<Format> list = rtpSocket.getRtpMap().values();
+        formats = new Format[list.size()];
+        list.toArray(formats);
+    }
 
-	public SendStream(RtpSocket rtpSocket) {
-		super("SendStream");
-		this.rtpSocket = rtpSocket;
-		packetizer = new RtpPacketizer();
-	}
+    private int getPayloadType(Format fmt) {
+        if (format != null && fmt.equals(format)) {
+            return payloadType;
+        }
 
-	private int getPayloadType(Format fmt) {
-		if (format != null && fmt.equals(format)) {
-			return payloadType;
-		}
+        payloadType = rtpSocket.getPayloadType(fmt);
+        format = fmt;
 
-		payloadType = rtpSocket.getPayloadType(fmt);
-		format = fmt;
+        return payloadType;
+    }
 
-		return payloadType;
-	}
+    public void onMediaTransfer(Buffer buffer) throws IOException {
+        if (buffer.getFlags() != Buffer.FLAG_SYSTEM_TIME) {
+            packetizer.process(buffer, rtpSocket.timer.getHeartBeat());
 
-	public void receive(Buffer buffer) {
-		if (buffer.getFlags() != Buffer.FLAG_SYSTEM_TIME) {
-			packetizer.process(buffer, rtpSocket.timer.getHeartBeat());
+            AudioFormat fmt = (AudioFormat) buffer.getFormat();
+            pt = getPayloadType(fmt);
 
-			AudioFormat fmt = (AudioFormat) buffer.getFormat();
-			pt = getPayloadType(fmt);
+            boolean marker = false;
+/*            try {
+                Object obj = buffer.getHeader();
+                if (obj != null) {
+                    RtpHeader rtpHeader = (RtpHeader) obj;
+                    marker = rtpHeader.getMarker();
+                }
+            } catch (Exception e) {
+                //ignore
+            }
+*/
+            header.init(marker, (byte) pt, seq++, (int) buffer.getTimeStamp(), ssrc);
+            buffer.setHeader(header);
+        }
 
-			boolean marker = false;
-			try {
-				Object obj = buffer.getHeader();
-				if (obj != null) {
-					RtpHeader rtpHeader = (RtpHeader) obj;
-					marker = rtpHeader.getMarker();
-				}
-			} catch (Exception e) {
-				//ignore
-			}
+            rtpSocket.send(buffer);
+    }
 
-			header.init(marker, (byte) pt, seq++, (int) buffer.getTimeStamp(), ssrc);
-			buffer.setHeader(header);
-		}
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.MediaSink.isAcceptable(Format).
+     */
+    public boolean isAcceptable(Format fmt) {
+        boolean res = false;
+        for (Format f : formats) {
+            if (f.matches(fmt)) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
 
-		boolean error = false;
+    public Format[] getFormats() {
+        return formats;
+    }
 
-		try {
-			rtpSocket.send(buffer);
-		} catch (IOException e) {
-		} finally {
-			buffer.dispose();
-		}
-	}
-
-	/**
-	 * (Non Java-doc.)
-	 * 
-	 * @see org.mobicents.media.MediaSink.isAcceptable(Format).
-	 */
-	public boolean isAcceptable(Format fmt) {
-		boolean res = false;
-		for (Format f : formats) {
-			if (f.matches(fmt)) {
-				res = true;
-				break;
-			}
-		}
-		return res;
-	}
-
-	public Format[] getFormats() {
-		return formats;
-	}
-
-	public void setFormats(Collection<Format> fmts) {
-		formats = new Format[fmts.size()];
-		fmts.toArray(formats);
-	}
-
+    public void setFormats(Collection<Format> fmts) {
+        formats = new Format[fmts.size()];
+        fmts.toArray(formats);
+    }
 }

@@ -47,6 +47,7 @@ public class MediaInformationBox extends Box {
     private HintMediaHeaderBox hintHeader;
     private NullMediaHeaderBox nullMediaHeader;
     private DataInformationBox dinf;
+    private SampleTableBox stbl;
     
     public MediaInformationBox(long size, String type) {
         super(size, type);
@@ -73,6 +74,9 @@ public class MediaInformationBox extends Box {
             } else if (type.equals("dinf")) {
                 dinf = new DataInformationBox(len, type);
                 count += dinf.load(fin);
+            } else if (type.equals("stbl")) {
+                stbl = new SampleTableBox(len, type);
+                count += stbl.load(fin);
             } else throw new IOException("Unknown box=" + type);
         }
         return (int) getSize();

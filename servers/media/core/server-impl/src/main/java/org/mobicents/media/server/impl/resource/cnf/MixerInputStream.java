@@ -1,18 +1,32 @@
 /*
- * Mobicents Media Gateway
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
  *
- * The source code contained in this file is in in the public domain.
- * It can be used in any project or product without prior permission,
- * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
- * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * AND DATA ACCURACY.  We do not warrant or make any representations
- * regarding the use of the software or the  results thereof, including
- * but not limited to the correctness, accuracy, reliability or
- * usefulness of the software.
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
 package org.mobicents.media.server.impl.resource.cnf;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,9 +44,15 @@ public class MixerInputStream extends AbstractSink {
     private int jitter;
     private long duration;
     protected AudioMixer mixer;
-        
+
+    /**
+     * Creates new input stream.
+     * 
+     * @param mixer
+     * @param jitter
+     */
     public MixerInputStream(AudioMixer mixer, int jitter) {
-    	super("MixerInputStream");
+        super("MixerInputStream");
         this.mixer = mixer;
         this.jitter = jitter;
     }
@@ -41,7 +61,12 @@ public class MixerInputStream extends AbstractSink {
     public String getId() {
         return mixer.getId();
     }
-    
+
+    /**
+     * Informs when input stream has enouph data for mixing.
+     * 
+     * @return return true when stream has enouph data for mixing.
+     */
     public boolean isReady() {
         return !buffers.isEmpty();
     }
@@ -55,33 +80,27 @@ public class MixerInputStream extends AbstractSink {
         return duration;
     }
 
-    public void receive(Buffer buffer) {
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.impl.AbstractSink#onMediaTransfer(org.mobicents.media.Buffer) 
+     */
+    public void onMediaTransfer(Buffer buffer) throws IOException {
         if (mixer == null) {
-        	buffer.dispose();
-            return;
-        }
-        
-        if (duration + buffer.getDuration() > jitter) {
-            //silently discard packet
-        	buffer.dispose();
             return;
         }
 
-        duration += buffer.getDuration();
-        buffers.add(buffer);
-//        print(buffer);
-    }
-    private void print(Buffer buffer) {
-        int len = buffer.getLength();
-        int offset = buffer.getOffset();
-        
-        byte[] data = (byte[])buffer.getData();
-        for (int i =offset; i < len; i++) {
-            System.out.print(data[i] + " ");
+        if (duration + buffer.getDuration() > jitter) {
+            return;
         }
-            System.out.println("");
+
+        Buffer buff = new Buffer();
+        buff.copy(buffer);
+        
+        duration += buff.getDuration();
+        buffers.add(buff);
     }
-    
+
     /**
      * Reads media buffer from this stream with specified duration.
      * 
@@ -95,14 +114,14 @@ public class MixerInputStream extends AbstractSink {
         int count = 0;
         while (count < size && !buffers.isEmpty()) {
             Buffer buff = buffers.get(0);
-            
+
             if (buff.isEOM() || buff.getData() == null) {
                 buffers.remove(buff);
                 this.duration -= buff.getDuration();
                 buff.dispose();
                 break;
             }
-            
+
             int len = Math.min(size - count, buff.getLength() - buff.getOffset());
             System.arraycopy(buff.getData(), buff.getOffset(), media, count, len);
 
@@ -118,11 +137,7 @@ public class MixerInputStream extends AbstractSink {
 
         return media;
     }
-    
-    @Override
-    public String toString() {
-        return mixer.toString();
-    }
+
 
     /**
      * (Non Java-doc.)
@@ -133,8 +148,18 @@ public class MixerInputStream extends AbstractSink {
         return fmt.matches(AudioMixer.LINEAR);
     }
 
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.MediaSink#getFormats() 
+     */
     public Format[] getFormats() {
         return AudioMixer.formats;
     }
-
+    
+    @Override
+    public String toString() {
+        return mixer.toString();
+    }
+    
 }

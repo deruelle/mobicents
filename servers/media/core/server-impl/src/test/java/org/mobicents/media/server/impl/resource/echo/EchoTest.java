@@ -147,7 +147,7 @@ public class EchoTest {
     private class PlayerListener implements NotificationListener {
 
         public void update(NotifyEvent event) {
-            if (event.getEventID() == AudioPlayerEvent.END_OF_MEDIA) {
+            if (event.getEventID() == NotifyEvent.COMPLETED) {
                 semaphore.release();
             }
         }
@@ -178,6 +178,11 @@ public class EchoTest {
 
         public void receive(Buffer buffer) {
             count++;
+        }
+
+        @Override
+        public void onMediaTransfer(Buffer buffer) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
     }

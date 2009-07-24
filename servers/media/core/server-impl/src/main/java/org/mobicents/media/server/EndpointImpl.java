@@ -190,6 +190,7 @@ public class EndpointImpl implements Endpoint {
             Channel rxChannel = rxChannelFactory.newInstance(this);
             rxChannel.setConnection(connection);
             rxChannel.connect(sink);
+            sink.start();
             return rxChannel;
         } else return null;
     }

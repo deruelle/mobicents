@@ -27,6 +27,7 @@
 
 package org.mobicents.media.server.impl.resource.prelay;
 
+import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.server.impl.AbstractSource;
@@ -83,6 +84,11 @@ public class PacketRelaySource extends AbstractSource {
 
     public Format[] getFormats() {
         return Bridge.DEFAULT_FORMAT;
+    }
+
+    @Override
+    public void evolve(Buffer buffer, long sequenceNumber) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

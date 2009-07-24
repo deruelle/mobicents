@@ -37,6 +37,7 @@ import org.mobicents.media.server.impl.AbstractSource;
 public class EchoSource extends AbstractSource {
     protected EchoSink sink;
     private Format[] supported = new Format[0];
+    private Buffer buffer;
     
     public EchoSource(String name) {
         super(name);
@@ -48,9 +49,11 @@ public class EchoSource extends AbstractSource {
         this.sink = sink;
     }
 
+    @Override
     public void start() {
     }
 
+    @Override
     public void stop() {
     }
 
@@ -59,8 +62,16 @@ public class EchoSource extends AbstractSource {
     }
     
     protected void delivery(Buffer buffer)  {
-        if (otherParty != null) {
+/*        if (otherParty != null) {
             otherParty.receive(buffer);
         }
+ */
+        this.buffer = buffer;
+        run();
+    }
+
+    @Override
+    public void evolve(Buffer buffer, long sequenceNumber) {
+        buffer.copy(this.buffer);
     }
 }

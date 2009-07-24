@@ -15,7 +15,6 @@
  */
 package org.mobicents.media.server.impl.resource.test;
 
-import java.util.concurrent.ScheduledFuture;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
@@ -24,35 +23,49 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
 
 /**
+ * Generates sine wave signal with specified Amplitude and frequence.
  *
+ * The format of output signal is Linear, 16bit, 8kHz.
+ * 
  * @author Oleg Kulikov
  */
 public class SineGenerator extends AbstractSource implements Runnable {
 
-    private byte[] data;
     
     private final static AudioFormat LINEAR_AUDIO = new AudioFormat(
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN,
             AudioFormat.SIGNED);
-    private final static Format formats[] = new Format[] {LINEAR_AUDIO};
-    
-    private Timer timer;
-    private ScheduledFuture worker;
-    
-    private int sizeInBytes;
-    private int offset;
-    private int seq;
+    private final static Format FORMAT[] = new Format[] {LINEAR_AUDIO};
     
     private int f;
     private short A = Short.MAX_VALUE;
     
+    private double dt;
+    private int pSize;
+    
+    private double time;
+    
+    public SineGenerator(String name, Timer timer) {
+        super(name);
+        setSyncSource(timer);
+        init();
+    }
+    
     /** Creates a new instance of Generator */
     public SineGenerator(Endpoint endpoint, String name) {
     	super(name);
-        this.timer = endpoint.getTimer();
+        setSyncSource(endpoint.getTimer());
+        init();
     }
 
+    private void init() {
+        //number of seconds covered by one sample
+        dt = 1/LINEAR_AUDIO.getSampleRate();
+        //packet size in samples
+        pSize = (int)((double)getSyncSource().getHeartBeat()/1000.0/dt);
+    }
+    
     public void setAmplitude(short A) {
         this.A = A;
     }
@@ -69,70 +82,33 @@ public class SineGenerator extends AbstractSource implements Runnable {
         return f;
     }
     
-    public void start() {
-        if (worker != null && !worker.isCancelled()) {
-            worker.cancel(true);
-        }
-        
-        data = new byte[(int)
-                LINEAR_AUDIO.getSampleRate() * 
-                LINEAR_AUDIO.getSampleSizeInBits()/8];
+    private short getValue(double t) {
+        return (short) (A* Math.sin(2 * Math.PI * f * t));
+    }
 
-        sizeInBytes = (int) (LINEAR_AUDIO.getSampleRate() * 
-                (LINEAR_AUDIO.getSampleSizeInBits() / 8)/1000 * 20); // Duration
+    public void evolve(Buffer buffer, long seq) {
+        byte[] data = (byte[])buffer.getData();
         
-        int len = data.length / 2;
         int k = 0;
-
-        for (int i = 0; i < len; i++) {
-            short s = (short) (A* Math.sin(2 * Math.PI * f * i / len));
-            data[k++] = (byte) s;
-            data[k++] = (byte) (s >> 8);
-        }
-
-        worker = timer.synchronize(this);
-    }
-
-    public void stop() {
-        if (worker != null && !worker.isCancelled()) {
-            worker.cancel(true);
-        }
-    }
-
-    public void run() {
-        byte[] media = new byte[sizeInBytes];
-
-        int count = Math.min(data.length - offset, sizeInBytes);
-        System.arraycopy(data, offset, media, 0, count);
-        offset += count;
-        if (offset == data.length) {
-            offset = 0;
+        
+        for (int i = 0; i < pSize; i++) {
+            short v = getValue(time + dt * i);
+            data[k++] = (byte) v;
+            data[k++] = (byte) (v >> 8);
         }
         
-        Buffer buffer = new Buffer();        
-        buffer.setOffset(0);
-        buffer.setLength(media.length);
-        buffer.setSequenceNumber(seq);
-        buffer.setDuration(timer.getHeartBeat());
-        buffer.setTimeStamp(seq * timer.getHeartBeat()); 
-        buffer.setData(media);
         buffer.setFormat(LINEAR_AUDIO);
-        seq++;
+        buffer.setSequenceNumber(seq);
+        buffer.setTimeStamp(getSyncSource().getTimestamp());
+        buffer.setDuration(getSyncSource().getHeartBeat());
+        buffer.setOffset(0);
+        buffer.setLength(2*pSize);
         
-        if (otherParty != null) {
-            otherParty.receive(buffer);
-        }
+        time += ((double)getSyncSource().getHeartBeat())/1000.0;
     }
 
     public Format[] getFormats() {
-        return formats;
+        return FORMAT;
     }
 
-    public void started() {
-    }
-
-    public void ended() {
-    }
-
-    
 }

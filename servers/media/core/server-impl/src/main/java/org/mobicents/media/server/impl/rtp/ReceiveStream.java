@@ -1,19 +1,31 @@
 /*
- * Mobicents Media Gateway
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
  *
- * The source code contained in this file is in in the public domain.
- * It can be used in any project or product without prior permission,
- * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
- * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * AND DATA ACCURACY.  We do not warrant or make any representations
- * regarding the use of the software or the  results thereof, including
- * but not limited to the correctness, accuracy, reliability or
- * usefulness of the software.
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
 package org.mobicents.media.server.impl.rtp;
 
-import java.util.concurrent.ScheduledFuture;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
@@ -22,40 +34,31 @@ import org.mobicents.media.server.impl.AbstractSource;
  * 
  * @author Oleg Kulikov
  */
-public class ReceiveStream extends AbstractSource implements Runnable {
+public class ReceiveStream extends AbstractSource {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -2277812497480986797L;
-    private JitterBuffer jitterBuffer;
-    private volatile ScheduledFuture readerTask;
     private Buffer frame;
     protected Format[] formats;
     private RtpSocket rtpSocket;
-
+    private RtpDepacketizer depacketizer;
+    
     /** Creates a new instance of ReceiveStream */
     public ReceiveStream(RtpSocket rtpSocket, int jitter) {
         super("ReceiveStream");
+        setSyncSource(rtpSocket.timer);
         this.rtpSocket = rtpSocket;
-        jitterBuffer = new JitterBuffer(jitter, rtpSocket.timer.getHeartBeat(), rtpSocket.getRtpMap());
+        depacketizer = new RtpDepacketizer(jitter, getSyncSource().getHeartBeat(), rtpSocket.getRtpMap());
     }
 
-    protected void push(byte[] data, int offset, int len) {
-        jitterBuffer.write(data, offset, len);
+    protected void push(RtpPacket rtpPacket) {
+        depacketizer.push(rtpPacket);
     }
 
-    public void stop() {
-        rtpSocket.stopReceiver();
-        if (readerTask != null) {
-            readerTask.cancel(false);
-        }
-    }
-
-    public void start() {
-        jitterBuffer.reset();
-        rtpSocket.startReceiver();
-        readerTask = rtpSocket.timer.synchronize(this);
+    @Override
+    public void beforeStart() {
+        depacketizer.reset();
     }
 
     public Format[] getFormats() {
@@ -64,21 +67,7 @@ public class ReceiveStream extends AbstractSource implements Runnable {
         return fmts;
     }
 
-    public void run() {
-        frame = jitterBuffer.read();
-
-        if (frame == null) {
-            return;
-        }
-
-        if (otherParty == null) {
-            return;
-        }
-
-        // The sink for ReceiveStream is Processor.Input
-        try {
-            otherParty.receive(frame);
-        } catch (Exception e) {
-        }
+    public void evolve(Buffer buffer, long seq) {
+        depacketizer.evolve(buffer);
     }
 }

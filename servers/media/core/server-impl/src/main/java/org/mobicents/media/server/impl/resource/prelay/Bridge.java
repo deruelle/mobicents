@@ -42,7 +42,7 @@ public class Bridge {
         AVProfile.GSM, AVProfile.G729, AVProfile.DTMF, Codec.LINEAR_AUDIO
     };
     
-    protected Proxy[] proxies = new Proxy[2];
+    protected PacketRelayProxy[] proxies = new PacketRelayProxy[2];
     private EndpointImpl endpoint;
     
     protected PacketRelaySource source;
@@ -51,14 +51,23 @@ public class Bridge {
     public Bridge(Endpoint endpoint) {
         this.endpoint = (EndpointImpl) endpoint;
         
-        proxies[0] = new Proxy("packet.relay", endpoint);
-        proxies[1] = new Proxy("packet.relay", endpoint);
+        proxies[0] = new PacketRelayProxy("packet.relay", endpoint);
+        proxies[1] = new PacketRelayProxy("packet.relay", endpoint);
+        
+        proxies[0].getInput().start();
+        proxies[0].getOutput().start();
+
+        proxies[1].getInput().start();
+        proxies[1].getOutput().start();
         
         PacketRelaySinkFactory sinkFactory = (PacketRelaySinkFactory) this.endpoint.getSinkFactory();
         PacketRelaySourceFactory sourceFactory = (PacketRelaySourceFactory) this.endpoint.getSourceFactory();
         
         source = new PacketRelaySource(sourceFactory.getName(), this);
+        source.start();
+        
         sink = new PacketRelaySink(sinkFactory.getName(), this);
+        sink.start();
     }
     
     public PacketRelaySource getSource() {

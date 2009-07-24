@@ -69,6 +69,10 @@ public class Utils {
     }
     
     public static synchronized boolean checkFreq(int[] ext, int[] F, int error) {
+        if (ext.length < F.length) {
+            reason = "Expected " + F.length + " peaks but found " + ext.length;
+            return false;
+        }
         for (int i = 0; i < F.length; i++) {
             if (Math.abs(ext[i] - F[i]) > error) {
                 reason = "Expected " + F[i] + " but found " + ext[i];

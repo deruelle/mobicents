@@ -179,6 +179,11 @@ public class AbstractSourceTest {
         public void receive(Buffer buffer) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+        @Override
+        public void onMediaTransfer(Buffer buffer) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
         
     }
     
@@ -201,6 +206,11 @@ public class AbstractSourceTest {
 
         public Format[] getFormats() {
             return formats;
+        }
+
+        @Override
+        public void evolve(Buffer buffer, long sequenceNumber) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 }

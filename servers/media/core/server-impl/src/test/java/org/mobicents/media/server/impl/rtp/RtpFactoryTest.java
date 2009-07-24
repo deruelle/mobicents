@@ -24,84 +24,69 @@ import org.mobicents.media.server.spi.Timer;
  */
 public class RtpFactoryTest {
 
-	private static final int HEART_BEAT = 20;
+    private static final int HEART_BEAT = 20;
+    private static final AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+    private static final AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+    private static Map<Integer, Format> formatMap = new HashMap<Integer, Format>();
+    
 
-	private static final AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
-	private static final AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+    static {
+        formatMap.put(0, PCMU);
+        formatMap.put(8, PCMA);
+    }
+    private RtpFactory factory = null;
 
-	private static Map<Integer, Format> formatMap = new HashMap<Integer, Format>();
-	static {
-		formatMap.put(0, PCMU);
-		formatMap.put(8, PCMA);
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	private RtpFactory factory = null;
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        factory = new RtpFactory();
+        factory.setFormatMap(formatMap);
 
-	}
+        Timer timer = new TimerImpl();
+        timer.setHeartBeat(HEART_BEAT);
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+        factory.setTimer(timer);
+        factory.setJitter(80);
+        factory.setBindAddress("127.0.0.1");
+        factory.setLocalPort(9201);
+        factory.start();
+    }
 
-	@Before
-	public void setUp() throws Exception {
-		factory = new RtpFactory();
-		factory.setFormatMap(formatMap);
+    @After
+    public void tearDown() {
+        // Dont close the Factory as it will stop the RtpSocket.readerThread and
+        // RtpSocketTest will be screwed
+        // factory.stop();
+    }
 
-		Timer timer = new TimerImpl();
-		timer.setHeartBeat(HEART_BEAT);
+    @Test
+    public void getRTPSocketTest() throws Exception {
+        RtpSocket rtpSocket = factory.getRTPSocket();
+        int port = rtpSocket.getLocalPort();
+        assertEquals(9201, port);
+        assertEquals(80, rtpSocket.getJitter());
 
-		factory.setTimer(timer);
-		factory.setJitter(80);
-		factory.setBindAddress("127.0.0.1");
-		factory.setPortRange("1081-1081");
+        HashMap<Integer, Format> format = rtpSocket.getRtpMap();
 
-	}
+        assertEquals(2, format.size());
 
-	@After
-	public void tearDown() {
-		// Dont close the Factory as it will stop the RtpSocket.readerThread and
-		// RtpSocketTest will be screwed
-		// factory.stop();
-	}
+        format.remove(0);
 
-	@Test
-	public void getRTPSocketTest() {
-		try {
-			RtpSocket rtpSocket = factory.getRTPSocket();
-			int port = rtpSocket.getLocalPort();
-			assertEquals(1081, port);
-			assertEquals(80, rtpSocket.getJitter());
+        rtpSocket.setRtpMap(format);
 
-			HashMap<Integer, Format> format = rtpSocket.getRtpMap();
+        assertEquals(1, rtpSocket.getRtpMap().size());
 
-			assertEquals(2, format.size());
+        rtpSocket.release();
 
-			format.remove(0);
+        RtpSocket rtpSocket2 = factory.getRTPSocket();
+        assertEquals(2, rtpSocket2.getRtpMap().size());
 
-			rtpSocket.setRtpMap(format);
-
-			assertEquals(1, rtpSocket.getRtpMap().size());
-
-			try {
-				RtpSocket rtpSocket1 = factory.getRTPSocket();
-				fail("RtpSocket shouldn't have been created at first place");
-			} catch (SocketException s) {
-				// expected
-			}
-
-			rtpSocket.release();
-
-			RtpSocket rtpSocket2 = factory.getRTPSocket();
-			assertEquals(2, rtpSocket2.getRtpMap().size());
-
-		} catch (Exception e) {
-			fail("Creation of RtpSocket failed");
-		}
-
-	}
-
+    }
 }

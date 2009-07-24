@@ -29,10 +29,6 @@ package org.mobicents.media.server;
 
 import java.io.IOException;
 import javax.sdp.SdpException;
-import org.mobicents.media.Buffer;
-import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
@@ -44,9 +40,7 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
 public class LocalConnectionImpl extends ConnectionImpl {
 
     private LocalConnectionImpl otherConnection;
-//    private Input rxInput, txInput;
-//    private Output rxOutput, txOutput;
-    
+
     public LocalConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) throws ResourceUnavailableException {
         super(endpoint, mode);
         try {
@@ -59,9 +53,6 @@ public class LocalConnectionImpl extends ConnectionImpl {
         setMode(mode);
     }
     
-    private String getIdent() {
-        return getId();
-    }
     public String getLocalDescriptor() {
         return null;
     }
@@ -107,64 +98,12 @@ public class LocalConnectionImpl extends ConnectionImpl {
         super.close();
     }
     
-    private class Output extends AbstractSource {
-
-        public Output(String name) {
-            super(name);
-        }
-        
-        public void start() {
-        }
-
-        public void stop() {
-        }
-
-        @Override
-        public void setConnection(Connection connection) {
-            if (connection != null) {
-                System.out.println("Assign connection " + connection.getId());
-            } else {
-                System.out.println("Remove connection " + getConnection().getId());
-            }
-            super.setConnection(connection);
-        }
-        public Format[] getFormats() {
-            return otherParty != null ? otherParty.getFormats() : new Format[0];
-        }
-        
-        protected boolean isAcceptable(Format fmt) {
-            return otherParty != null && otherParty.isAcceptable(fmt);
-        }
-        
-        public void delivery(Buffer buffer) {
-            if (isAcceptable(buffer.getFormat())) {
-                otherParty.receive(buffer);
-            }
-        }
+    public long getPacketsReceived(String media) {
+        return rxChannel != null ? rxChannel.getPacketsTransmitted() : 0;
     }
     
-    private class Input extends AbstractSink {
-
-        private Output output;
-        private Format fmt;
-        private boolean isAcceptable;
-        
-        public Input(String name, Output output) {
-            super(name);
-            this.output = output;
-        }
-        
-        public Format[] getFormats() {
-            return output.getFormats();
-        }
-
-        public boolean isAcceptable(Format format) {
-            return output.isAcceptable(format);
-        }
-
-        public void receive(Buffer buffer) {
-            output.delivery(buffer);
-        }
-        
+    public long getPacketsTransmitted(String media) {
+        return txChannel != null ? txChannel.getPacketsTransmitted() : 0;
     }
+    
 }

@@ -244,6 +244,8 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             //rtpSocket.getReceiveStream().connect(mux);
             demux.connect(rtpSocket.getSendStream());
             rtpSocket.getReceiveStream().start();
+            rtpSocket.getSendStream().start();
+            System.out.println("Send stream started!!!!");
         }
 
         demux.start();
@@ -403,4 +405,13 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         
         return preffered;
     }
+    
+    public long getPacketsReceived(String media) {
+        return rtpSockets.get(media).getReceiveStream().getPacketsTransmitted();
+    }
+    
+    public long getPacketsTransmitted(String media) {
+        return rtpSockets.get(media).getSendStream().getBytesReceived();
+    }
+    
 }

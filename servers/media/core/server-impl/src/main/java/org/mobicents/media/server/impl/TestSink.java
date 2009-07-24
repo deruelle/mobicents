@@ -33,11 +33,8 @@ public class TestSink extends AbstractSink {
         return true;
     }
 
-    public void receive(Buffer buffer) {
+    public void onMediaTransfer(Buffer buffer) {
         System.out.println("src=" + name + ", recv=" + buffer);
     }
 
-    public int getResourceType() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

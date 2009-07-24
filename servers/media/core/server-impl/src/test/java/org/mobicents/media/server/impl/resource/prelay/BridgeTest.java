@@ -156,9 +156,11 @@ public class BridgeTest {
 
         MediaSource gen1 = (MediaSource) e1.getComponent("g1");
         gen1.start();
-
+        e1.getComponent("a1").start();
+        
         MediaSource gen2 = (MediaSource) e2.getComponent("g2");
         gen2.start();
+        e2.getComponent("a2").start();
 
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
         
@@ -204,8 +206,10 @@ public class BridgeTest {
         }
 
         public void update(NotifyEvent event) {
-            SpectrumEvent evt = (SpectrumEvent) event;
-            s.add(evt.getSpectra());
+            if (event.getEventID() == SpectrumEvent.SPECTRA) {
+                SpectrumEvent evt = (SpectrumEvent) event;
+                s.add(evt.getSpectra());
+            }
         }
     }
     

@@ -87,7 +87,7 @@
             </map>
         </property>
         <property name="bindAddress">127.0.0.1</property>
-        <property name="portRange">1024-65535</property>
+        <property name="localPort">9201</property>
         <property name="jitter">60</property>
         <property name="timer"><inject bean="Timer"/></property>
     </bean>
@@ -98,6 +98,8 @@
                 <entry><key>31</key><value><inject bean="H261"/></value></entry>
             </map>
         </property>
+        <property name="bindAddress">127.0.0.1</property>
+        <property name="localPort">9202</property>
         <property name="jitter">60</property>
         <property name="timer"><inject bean="Timer"/></property>
     </bean>         
@@ -176,13 +178,13 @@
         <property name="sourceFactory">
             <inject bean="AudioPlayerFactory"/>
         </property>
-        <property name="rtpFactory">
+        <!-- property name="rtpFactory">
             <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="org.mobicents.media.server.resource.ChannelFactory">
                 <entry>
                     <key>audio</key><value><inject bean="RTPAudioFactory"/></value>
                 </entry>
             </map>
-        </property>
+        </property -->
         <property name="txChannelFactory">
             <inject bean="TxChannelFactory"/>
         </property>

@@ -26,14 +26,15 @@
  */
 package org.mobicents.media.server.impl.resource.prelay;
 
+import java.io.IOException;
 import java.util.concurrent.ScheduledFuture;
 import org.mobicents.media.Buffer;
+import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.rtp.BufferFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
@@ -44,7 +45,7 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * 
  * @author kulikov
  */
-public class Proxy {
+public class PacketRelayProxy {
 
     public final static Format NOISE_FORMAT = Codec.LINEAR_AUDIO;
     
@@ -60,7 +61,7 @@ public class Proxy {
     private boolean isSourceConnected;
     
     private Timer timer;
-    private BufferFactory bufferFactory = new BufferFactory(2, "");
+    private BufferFactory bufferFactory = new BufferFactory(2);
     private long seq;
     private long timestamp;
     
@@ -73,13 +74,15 @@ public class Proxy {
     private ScheduledFuture worker;
     private ScheduledFuture silenceWorker;
     
+    private Buffer buff;
+    
     /**
      * Creates new instance of Packet Relay proxy.
      * 
      * @param name the name of this proxy.
      * @param endpoint the endpoint executed this proxy.
      */
-    public Proxy(String name, Endpoint endpoint) {
+    public PacketRelayProxy(String name, Endpoint endpoint) {
         input = new Input(name + ".input");
         output = new Output(name + ".output");
         timer = endpoint.getTimer();
@@ -233,7 +236,8 @@ public class Proxy {
             return output.isConnected() ? output.isAcceptable(format) : true;
         }
 
-        public void receive(Buffer buffer) {
+        @Override
+        public void onMediaTransfer(Buffer buffer) throws IOException {
             time = System.currentTimeMillis();
 
             seq++;
@@ -247,8 +251,8 @@ public class Proxy {
                 buffer.setTimeStamp(timestamp);
                 buffer.setSequenceNumber(seq);
                 
-                //deliver to the other party
-                output.delivery(buffer);
+                buff = buffer;
+                output.run();
             }
         }
     }
@@ -259,27 +263,12 @@ public class Proxy {
             super(name);
         }
 
+        @Override
         public void start() {
         }
 
+        @Override
         public void stop() {
-        }
-
-        public void run() {
-            Buffer buffer = bufferFactory.allocate();
-
-            byte[] data = (byte[]) buffer.getData();
-            for (int i = 0; i < 320; i++) {
-                data[i] = 0;
-            }
-            timestamp += timer.getHeartBeat();
-            buffer.setLength(320);
-            buffer.setFormat(Codec.LINEAR_AUDIO);
-            buffer.setSequenceNumber(seq++);
-            buffer.setTimeStamp(timestamp);
-            buffer.setDuration(20);
-
-            delivery(buffer);
         }
 
         @Override
@@ -327,8 +316,16 @@ public class Proxy {
 
         public void delivery(Buffer buffer) {
             if (otherParty != null && otherParty.isAcceptable(buffer.getFormat())) {
-                otherParty.receive(buffer);
+                try {
+                    otherParty.receive(buffer);
+                } catch (IOException e) {
+                }
             }
+        }
+
+        @Override
+        public void evolve(Buffer buffer, long sequenceNumber) {
+            buffer.copy(buff);
         }
     }
 

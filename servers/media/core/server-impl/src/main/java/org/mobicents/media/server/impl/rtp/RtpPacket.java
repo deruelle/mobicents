@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 
 /**
  *
@@ -39,6 +40,29 @@ public class RtpPacket implements Serializable {
     private byte[] payload;
     private int offset = 0;
     private int length = 0;
+
+    public RtpPacket(ByteBuffer readerBuffer) {
+        int len = readerBuffer.limit();
+        int b = readerBuffer.get() & 0xff;
+        
+        version = (b & 0x0C) >> 6;
+        padding = (b & 0x20) == 0x020;
+        extensions = (b & 0x10) == 0x10;
+        cc = b & 0x0F;
+        
+        b = readerBuffer.get() & 0xff;
+        marker = (b & 0x80) == 0x80;
+        payloadType = b & 0x7F;
+
+        seqNumber = (readerBuffer.get() & 0xff) << 8;
+        seqNumber = seqNumber | (readerBuffer.get() & 0xff);
+
+        timestamp = readerBuffer.getInt();
+        ssrc = readerBuffer.getInt();
+        
+        payload = new byte[len - 12];
+        readerBuffer.get(payload, 0, payload.length);
+    }
     
     /** Creates a new instance of RtpPacket */
     public RtpPacket(byte[] data) throws IOException {
@@ -71,7 +95,7 @@ public class RtpPacket implements Serializable {
         payload = realPayload;
     }
 
-    public RtpPacket(byte payloadType, int seqNumber, int timestamp, long ssrc, 
+    public RtpPacket(byte payloadType, int seqNumber, int timestamp, long ssrc,
             byte[] payload) {
         this.payloadType = payloadType;
         this.payload = payload;
@@ -79,7 +103,8 @@ public class RtpPacket implements Serializable {
         this.timestamp = timestamp;
         this.ssrc = ssrc;
     }
-    public RtpPacket(byte payloadType, int seqNumber, int timestamp, long ssrc, 
+
+    public RtpPacket(byte payloadType, int seqNumber, int timestamp, long ssrc,
             byte[] payload, int offset, int length) {
         this.payloadType = payloadType;
         this.payload = payload;
@@ -123,14 +148,10 @@ public class RtpPacket implements Serializable {
         bout.write((byte) ((ssrc & 0x0000FF00) >> 8));
         bout.write((byte) ((ssrc & 0x000000FF)));
 
-//        try {
-            bout.write(payload, offset, length);
-//        } catch (IOException e) {
-//        }
-
+        bout.write(payload, offset, length);
         return bout.toByteArray();
     }
-    
+
     @Override
     public String toString() {
         return "RTP Packet[seq=" + this.seqNumber + ", timestamp=" + timestamp +

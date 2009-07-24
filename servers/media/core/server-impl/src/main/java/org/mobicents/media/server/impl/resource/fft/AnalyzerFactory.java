@@ -49,7 +49,7 @@ public class AnalyzerFactory implements ComponentFactory {
     
     
     public Component newInstance(Endpoint endpoint) {
-        return new SpectraAnalyzer(endpoint, name);
+        return new SpectraAnalyzer(name);
     }
 
 }

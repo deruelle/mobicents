@@ -27,6 +27,7 @@
 
 package org.mobicents.media.server.impl.resource.prelay;
 
+import java.io.IOException;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
@@ -84,7 +85,9 @@ public class PacketRelaySink extends AbstractSink {
         return true;
     }
 
-    public void receive(Buffer buffer) {
+    @Override
+    public void onMediaTransfer(Buffer buffer) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

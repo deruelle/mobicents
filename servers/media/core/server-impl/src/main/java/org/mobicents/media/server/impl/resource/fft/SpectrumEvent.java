@@ -5,53 +5,28 @@
 
 package org.mobicents.media.server.impl.resource.fft;
 
-import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.impl.BaseComponent;
+import org.mobicents.media.server.impl.NotifyEventImpl;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
  * @author kulikov
  */
-public class SpectrumEvent implements NotifyEvent {
+public class SpectrumEvent extends NotifyEventImpl implements NotifyEvent {
 
-    public final static int SPECTRA = 1;
-    
-    private Endpoint endpoint;
-    private Connection connection;
-    private String resourceName;
+    public final static int SPECTRA = 40 ;
     
     private double[] spectra;
     
-    public SpectrumEvent(Endpoint endpoint, Connection connection, String resourceName, double[] spectra) {
-        this.endpoint = endpoint;
-        this.connection = connection;
-        this.resourceName = resourceName;
+    public SpectrumEvent(BaseComponent component, double[] spectra) {
+        super(component, SPECTRA);
         this.spectra = spectra;
     }
     
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
 
     public double[] getSpectra() {
         return spectra;
     }
     
-    public int getResourceID() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int getEventID() {
-        return SPECTRA;
-    }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
 }

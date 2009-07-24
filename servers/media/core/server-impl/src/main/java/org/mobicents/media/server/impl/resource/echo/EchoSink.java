@@ -26,6 +26,8 @@
  */
 package org.mobicents.media.server.impl.resource.echo;
 
+import java.io.IOException;
+
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSink;
@@ -56,7 +58,7 @@ public class EchoSink extends AbstractSink {
         return true;
     }
 
-    public void receive(Buffer buffer) {
+    public void onMediaTransfer(Buffer buffer) throws IOException {
         source.delivery(buffer);
     }
 }

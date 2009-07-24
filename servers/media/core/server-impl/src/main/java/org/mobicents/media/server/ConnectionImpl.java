@@ -1,11 +1,32 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
 
 package org.mobicents.media.server;
 
-import org.jboss.util.id.UID;
 import org.mobicents.media.Component;
 import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.spi.Connection;
@@ -129,21 +150,16 @@ public abstract class ConnectionImpl implements Connection {
         return null;
     }
     
-    public Component getComponent(String name) {
+    public Component getComponent(String name, int chanID) {
         Component c = null;
-        if (rxChannel != null) {
-            c = rxChannel.getComponent(name);
+        switch (chanID) {
+            case Connection.CHANNEL_RX :
+                return rxChannel != null ? rxChannel.getComponent(name) : null;
+            case Connection.CHANNEL_TX :
+                return txChannel != null ? txChannel.getComponent(name) : null;
+            default :
+                return null;
         }
-        
-        if (c != null) {
-            return c;
-        }
-        
-        if (txChannel != null) {
-            c = txChannel.getComponent(name);
-        }
-        
-        return c;
     }
     
     public void addNotificationListener(NotificationListener listener) {

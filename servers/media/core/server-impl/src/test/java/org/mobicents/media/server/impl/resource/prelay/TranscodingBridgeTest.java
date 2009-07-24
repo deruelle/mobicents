@@ -7,29 +7,26 @@ package org.mobicents.media.server.impl.resource.prelay;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.media.Buffer;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Format;
-import org.mobicents.media.MediaSink;
-import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.EndpointImpl;
-import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.dsp.DspFactory;
 import org.mobicents.media.server.impl.dsp.audio.g711.alaw.DecoderFactory;
 import org.mobicents.media.server.impl.dsp.audio.g711.alaw.EncoderFactory;
+import org.mobicents.media.server.impl.resource.Proxy;
+import org.mobicents.media.server.impl.resource.ProxySinkFactory;
+import org.mobicents.media.server.impl.resource.ProxySourceFactory;
 import org.mobicents.media.server.impl.resource.fft.AnalyzerFactory;
 import org.mobicents.media.server.impl.resource.test.SineGeneratorFactory;
+import org.mobicents.media.server.impl.resource.test.TransmissionTester2;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.resource.ChannelFactory;
@@ -38,7 +35,6 @@ import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
-import org.mobicents.media.server.spi.dsp.Codec;
 import static org.junit.Assert.*;
 
 /**
@@ -47,11 +43,14 @@ import static org.junit.Assert.*;
  */
 public class TranscodingBridgeTest {
 
+    private int localPort1 = 9201;
+    private int localPort2 = 9202;
+    
     private final static int FREQ_ERROR = 5;
     private int MAX_ERRORS = 3;
     private final static int[] FREQ = new int[]{50, 250};
     private Timer timer;
-    private EndpointImpl sender,  receiver;
+    private EndpointImpl testerEndpoint,  echoEndpoint;
     private EndpointImpl packetRelayEnp;
     private SineGeneratorFactory g1,  g2;
     private AnalyzerFactory a1,  a2;
@@ -63,11 +62,14 @@ public class TranscodingBridgeTest {
     private Semaphore semaphore;
     private boolean res;
     private DspFactory dspFactory;
-    private RtpFactory rtpFactory;
+    private RtpFactory rtpFactory1, rtpFactory2;
     private EncoderFactory encoderFactory;
     private DecoderFactory decoderFactory;
     private ArrayList list;
 
+    private TransmissionTester2 tester;
+    private Proxy proxy;
+    
     public TranscodingBridgeTest() {
     }
 
@@ -81,40 +83,38 @@ public class TranscodingBridgeTest {
 
     @Before
     public void setUp() throws Exception {
-        list = new ArrayList();
-
-        semaphore = new Semaphore(0);
-        res = false;
 
         // creating timer
         timer = new TimerImpl();
-
+        tester = new TransmissionTester2(timer);
+        
         HashMap<Integer, Format> rtpmap = new HashMap();
         rtpmap.put(0, AVProfile.PCMA);
 
-        rtpFactory = new RtpFactory();
-        rtpFactory.setBindAddress("localhost");
-        rtpFactory.setPortRange("1024-65535");
-        rtpFactory.setJitter(60);
-        rtpFactory.setTimer(timer);
-        rtpFactory.setFormatMap(rtpmap);
+        rtpFactory1 = new RtpFactory();
+        rtpFactory1.setBindAddress("localhost");
+        rtpFactory1.setLocalPort(localPort1);
+        rtpFactory1.setTimer(timer);
+        rtpFactory1.setFormatMap(rtpmap);
+        rtpFactory1.start();
 
-        Hashtable<String, RtpFactory> rtpFactories = new Hashtable();
-        rtpFactories.put("audio", rtpFactory);
 
-        // preparing g711: ALaw encoder, ULAW decoder
+        Hashtable<String, RtpFactory> rtpFactories1 = new Hashtable();
+        rtpFactories1.put("audio", rtpFactory1);
+
+        // preparing g711: ALaw encoder, decoder
         encoderFactory = new EncoderFactory();
         decoderFactory = new DecoderFactory();
 
         // group codecs into list
-        ArrayList list = new ArrayList();
-        list.add(encoderFactory);
-        list.add(decoderFactory);
+        ArrayList codecs = new ArrayList();
+        codecs.add(encoderFactory);
+        codecs.add(decoderFactory);
 
         // creating dsp factory with g711 encoder/decoder
         dspFactory = new DspFactory();
         dspFactory.setName("dsp");
-        dspFactory.setCodecFactories(list);
+        dspFactory.setCodecFactories(codecs);
 
         // creating component list
         ArrayList components = new ArrayList();
@@ -154,7 +154,7 @@ public class TranscodingBridgeTest {
         packetRelayEnp.setTimer(timer);
         packetRelayEnp.setTxChannelFactory(prChannelFactory);
         packetRelayEnp.setRxChannelFactory(prChannelFactory);
-        packetRelayEnp.setRtpFactory(rtpFactories);
+        packetRelayEnp.setRtpFactory(rtpFactories1);
 
         // strating packet relay endpoint
         packetRelayEnp.start();
@@ -163,200 +163,148 @@ public class TranscodingBridgeTest {
         channelFactory = new ChannelFactory();
         channelFactory.start();
 
-        // creating source
-        TestSourceFactory genFactory = new TestSourceFactory();
-        genFactory.setName("test-source");
-
-        // configuring sender
-        sender = new EndpointImpl("/pr/test/sender");
-        sender.setTimer(timer);
-        sender.setTxChannelFactory(channelFactory);
-        sender.setRxChannelFactory(channelFactory);
-        sender.setSourceFactory(genFactory);
-        sender.start();
-
-        TestSinkFactory detFactory = new TestSinkFactory();
-        detFactory.setName("test-sink");
-        // configuring receiver
-        receiver = new EndpointImpl("/pr/test/sender");
-        receiver.setTimer(timer);
-        receiver.setTxChannelFactory(channelFactory);
-        receiver.setRxChannelFactory(channelFactory);
-        receiver.setSinkFactory(detFactory);
-        receiver.setRtpFactory(rtpFactories);
-        receiver.start();
+        setupTester();
+        setupEcho();
     }
 
     @After
     public void tearDown() {
+        rtpFactory1.stop();
+        rtpFactory2.stop();
     }
 
+    private void setupTester() throws Exception {
+        tester = new TransmissionTester2(timer);
+
+        TestSourceFactory genFactory = new TestSourceFactory(tester);
+        TestSinkFactory detFactory = new TestSinkFactory(tester);
+
+        // configuring sender
+        testerEndpoint = new EndpointImpl("/pr/test/sender");
+        testerEndpoint.setTimer(timer);
+        testerEndpoint.setTxChannelFactory(channelFactory);
+        testerEndpoint.setRxChannelFactory(channelFactory);
+        testerEndpoint.setSourceFactory(genFactory);
+        testerEndpoint.setSinkFactory(detFactory);
+        testerEndpoint.start();
+    }
+    
+    private void setupEcho() throws Exception {
+        proxy = new Proxy("proxy");
+        proxy.setFormat(new Format[]{AVProfile.PCMA});
+        
+        proxy.getInput().start();
+        proxy.getOutput().start();
+        
+        ProxySourceFactory sourceFactory = new ProxySourceFactory(proxy);
+        ProxySinkFactory sinkFactory = new ProxySinkFactory(proxy);
+        
+        HashMap<Integer, Format> rtpmap = new HashMap();
+        rtpmap.put(0, AVProfile.PCMA);
+        
+        rtpFactory2 = new RtpFactory();
+        rtpFactory2.setBindAddress("localhost");
+        rtpFactory2.setLocalPort(localPort2);
+        rtpFactory2.setTimer(timer);
+        rtpFactory2.setFormatMap(rtpmap);
+        rtpFactory2.start();
+
+        Hashtable<String, RtpFactory> rtpFactories2 = new Hashtable();
+        rtpFactories2.put("audio", rtpFactory2);
+        
+        echoEndpoint = new EndpointImpl("/pr/test/sender");
+        echoEndpoint.setTimer(timer);
+        echoEndpoint.setTxChannelFactory(channelFactory);
+        echoEndpoint.setRxChannelFactory(channelFactory);
+        echoEndpoint.setSinkFactory(sinkFactory);
+        echoEndpoint.setSourceFactory(sourceFactory);
+        echoEndpoint.setRtpFactory(rtpFactories2);
+        echoEndpoint.start();
+    }
     /**
      * Test of getSink method, of class Bridge.
      */
-//	@Test
+    //@Test
     public void testSimpleTransmission() throws Exception {
-        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_RECV);
-        Connection rxConnection = receiver.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection txConnection = testerEndpoint.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection rxConnection = echoEndpoint.createLocalConnection(ConnectionMode.SEND_RECV);
 
-        Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.RECV_ONLY);
-        Connection txC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_ONLY);
+        Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection txC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_RECV);
 
         rxC.setOtherParty(txConnection);
         txC.setOtherParty(rxConnection);
 
-        MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
-        gen1.start();
-
-        semaphore.tryAcquire(5, TimeUnit.SECONDS);
-        gen1.stop();
-        semaphore.tryAcquire(5, TimeUnit.SECONDS);
+        tester.start();
         
-        assertEquals(true, !list.isEmpty());
-
-        receiver.deleteAllConnections();
-        sender.deleteAllConnections();
+        echoEndpoint.deleteAllConnections();
+        testerEndpoint.deleteAllConnections();
 
         packetRelayEnp.deleteAllConnections();
-
+        
+        assertTrue(tester.getMessage(), tester.isPassed());
     }
 
     private void runRtpTransmission() throws Exception {
-        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_ONLY);
-        Connection rxConnection = receiver.createConnection(ConnectionMode.RECV_ONLY);
+        Connection txConnection = testerEndpoint.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection rxConnection = echoEndpoint.createConnection(ConnectionMode.SEND_RECV);
 
-        Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.RECV_ONLY);
-        Connection txC = packetRelayEnp.createConnection(ConnectionMode.SEND_ONLY);
+        Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection txC = packetRelayEnp.createConnection(ConnectionMode.SEND_RECV);
 
         rxC.setOtherParty(txConnection);
         txC.setRemoteDescriptor(rxConnection.getLocalDescriptor());
         rxConnection.setRemoteDescriptor(txC.getLocalDescriptor());
 
-        MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
-        gen1.start();
-
-        semaphore.tryAcquire(5, TimeUnit.SECONDS);
-        assertEquals(true, !list.isEmpty());
-
-        gen1.stop();
-
-        list.clear();
+        tester.start();
         
-        semaphore.tryAcquire(5, TimeUnit.SECONDS);
-        //assertEquals(true, !list.isEmpty());
-        
-        receiver.deleteAllConnections();
-        sender.deleteAllConnections();
+        echoEndpoint.deleteAllConnections();
+        testerEndpoint.deleteAllConnections();
 
         packetRelayEnp.deleteAllConnections();
+        assertTrue(tester.getMessage(), tester. isPassed());        
     }
 
     @Test
     public void testRtpTransmission() throws Exception {
         for (int i = 0; i < 3; i++) {
-            list.clear();
             runRtpTransmission();
-            assertEquals(false, list.isEmpty());
             System.out.println("Pass...." + i);
         }
     }
 
     private class TestSourceFactory implements ComponentFactory {
 
-        private String name;
-
-        public String getName() {
-            return name;
+        private TransmissionTester2 tester;
+        
+        public TestSourceFactory(TransmissionTester2 tester) {
+            this.tester = tester;
         }
-
-        public void setName(String name) {
-            this.name = name;
+        public String getName() {
+            return tester.getGenerator().getName();
         }
 
         public Component newInstance(Endpoint endpoint) {
-            return new TestSource(name, endpoint.getTimer());
+            return tester.getGenerator();
         }
     }
 
     private class TestSinkFactory implements ComponentFactory {
 
-        private String name;
+        private TransmissionTester2 tester;
+        
+        public TestSinkFactory(TransmissionTester2 tester) {
+            this.tester = tester;
+        }
 
         public String getName() {
-            return name;
+            return tester.getDetector().getName();
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
 
         public Component newInstance(Endpoint endpoint) {
-            return new TestSink(name);
+            return tester.getDetector();
         }
     }
 
-    private class TestSource extends AbstractSource implements Runnable {
-
-        private int seq;
-        private Timer timer;
-        private ScheduledFuture worker;
-
-        public TestSource(String name, Timer timer) {
-            super(name);
-            this.timer = timer;
-        }
-
-        public void start() {
-            worker = timer.synchronize(this);
-        }
-
-        public void stop() {
-            worker.cancel(true);
-        }
-
-        public Format[] getFormats() {
-            return new Format[]{Codec.LINEAR_AUDIO};
-        }
-
-        public void run() {
-            Buffer buffer = new Buffer();
-            buffer.setSequenceNumber(seq++);
-            buffer.setDuration(20);
-            buffer.setTimeStamp(seq * 20);
-            buffer.setFormat(Codec.LINEAR_AUDIO);
-            buffer.setData(new byte[320]);
-            buffer.setLength(320);
-            buffer.setOffset(0);
-            otherParty.receive(buffer);
-        }
-
-        @Override
-        public void connect(MediaSink otherParty) {
-            super.connect(otherParty);
-        }
-
-        @Override
-        public void disconnect(MediaSink otherParty) {
-            super.disconnect(otherParty);
-        }
-    }
-
-    private class TestSink extends AbstractSink {
-
-        public TestSink(String name) {
-            super(name);
-        }
-
-        public Format[] getFormats() {
-            return new Format[]{Codec.PCMA};
-        }
-
-        public boolean isAcceptable(Format format) {
-            return format.matches(Codec.PCMA);
-        }
-
-        public void receive(Buffer buffer) {
-            list.add(buffer);
-        }
-    }
 }

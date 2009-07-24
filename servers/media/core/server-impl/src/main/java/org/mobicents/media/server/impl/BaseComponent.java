@@ -111,4 +111,7 @@ public abstract class BaseComponent implements Component {
         return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
     }
     
+    public void resetStats() {
+    }
+    
 }

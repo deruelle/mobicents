@@ -46,7 +46,7 @@ public class AudioPlayerFactory implements ComponentFactory {
     }
         
     public AudioPlayerImpl newInstance(Endpoint endpoint) {
-        AudioPlayerImpl p = new AudioPlayerImpl(name);
+        AudioPlayerImpl p = new AudioPlayerImpl(name, endpoint.getTimer());
         p.setEndpoint(endpoint);
         return p;
     }

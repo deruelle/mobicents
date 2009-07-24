@@ -30,16 +30,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import org.mobicents.media.Buffer;
 import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
-import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.BaseComponent;
+import org.mobicents.media.server.impl.resource.Proxy;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
 
@@ -63,7 +60,7 @@ public class Channel {
     
     //The list of internal pipes
     private List<Pipe> pipes = new ArrayList();
-    private LocalPipe localPipe = new LocalPipe("local-pipe");
+    private Proxy localPipe = new Proxy("local-pipe");
     
     //The external sink to which this channel is attached
 //    private MediaSink sink;
@@ -148,10 +145,34 @@ public class Channel {
     }
     
     public void start() {
-        Collection <MediaSource> list = sources.values();
+/*        Collection <MediaSource> list = sources.values();
         for (MediaSource s : list) {
             s.start();
         }
+        
+        Collection <MediaSink> list2 = sinks.values();
+        for (MediaSink s : list2) {
+            s.start();
+        }
+*/        
+        Collection <Inlet> list3 = inlets.values();
+        for (Inlet s : list3) {
+            if (s instanceof Outlet || s instanceof MediaSource) {
+                s.getInput().start();
+                s.start();
+            }
+        }
+        
+        Collection <Outlet> list4 = outlets.values();
+        for (Outlet s : list4) {
+            if (s instanceof Inlet || s instanceof MediaSink) {
+                s.getOutput().start();
+                s.start();
+            }
+        }
+        
+        intake.start();
+        exhaust.start();
     }
     
     public void stop() {
@@ -159,6 +180,24 @@ public class Channel {
         for (MediaSource s : list) {
             s.stop();
         }
+        
+        Collection <MediaSink> list2 = sinks.values();
+        for (MediaSink s : list2) {
+            s.stop();
+        }
+        
+        Collection <Inlet> list3 = inlets.values();
+        for (Inlet s : list3) {
+            s.getInput().stop();
+        }
+        
+        Collection <Outlet> list4 = outlets.values();
+        for (Outlet s : list4) {
+            s.getOutput().stop();
+        }
+        
+        intake.stop();
+        exhaust.stop();
     }
     /**
      * Opens pipes between source and sink.
@@ -303,17 +342,32 @@ public class Channel {
             throw new IllegalArgumentException("Channels " + this + " and " + channel + " was never connected");
         }
     }
-    
+
+    /**
+     * Searches the component with specified name that can be explicitly added 
+     * to this channel.
+     * 
+     * @param name the name of the component to find.
+     * @return component that was found or null if component with specified name
+     * absent.
+     */
     public Component getComponent(String name) {
-        if (sources.containsKey(name)) {
+        //search result depends from the order of maps observation!
+        //inlet/outlet implicitly registers input/output in source or sink map
+        //and as result can be returned implicit sink/source of the complex 
+        //component. To prevent such kind of search error let's start to search 
+        //from inlets/outlets and look into sink,source only if explicitly added 
+        //component was not found yet       
+        if (inlets.containsKey(name)) {
+            return inlets.get(name);
+        } else if (outlets.containsKey(name)){
+            return outlets.get(name);
+        } else if (sources.containsKey(name)) {
             return sources.get(name);
         } else if (sinks.containsKey(name)) {
             return sinks.get(name);
-        } else if (inlets.containsKey(name)) {
-            return inlets.get(name);
-        } else {
-            return outlets.get(name);
-        }
+        } 
+        return null;
     }
         
     public void close() {
@@ -352,7 +406,10 @@ public class Channel {
         return f;
     }
     
-    private class LocalPipe extends BaseComponent implements Inlet, Outlet {
+    public long getPacketsTransmitted() {
+        return exhaust.getPacketsTransmitted();
+    }
+/*    private class LocalPipe extends BaseComponent implements Inlet, Outlet {
     
         private LocalInput input;
         private LocalOutput output;
@@ -376,7 +433,7 @@ public class Channel {
                 return output.isAcceptable(format);
             }
 
-            public void receive(Buffer buffer) {
+            public void onMediaTransfer(Buffer buffer) {
                 output.send(buffer);
             }
             
@@ -411,6 +468,11 @@ public class Channel {
                     this.otherParty.receive(buffer);
                 }
             }
+
+            @Override
+            public void evolve(Buffer buffer, long sequenceNumber) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
         }
         
         public LocalPipe(String name) {
@@ -427,7 +489,15 @@ public class Channel {
         public MediaSource getOutput() {
             return output;
         }
+
+        public void start() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void stop() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
         
     }
-    
+*/    
 }

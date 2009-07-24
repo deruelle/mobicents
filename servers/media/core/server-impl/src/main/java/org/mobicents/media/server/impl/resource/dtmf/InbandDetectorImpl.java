@@ -1,23 +1,37 @@
 /*
- * Mobicents Media Gateway
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
  *
- * The source code contained in this file is in in the public domain.
- * It can be used in any project or product without prior permission,
- * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
- * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * AND DATA ACCURACY.  We do not warrant or make any representations
- * regarding the use of the software or the  results thereof, including
- * but not limited to the correctness, accuracy, reliability or
- * usefulness of the software.
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
 package org.mobicents.media.server.impl.resource.dtmf;
 
+import java.io.IOException;
+
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.resource.GoertzelFilter;
 import org.mobicents.media.server.spi.dsp.Codec;
-import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**
  * Implements inband DTMF detector.
@@ -39,284 +53,187 @@ import org.mobicents.media.server.spi.resource.DtmfDetector;
  */
 public class InbandDetectorImpl extends DtmfBuffer {
 
-	private final static Format[] FORMATS = new Format[] { Codec.LINEAR_AUDIO };
-	public final static String[][] events = new String[][] { { "1", "2", "3", "A" }, { "4", "5", "6", "B" },
-			{ "7", "8", "9", "C" }, { "*", "0", "#", "D" } };
-	/** DTMF tone duration in milliseconds */
+    /**
+     * The default duration of the DTMF tone.
+     */
+    private final static int TONE_DURATION = 50;
+    
+    private final static Format[] FORMATS = new Format[]{Codec.LINEAR_AUDIO};
+    public final static String[][] events = new String[][]{
+        {"1", "2", "3", "A"},
+        {"4", "5", "6", "B"},
+        {"7", "8", "9", "C"},
+        {"*", "0", "#", "D"}
+    };
+    private final static int[] lowFreq = new int[]{697, 770, 852, 941};
+    private final static int[] highFreq = new int[]{1209, 1336, 1477, 1633};
 
-	private double THRESHOLD = 30;
-	private int[] lowFreq = new int[] { 697, 770, 852, 941 };
-	private int[] highFreq = new int[] { 1209, 1336, 1477, 1633 };
-	private byte[] localBuffer;
-	private int offset = 0;
+    private GoertzelFilter[] lowFreqFilters = new GoertzelFilter[4];
+    private GoertzelFilter[] highFreqFilters = new GoertzelFilter[4];
+    
+    private double threshold;
+    private int level;
+    
+    private int offset = 0;
+    private int toneDuration = TONE_DURATION;
+    private int N = 8 * toneDuration;
+    private double scale = (double) toneDuration / (double) 1000;
+    
+    private double p[] = new double[4];
+    private double P[] = new double[4];
+    
+    private double[] signal;
+    private double maxAmpl;
 
-	private boolean started = false;
-	private volatile boolean initialized = false;
+    /**
+     * Creates new instance of Detector.
+     */
+    public InbandDetectorImpl(String name) {
+        super(name);
+        signal = new double[N];
+        for (int i = 0; i < 4; i++) {
+            lowFreqFilters[i] = new GoertzelFilter(lowFreq[i], N, scale);
+            highFreqFilters[i] = new GoertzelFilter(highFreq[i], N, scale);
+        }
+        setVolume(DEFAULT_SIGNAL_LEVEL);
+    }
 
-	private int toneDuration = DtmfDetector.DETECTOR_DURATION;
-	private int N = 16 * toneDuration / 2;
-	private double scale = (double) toneDuration / (double) 1000;
-	private double[] ham = null;
-	private double[] realWLowFreq = new double[lowFreq.length];
-	private double[] imagWLowFreq = new double[lowFreq.length];
+    public void setDuration(int duartion) {
+        this.toneDuration = duartion;
+    }
 
-	private double[] realWHighFreq = new double[highFreq.length];
-	private double[] imagWHighFreq = new double[highFreq.length];
+    public int getDuration() {
+        return this.toneDuration;
+    }
 
-	/**
-	 * Creates new instance of Detector.
-	 */
-	public InbandDetectorImpl(String name) {
-		super(name);
+    public void setVolume(int level) {
+        this.level = level;
+        threshold = Math.pow(Math.pow(10, level), 0.1) * Short.MAX_VALUE;
+    }
 
-	}
+    public int getVolume() {
+        return level;
+    }
+    
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.protocol.BufferTransferHandler.transferData().
+     */
+    public void onMediaTransfer(Buffer buffer) throws IOException {
+        byte[] data = (byte[]) buffer.getData();
 
-	/**
-	 * After creating instance of InbandDetector, set the Tone Duratin if its
-	 * not default = 50ms and the initialize it
-	 */
-	public void init() {
-		initialized = true;
-		N = 16 * toneDuration / 2;
-		scale = (double) toneDuration / (double) 1000;
-		ham = new double[N];
+        int M = buffer.getOffset() + buffer.getLength();
+        int k = buffer.getOffset();
+        while (k < M) {
+            while (offset < N && k < M - 1) {
+                double s = ((data[k++] & 0xff) | (data[k++] << 8));
+                double sa = Math.abs(s);
+                if (sa > maxAmpl) {
+                    maxAmpl = sa;
+                }
+                signal[offset++] = s;
+            }
 
-		localBuffer = new byte[16 * toneDuration];
+            //if dtmf buffer full check signal
+            if (offset == N) {
+                offset = 0;
+                //and if max amplitude of signal is greater theshold
+                //try to detect tone.
+                if (maxAmpl >= threshold) {
+                    maxAmpl = 0;
+                    getPower(lowFreqFilters, signal, 0, p);
+                    getPower(highFreqFilters, signal, 0, P);
 
-		// hamming window
-		for (int i = 0; i < N; i++) {
-			ham[i] = (0.54 - 0.46 * Math.cos(2 * Math.PI * i / N));
-		}
+                    String tone = getTone(p, P);
+                    if (tone != null) {
+                        push(tone);
+                    }
+                }
+            }
+        }
+    }
 
-		for (int i = 0; i < lowFreq.length; i++) {
-			realWLowFreq[i] = 2.0 * Math.cos(2.0 * scale * Math.PI * lowFreq[i] / N);
-			imagWLowFreq[i] = Math.sin(2.0 * scale * Math.PI * lowFreq[i] / N);
-		}
+    private void getPower(GoertzelFilter[] filters, double[] data, int offset, double[] power) {
+        for (int i = 0; i < 4; i++) {
+            //power[i] = filter.getPower(freq[i], data, 0, data.length, (double) TONE_DURATION / (double) 1000);
+            power[i] = filters[i].getPower(data, offset);
+        }
+    }
 
-		for (int i = 0; i < highFreq.length; i++) {
-			realWHighFreq[i] = 2.0 * Math.cos(2.0 * scale * Math.PI * highFreq[i] / N);
-			imagWHighFreq[i] = Math.sin(2.0 * scale * Math.PI * highFreq[i] / N);
-		}
+    /**
+     * Searches maximum value in the specified array.
+     * 
+     * @param data[]
+     *            input data.
+     * @return the index of the maximum value in the data array.
+     */
+    private int getMax(double data[]) {
+        int idx = 0;
+        double max = data[0];
+        for (int i = 1; i < data.length; i++) {
+            if (max < data[i]) {
+                max = data[i];
+                idx = i;
+            }
+        }
+        return idx;
+    }
 
-	}
+    /**
+     * Searches DTMF tone.
+     * 
+     * @param f
+     *            the low frequency array
+     * @param F
+     *            the high frequency array.
+     * @return DTMF tone.
+     */
+    private String getTone(double f[], double F[]) {
+        int fm = getMax(f);
+        boolean fd = true;
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.MediaSink#start().
-	 */
-	public void start() {
-		started = true;
-	}
+        for (int i = 0; i < f.length; i++) {
+            if (fm == i) {
+                continue;
+            }
+            double r = f[fm] / (f[i] + 1E-15);
+            if (r < threshold) {
+                fd = false;
+                break;
+            }
+        }
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.MediaSink#stop().
-	 */
-	public void stop() {
-		started = false;
-	}
+        if (!fd) {
+            return null;
+        }
 
-	public void setDuration(int duartion) {
-		this.toneDuration = duartion;
-	}
+        int Fm = getMax(F);
+        boolean Fd = true;
 
-	public int getDuration() {
-		return this.toneDuration;
-	}
+        for (int i = 0; i < F.length; i++) {
+            if (Fm == i) {
+                continue;
+            }
+            double r = F[Fm] / (F[i] + 1E-15);
+            if (r < threshold) {
+                Fd = false;
+                break;
+            }
+        }
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.protocol.BufferTransferHandler.transferData().
-	 */
-	public void receive(Buffer buffer) {
-		try {
-			byte[] data = (byte[]) buffer.getData();
-			int len = Math.min(localBuffer.length - offset, data.length);
-			System.arraycopy(data, 0, localBuffer, offset, len);
-			offset += len;
+        if (!Fd) {
+            return null;
+        }
 
-			// buffer full?
-			if (offset == localBuffer.length) {
-				double[] signal = new double[localBuffer.length / 2];
-				int k = 0;
-				for (int i = 0; i < signal.length; i++) {
-					signal[i] = ((localBuffer[k++] & 0xff) | (localBuffer[k++] << 8));
-				}
+        return events[fm][Fm];
+    }
 
-				localBuffer = new byte[localBuffer.length];
-				offset = 0;
+    public Format[] getFormats() {
+        return FORMATS;
+    }
 
-				double p[] = getPower(lowFreq, realWLowFreq, imagWLowFreq, signal);
-				double P[] = getPower(highFreq, realWHighFreq, imagWHighFreq, signal);
-
-				String tone = getTone(p, P);
-				if (tone != null) {
-					super.push(tone);
-				}
-			}
-		} finally {
-			buffer.dispose();
-		}
-
-	}
-
-	/**
-	 * Calculate power of the specified frequencies.
-	 * 
-	 * @param freq
-	 *            the array of frequencies
-	 * @param data
-	 *            signal
-	 * @return the power for the respective frequency
-	 */
-	private double[] getPower(int[] freq, double[] realW, double[] imagW, double[] data) {
-		double[] power = new double[freq.length];
-
-		double d1 = 0.0;
-		double d2 = 0.0;
-		double y = 0;
-
-		for (int j = 0; j < freq.length; j++) {
-
-			double f = freq[j];
-
-			// hamming window
-			for (int i = 0; i < N; i++) {
-				data[i] *= ham[i];
-			}
-
-			d1 = 0.0;
-			d2 = 0.0;
-			y = 0;
-
-			for (int n = 0; n < N; ++n) {
-				y = data[n] + realW[j] * d1 - d2;
-				d2 = d1;
-				d1 = y;
-			}
-
-			double resultr = 0.5 * realW[j] * d1 - d2;
-			double resulti = imagW[j] * d1;
-
-			// The profiling shows that Math.sqrt() is really not taking much
-			// CPU. If you think otherwise try using the calculateSqRt() method
-			// using Babylonian algo and profile.
-			power[j] = Math.sqrt((resultr * resultr) + (resulti * resulti));
-		}
-		return power;
-	}
-
-	// This is Babylonian method of calculating Sq Root
-	// http://en.wikipedia.org/wiki/Babylonian_method#Babylonian_method
-	private double calculateSqRt(double n) {
-
-		double x = n * 0.25;
-		double a = 0.0;
-
-		// The loop shows how many iteration it took to get the Sq Root. The
-		// lesser the iteration the fast is calculation and less is CPU. This
-		// depends on approximation 'x' above. If this can some how be close to
-		// Sq Root value the iteration can be reduced greatly
-
-		// int loop = 0;
-
-		do {
-			// loop++;
-			x = 0.5 * (x + n / x);
-			a = x * x - n;
-			if (a < 0)
-				a = -a;
-
-		} while (a > 0.00001);
-
-		return x;
-	}
-
-	/**
-	 * Searches maximum value in the specified array.
-	 * 
-	 * @param data[]
-	 *            input data.
-	 * @return the index of the maximum value in the data array.
-	 */
-	private int getMax(double data[]) {
-		int idx = 0;
-		double max = data[0];
-		for (int i = 1; i < data.length; i++) {
-			if (max < data[i]) {
-				max = data[i];
-				idx = i;
-			}
-		}
-		return idx;
-	}
-
-	/**
-	 * Searches DTMF tone.
-	 * 
-	 * @param f
-	 *            the low frequency array
-	 * @param F
-	 *            the high frequency array.
-	 * @return DTMF tone.
-	 */
-	private String getTone(double f[], double F[]) {
-		int fm = getMax(f);
-		boolean fd = true;
-
-		for (int i = 0; i < f.length; i++) {
-			if (fm == i) {
-				continue;
-			}
-			double r = f[fm] / (f[i] + 1E-15);
-			if (r < THRESHOLD) {
-				fd = false;
-				break;
-			}
-		}
-
-		if (!fd) {
-			return null;
-		}
-
-		int Fm = getMax(F);
-		boolean Fd = true;
-
-		for (int i = 0; i < F.length; i++) {
-			if (Fm == i) {
-				continue;
-			}
-			double r = F[Fm] / (F[i] + 1E-15);
-			if (r < THRESHOLD) {
-				Fd = false;
-				break;
-			}
-		}
-
-		if (!Fd) {
-			return null;
-		}
-
-		return events[fm][Fm];
-	}
-
-	public Format[] getFormats() {
-		return FORMATS;
-	}
-
-	public boolean isAcceptable(Format format) {
-		return format.matches(Codec.LINEAR_AUDIO);
-	}
-
-	@Override
-	public void connect(MediaSource otherParty) {
-		if (!initialized) {
-			throw new IllegalStateException(
-					"InbandDetector is not initialized. Call init() on InbandDetector instance before calling connect");
-		}
-		super.connect(otherParty);
-	}
+    public boolean isAcceptable(Format format) {
+        return format.matches(Codec.LINEAR_AUDIO);
+    }
 }

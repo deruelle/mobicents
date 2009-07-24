@@ -21,7 +21,7 @@ public class Rfc2833GeneratorFactory implements ComponentFactory {
 	}
 
 	public Component newInstance(Endpoint endpoint) {
-		Rfc2833GeneratorImpl generator = new Rfc2833GeneratorImpl(this.name);
+		Rfc2833GeneratorImpl generator = new Rfc2833GeneratorImpl(this.name, endpoint.getTimer());
 		generator.setEndpoint(endpoint);
 		return generator;
 	}

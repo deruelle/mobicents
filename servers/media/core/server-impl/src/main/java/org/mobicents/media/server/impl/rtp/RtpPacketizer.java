@@ -43,6 +43,8 @@ public class RtpPacketizer implements Serializable {
             buffer.setTimeStamp(buffer.getSequenceNumber() * 8 * packetPeriod);
         } else if (fmt.equals(Codec.GSM)) {
             buffer.setTimeStamp(buffer.getSequenceNumber() * 8 * packetPeriod);
+        } else {
+            buffer.setTimeStamp(buffer.getSequenceNumber() * 8 * packetPeriod);
         }
     }
 }

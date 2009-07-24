@@ -21,7 +21,7 @@ public class InbandGeneratorFactory implements ComponentFactory {
 	}
 	
 	public Component newInstance(Endpoint endpoint) {
-		InbandGeneratorImpl generator = new InbandGeneratorImpl(this.name);
+		InbandGeneratorImpl generator = new InbandGeneratorImpl(this.name, endpoint.getTimer());
 		generator.setEndpoint(endpoint);
 		return generator;
 	}

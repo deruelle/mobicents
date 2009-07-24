@@ -13,9 +13,9 @@
  */
 package org.mobicents.media.server.impl.dsp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import java.util.List;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
@@ -39,41 +39,23 @@ import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 public class Processor extends BaseComponent implements SignalingProcessor {
 
     private Format[] inputFormats = new Format[0];
-    private Format[] outputFormats = new Format[0];
     
     private Input input;
     private Output output;
+    
     private transient ArrayList<Codec> codecs = new ArrayList();
     private Codec codec;
 
+    private Buffer buff;
+    
     public Processor(String name) {
         super(name);
-        input = new Input();
-        output = new Output();
-    }
-
-    private void append(List<Format> list, Format fmt) {
-        for (Format f : list) {
-            if (f.matches(fmt)) {
-                return;
-            }
-        }
-        list.add(fmt);
-    }
-
-    private String getProcName() {
-        return getName() + this.hashCode() +"[" + input.getId() + "]";
-    }
-    private Format[] toArray(List<Format> list) {
-        Format[] array = new Format[list.size()];
-        list.toArray(array);
-        return array;
+        input = new Input(name);
+        output = new Output(name);
     }
 
     protected void add(Codec codec) {
         codecs.add(codec);
-//        append(inputFormats, codec.getSupportedInputFormat());
-//        append(outputFormats, codec.getSupportedOutputFormat());
     }
 
     /**
@@ -95,70 +77,150 @@ public class Processor extends BaseComponent implements SignalingProcessor {
     }
 
     /**
-     * Checks is format presented in the list.
+     * (Non Java-doc.)
      * 
-     * @param fmts the list of formats to check
-     * @param fmt the format instance to check.
-     * @return true if fmt is in list of fmts.
+     * @see org.mobicents.media.Component#start() 
      */
-    private boolean contains(Format[] fmts, Format fmt) {
-        for (int i = 0; i < fmts.length; i++) {
-            if (fmts[i].matches(fmt)) {
-                return true;
-            }
-        }
-        return false;
+    public void start() {
+        input.start();
+        output.start();
     }
 
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.Component#stop() 
+     */
+    public void stop() {
+        input.stop();
+        output.stop();
+    }
+
+    /**
+     * Implements input of the processor.
+     */
+    private class Input extends AbstractSink {
+
+        private Format fmt;
+        private boolean isAcceptable;
+        
+        public Input(String name) {
+            super(name + ".input");
+        }
+
+        /**
+         * (Non Java-doc.)
+         * 
+         * @see org.mobicents.media.MediaSink#isAcceptable(org.mobicents.media.Format) 
+         */
+        public boolean isAcceptable(Format format) {
+            if (fmt != null && fmt.matches(format)) {
+                return isAcceptable;
+            }
+            
+            inputFormats = getFormats();
+            
+            fmt = format;
+            for (Format f : inputFormats) {
+                if (f.matches(format)) {
+                    this.isAcceptable = true;
+                    break;
+                }
+            }
+            return this.isAcceptable;
+        }
+
+        /**
+         * (Non Java-doc.)
+         * 
+         * @see org.mobicents.media.server.impl.AbstractSink#onMediaTransfer(org.mobicents.media.Buffer) 
+         */
+        public void onMediaTransfer(Buffer buffer) throws IOException {
+            output.transmit(buffer);
+        }
+
+        /**
+         * Gets list of formats supported by connected other party
+         * 
+         * @return the array of format objects.
+         */
+        protected Format[] getOtherPartyFormats() {
+            return otherParty != null ? otherParty.getFormats() : new Format[0];
+        }
+
+        /**
+         * (Non Java-doc.)
+         * 
+         * @see org.mobicents.media.MediaSink#getFormats() 
+         */
+        public Format[] getFormats() {
+            Format[] original = output.getOtherPartyFormats();
+            ArrayList<Format> list = new ArrayList();
+            for (Format f : original) {
+                list.add(f);
+                for (Codec codec: codecs) {
+                    if (codec.getSupportedOutputFormat().matches(f)) {
+                        Format ff = codec.getSupportedInputFormat();
+                        if (!list.contains(ff)){
+                            list.add(ff);
+                        }
+                    }
+                }
+            }
+            Format[] fmts = new Format[list.size()];
+            list.toArray(fmts);
+            
+            return fmts;
+        }
+        
+        @Override
+        public String toString() {
+            return "Processor.Input[" + getName() + "]";
+        }
+        
+    }
+    
     /**
      * Implements output of the processor.
      */
     private class Output extends AbstractSource {
         //references to the format of last processed packet
         private Format format;
-        protected boolean connected = false;
-        protected int failDeliveryCount = 0;
         private boolean started = false;
 
-        public Output() {
-            super("Processor.Output");
+        /**
+         * Creates new instance of processor's output.
+         * 
+         * @param name - the name of the processor;
+         */
+        public Output(String name) {
+            super(name + ".output");
         }
 
-        @Override
-        public void connect(MediaSink sink) {
-            super.connect(sink);
-            
-            format = null;
-            codec = null;
-            
-            Format[] fmts = sink.getFormats();
-            ArrayList<Format> list = new ArrayList();
-            
-            for (Format f : fmts) {
-                list.add(f);
-                for (Codec codec : codecs) {
-                    if (codec.getSupportedInputFormat().matches(f)) {
-                        list.add(codec.getSupportedOutputFormat());
-                    }
-                }
-            }            
-            
-            inputFormats = new Format[list.size()];
-            list.toArray(inputFormats);
-        }
-
+        /**
+         * Gets list of formats supported by connected other party
+         * 
+         * @return the array of format objects.
+         */
         protected Format[] getOtherPartyFormats() {
             return otherParty != null ? otherParty.getFormats() : new Format[0];
         }
 
+        @Override
         public void start() {
             started = true;
         }
 
+        @Override
         public void stop() {
             started = false;
         }
 
+        /**
+         * (Non Java-doc.)
+         * 
+         * @see org.mobicents.media.MediaSource#getFormats() 
+         */
         public Format[] getFormats() {
             Format[] original = input.getOtherPartyFormats();
             ArrayList<Format> list = new ArrayList();
@@ -179,6 +241,12 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             return fmts;
         }
 
+        /**
+         * Checks is this format is accessable by other party.
+         * 
+         * @param format the format to check.         * 
+         * @return true if other party can accept this format.
+         */
         private boolean isAcceptable(Format format) {
             return otherParty.isAcceptable(format);
         }
@@ -237,100 +305,20 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             //if this format is acceptable by the consumer.
 
             //deliver packet to the consumer
-            try {
-                otherParty.receive(buffer);
-            } catch (Exception e) {
-                //e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Implements output of the processor.
-     */
-    private class Input extends AbstractSink {
-
-        private Format fmt;
-        private boolean isAcceptable;
-        
-        public Input() {
-            super("Processor.Input");
+            buff = buffer;
+            run();
         }
 
         @Override
-        public void connect(MediaSource source) {
-            super.connect(source);
-
-            fmt = null;
-            isAcceptable = false;
-            
-            Format[] fmts = source.getFormats();
-            ArrayList<Format> list = new ArrayList();
-            
-            for (Format f : fmts) {
-                list.add(f);
-                for (Codec codec : codecs) {
-                    if (codec.getSupportedOutputFormat().matches(f)) {
-                        list.add(codec.getSupportedInputFormat());
-                    }
-                }
-            }            
-            
-            outputFormats = new Format[list.size()];
-            list.toArray(outputFormats);            
+        public void evolve(Buffer buffer, long sequenceNumber) {
+            buffer.copy(buff);
         }
-
-        public boolean isAcceptable(Format format) {
-            if (fmt != null && fmt.matches(format)) {
-                return isAcceptable;
-            }
-            
-            inputFormats = getFormats();
-            
-            fmt = format;
-            for (Format f : inputFormats) {
-                if (f.matches(format)) {
-                    this.isAcceptable = true;
-                    break;
-                }
-            }
-            return this.isAcceptable;
-        }
-
-        public void receive(Buffer buffer) {
-            output.transmit(buffer);
-        }
-
-        protected Format[] getOtherPartyFormats() {
-            return otherParty != null ? otherParty.getFormats() : new Format[0];
-        }
-
-        public Format[] getFormats() {
-            Format[] original = output.getOtherPartyFormats();
-            ArrayList<Format> list = new ArrayList();
-            for (Format f : original) {
-                list.add(f);
-                for (Codec codec: codecs) {
-                    if (codec.getSupportedOutputFormat().matches(f)) {
-                        Format ff = codec.getSupportedInputFormat();
-                        if (!list.contains(ff)){
-                            list.add(ff);
-                        }
-                    }
-                }
-            }
-            Format[] fmts = new Format[list.size()];
-            list.toArray(fmts);
-            
-            return fmts;
+        
+        @Override
+        public String toString() {
+            return "Processor.Output[" + getName() + "]";
         }
     }
 
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.media.server.spi.dsp.SignalingProcessor.configure(Format[], Format[]).
-     */
-    public void configure(Format[] inputFormats, Format[] outputFormats) {
-    }
+
 }

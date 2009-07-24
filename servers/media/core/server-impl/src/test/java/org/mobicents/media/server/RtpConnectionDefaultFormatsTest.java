@@ -45,6 +45,10 @@ import org.mobicents.media.server.spi.resource.AudioPlayer;
 public class RtpConnectionDefaultFormatsTest {
 
     private Timer timer;
+    
+    private int localPort1 = 9201;
+    private int localPort2 = 9202;
+    
     private EndpointImpl sender;
     private EndpointImpl receiver;
     
@@ -52,7 +56,7 @@ public class RtpConnectionDefaultFormatsTest {
     private TestSinkFactory sinkFactory;
     
     private ChannelFactory channelFactory;
-    private RtpFactory rtpFactory;
+    private RtpFactory rtpFactory1, rtpFactory2;
     
     private Semaphore semaphore;
     private int count;
@@ -75,15 +79,27 @@ public class RtpConnectionDefaultFormatsTest {
         rtpmap.put(0, new AudioFormat(AudioFormat.ALAW, 8000, 8, 1));
         rtpmap.put(8,  new AudioFormat(AudioFormat.ULAW, 8000, 8, 1));
         
-        rtpFactory = new RtpFactory();
-        rtpFactory.setBindAddress("localhost");
-        rtpFactory.setPortRange("1024-65535");
-        rtpFactory.setJitter(60);
-        rtpFactory.setTimer(timer);
-        rtpFactory.setFormatMap(rtpmap);
+
+        rtpFactory1 = new RtpFactory();
+        rtpFactory1.setBindAddress("localhost");
+        rtpFactory1.setLocalPort(localPort1);
+        rtpFactory1.setTimer(timer);
+        rtpFactory1.setFormatMap(rtpmap);
+        rtpFactory1.start();
+
+        rtpFactory2 = new RtpFactory();
+        rtpFactory2.setBindAddress("localhost");
+        rtpFactory2.setLocalPort(localPort2);
+        rtpFactory2.setTimer(timer);
+        rtpFactory2.setFormatMap(rtpmap);
+        rtpFactory2.start();
         
-        Hashtable<String, RtpFactory> rtpFactories = new Hashtable();
-        rtpFactories.put("audio", rtpFactory);
+        
+        Hashtable<String, RtpFactory> rtpFactories1 = new Hashtable();
+        rtpFactories1.put("audio", rtpFactory1);
+
+        Hashtable<String, RtpFactory> rtpFactories2 = new Hashtable();
+        rtpFactories2.put("audio", rtpFactory2);
         
         playerFactory = new AudioPlayerFactory();
         playerFactory.setName("audio.player");
@@ -96,7 +112,7 @@ public class RtpConnectionDefaultFormatsTest {
         sender = new EndpointImpl("test/announcement/sender");
         sender.setTimer(timer);
         
-        sender.setRtpFactory(rtpFactories);
+        sender.setRtpFactory(rtpFactories1);
         sender.setSourceFactory(playerFactory);
         sender.setTxChannelFactory(channelFactory);
         
@@ -105,7 +121,7 @@ public class RtpConnectionDefaultFormatsTest {
         receiver = new EndpointImpl("test/announcement/receiver");
         receiver.setTimer(timer);
         
-        receiver.setRtpFactory(rtpFactories);
+        receiver.setRtpFactory(rtpFactories2);
         receiver.setSinkFactory(sinkFactory);
         receiver.setRxChannelFactory(channelFactory);
         
@@ -152,7 +168,7 @@ public class RtpConnectionDefaultFormatsTest {
     private class PlayerListener implements NotificationListener {
 
         public void update(NotifyEvent event) {
-            if (event.getEventID() == AudioPlayerEvent.END_OF_MEDIA) {
+            if (event.getEventID() == NotifyEvent.COMPLETED) {
                 semaphore.release();
             }
         }
@@ -183,6 +199,11 @@ public class RtpConnectionDefaultFormatsTest {
 
         public void receive(Buffer buffer) {
             count++;
+        }
+
+        @Override
+        public void onMediaTransfer(Buffer buffer) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
     }

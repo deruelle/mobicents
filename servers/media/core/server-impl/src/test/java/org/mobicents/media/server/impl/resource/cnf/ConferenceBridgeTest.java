@@ -62,6 +62,8 @@ public class ConferenceBridgeTest {
 
     @Before
     public void setUp() throws Exception {
+        short A = (short)(Short.MAX_VALUE / 3);
+        
         semaphore = new Semaphore(0);
         res = false;
 
@@ -92,17 +94,17 @@ public class ConferenceBridgeTest {
         g1 = new SineGeneratorFactory();
         g1.setName("g1");
         g1.setF(FREQ[0]);
-        g1.setA(Short.MAX_VALUE);
+        g1.setA(A);
         
         g2 = new SineGeneratorFactory();
         g2.setName("g2");
         g2.setF(FREQ[1]);
-        g2.setA(Short.MAX_VALUE);
+        g2.setA(A);
 
         g3 = new SineGeneratorFactory();
         g3.setName("g3");
         g3.setF(FREQ[2]);
-        g3.setA(Short.MAX_VALUE);
+        g3.setA(A);
 
         e1 = new EndpointImpl("/cnf/test/1");
         e2 = new EndpointImpl("/cnf/test/2");
@@ -172,15 +174,25 @@ public class ConferenceBridgeTest {
         c2.setOtherParty(cc2);
         c3.setOtherParty(cc3);
 
+        
         MediaSource gen1 = (MediaSource) e1.getComponent("g1");
         gen1.start();
+        
+        MediaSink an1 = (MediaSink) e1.getComponent("a1");
+        an1.start();
 
         MediaSource gen2 = (MediaSource) e2.getComponent("g2");
         gen2.start();
 
+        MediaSink an2 = (MediaSink) e2.getComponent("a2");
+        an2.start();
+        
         MediaSource gen3 = (MediaSource) e3.getComponent("g3");
         gen3.start();
 
+        MediaSink an3 = (MediaSink) e3.getComponent("a3");
+        an3.start();
+        
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
         
         gen2.stop();
@@ -197,6 +209,8 @@ public class ConferenceBridgeTest {
         	Thread.currentThread().sleep(1000);
     	}catch(Exception e)
     	{}
+        
+        System.out.println("PR=" + an1.getPacketsReceived());
         res = verify(s1, new int[]{FREQ[1], FREQ[2]});
         assertEquals(true, res);
         
@@ -209,12 +223,26 @@ public class ConferenceBridgeTest {
 
     private boolean verify(ArrayList<double[]> spectra, int[] F) {
         int errorCount = 0;
+        if (spectra.size() == 0) {
+            return false;
+        }
+        
         int i =0;
-        for (double[] s : spectra) {
+        for (double[] s : spectra) {            
             int[] ext = Utils.getFreq(s);
+/*            if (ext.length == 0) {
+                System.out.println("Extremums =" + ext.length);
+                return false;
+            }
+ */
+            for (int k = 0; k < ext.length; k++) {
+                System.out.println(ext[k]);
+            }
+            System.out.println("-----------------");
             boolean r = Utils.checkFreq(ext, F, FREQ_ERROR);
             if (!r) {
                 errorCount++;
+                System.out.println("Error count=" + errorCount);
             }
         }
         return (errorCount <= MAX_ERRORS);
@@ -229,8 +257,14 @@ public class ConferenceBridgeTest {
         }
 
         public void update(NotifyEvent event) {
-            SpectrumEvent evt = (SpectrumEvent) event;
-            s.add(evt.getSpectra());
+            switch (event.getEventID()) {
+                case SpectrumEvent.SPECTRA :
+                    SpectrumEvent evt = (SpectrumEvent) event;
+                    s.add(evt.getSpectra());
+                    break;
+                case NotifyEvent.START_FAILED :
+                    break;
+            }
         }
     }
 }

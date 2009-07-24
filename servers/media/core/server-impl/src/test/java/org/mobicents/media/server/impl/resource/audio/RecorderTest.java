@@ -1,25 +1,20 @@
 package org.mobicents.media.server.impl.resource.audio;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
-import java.io.File;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.media.Format;
-import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.clock.TimerImpl;
-import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.events.FailureEvent;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -29,200 +24,127 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public class RecorderTest {
 
-	private Logger logger = Logger.getLogger(RecorderTest.class);
+    private TimerImpl timer;
+    private Semaphore semaphore;
+    private AudioPlayerImpl player;
+    private RecorderImpl recorder;
+    private boolean completed = false;
+    private boolean stopped = false;
+    private boolean failed = false;
 
-	private EndpointImpl endpointPlayer;
-	private TimerImpl timer;
-	private Semaphore semaphore;
-	private AudioPlayerImpl player;
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	private EndpointImpl endpointRecorder;
-	private RecorderImpl recorder;
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	private final static Format[] formats = new Format[] { AVProfile.PCMA, AVProfile.PCMU, Codec.LINEAR_AUDIO };
+    @Before
+    public void setUp() {
+        failed = false;
+        stopped = false;
+        timer = new TimerImpl();
 
-	private boolean stopped = false;
-	private boolean completed = false;
-	private boolean failed = false;
+        player = new AudioPlayerImpl("test", timer);
+        player.addListener(new PlayerListener());
+        
+        recorder = new RecorderImpl("test");
+        recorder.addListener(new RecorderListener());
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+        semaphore = new Semaphore(0);
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @After
+    public void tearDown() {
+    }
+    
+    private void testRecording(String src, String dst) throws Exception {
+        URL url = RecorderTest.class.getClassLoader().getResource(src);
+        String path = url.getPath();
+        
+        String recordDir = path.substring(0, path.lastIndexOf('/'));
+        recorder.setRecordDir(recordDir);
+        recorder.setRecordFile(dst);
+        
+        player.setURL(url.toExternalForm());
+        player.connect(recorder);
+        
+        recorder.start();
+        player.start();
+        
+        semaphore.tryAcquire(60, TimeUnit.SECONDS);        
+        
+        assertTrue("It is expected that audio player finishes playback", completed);
+        completed = false;
+        
+        recorder.stop();
+        player.stop();
+        
+        //give a bit of time to complete recording
+        semaphore.tryAcquire(5, TimeUnit.SECONDS);
+        assertTrue("Player have to send STOPPED event", stopped);
+        assertFalse("Recorder failed", failed);
+        assertTrue("Recorder have to send COMPLETED event", completed);
+    }
+    
+    @Test
+    public void test_Wav_L16_8000() throws Exception {
+        testRecording("org/mobicents/media/server/impl/fox-full.wav", "recorder-test/fox-full-recorded.wav");
+    }
 
-	@Before
-	public void setUp() {
+    @Test
+    public void test_8000_MONO_ALAW() throws Exception {
+        testRecording("org/mobicents/media/server/impl/addf8-Alaw-GW.wav", "addf8-Alaw-GW-recorded.wav");
+    }
 
-		stopped = false;
-		completed = false;
-		failed = false;
+    @Test
+    public void test_8000_MONO_ULAW() throws Exception {
+        testRecording("org/mobicents/media/server/impl/8kulaw.wav", "8kulaw-recorded.wav");
+    }
 
-		timer = new TimerImpl();
-		endpointPlayer = new EndpointImpl();
-		endpointPlayer.setTimer(timer);
+    @Test
+    public void test_SPEEX() throws Exception {
+        testRecording("org/mobicents/media/server/impl/sin8m.spx", "speex-recording.spx");
+    }
 
-		player = new AudioPlayerImpl("test");
-		player.setEndpoint(endpointPlayer);
-		player.setResourceType(10);
+    private class PlayerListener implements NotificationListener {
 
-		endpointRecorder = new EndpointImpl();
-		endpointPlayer.setTimer(timer);
+        public void update(NotifyEvent event) {
+            switch(event.getEventID()) {
+                case NotifyEvent.COMPLETED :
+                    completed = true;
+                    semaphore.release();
+                    break;
+                case NotifyEvent.START_FAILED :
+                case NotifyEvent.TX_FAILED :
+                    failed = true;
+                    semaphore.release();
+                    break;
+            }
+        }
+        
+    }
+    
+    private class RecorderListener implements NotificationListener {
 
-		recorder = new RecorderImpl("test");
-		recorder.setEndpoint(endpointRecorder);
-		recorder.addListener(new RecorderListener());
-
-		semaphore = new Semaphore(0);
-
-	}
-
-	@Test
-	public void testSupportedFormats() {
-		Format[] supported = recorder.getFormats();
-		assertEquals(formats.length, supported.length);
-		for (int i = 0; i < supported.length; i++) {
-			boolean found = false;
-			for (int j = 0; j < formats.length; j++) {
-				if (supported[i].equals(formats[j])) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				fail("Not found " + supported[i]);
-			}
-		}
-	}
-
-	@Test
-	public void test_Wav_L16_8000() throws Exception {
-		URL url = RecorderTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/fox-full.wav");
-
-		String tempFilePath = url.getPath();
-		String recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
-
-		recorder.setRecordDir(recordDir);
-		// let us record for 15 sec
-		recorder.setRecordTime(15);
-
-		player.setFile(url.toExternalForm());
-		player.connect(recorder);
-
-		recorder.start("recorder-test/fox-full-recorded.wav");
-		player.start();
-
-		// After 8 sec we fire Stop
-		semaphore.tryAcquire(8, TimeUnit.SECONDS);
-
-		recorder.stop();
-		semaphore.tryAcquire(2, TimeUnit.SECONDS);
-
-		assertEquals(true, stopped);
-
-		// Test directory creation
-		try {
-			File file = new File(recordDir + "/" + "recorder-test/fox-full-recorded.wav");
-			assertEquals(true, file.exists());
-		} catch (Exception e) {
-			logger.error(e);
-			fail("Recoded File 8kulaw-recorded.wav not created ");
-		}
-	}
-
-	@Test
-	public void test_8000_MONO_ALAW() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource(
-				"org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
-
-		String tempFilePath = url.getPath();
-		String recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
-
-		recorder.setRecordDir(recordDir);
-
-		// The file to be played is only of 2 sec.
-		recorder.setRecordTime(4);
-
-		player.setFile(url.toExternalForm());
-		player.connect(recorder);
-
-		recorder.start("addf8-Alaw-GW-recorded.wav");
-		player.start();
-
-		semaphore.tryAcquire(7, TimeUnit.SECONDS);
-
-		// Here the File is just 2sec and timer is based on Byte size. And hence
-		// no event is ever fired. Look at RecoderImpl TODO if we should have a
-		// Timer too?
-		assertEquals(false, completed);
-
-		try {
-			File file = new File(recordDir + "/" + "addf8-Alaw-GW-recorded.wav");
-			assertEquals(true, file.exists());
-		} catch (Exception e) {
-			logger.error(e);
-			fail("Recoded File addf8-Alaw-GW-recorded.wav not created ");
-		}
-	}
-
-	@Test
-	public void test_8000_MONO_ULAW() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/8kulaw.wav");
-
-		String tempFilePath = url.getPath();
-		String recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
-
-
-		recorder.setRecordDir(recordDir);
-
-		// let us record for 5 sec
-		recorder.setRecordTime(5);
-
-		player.setFile(url.toExternalForm());
-		player.connect(recorder);
-
-		recorder.start("8kulaw-recorded.wav");
-		player.start();
-
-		semaphore.tryAcquire(10, TimeUnit.SECONDS);
-
-		assertEquals(true, completed);
-
-		try {
-			File file = new File(recordDir + "/" + "8kulaw-recorded.wav");
-			assertEquals(true, file.exists());
-		} catch (Exception e) {
-			logger.error(e);
-			fail("Recoded File 8kulaw-recorded.wav not created ");
-		}
-	}
-
-
-	private class RecorderListener implements NotificationListener {
-
-		public void update(NotifyEvent event) {
-			switch (event.getEventID()) {
-			case RecorderEvent.STOPPED:
-				stopped = true;
-				semaphore.release();
-				break;
-			case RecorderEvent.DURATION_OVER:
-				completed = true;
-				semaphore.release();
-				break;
-			case RecorderEvent.FAILED:
-				failed = true;
-				semaphore.release();
-				break;
-			}
-		}
-
-	}
-
-	@After
-	public void tearDown() {
-	}
+        public void update(NotifyEvent event) {
+            switch (event.getEventID()) {
+                case NotifyEvent.STOPPED:
+                    stopped = true;
+                    break;
+                case NotifyEvent.START_FAILED :
+                case NotifyEvent.RX_FAILED :
+                    failed = true;
+                    semaphore.release();
+                    ((FailureEvent)event).getException().printStackTrace();
+                    break;
+                case NotifyEvent.COMPLETED :
+                    completed = true;
+                    semaphore.release();
+                    break;
+            }
+        }
+    }
 
 }

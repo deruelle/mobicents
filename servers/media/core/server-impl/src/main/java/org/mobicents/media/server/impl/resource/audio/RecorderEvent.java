@@ -1,5 +1,6 @@
 package org.mobicents.media.server.impl.resource.audio;
 
+import org.mobicents.media.Component;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.events.NotifyEvent;
@@ -42,6 +43,10 @@ public class RecorderEvent implements NotifyEvent {
 
     public String getResourceName() {
         return resourceName;
+    }
+
+    public Component getSource() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

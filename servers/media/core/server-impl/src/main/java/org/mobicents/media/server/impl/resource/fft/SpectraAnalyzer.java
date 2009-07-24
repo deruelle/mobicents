@@ -13,6 +13,7 @@
  */
 package org.mobicents.media.server.impl.resource.fft;
 
+import java.io.IOException;
 import org.mobicents.media.Format;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
@@ -28,9 +29,8 @@ public class SpectraAnalyzer extends AbstractSink {
 
     private Endpoint endpoint;
     
-    public SpectraAnalyzer(Endpoint endpoint, String name) {
+    public SpectraAnalyzer(String name) {
         super(name);        
-        this.endpoint = endpoint;
     }
     
     private final static AudioFormat LINEAR_AUDIO = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
@@ -39,12 +39,6 @@ public class SpectraAnalyzer extends AbstractSink {
     private byte[] localBuffer = new byte[16000];
     private FFT fft = new FFT();
     private static transient Logger logger = Logger.getLogger(SpectraAnalyzer.class);
-
-    public void start() {
-    }
-
-    public void stop() {
-    }
 
     private double[] mod(Complex[] x) {
         double[] res = new double[x.length];
@@ -55,14 +49,14 @@ public class SpectraAnalyzer extends AbstractSink {
     }
 
     protected void sendEvent(double[] spectra) {
-        SpectrumEvent evt = new SpectrumEvent(endpoint, getConnection(), getName(), spectra);
+        SpectrumEvent evt = new SpectrumEvent(this, spectra);
         sendEvent(evt);
     }
 
-    public void receive(Buffer buffer) {
+    public void onMediaTransfer(Buffer buffer) throws IOException {
         byte[] data = (byte[]) buffer.getData();
-        int len = Math.min(16000 - offset, data.length);
-        System.arraycopy(data, 0, localBuffer, offset, len);
+        int len = Math.min(16000 - offset, buffer.getLength());
+        System.arraycopy(data, buffer.getOffset(), localBuffer, offset, len);
         offset += len;
 
         if (logger.isDebugEnabled()) {

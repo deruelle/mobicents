@@ -1,56 +1,58 @@
 /*
- * Mobicents Media Gateway
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
  *
- * The source code contained in this file is in in the public domain.
- * It can be used in any project or product without prior permission,
- * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
- * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * AND DATA ACCURACY.  We do not warrant or make any representations
- * regarding the use of the software or the  results thereof, including
- * but not limited to the correctness, accuracy, reliability or
- * usefulness of the software.
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
 package org.mobicents.media.server.impl.resource.cnf;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
 
-import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.Outlet;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.rtp.BufferFactory;
-import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class AudioMixer extends AbstractSink implements Serializable {
+public class AudioMixer extends AbstractSink implements Outlet {
 
-    private String name;
-    protected final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
-            AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    protected final static AudioFormat LINEAR = new AudioFormat(
+            AudioFormat.LINEAR, 8000, 16, 1,
+            AudioFormat.LITTLE_ENDIAN, 
+            AudioFormat.SIGNED);
     protected final static Format[] formats = new Format[]{LINEAR};
-    
-    private Timer timer;
-    private transient ScheduledFuture worker;
-    
     private ConcurrentHashMap<MediaSource, MixerInputStream> inputs = new ConcurrentHashMap<MediaSource, MixerInputStream>();
-    private volatile boolean started = false;
-    
-    private AudioFormat fmt = LINEAR;
     private int packetSize;
     private int packetPeriod = 20;
     private int jitter = 60;
-    private int seq;
     private MixerOutput mixerOutput;
     private double targetGain = 1;
     private double currentGain = 1;
@@ -58,9 +60,6 @@ public class AudioMixer extends AbstractSink implements Serializable {
     // from gain 1 to gain 0
     private static double maxStepUp = 1. / 4000; // 3000 samples transition
     // from gain 1 to gain 0
-    private transient Logger logger = Logger.getLogger(AudioMixer.class);
-    
-    private BufferFactory bufferFactory = null;
 
     /**
      * Creates a new instance of AudioMixer.
@@ -70,13 +69,11 @@ public class AudioMixer extends AbstractSink implements Serializable {
      * @param fmt
      *            format of the output stream.
      */
-    public AudioMixer(Endpoint endpoint, String name) {
-        super("AudioMixer[" + endpoint.getLocalName() + "]");
-        bufferFactory = new BufferFactory(10, "AudioMixer[" + endpoint.getLocalName() + "]");
-        this.name = "AudioMixer[" + endpoint.getLocalName() + "]/" + name;
-        this.timer = endpoint.getTimer();
-        this.mixerOutput = new MixerOutput();
-        this.init();
+    public AudioMixer(String name, Timer timer) {
+        super(name);
+        mixerOutput = new MixerOutput(this);
+        mixerOutput.setSyncSource(timer);
+        init();
     }
 
     /**
@@ -97,160 +94,183 @@ public class AudioMixer extends AbstractSink implements Serializable {
         return inputs.size();
     }
 
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.Outlet#getOutput(). 
+     */
     public MediaSource getOutput() {
         return mixerOutput;
     }
 
     @Override
     public void connect(MediaSource stream) {
-        //super.connect(stream);
         MixerInputStream input = new MixerInputStream(this, jitter);
         inputs.put(stream, input);
         input.connect(stream);
+        input.start();
     }
 
     @Override
     public void disconnect(MediaSource stream) {
         MixerInputStream input = (MixerInputStream) inputs.remove(stream);
         if (input != null) {
+            input.stop();
             input.disconnect(stream);
         }
-        //super.disconnect(stream);
     }
 
+    /**
+     * Gets the number of active input streams.
+     * 
+     * @return the number of active streams.
+     */
     public int getInputCount() {
         return inputs.size();
     }
 
-    /**
-     * Starts mixer.
-     */
+    @Override
     public void start() {
-        started = true;
-        worker = timer.synchronize(new Mixer());
+        mixerOutput.start();
     }
 
-    /**
-     * Terminates mixer.
-     */
+    @Override
     public void stop() {
-        started = false;
-        if (worker != null) {
-            worker.cancel(true);
-        }
+        mixerOutput.stop();
     }
 
     @Override
     public String toString() {
-        return "AudioMixer[" + name + "]";
+        return "AudioMixer[" + getName() + "]";
     }
 
     /**
-     * Implements mixing procedure for a buffer of audio.
+     * Converts inner byte representation of the signal into 
+     * 16bit per sample array
+     * 
+     * @param input the array where sample takes two elements.
+     * @return array where sample takes one element.
      */
-    private class Mixer implements Runnable {
-
-        public short[] byteToShortArray(byte[] input) {
-            short[] output = new short[input.length >> 1];
-            for (int q = 0; q < input.length; q += 2) {
-                short f = (short) (((input[q + 1]) << 8) | (input[q] & 0xff));
-                output[q >> 1] = f;
-            }
-            return output;
+    public short[] byteToShortArray(byte[] input) {
+        short[] output = new short[input.length >> 1];
+        for (int q = 0; q < input.length; q += 2) {
+            short f = (short) (((input[q + 1]) << 8) | (input[q] & 0xff));
+            output[q >> 1] = f;
         }
-
-        public byte[] mix(ArrayList<byte[]> input) {
-            int numSamples = packetSize >> 1;
-            short[][] inputs = new short[input.size()][];
-            for (int q = 0; q < input.size(); q++) {
-                inputs[q] = byteToShortArray(input.get(q));
-            }
-
-            int[] mixed = new int[numSamples];
-
-            for (int q = 0; q < numSamples; q++) {
-                for (int w = 0; w < input.size(); w++) {
-                    mixed[q] += inputs[w][q];
-                }
-            }
-
-            int numExceeding = 0;
-            int maxExcess = 0;
-
-            for (int q = 0; q < numSamples; q++) {
-                int excess = 0;
-                int overflow = mixed[q] - Short.MAX_VALUE;
-                int underflow = mixed[q] - Short.MIN_VALUE;
-
-                if (overflow > 0) {
-                    excess = overflow;
-                } else if (underflow < 0) {
-                    excess = -underflow;
-                }
-
-                if (excess > 0) {
-                    numExceeding++;
-                }
-                maxExcess = Math.max(maxExcess, excess);
-            }
-
-            if (numExceeding > numSamples >> 5) {
-                targetGain = (float) (Short.MAX_VALUE) / (float) (Short.MAX_VALUE + maxExcess + 2000);
-            } else {
-                targetGain = 1;
-            }
-
-            byte[] data = new byte[packetSize];
-            int l = 0;
-            for (int q = 0; q < numSamples; q++) {
-                mixed[q] *= currentGain;
-                if (targetGain - currentGain >= maxStepUp) {
-                    currentGain += maxStepUp;
-                } else if (currentGain - targetGain > maxStepDown) {
-                    currentGain -= maxStepDown;
-                }
-                short s = (short) (mixed[q]);
-                data[l++] = (byte) (s);
-                data[l++] = (byte) (s >> 8);
-            }
-            return data;
-        }
-
-        public void run() {
-            Collection<MixerInputStream> buffers = inputs.values();
-            ArrayList<byte[]> frames = new ArrayList();
-            for (MixerInputStream buffer : buffers) {
-                if (buffer.isReady()) {
-                    frames.add(buffer.read(packetPeriod));
-                }
-            }
-
-            byte[] data = mix(frames);
-            push(data);
-        }
+        return output;
     }
 
-    private void push(byte[] data) {
-        Buffer buffer = bufferFactory.allocate();
+    /**
+     * Mixes input packets.
+     * 
+     * @param input collection of arras of samples of same length
+     * @return array of result array of samples.
+     */
+    public byte[] mix(ArrayList<byte[]> input) {
+        int numSamples = packetSize >> 1;
+        short[][] streams = new short[input.size()][];
+        for (int q = 0; q < input.size(); q++) {
+            streams[q] = byteToShortArray(input.get(q));
+        }
+
+        int[] mixed = new int[numSamples];
+
+        for (int q = 0; q < numSamples; q++) {
+            for (int w = 0; w < input.size(); w++) {
+                mixed[q] += streams[w][q];
+            }
+        }
+
+        int numExceeding = 0;
+        int maxExcess = 0;
+
+        for (int q = 0; q < numSamples; q++) {
+            int excess = 0;
+            int overflow = mixed[q] - Short.MAX_VALUE;
+            int underflow = mixed[q] - Short.MIN_VALUE;
+
+            if (overflow > 0) {
+                excess = overflow;
+            } else if (underflow < 0) {
+                excess = -underflow;
+            }
+
+            if (excess > 0) {
+                numExceeding++;
+            }
+            maxExcess = Math.max(maxExcess, excess);
+        }
+
+        if (numExceeding > numSamples >> 5) {
+            targetGain = (float) (Short.MAX_VALUE) / (float) (Short.MAX_VALUE + maxExcess + 2000);
+        } else {
+            targetGain = 1;
+        }
+
+        byte[] data = new byte[packetSize];
+        int l = 0;
+        for (int q = 0; q < numSamples; q++) {
+            mixed[q] *= currentGain;
+            if (targetGain - currentGain >= maxStepUp) {
+                currentGain += maxStepUp;
+            } else if (currentGain - targetGain > maxStepDown) {
+                currentGain -= maxStepDown;
+            }
+            short s = (short) (mixed[q]);
+            data[l++] = (byte) (s);
+            data[l++] = (byte) (s >> 8);
+        }
+        return data;
+    }
+
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.impl.AbstractSource#evolve(org.mobicents.media.Buffer, long). 
+     */
+    public void evolve(Buffer buffer, long seq) {
+        Collection<MixerInputStream> streams = inputs.values();
+        ArrayList<byte[]> frames = new ArrayList();
+        for (MixerInputStream stream : streams) {
+            if (stream.isReady()) {
+                frames.add(stream.read(packetPeriod));
+            }
+        }
+
+        byte[] data = mix(frames);
+        
         buffer.setData(data);
         buffer.setOffset(0);
         buffer.setLength(data.length);
         buffer.setDuration(packetPeriod);
         buffer.setTimeStamp(packetPeriod * seq);
-        buffer.setSequenceNumber(seq++);
+        buffer.setSequenceNumber(seq);
 
-        buffer.setFormat(fmt);
-        mixerOutput.push(buffer);
+        buffer.setFormat(LINEAR);
     }
 
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.MediaSink#isAcceptable(org.mobicents.media.Format) 
+     */
     public boolean isAcceptable(Format fmt) {
         return fmt.matches(LINEAR);
     }
 
-    public void receive(Buffer buffer) {
+    /**
+     * (Non Java-doc.)
+     * @see org.mobicents.media.server.impl.AbstractSink#onMediaTransfer(org.mobicents.media.Buffer) 
+     */
+    public void onMediaTransfer(Buffer buffer) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.MediaSink#getFormats() 
+     */
     public Format[] getFormats() {
         return formats;
     }

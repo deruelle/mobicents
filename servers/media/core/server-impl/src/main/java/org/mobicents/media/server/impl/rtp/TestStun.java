@@ -15,7 +15,7 @@ import net.java.stun4j.client.StunDiscoveryReport;
 public class TestStun {
 
     public static void main(String[] args) throws Exception {
-        StunAddress localStunAddress = new StunAddress("192.168.1.2", 9201);
+/*        StunAddress localStunAddress = new StunAddress("192.168.1.2", 9201);
         StunAddress serverStunAddress = new StunAddress("stun.ekiga.net", 3478);
 
         NetworkConfigurationDiscoveryProcess addressDiscovery =
@@ -34,5 +34,7 @@ public class TestStun {
         }
         System.out.println("Stun report = " + report);
         addressDiscovery.shutDown();
+ */
+        System.out.println((long)Math.floor(1.7));
     }
 }
