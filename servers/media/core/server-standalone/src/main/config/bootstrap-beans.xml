@@ -129,7 +129,7 @@
 			</map>
 		</property>
 		<property name="bindAddress">127.0.0.1</property>
-		<property name="portRange">1024-65535</property>
+		<property name="localPort">9200</property>
 		<property name="jitter">60</property>
 		<property name="timer">
 			<inject bean="Timer" />
@@ -150,6 +150,8 @@
 				</entry>
 			</map>
 		</property>
+		<property name="bindAddress">127.0.0.1</property>
+		<property name="localPort">9204</property>
 		<property name="jitter">60</property>
 		<property name="timer">
 			<inject bean="Timer" />
