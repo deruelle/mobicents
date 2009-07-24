@@ -24,42 +24,17 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.spi;
-
-import java.util.concurrent.ScheduledFuture;
+package org.mobicents.media.server.spi.events;
 
 /**
  *
  * @author kulikov
  */
-public interface Timer {
+public interface FailureEvent extends NotifyEvent {    
     /**
-     * Gets value of interval between timer ticks.
+     * Gets the exception which was a reason of this failure event.
      * 
-     * @return the int value in milliseconds.
+     * @return Exception object.
      */
-    public int getHeartBeat();
-
-    /**
-     * Modify interval between timer tick
-     * 
-     * @param heartBeat the new value of interval in milliseconds.
-     */
-    public void setHeartBeat(int heartBeat);
-    
-    /**
-     * Synchronizes task from this timer.
-     * 
-     * @param task the task to be synchronized.
-     * @return the action which can be canceled to unsynchronize previously 
-     * synchronized task
-     */
-    public ScheduledFuture synchronize(Runnable task);
-    
-    /**
-     * Gets the absolute timestamp value.
-     * 
-     * @return the timestamp value in milliseconds.
-     */
-    public long getTimestamp();
+    public Exception getException();
 }

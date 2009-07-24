@@ -15,7 +15,6 @@
 package org.mobicents.media.server.spi.dsp;
 
 import org.mobicents.media.Component;
-import org.mobicents.media.Format;
 import org.mobicents.media.Inlet;
 import org.mobicents.media.Outlet;
 
@@ -25,12 +24,5 @@ import org.mobicents.media.Outlet;
  * @author Oleg Kulikov
  */
 public interface SignalingProcessor extends Component, Inlet, Outlet {
-    /**
-     * Configures signaling processor.
-     * 
-     * @param inputFormat the format of the input signal.
-     * @param outputFormat the format of the output signal.
-     */
-    public void configure(Format[] inputFormats, Format[] outputFormats);
     
 }

@@ -14,6 +14,8 @@
 
 package org.mobicents.media;
 
+import java.io.IOException;
+
 
 /**
  * Implements the media consumer.
@@ -60,7 +62,34 @@ public interface MediaSink extends Component {
      * 
      * @param buffer the Buffer object which contains the next portion of media.
      */
-    public void receive(Buffer buffer);
+    public void receive(Buffer buffer) throws IOException;
     
-    //public void dispose();
+    /**
+     * Gets the state of the component.
+     * 
+     * @return  true if component is connected to other component.
+     */
+    public boolean isConnected();
+    
+    /**
+     * Gets true if component is able to receive media.
+     * 
+     * @return true if component is able to receive media.
+     */
+    public boolean isStarted();
+    
+    /**
+     * Shows the number of packets received by this medis sink since last start.
+     * 
+     * @return the number of packets.
+     */
+    public long getPacketsReceived();
+    
+    /**
+     * Shows the number of bytes received by this sink since last start;
+     * 
+     * @return the number of bytes.
+     */
+    public long getBytesReceived();
+    
 }

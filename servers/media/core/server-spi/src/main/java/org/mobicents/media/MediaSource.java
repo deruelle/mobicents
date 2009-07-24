@@ -14,6 +14,8 @@
 
 package org.mobicents.media;
 
+import org.mobicents.media.server.spi.Timer;
+
 /**
  * Abstracts a read interface that pushes data in the form of Buffer objects.
  *  
@@ -23,6 +25,21 @@ package org.mobicents.media;
  * @author Oleg Kulikov
  */
 public interface MediaSource extends Component {
+    
+    /**
+     * Gets the source used for synchronization of processing
+     * 
+     * @return timer instance.
+     */
+    public Timer getSyncSource();
+
+    /**
+     * Assign the source for synchronization of the processing.
+     * 
+     * @param timer the timer instance.
+     */
+    public void setSyncSource(Timer timer);
+    
     /**
      * Joins this source with media sink.
      * 
@@ -38,23 +55,38 @@ public interface MediaSource extends Component {
     public void disconnect(MediaSink sink);
     
     /**
-     * Starts media producing.
-     */
-    public void start();
-    
-    /**
-     * Terminates media producing.
-     */
-    public void stop();
-    
-    /**
      * Get possible formats in which this source can stream media.
      * 
      * @return an array of Format objects.
      */
     public Format[] getFormats();    
     
+    /**
+     * Gets the state of the component.
+     * 
+     * @return  true if component is connected to other component.
+     */
+    public boolean isConnected();
     
-    //public void dispose();
+    /**
+     * Gets true if component is transmitting media.
+     * 
+     * @return true if component is transmitting media.
+     */
+    public boolean isStarted();
+    
+    /**
+     * Shows the number of packets received by this medis sink since last start.
+     * 
+     * @return the number of packets.
+     */
+    public long getPacketsTransmitted();
+    
+    /**
+     * Shows the number of bytes received by this sink since last start;
+     * 
+     * @return the number of bytes.
+     */
+    public long getBytesTransmitted();
     
 }

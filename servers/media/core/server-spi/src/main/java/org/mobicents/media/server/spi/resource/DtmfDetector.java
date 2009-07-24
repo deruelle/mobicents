@@ -9,21 +9,58 @@ import org.mobicents.media.MediaSink;
  */
 public interface DtmfDetector extends MediaSink {
 
-	public static final String DETECTOR_MASK = "[0-9, A,B,C,D,*,#]";
+    /**
+     * Default level of the DTMF tone in decibells.
+     */
+    public final static int DEFAULT_SIGNAL_LEVEL = -30;
+    /**
+     * Default interdigit time interval in millisconds.
+     */
+    public final static int DEFAULT_INTERDIGIT_INTERVAL = 500;
+    
+    
+    /**
+     * Specifies mask for dtmf sequence.
+     * 
+     * @return the mask assigned to detector as regular expression.
+     */
+    public String getMask();
 
-	public static final int DETECTOR_SILENCE = 500;
+    /**
+     * Assign mask for DTMF sequence detection.
+     * 
+     * @param mask the regular expression string.
+     */
+    public void setMask(String mask);
 
-	public static final int DETECTOR_DURATION = 50;
+    /**
+     * The time the system will wait between DTMF digits. 
+     * If this value is reached, the system fires dtmf event.
+     * 
+     * @param interval the time interval in millisconds.
+     */
+    public void setInterdigitInterval(int interval);
 
-	
+    /**
+     * The time the system will wait between DTMF digits. 
+     * If this value is reached, the system fires dtmf event.
+     * 
+     * @return  the time interval in millisconds.
+     */
+    public int getInterdigitInterval();
 
-	public final static String[] TONE = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#", "A",
-			"B", "C", "D" };
+    /**
+     * Describes the power level of the tone, expressed in dBm0
+     * 
+     * @param level the value in dBm0
+     */
+    public void setVolume(int level);
 
-	public String getMask();
-
-	public void setMask(String mask);
-
-
-
+    /**
+     * Describes the power level of the tone, expressed in dBm0
+     * 
+     * @return the value in dBm0
+     */
+    public int getVolume();
+    
 }

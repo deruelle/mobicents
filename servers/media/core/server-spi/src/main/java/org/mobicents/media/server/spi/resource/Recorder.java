@@ -1,5 +1,7 @@
 package org.mobicents.media.server.spi.resource;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.mobicents.media.MediaSink;
 
 /**
@@ -9,28 +11,6 @@ import org.mobicents.media.MediaSink;
  */
 public interface Recorder extends MediaSink {
 	
-	public static final String EMPTY_STRING = "";
-	
-	//Default record time set is 60 seconds
-	public static final int DEFAULT_RECORD_TIME = 60;
-
-	/**
-	 * Set the Recording time in seconds
-	 * 
-	 * @param recordTime
-	 */
-	public void setRecordTime(int recordTime);
-
-	/**
-	 * Start the Recorder passing the path of file. For example
-	 * myapp/recordedFile.wav
-	 * 
-	 * @param file
-	 */
-	public void start(String file);
-
-	
-	public void stop();
 	/**
 	 * Set the Record path. This will be the parent path and file path passed in
 	 * start(String file) will be appended to this base record path. For example
@@ -43,4 +23,12 @@ public interface Recorder extends MediaSink {
 	 */
 	public void setRecordDir(String recordDir);
 
+        /**
+         * Assign file for recording.
+         * 
+         * @param uri the URI which points to a file.
+         * @throws java.io.IOException
+         * @throws java.io.FileNotFoundException
+         */
+        public void setRecordFile(String uri) throws IOException, FileNotFoundException;
 }

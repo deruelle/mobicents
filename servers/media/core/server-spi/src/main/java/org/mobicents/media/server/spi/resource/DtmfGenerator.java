@@ -9,9 +9,6 @@ import org.mobicents.media.MediaSource;
  */
 public interface DtmfGenerator extends MediaSource {
 	
-	public static final int GENERATOR_DURATION = 80;
-	public static final int GENERATOR_VOLUME = 10;
-	
 	public void setDigit(String digit);
 	public String getDigit();
 	
@@ -20,6 +17,4 @@ public interface DtmfGenerator extends MediaSource {
 	
 	public void setVolume(int volume);
 	public int getVolume();
-	
-
 }

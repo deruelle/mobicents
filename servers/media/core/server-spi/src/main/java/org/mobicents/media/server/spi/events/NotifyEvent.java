@@ -28,16 +28,21 @@
 package org.mobicents.media.server.spi.events;
 
 import java.io.Serializable;
-import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.Component;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public interface NotifyEvent extends Serializable {
-    public Endpoint getEndpoint();
-    public Connection getConnection();
-    public String getResourceName();
+    public final static int STARTED = 10;
+    public final static int COMPLETED = 20;
+    public final static int STOPPED = 30;
+
+    public final static int START_FAILED = 0;
+    public final static int TX_FAILED = 1;
+    public final static int RX_FAILED = 2;
+    
+    public Component getSource();
     public int getEventID();
 }

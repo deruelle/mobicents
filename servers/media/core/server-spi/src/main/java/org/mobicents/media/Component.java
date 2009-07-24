@@ -33,38 +33,68 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 
 /**
- * Represents media component.
+ * <i>Component</i> is an Object that is responsible for any media 
+ * data processing. 
+ * 
+ * Examples of components are the audio player, recoder, 
+ * DTMF detector, etc. The <code>Component</code> is a supper class for all 
+ * media processing components.
  * 
  * @author kulikov
  */
 public interface Component extends Serializable {
-    public final static int AUDIO_PLAYER = 10;
-    public final static int AUDIO_RECORDER = 11;
     
-    public final static int DTMF_DETECTOR = 20;
-    public final static int DTMF_GENERATOR = 21;        
-    
+    /**
+     * Gets the unique identifier of this component.
+     * 
+     * @return
+     */
     public String getId();
     
     /**
-     * Defines the integer identificator for type of this resource. 
-     * 
-     * @return an integer constant.
-     */
-    public int getResourceType();
-    public void setResourceType(int resType);
-    
-    /**
      * Gets the name of the component.
+     * The component of same type can share same name.
      * 
      * @return name of this component;
      */
     public String getName();
     
+    /**
+     * Starts media processing.
+     */
+    public void start();
+    
+    /**
+     * Terminates media processing.
+     */
+    public void stop();
+    
+    /**
+     * Gets the reference to endpoint to which this component belongs
+     * 
+     * @return the endpoint reference.
+     */
     public Endpoint getEndpoint();
+    
+    /**
+     * Sets reference to the endpoint to which this component belongs.
+     * 
+     * @param endpoint the reference to the endpoint.
+     */
     public void setEndpoint(Endpoint endpoint);
     
+    /**
+     * Reference to the connection to which this component belongs.
+     * 
+     * @return the connection instance.
+     */    
     public Connection getConnection();
+    
+    /**
+     * Set reference to the connection to which this component belongs.
+     * 
+     * @param connection the connection instance.
+     */
     public void setConnection(Connection connection);
     
     /**
@@ -80,5 +110,10 @@ public interface Component extends Serializable {
      * @param listener the listener object.
      */
     public void removeListener(NotificationListener listener);
+    
+    /**
+     * Resets any transmission stats.
+     */
+    public void resetStats();
     
 }

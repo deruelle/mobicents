@@ -25,7 +25,9 @@ import org.mobicents.media.Component;
  * @author Oleg Kulikov
  */
 public interface Connection extends Serializable {
-
+    public final static int CHANNEL_RX = 0;
+    public final static int CHANNEL_TX = 1;
+    
     /**
      * Gets the identifier of this connection.
      *
@@ -123,6 +125,8 @@ public interface Connection extends Serializable {
     public void removeListener(ConnectionListener listener);
     public void removeNotificationListener(NotificationListener listener);
 
-    public Component getComponent(int resourceType);
-    public Component getComponent(String name);
+    public Component getComponent(String name, int chanID);
+    
+    public long getPacketsReceived(String media);
+    public long getPacketsTransmitted(String media);
 }
