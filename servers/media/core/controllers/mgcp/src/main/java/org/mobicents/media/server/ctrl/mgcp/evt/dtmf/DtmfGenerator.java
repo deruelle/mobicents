@@ -29,7 +29,7 @@ public class DtmfGenerator extends SignalGenerator {
 	@Override
 	protected boolean doVerify(Connection connection) {
 		dtmfGenerator = (org.mobicents.media.server.spi.resource.DtmfGenerator) connection
-				.getComponent(getResourceName());
+				.getComponent(getResourceName(), Connection.CHANNEL_TX);
 		return dtmfGenerator != null;
 	}
 

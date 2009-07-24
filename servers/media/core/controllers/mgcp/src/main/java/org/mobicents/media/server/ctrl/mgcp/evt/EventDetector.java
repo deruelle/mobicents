@@ -120,7 +120,7 @@ public abstract class EventDetector implements NotificationListener {
     }
 
     protected boolean doVerify(Connection connection) {
-        component = connection.getComponent(resourceName);
+        component = connection.getComponent(resourceName, Connection.CHANNEL_RX);
         return component != null;
     }
     

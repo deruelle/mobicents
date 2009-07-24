@@ -49,7 +49,7 @@ public class PlayAnnouncement extends SignalGenerator {
 
     @Override
     protected boolean doVerify(Connection connection) {
-        audioPlayer = (AudioPlayer) connection.getComponent(getResourceName());
+        audioPlayer = (AudioPlayer) connection.getComponent(getResourceName(), Connection.CHANNEL_TX);
         return audioPlayer != null;
     }
 

@@ -7,6 +7,7 @@ package org.mobicents.media.server.ctrl.mgcp.evt.ann;
 
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -162,6 +163,11 @@ public class PlayAnnouncementTest {
 
         public void receive(Buffer buffer) {
             count++;
+        }
+
+        @Override
+        public void onMediaTransfer(Buffer buffer) throws IOException {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
     }

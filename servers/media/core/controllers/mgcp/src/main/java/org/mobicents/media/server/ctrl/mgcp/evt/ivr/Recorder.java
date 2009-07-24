@@ -27,7 +27,7 @@ public class Recorder extends SignalGenerator {
 
 	@Override
 	protected boolean doVerify(Connection connection) {
-		this.recorder = (org.mobicents.media.server.spi.resource.Recorder) connection.getComponent(getResourceName());
+		this.recorder = (org.mobicents.media.server.spi.resource.Recorder) connection.getComponent(getResourceName(), Connection.CHANNEL_RX);
 		return this.recorder != null;
 	}
 
@@ -39,7 +39,13 @@ public class Recorder extends SignalGenerator {
 
 	@Override
 	public void start(Request request) {
-		recorder.start(this.url);
+            try {
+            recorder.setRecordFile(url);
+		recorder.start();
+            } catch (Exception e) {
+                //@FIXME allow method to throw excetion
+                e.printStackTrace();
+            }
 	}
 
 }

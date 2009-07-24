@@ -55,8 +55,8 @@ public class DtmfDetectionTestCase extends MgcpMicrocontainerTest implements Jai
         super.setUp();
         semaphore = new Semaphore(0);
 
-        txConnection = createConnection(AAP, ConnectionMode.SendOnly, null);
-        rxConnection = createConnection(IVR, ConnectionMode.RecvOnly, txConnection.getLocalSdp());
+        txConnection = createConnection(AAP, ConnectionMode.SendRecv, null);
+        rxConnection = createConnection(IVR, ConnectionMode.SendRecv, txConnection.getLocalSdp());
 
         modifyConnection(txConnection, rxConnection.getLocalSdp());
 
@@ -108,7 +108,7 @@ public class DtmfDetectionTestCase extends MgcpMicrocontainerTest implements Jai
         this.requestDtmfGen(MgcpEvent.dtmf0);
         
         oc = false;
-        semaphore.tryAcquire(150, TimeUnit.SECONDS);
+        semaphore.tryAcquire(15, TimeUnit.SECONDS);
         
         assertEquals(true, checkEvent(MgcpEvent.dtmf0));
         Thread.currentThread().sleep(2000);
