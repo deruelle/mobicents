@@ -35,13 +35,13 @@ import org.mobicents.media.Component;
  * @author Oleg Kulikov
  */
 public interface NotifyEvent extends Serializable {
-    public final static int STARTED = 10;
-    public final static int COMPLETED = 20;
-    public final static int STOPPED = 30;
+    public final static int STARTED = 10000;
+    public final static int COMPLETED = 20000;
+    public final static int STOPPED = 30000;
 
-    public final static int START_FAILED = 0;
-    public final static int TX_FAILED = 1;
-    public final static int RX_FAILED = 2;
+    public final static int START_FAILED = 10001;
+    public final static int TX_FAILED = 10002;
+    public final static int RX_FAILED = 10003;
     
     public Component getSource();
     public int getEventID();
