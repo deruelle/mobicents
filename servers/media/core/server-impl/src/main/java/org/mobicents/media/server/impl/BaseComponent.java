@@ -94,7 +94,10 @@ public abstract class BaseComponent implements Component {
     
     protected void sendEvent(NotifyEvent evt) {
         for (NotificationListener listener : listeners) {
-            listener.update(evt);
+            try {
+                listener.update(evt);
+            } catch (Exception e) {
+            }
         }
     }
     
