@@ -70,6 +70,7 @@ public class RtpDepacketizer {
             buffer.setOffset(0);
             buffer.setLength(payload.length);
             buffer.setDuration(period);
+            buffer.setDiscard(false);
         } else {
             buffer.setDiscard(true);
         }

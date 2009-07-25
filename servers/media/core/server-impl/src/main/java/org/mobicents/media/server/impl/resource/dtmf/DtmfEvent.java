@@ -26,16 +26,14 @@
  */
 package org.mobicents.media.server.impl.resource.dtmf;
 
-import org.mobicents.media.Component;
-import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.impl.BaseComponent;
+import org.mobicents.media.server.impl.NotifyEventImpl;
 
 /**
  * 
  * @author kulikov
  */
-public class DtmfEvent implements NotifyEvent {
+public class DtmfEvent extends NotifyEventImpl {
 	public final static int DTMF_0 = 0;
 	public final static int DTMF_1 = 1;
 	public final static int DTMF_2 = 2;
@@ -54,36 +52,9 @@ public class DtmfEvent implements NotifyEvent {
 	public final static int DTMF_STAR = 15;
 
 
-
-	private Endpoint endpoint;
-	private Connection connection;
-	private String resourceName;
-	private int eventID;
-
-	public DtmfEvent(Endpoint endpoint, Connection connection, String resourceName, int eventID) {
-		this.eventID = eventID;
-                this.resourceName = resourceName;
+	public DtmfEvent(BaseComponent source, int eventID) {
+		super(source, eventID);
 	}
 
-	public Endpoint getEndpoint() {
-		return endpoint;
-	}
-
-	public Connection getConnection() {
-		return connection;
-	}
-
-
-	public int getEventID() {
-		return eventID;
-	}
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
-    public Component getSource() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
 }
