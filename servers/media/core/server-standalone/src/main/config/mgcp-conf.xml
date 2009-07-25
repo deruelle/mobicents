@@ -24,14 +24,14 @@
 		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
 		<property name="eventName">oc</property>
 		<property name="resourceName">audio.player</property>
-		<property name="eventID">2</property>
+		<property name="eventID">20000</property>
 	</bean>
 
 	<bean name="Announcement.OF"
 		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
 		<property name="eventName">of</property>
 		<property name="resourceName">audio.player</property>
-		<property name="eventID">3</property>
+		<property name="eventID">10001</property>
 	</bean>
 
 	<bean name="Package.Announcement"
