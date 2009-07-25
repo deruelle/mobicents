@@ -71,8 +71,10 @@ public class InbandGeneratorImplTest implements NotificationListener {
         det.start();
         
         Thread.currentThread().sleep(2000);
-        
+        gen.stop();
         det.stop();
+        
+        Thread.currentThread().sleep(1000);        
         assertTrue(verify(s, new int[]{941, 1336}));
     }
 
