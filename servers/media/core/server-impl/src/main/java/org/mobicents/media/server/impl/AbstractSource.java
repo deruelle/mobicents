@@ -60,6 +60,10 @@ public abstract class AbstractSource extends BaseComponent
     private long bytesTransmitted;
     
     private boolean started;
+
+    private NotifyEvent evtStarted;
+    private NotifyEvent evtCompleted;
+    private NotifyEvent evtStopped;
     
     /**
      * Creates new instance of source with specified name.
@@ -68,6 +72,9 @@ public abstract class AbstractSource extends BaseComponent
      */
     public AbstractSource(String name) {
         super(name);
+        evtStarted = new NotifyEventImpl(this, NotifyEvent.STARTED);
+        evtCompleted = new NotifyEventImpl(this, NotifyEvent.COMPLETED);
+        evtStopped = new NotifyEventImpl(this, NotifyEvent.STOPPED);
     }
 
     /**
@@ -142,6 +149,7 @@ public abstract class AbstractSource extends BaseComponent
                 thread = null;
             }
             started = false;
+            stopped();
             afterStop();
         } finally {
             state.unlock();
@@ -241,8 +249,7 @@ public abstract class AbstractSource extends BaseComponent
      * Sends notification that media processing has been started.
      */
     protected void started() {
-        NotifyEventImpl started = new NotifyEventImpl(this, NotifyEventImpl.STARTED);
-        sendEvent(started);
+        sendEvent(evtStarted);
     }
     
     /**
@@ -267,8 +274,15 @@ public abstract class AbstractSource extends BaseComponent
         if (thread != null) {
             thread.cancel(false);
         }
-        NotifyEventImpl completed = new NotifyEventImpl(this, NotifyEventImpl.COMPLETED);
-        sendEvent(completed);
+        sendEvent(evtCompleted);
+    }
+    
+    /**
+     * Sends notification that detection is terminated.
+     * 
+     */
+    protected void stopped() {
+        sendEvent(evtStopped);
     }
     
     /**

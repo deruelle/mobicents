@@ -36,6 +36,10 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
     private long packetsReceived;
     private long bytesReceived;
     
+    private NotifyEvent evtStarted;
+    private NotifyEvent evtStopped;
+    
+    
     /**
      * Creates new instance of sink with specified name.
      * 
@@ -43,6 +47,8 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
      */
     public AbstractSink(String name) {
         super(name);
+        evtStarted = new NotifyEventImpl(this, NotifyEvent.STARTED);
+        evtStopped = new NotifyEventImpl(this, NotifyEvent.STOPPED);
     }
 
     /**
@@ -185,8 +191,7 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
      * Sends notification that media processing has been started.
      */
     protected void started() {
-        NotifyEventImpl startedEvt = new NotifyEventImpl(this, NotifyEventImpl.STARTED);
-        sendEvent(startedEvt);
+        sendEvent(evtStarted);
     }
     
     /**
@@ -194,8 +199,7 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
      * 
      */
     protected void stopped() {
-        NotifyEventImpl stopped = new NotifyEventImpl(this, NotifyEventImpl.STOPPED);
-        sendEvent(stopped);
+        sendEvent(evtStopped);
     }
     
 }
