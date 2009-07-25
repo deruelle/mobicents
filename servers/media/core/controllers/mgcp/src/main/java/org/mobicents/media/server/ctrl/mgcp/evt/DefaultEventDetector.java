@@ -44,6 +44,10 @@ public class DefaultEventDetector extends EventDetector {
 
     @Override
     public void performAction(NotifyEvent event, RequestedAction action) {
+        System.out.println("!!!!! ================================= !!!!");
+        System.out.println("!!!!! source=" + event.getSource());
+        System.out.println("!!!!! source=" + event.getSource().getName());
+        System.out.println("!!!!! this.resourcename=" + this.getResourceName());
         if (!event.getSource().getName().matches(this.getResourceName())) {
             return;
         }
