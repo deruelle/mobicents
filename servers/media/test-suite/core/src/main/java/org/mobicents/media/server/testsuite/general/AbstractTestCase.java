@@ -11,6 +11,9 @@ import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Notify;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -18,6 +21,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TooManyListenersException;
 import java.util.Vector;
@@ -46,6 +50,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	protected transient Logger logger = Logger.getLogger(this.getClass().getName());
 	private TestState testState = TestState.Stoped;
 	public transient final static String _CASE_FILE = "testcase.bin";
+	public transient final static String _COLLECTIVE_CASE_FILE="graph.txt";
 	public static final String _LINE_SEPARATOR;
 	static {
 		String lineSeparator = System.getProperty("line.separator");
@@ -253,6 +258,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 					// Now lets serialize.
 					
 					serialize();
+					dumpSampleTraffic();
 				} finally {
 					this.testState = TestState.Stoped;
 					this.gracefulStopTask = null;
@@ -554,6 +560,124 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
 	}
 
+	private void dumpSampleTraffic()
+	{
+		
+		if(this.callSequenceToCall!=null && this.callSequenceToCall.size()>0)
+		{
+			int index0 = this.callSequenceToCall.size()/2;
+			Iterator<Long> seqIterator= this.callSequenceToCall.keySet().iterator();
+			while(index0>0)
+			{
+
+				//seqIterator.next();
+				index0--;
+			}
+			
+			
+			AbstractCall call = null;
+			while(call==null && seqIterator.hasNext())
+			{
+				Long seq = seqIterator.next();
+				
+				call = this.callSequenceToCall.get(seq);
+				if(call.getState()==CallState.IN_ERROR || call.getState() == CallState.TIMED_OUT)
+				{
+					call = null;
+					continue;
+				}else
+				{
+					break;
+				}
+			}
+			
+			if(call!=null)
+			{
+				//on end file dumps traffic along with jitter to this file, saves a lot of place, allows us to make mooore calls
+				File callDumpFile = call.getGraphDataFileName();
+				
+				FileInputStream inputChannel=null;
+				FileOutputStream outputChannel=null;
+				try {
+					inputChannel = new FileInputStream(callDumpFile);
+					outputChannel = new FileOutputStream(new File(this.getTestDumpDirectory(),_COLLECTIVE_CASE_FILE));
+					outputChannel.write((this.getCallDisplayInterface().getCallDuration()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((this.getCallDisplayInterface().getCPS()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((this.getCallDisplayInterface().getMaxConcurrentCalls()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((this.getCallDisplayInterface().getMaxFailCalls()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((this.getErrorCallNumber()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((this.getCallDisplayInterface().getMaxCalls()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((this.getTotalCallNumber()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					
+					
+					//outputChannel.write((call.getCallID().toString().getBytes()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((call.getSequence()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((call.getAvgJitter()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					outputChannel.write((call.getPeakJitter()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+					
+					while(inputChannel.available()>0)
+					{
+						byte[] b = new byte[inputChannel.available()];
+						int read=inputChannel.read(b);
+						//FIXME: should we add more 
+						outputChannel.write(b,0,read);
+					}
+					
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					if(inputChannel!=null)
+					{
+						try {
+							inputChannel.close();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
+					if(outputChannel!=null)
+					{
+						try {
+							outputChannel.close();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					if(inputChannel!=null)
+					{
+						try {
+							inputChannel.close();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
+					if(outputChannel!=null)
+					{
+						try {
+							outputChannel.close();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				}
+			}else
+			{
+				logger.severe("Failed to find call to add data to collective dump file.");
+			}
+			
+		}
+		
+	}
+	
+	
 	/**
 	 * This method is called after stop, to dump case data.
 	 */
@@ -577,4 +701,5 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		}
 	}
 
+	
 }

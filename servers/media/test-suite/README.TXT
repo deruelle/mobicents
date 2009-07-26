@@ -40,4 +40,15 @@ To get knowledge on how to use it visit: XXX add urls XXX, or follow this file.
                            To see list of configuration options run: mvn install -Prun-cli-usage
                            To run testtool type: mvn install -Prun-cli, to ocnfigure specific options
                            one has to modify pom profile with id: run-cli
+                           
+4. Jitter graphs.
+ Tool allows to graph in two modes:
+  - GUI - simply opens new window with jiiter graph
+  - CLI - after series of tests tool creates txt files with some data, after executing last test with command line option
+          "--collectivegraph" will produce graph.txt file which agregates present tests into one file allowing to easy import
+          to Calc or Excel(it should be also fairly easy to plot with tools like GNU plot or even matlab.)
+          Tool takes one call from test and writes data into agregation file, each call takes one collumn, fields in collumn
+          can be described as: call duration, cps, max concurrent calls, max fail calls, failed calls, max calls, total performed calls
+          , sequence, avg jitter, peak jitter.
+
  

@@ -116,7 +116,8 @@ echo "--audiofile : audio file url, if requried, default is file:/...../target/a
 echo "--audiocodec : audio codec to be used if requried, default is \'0 pcmu/8000\', value should be specifiedd in \'\'"
 echo "--testtype : test type, currently there is only one available: AnnTest"
 echo "--maxfail : specifies how many calls may fail until testtool will stop sending requests to server, default is -1, which means unbound"
-echo "--usage : print this message"
+echo "--collectivegraph : no arg option which creates collective file with data that can be presented as graph, can be set for test, and will be executed as end action, file is created in datadump directory."
+echo "--usage : print cli usage directly from CLI runner"
 echo "example options part: --localaddress=127.0.0.1 --localport=2499 --concurentcalls=12 --audiocodec=\'8 pcma/8000\' --testtype=AnnTest"
 
 }
@@ -145,8 +146,8 @@ executeTest(){
 
 
       echo "Preparing test tool jar..."
-      mvn -f $TEST_CORE/pom.xml clean install
-
+      #mvn -f $TEST_CORE/pom.xml clean install
+      mvn -f $TEST_CORE/pom.xml install
 
       echo ""
       echo "========================================================================="

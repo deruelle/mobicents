@@ -148,6 +148,12 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 		this.graphDataFileName = new File(testDumpDirectory, this.sequence + "_graph.txt");
 	}
 
+	
+	
+	public java.io.File getGraphDataFileName() {
+		return graphDataFileName;
+	}
+
 	protected void initSocket() throws IOException {
 		this.datagramChannel = DatagramChannel.open();
 		this.datagramChannel.configureBlocking(false);
@@ -242,13 +248,17 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 			}
 
 			if (rtpTraffic != null && rtpTraffic.size()>0) {
-				try {
-					if (graphDataDumpChannel != null) {
-						graphDataDumpChannel.write(("Call ID: "+this.getCallID()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					}
-				} catch (IOException ex) {
-					logger.error(ex);
-				}
+//				try {
+//					if (graphDataDumpChannel != null) {
+//						graphDataDumpChannel.write(("Call ID: "+this.getCallID()+AbstractTestCase._LINE_SEPARATOR).getBytes());
+//					}
+//				} catch (IOException ex) {
+//					logger.error(ex);
+//				}
+				
+				
+				
+				
 				for (int i = 0; i < rtpTraffic.size() - 1; i++) {
 					RtpPacket p1 = rtpTraffic.get(i);
 					RtpPacket p2 = rtpTraffic.get(i + 1);
@@ -263,8 +273,16 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 					}
 					try {
 						if (graphDataDumpChannel != null) {
-							graphDataDumpChannel.write((p2.getTime().getTime() - p1.getTime().getTime() + AbstractTestCase._LINE_SEPARATOR).getBytes());
+							int localJitter = (int) (p2.getTime().getTime() - p1.getTime().getTime());
+							if(localJitter> this.peakJitter)
+							 this.peakJitter = localJitter;
+							//Aprox
+							this.avgJitter+=localJitter;
+							this.avgJitter/=2;
+							
+							graphDataDumpChannel.write((localJitter + AbstractTestCase._LINE_SEPARATOR).getBytes());
 						}
+						
 					} catch (IOException ex) {
 						logger.error(ex);
 					}
@@ -404,6 +422,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 					RtpPacket rtp = new RtpPacket(packetBuffer.array());
 					rtp.setTime(new Date(System.currentTimeMillis()));
 
+					
 					if (rtpTraffic != null) {
 						rtpTraffic.add(rtp);
 					} else {
