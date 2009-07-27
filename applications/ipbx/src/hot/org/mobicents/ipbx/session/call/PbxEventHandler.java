@@ -177,20 +177,8 @@ public class PbxEventHandler {
 				String sdp = new String(sdpBytes);
 				
 				sipSession.setAttribute("firstSipMessage", response);
-				if(mediaSessionStore != null) {
-					if(mediaSessionStore.getMsConnection() != null) {
-						mediaSessionStore.getMsConnection().modify("$", sdp);
-					} else {
-						RuntimeException e = new RuntimeException("mediaSessionStore.getMsConnection is null. This shouldn't happen!");
-						log.error("ERROR PRECON " + sipSession.toString(), e);
-						throw e;
-					}
-				} else {
-					RuntimeException e = new RuntimeException("mediaSessionStore is null. This shouldn't happen!");
-					log.error("ERROR PRECON " + sipSession.toString(), e);
-					throw e;
-				}
-				mediaSessionStore.getMsConnection().modify("$", sdp);
+				mediaController.createConnection(PR_JNDI_NAME).modify("$", sdp);
+				
 			} else if(status == 401 || status == 407) {
 				Integer authAttempts = (Integer) sipSession.getAttribute("authAttempts");
 				if(authAttempts == null) authAttempts = 0;
@@ -299,7 +287,7 @@ public class PbxEventHandler {
 		SipServletRequest ack = response.createAck();
 
 		try {
-			//ack.setContent(sdp, "application/sdp");
+			ack.setContent(sdp, "application/sdp");
 			ack.send();
 		} catch (Exception e) {
 			log.error(e);

@@ -22,7 +22,7 @@ public class CallActionConnectionHandler {
 	@Logger 
 	private static Log logger;
 	
-	
+	/*
 	@Observer("connectionHalfOpen")
 	public void connectionHalfOpen(MsConnectionEvent event) {
 		logger.info("Making a call on " + sipSession.toString());
@@ -37,5 +37,5 @@ public class CallActionConnectionHandler {
 		} catch (Exception e) {
 			logger.error("An unexpected exception occured while sending the request", e);
 		}	
-	}
+	}*/
 }

@@ -100,9 +100,7 @@ public class CallAction {
 				}
 			}
 			
-			MediaController mc = MediaControllerManager.instance().getMediaController(sipSession);
-			MsConnection connection = mc.createConnection(PR_JNDI_NAME);
-			connection.modify("$", null);
+			request.send();
 		} catch (Exception e) {
 			log.error("Error", e);
 		}
