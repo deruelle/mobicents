@@ -22,9 +22,6 @@
     <listitem>
       <para>Fixed</para>
     </listitem>
-    <listitem>
-      <para>Verified</para>
-    </listitem>
   </orderedlist>
   <section>
     <title>GCode Documentation Ticket</title>
@@ -181,14 +178,14 @@
           <para>Each content author is responsible for updating and maintaining the XML Comment Block at each stage of the authoring process.</para>
           <para>XML comments must be placed at the parent XML level.  For example, if a change is required to content contained in a <markup>&lt;para&gt;</markup> tag within a <markup>&lt;section&gt;</markup>, the XML comment must be inserted at the <markup>&lt;section&gt;</markup> level.  The XML comment uses the following structure:</para>
           <programlisting role="XML">
-&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Closure  SUMMARY: [Brief summary of change] --&gt;
+&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Fixed  SUMMARY: [Brief summary of change] --&gt;
 </programlisting>
         </step>
         <step>
           <title>Claim the Section for Editing </title>
           <para>If the section is not marked as being changed by another content author, you can proceed to &apos;claim&apos; the section for editing.</para>
           <para>Change the XML comment to reflect the following information:</para>
-          <programlisting role="XML">&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Closure  SUMMARY: [Brief summary of change]--&gt;
+          <programlisting role="XML">&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Fixed  SUMMARY: [Brief summary of change]--&gt;
 </programlisting>
           <variablelist>
             <varlistentry>
@@ -465,25 +462,258 @@
               <para>The Peer Review comment syntax you used to mark any changes.</para>
               <para>For example, &quot;I&apos;ve used &quot;Issue #666 - PR&quot; to mark my review comments&quot;</para>
             </listitem>
+            <listitem>
+              <para>Indicate whether a re-review is required after the recommended changes have been incorporated, or if the changes can go straight to the Mobicents Editor for review.</para>
+            </listitem>
           </itemizedlist>
+          <note>
+            <title>Re-review, or Straight to Editing?</title>
+            <para>Generally, a re-review is required when large changes are suggested by the reviewer.   It is important to verify that the content author has understood what you meant in your review comments, and has appropriately incorporated your suggestions.</para>
+            <para>For smaller changes, you can recommend that the content author make the suggested changes, and forward the enhancement onto Editing.</para>
+          </note>
+        </step>
+      </procedure>
+      <para>The responsibility falls to the content author to discuss and incorporate the changes that were recommended by the Peer Reviewer.</para>
+      <procedure>
+        <title>Incorporate Changes from Peer Reviewer</title>
+        <step>
+          <title>Review Comments</title>
+          <para>Open the XML User Guide,  and review the comments made by the Peer Reviewer.  </para>
         </step>
         <step>
-          <title>Re-review, or Straight to Editing?</title>
-          <para>TODO  - add info here about re-review before editing if requried.</para>
+          <title>Incorporate Changes or Discuss</title>
+          <para>If the content author agrees with the feedback provided by the Peer Reviewer, the  comments can be incorporated.</para>
+          <para>It is the responsibility of the content author to discuss any review comments that may require further clarification.  After the content author and peer reviewer have reached an agreement, the agreed changes can be documented.</para>
+          <para><note>
+              <para>Ensure any discussions about content decisions are documented in the GCode Documentation Ticket.</para>
+            </note></para>
+        </step>
+        <step>
+          <title>Update XML Comment Block</title>
+          <para>Update the XML Comment Block to indicate the status of the chapter or section.</para>
+          <para>If changes do not require a re-review, change the STATUS to <userinput>Editing</userinput>, and update the date.</para>
+          <para>If changes require re-review, leave the STATUS as <userinput>Review</userinput>, and update the date.</para>
+        </step>
+        <step>
+          <title>Create Combined XML File</title>
+          <para>Run the <literal>mkbk</literal> script and create the <filename>all-[server name].xml</filename> file.</para>
+          <para>For command-line usage, refer to <xref linkend="pam-Publican_and_Maven"/>.</para>
+        </step>
+        <step>
+          <title>Commit all-[server name].xml to GCode SVN</title>
+          <para>Commit the file to GCode SVN, so the Hudson Build Server builds the doc from the correct file version.</para>
+        </step>
+        <step>
+          <title>Request Hudson to Build a HTML-Single </title>
+          <para>Generate the review document by instructing the Hudson Build Server to create a HTML-Single book.</para>
+        </step>
+        <step>
+          <title>Record the Build ID Number</title>
+          <para>After Hudson has successfully published the XML book to HTML-Single format, copy the direct link to the file and paste it into the ticket.</para>
+        </step>
+        <step>
+          <title>Update GCode Ticket</title>
+          <para>Add a comment to the GCode Documentation Ticket, stating that all review comments have been incorporated and that the enhancement is read for editing.</para>
+          <para>If the changes require a re-review, make a comment to this effect.</para>
+        </step>
+        <step>
+          <title>Send GCode Ticket to Next Phase</title>
+          <para>If a re-review is required, notify the Peer Reviewer that the content is ready for re-review.</para>
+          <para>If a re-review is not required, the changes can be forwarded to the next phase: Editing.</para>
         </step>
       </procedure>
     </section>
   </section>
   <section>
     <title>Editing</title>
-    <para>TODO - Add information about the role the editor plays in the process</para>
+    <para>The role an editor plays in any documentation project is critical to maintaining consistency in the language and tone of the UDS.  The Mobicents Editor (the Editor) is responsible for evaluating the content &quot;as is&quot;, and is not responsible for the technical accuracy of the information.  Therefore, the previous phases of Authoring and Review are essential to ensure that the information presented to the reader is as accurate as possible.</para>
+    <para>After the Editing request has been sent by the content author, the Editor  is notified that an editing review  is waiting through an email notification from GCode.   <xref linkend="procedure-Editing_Documentation_Changes"/> describes the process the Mobicents Editor (the Editor) must follow to ensure the existing standards of the Mobicents UDS are maintained.</para>
+    <procedure id="procedure-Editing_Documentation_Changes">
+      <title>Editing Documentation Changes</title>
+      <step>
+        <title>Open the Ticket</title>
+        <para>In the email notification, click the link in the ticket to take you to the GCode Documentation Ticket.</para>
+      </step>
+      <step>
+        <title>Open the HTML Document</title>
+        <para>The ticket should  contain a direct link to the affected build version and section of the user guide hosted on the Hudson Build Server.</para>
+        <para>Click each link to be taken to the closest section containing each enhancement.</para>
+        <para>Refer to the details in the ticket to verify what you should be reviewing.</para>
+      </step>
+      <step>
+        <title>Make Editorial Changes</title>
+        <para>For minor changes relating directly to spelling and punctuation, the Editor must contribute the changes directly to the XML User Guide.  </para>
+        <note>
+          <title>No Spell Check, No Edit</title>
+          <para>It is totally acceptable to send back a GCode Documentation Ticket that has not underdone a basic spelling and grammar check.  Recommend to the content author that they spell check the changes before sending the ticket back.</para>
+        </note>
+        <variablelist>
+          <title>Editorial Questions</title>
+          <varlistentry>
+            <term>Does It Make Sense?</term>
+            <listitem>
+              <para>Look at readability of the documented enhancement.  Does it make sense when you read it?  If not, what needs to be changed?</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Is the &quot;tone&quot; correct?</term>
+            <listitem>
+              <para>Is the content suitable for techical publications? Or does it fall into other genres, such as marketing, or whitepaper styles?  Suggest ways of correcting the tone.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </step>
+      <step>
+        <title>Review the XML Structure</title>
+        <para>For issues relating to the organisation of the content, including display and general layout, ask the following questions:</para>
+        <variablelist>
+          <title>Structural Questions</title>
+          <varlistentry>
+            <term>Is the XML Structure The Best Choice?</term>
+            <listitem>
+              <para>Are instructions and workflow steps  contained in a &lt;procedure&gt; element, with &lt;step&gt; titles?</para>
+              <para>Are screenshots contained in a &lt;figure&gt; tag, with an appropriate caption?</para>
+              <para>Are  &lt;sections&gt; nested too deeply?  If so, provide recommendations on how the problem can be fixed.</para>
+              <para>Are paragraphs too long?  Are there too many concepts per paragraph?</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Is a Diagram or Screenshot Really Needed?</term>
+            <listitem>
+              <para>Diagrams should be present only if the information contained within them is essential for the reader to grasp a concept, or user interface.   Well written procedures generally don&apos;t require supporting screen shots if the procedure describes the fields a user must complete.  Excluding unnecessary screenshots increases the  maintainability of the UDS.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>Is the Diagram or Screenshot Correctly Sized?</term>
+            <listitem>
+              <para>Does the image flow outside the boundaries of the page (whether it is a PDF or a HTML page)</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </step>
+      <step>
+        <title>Comment on the Enhancements</title>
+        <para>When you encounter an area that requires improvement, you must document your suggestions  in the XML file so the content author can review your suggestions in context.</para>
+        <para>XML comments are used to document Editor comments.</para>
+        <programlisting role="XML">&lt;!--Issue #[GCode Issue Number] Editor Comment - [describe what needs to be changed or clarified by the content author.]</programlisting>
+        <para>In the comment, be as detailed as possible so the content author can effectively evaluate your suggestions.  </para>
+        <note>
+          <para>Feedback can sometimes be percieved as criticism.  For this reason, it is important to provide only constructive feedback to the contributing content author.  </para>
+        </note>
+      </step>
+      <step>
+        <title>Update the Review Block Information for the Section</title>
+        <para>Update the XML Status Block for the Chapter or Section you are reviewing.  </para>
+        <para>Change STATUS to <userinput>Closure</userinput>, and update the DATE CHANGED to the date of your review. </para>
+      </step>
+      <step>
+        <title>Commit Comments to GCode SVN</title>
+        <para>Once you have finished providing feedback, commit your XML comments and changes to GCode SVN. </para>
+        <para>Include a meaningful commit message to indicate what was done.  For example:</para>
+        <para><userinput>Issue #666 - Editing - Commited comments made as part of Editing for this ticket.</userinput></para>
+        <para>Make note of the commit number.</para>
+      </step>
+      <step>
+        <title>Update the GCode Ticket</title>
+        <para>Once the XML files are committed, you must update the GCode ticket with the following information:</para>
+        <itemizedlist>
+          <listitem>
+            <para>Gcode SVN commit number.</para>
+          </listitem>
+          <listitem>
+            <para>Brief summary of suggestions for the content author.</para>
+          </listitem>
+          <listitem>
+            <para>The Editor  comment syntax you used to mark any changes.</para>
+            <para>For example, &quot;I&apos;ve used &quot;Issue #666 - Editor Comment&quot; to mark my editorial  comments&quot;</para>
+          </listitem>
+          <listitem>
+            <para>Indicate whether a re-review is required after the recommended changes have been incorporated, or if the changes can go straight to the Closure phase.</para>
+          </listitem>
+        </itemizedlist>
+        <note>
+          <title>Re-review, or Straight to Closure?</title>
+          <para>Generally, a re-review is required when large changes are suggested by the Editor.   It is important to verify that the content author has understood what you meant in your review comments, and has appropriately incorporated your suggestions.</para>
+          <para>For smaller changes, you can recommend that the content author make the suggested changes, and forward the enhancement onto the  Fixed phase.</para>
+        </note>
+      </step>
+      <step>
+        <title>Send GCode Ticket to Next Phase</title>
+        <para>If a re-review is required, notify the Peer Reviewer that the content is ready for re-review.</para>
+        <para>If a re-review is not required, the changes can be forwarded to the next phase: Fixed.</para>
+      </step>
+    </procedure>
+    <para> </para>
   </section>
   <section>
     <title>Fixed</title>
-    <para>TODO - Add info about what happens when editor and content author are happy with the changes.</para>
-  </section>
-  <section>
-    <title>Verified</title>
-    <para>TODO - describe what verified means in the docs lifecycle.</para>
+    <para>This phase includes incorporating any  changes from the Editor, and closing off the GCode Documentation Ticket.</para>
+    <procedure>
+      <title>Incorporate Changes from Peer Reviewer</title>
+      <step>
+        <title>Review Comments</title>
+        <para>Open the XML User Guide,  and review the comments made by the Editor.  </para>
+      </step>
+      <step>
+        <title>Incorporate Changes or Discuss</title>
+        <para>If the content author agrees with the feedback provided by the Editor, the  comments can be incorporated.</para>
+        <para>It is the responsibility of the content author to discuss any review comments that may require further clarification.  After the content author and Editor have reached an agreement, the agreed changes can be documented.</para>
+        <para><note>
+            <para>Ensure any discussions about content decisions are documented in the GCode Documentation Ticket.</para>
+          </note></para>
+      </step>
+      <step>
+        <title>Update XML Comment Block</title>
+        <para>Update the XML Comment Block to indicate the status of the chapter or section.</para>
+        <para>If changes do not require a re-review, change the STATUS to <userinput>Fixed</userinput>, and update the date.</para>
+        <para>If changes require re-review, leave the STATUS as <userinput>Review</userinput>, and update the date.</para>
+      </step>
+      <step>
+        <title>Create Combined XML File</title>
+        <para>Run the <literal>mkbk</literal> script and create the <filename>all-[server name].xml</filename> file.</para>
+        <para>For command-line usage, refer to <xref linkend="pam-Publican_and_Maven"/>.</para>
+      </step>
+      <step>
+        <title>Commit all-[server name].xml to GCode SVN</title>
+        <para>Commit the file to GCode SVN, so the Hudson Build Server builds the doc from the correct file version.</para>
+      </step>
+      <step>
+        <title>Request Hudson to Build a HTML-Single </title>
+        <para>Generate the review document by instructing the Hudson Build Server to create a HTML-Single book.</para>
+      </step>
+      <step>
+        <title>Record the Build ID Number</title>
+        <para>After Hudson has successfully published the XML book to HTML-Single format, copy the direct link to the file and paste it into the ticket.</para>
+      </step>
+      <step>
+        <title>Update GCode Ticket</title>
+        <para>Add a comment to the GCode Documentation Ticket, stating that all review comments have been incorporated and that the enhancement is ready for editing.</para>
+        <para>If the changes require a re-review, make a comment to this effect.</para>
+      </step>
+      <step>
+        <title>Send GCode Ticket to Next Phase</title>
+        <para>If a re-review is required, notify the Editor  that the content is ready for re-review.</para>
+        <para>If a re-review is not required, the ticket can be closed off according to the procedures in <xref linkend="procedure-Ticket_Closure_Procedures"/>.</para>
+      </step>
+    </procedure>
+    <procedure id="procedure-Ticket_Closure_Procedures">
+      <title>Ticket Closure Procedures</title>
+      <para>This procedure details how to close off the ticket after all phases are satisfactorally completed.</para>
+      <step>
+        <title>Create Combined XML File</title>
+        <para>Run the <literal>mkbk</literal> script and create the <filename>all-[server name].xml</filename> file.</para>
+        <para>For command-line usage, refer to <xref linkend="pam-Publican_and_Maven"/>.</para>
+      </step>
+      <step>
+        <title>Commit all-[server name].xml to GCode SVN</title>
+        <para>Commit the file to GCode SVN, so the Hudson Build Server builds the doc from the correct file version.</para>
+      </step>
+      <step>
+        <title>Update GCode Ticket</title>
+        <para>In the ticket, mention that the change has been completed and the all-[book name].xml file is generated and committed to GCode SVN.</para>
+        <para>Update the status to Verified.</para>
+        <para>Save and Close the ticket.</para>
+      </step>
+    </procedure>
   </section>
 </chapter>

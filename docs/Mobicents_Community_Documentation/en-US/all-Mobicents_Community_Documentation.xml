@@ -273,11 +273,11 @@ public class ExClient
 	<para>
 		Because the GCode SVN contains the source code for the Mobicents Platform, the repository is available to the public in read-only format. For contributors to make changes to the repository in any way, the Mobicents project must grant specific read-write permissions to the contributor's nominated Google account.
 	</para>
-	<tip>
-	<para>
-		To obtain read-write access, notify one of the project owners listed on the Google Code Project Home Page. Ensure the Google account information is included in the request.
-	</para>
-	</tip>
+	<note>
+		<para>
+			To obtain read-write access, notify one of the project owners listed on the Google Code Project Home Page. Ensure the Google account information is included in the request.
+		</para>
+	</note>
 	<para>
 		The most recent commit of the User Guide is located in the <filename>/trunk</filename> directory. Within this directory, each user guide is separated into the server folder to which it belongs. Click on the links in the list to inspect the document repository structure.
 	</para>
@@ -548,11 +548,6 @@ public class ExClient
 		<listitem>
 			<para>
 				Fixed
-			</para>
-		</listitem>
-		<listitem>
-			<para>
-				Verified
 			</para>
 		</listitem>
 	</orderedlist>
@@ -837,7 +832,7 @@ public class ExClient
 					</para>
 					
 <programlisting role="XML">
-&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Closure  SUMMARY: [Brief summary of change] --&gt;
+&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Fixed  SUMMARY: [Brief summary of change] --&gt;
 </programlisting>
 				</step>
 				<step>
@@ -849,7 +844,7 @@ public class ExClient
 						Change the XML comment to reflect the following information:
 					</para>
 					
-<programlisting role="XML">&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Closure  SUMMARY: [Brief summary of change]--&gt;
+<programlisting role="XML">&lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Fixed  SUMMARY: [Brief summary of change]--&gt;
 </programlisting>
 					<variablelist>
 						<varlistentry>
@@ -1305,12 +1300,106 @@ public class ExClient
 								For example, "I've used "Issue #666 - PR" to mark my review comments"
 							</para>
 						</listitem>
+						<listitem>
+							<para>
+								Indicate whether a re-review is required after the recommended changes have been incorporated, or if the changes can go straight to the Mobicents Editor for review.
+							</para>
+						</listitem>
 					</itemizedlist>
+					<note>
+						<title>Re-review, or Straight to Editing?</title>
+						<para>
+							Generally, a re-review is required when large changes are suggested by the reviewer. It is important to verify that the content author has understood what you meant in your review comments, and has appropriately incorporated your suggestions.
+						</para>
+						<para>
+							For smaller changes, you can recommend that the content author make the suggested changes, and forward the enhancement onto Editing.
+						</para>
+					</note>
+				</step>
+			</procedure>
+			
+			<para>
+				The responsibility falls to the content author to discuss and incorporate the changes that were recommended by the Peer Reviewer.
+			</para>
+			<procedure>
+				<title>Incorporate Changes from Peer Reviewer</title>
+				<step>
+					<title>Review Comments</title>
+					<para>
+						Open the XML User Guide, and review the comments made by the Peer Reviewer.
+					</para>
 				</step>
 				<step>
-					<title>Re-review, or Straight to Editing?</title>
+					<title>Incorporate Changes or Discuss</title>
 					<para>
-						TODO - add info here about re-review before editing if requried.
+						If the content author agrees with the feedback provided by the Peer Reviewer, the comments can be incorporated.
+					</para>
+					<para>
+						It is the responsibility of the content author to discuss any review comments that may require further clarification. After the content author and peer reviewer have reached an agreement, the agreed changes can be documented.
+					</para>
+					<para>
+						<note>
+							<para>
+								Ensure any discussions about content decisions are documented in the GCode Documentation Ticket.
+							</para>
+						</note>
+					</para>
+				</step>
+				<step>
+					<title>Update XML Comment Block</title>
+					<para>
+						Update the XML Comment Block to indicate the status of the chapter or section.
+					</para>
+					<para>
+						If changes do not require a re-review, change the STATUS to <userinput>Editing</userinput>, and update the date.
+					</para>
+					<para>
+						If changes require re-review, leave the STATUS as <userinput>Review</userinput>, and update the date.
+					</para>
+				</step>
+				<step>
+					<title>Create Combined XML File</title>
+					<para>
+						Run the <literal>mkbk</literal> script and create the <filename>all-[server name].xml</filename> file.
+					</para>
+					<para>
+						For command-line usage, refer to <xref linkend="pam-Publican_and_Maven"/>.
+					</para>
+				</step>
+				<step>
+					<title>Commit all-[server name].xml to GCode SVN</title>
+					<para>
+						Commit the file to GCode SVN, so the Hudson Build Server builds the doc from the correct file version.
+					</para>
+				</step>
+				<step>
+					<title>Request Hudson to Build a HTML-Single </title>
+					<para>
+						Generate the review document by instructing the Hudson Build Server to create a HTML-Single book.
+					</para>
+				</step>
+				<step>
+					<title>Record the Build ID Number</title>
+					<para>
+						After Hudson has successfully published the XML book to HTML-Single format, copy the direct link to the file and paste it into the ticket.
+					</para>
+				</step>
+				<step>
+					<title>Update GCode Ticket</title>
+					<para>
+						Add a comment to the GCode Documentation Ticket, stating that all review comments have been incorporated and that the enhancement is read for editing.
+					</para>
+					<para>
+						If the changes require a re-review, make a comment to this effect.
+					</para>
+				</step>
+				<step>
+					<title>Send GCode Ticket to Next Phase</title>
+					<para>
+						If a re-review is required, notify the Peer Reviewer that the content is ready for re-review.
+					</para>
+					<para>
+						If a re-review is not required, the changes can be forwarded to the next phase: Editing.
 					</para>
 				</step>
 			</procedure>
@@ -1322,22 +1411,323 @@ public class ExClient
 	<section>
 		<title>Editing</title>
 		<para>
-			TODO - Add information about the role the editor plays in the process
+			The role an editor plays in any documentation project is critical to maintaining consistency in the language and tone of the UDS. The Mobicents Editor (the Editor) is responsible for evaluating the content "as is", and is not responsible for the technical accuracy of the information. Therefore, the previous phases of Authoring and Review are essential to ensure that the information presented to the reader is as accurate as possible.
 		</para>
+		<para>
+			After the Editing request has been sent by the content author, the Editor is notified that an editing review is waiting through an email notification from GCode. <xref linkend="procedure-Editing_Documentation_Changes"/> describes the process the Mobicents Editor (the Editor) must follow to ensure the existing standards of the Mobicents UDS are maintained.
+		</para>
+		<procedure id="procedure-Editing_Documentation_Changes">
+			<title>Editing Documentation Changes</title>
+			<step>
+				<title>Open the Ticket</title>
+				<para>
+					In the email notification, click the link in the ticket to take you to the GCode Documentation Ticket.
+				</para>
+			</step>
+			<step>
+				<title>Open the HTML Document</title>
+				<para>
+					The ticket should contain a direct link to the affected build version and section of the user guide hosted on the Hudson Build Server.
+				</para>
+				<para>
+					Click each link to be taken to the closest section containing each enhancement.
+				</para>
+				<para>
+					Refer to the details in the ticket to verify what you should be reviewing.
+				</para>
+			</step>
+			<step>
+				<title>Make Editorial Changes</title>
+				<para>
+					For minor changes relating directly to spelling and punctuation, the Editor must contribute the changes directly to the XML User Guide.
+				</para>
+				<note>
+					<title>No Spell Check, No Edit</title>
+					<para>
+						It is totally acceptable to send back a GCode Documentation Ticket that has not underdone a basic spelling and grammar check. Recommend to the content author that they spell check the changes before sending the ticket back.
+					</para>
+				</note>
+				<variablelist>
+					<title>Editorial Questions</title>
+					<varlistentry>
+						<term>Does It Make Sense?</term>
+						<listitem>
+							<para>
+								Look at readability of the documented enhancement. Does it make sense when you read it? If not, what needs to be changed?
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Is the "tone" correct?</term>
+						<listitem>
+							<para>
+								Is the content suitable for techical publications? Or does it fall into other genres, such as marketing, or whitepaper styles? Suggest ways of correcting the tone.
+							</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</step>
+			<step>
+				<title>Review the XML Structure</title>
+				<para>
+					For issues relating to the organisation of the content, including display and general layout, ask the following questions:
+				</para>
+				<variablelist>
+					<title>Structural Questions</title>
+					<varlistentry>
+						<term>Is the XML Structure The Best Choice?</term>
+						<listitem>
+							<para>
+								Are instructions and workflow steps contained in a &lt;procedure&gt; element, with &lt;step&gt; titles?
+							</para>
+							<para>
+								Are screenshots contained in a &lt;figure&gt; tag, with an appropriate caption?
+							</para>
+							<para>
+								Are &lt;sections&gt; nested too deeply? If so, provide recommendations on how the problem can be fixed.
+							</para>
+							<para>
+								Are paragraphs too long? Are there too many concepts per paragraph?
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Is a Diagram or Screenshot Really Needed?</term>
+						<listitem>
+							<para>
+								Diagrams should be present only if the information contained within them is essential for the reader to grasp a concept, or user interface. Well written procedures generally don't require supporting screen shots if the procedure describes the fields a user must complete. Excluding unnecessary screenshots increases the maintainability of the UDS.
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Is the Diagram or Screenshot Correctly Sized?</term>
+						<listitem>
+							<para>
+								Does the image flow outside the boundaries of the page (whether it is a PDF or a HTML page)
+							</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</step>
+			<step>
+				<title>Comment on the Enhancements</title>
+				<para>
+					When you encounter an area that requires improvement, you must document your suggestions in the XML file so the content author can review your suggestions in context.
+				</para>
+				<para>
+					XML comments are used to document Editor comments.
+				</para>
+				
+<programlisting role="XML">&lt;!--Issue #[GCode Issue Number] Editor Comment - [describe what needs to be changed or clarified by the content author.]
+</programlisting>
+				<para>
+					In the comment, be as detailed as possible so the content author can effectively evaluate your suggestions.
+				</para>
+				<note>
+					<para>
+						Feedback can sometimes be percieved as criticism. For this reason, it is important to provide only constructive feedback to the contributing content author.
+					</para>
+				</note>
+			</step>
+			<step>
+				<title>Update the Review Block Information for the Section</title>
+				<para>
+					Update the XML Status Block for the Chapter or Section you are reviewing.
+				</para>
+				<para>
+					Change STATUS to <userinput>Closure</userinput>, and update the DATE CHANGED to the date of your review.
+				</para>
+			</step>
+			<step>
+				<title>Commit Comments to GCode SVN</title>
+				<para>
+					Once you have finished providing feedback, commit your XML comments and changes to GCode SVN.
+				</para>
+				<para>
+					Include a meaningful commit message to indicate what was done. For example:
+				</para>
+				<para>
+					<userinput>Issue #666 - Editing - Commited comments made as part of Editing for this ticket.</userinput>
+				</para>
+				<para>
+					Make note of the commit number.
+				</para>
+			</step>
+			<step>
+				<title>Update the GCode Ticket</title>
+				<para>
+					Once the XML files are committed, you must update the GCode ticket with the following information:
+				</para>
+				<itemizedlist>
+					<listitem>
+						<para>
+							Gcode SVN commit number.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Brief summary of suggestions for the content author.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							The Editor comment syntax you used to mark any changes.
+						</para>
+						<para>
+							For example, "I've used "Issue #666 - Editor Comment" to mark my editorial comments"
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Indicate whether a re-review is required after the recommended changes have been incorporated, or if the changes can go straight to the Closure phase.
+						</para>
+					</listitem>
+				</itemizedlist>
+				<note>
+					<title>Re-review, or Straight to Closure?</title>
+					<para>
+						Generally, a re-review is required when large changes are suggested by the Editor. It is important to verify that the content author has understood what you meant in your review comments, and has appropriately incorporated your suggestions.
+					</para>
+					<para>
+						For smaller changes, you can recommend that the content author make the suggested changes, and forward the enhancement onto the Fixed phase.
+					</para>
+				</note>
+			</step>
+			<step>
+				<title>Send GCode Ticket to Next Phase</title>
+				<para>
+					If a re-review is required, notify the Peer Reviewer that the content is ready for re-review.
+				</para>
+				<para>
+					If a re-review is not required, the changes can be forwarded to the next phase: Fixed.
+				</para>
+			</step>
+		</procedure>
+
 	</section>
 	
 	<section>
 		<title>Fixed</title>
 		<para>
-			TODO - Add info about what happens when editor and content author are happy with the changes.
+			This phase includes incorporating any changes from the Editor, and closing off the GCode Documentation Ticket.
 		</para>
-	</section>
-	
-	<section>
-		<title>Verified</title>
-		<para>
-			TODO - describe what verified means in the docs lifecycle.
-		</para>
+		<procedure>
+			<title>Incorporate Changes from Peer Reviewer</title>
+			<step>
+				<title>Review Comments</title>
+				<para>
+					Open the XML User Guide, and review the comments made by the Editor.
+				</para>
+			</step>
+			<step>
+				<title>Incorporate Changes or Discuss</title>
+				<para>
+					If the content author agrees with the feedback provided by the Editor, the comments can be incorporated.
+				</para>
+				<para>
+					It is the responsibility of the content author to discuss any review comments that may require further clarification. After the content author and Editor have reached an agreement, the agreed changes can be documented.
+				</para>
+				<para>
+					<note>
+						<para>
+							Ensure any discussions about content decisions are documented in the GCode Documentation Ticket.
+						</para>
+					</note>
+				</para>
+			</step>
+			<step>
+				<title>Update XML Comment Block</title>
+				<para>
+					Update the XML Comment Block to indicate the status of the chapter or section.
+				</para>
+				<para>
+					If changes do not require a re-review, change the STATUS to <userinput>Fixed</userinput>, and update the date.
+				</para>
+				<para>
+					If changes require re-review, leave the STATUS as <userinput>Review</userinput>, and update the date.
+				</para>
+			</step>
+			<step>
+				<title>Create Combined XML File</title>
+				<para>
+					Run the <literal>mkbk</literal> script and create the <filename>all-[server name].xml</filename> file.
+				</para>
+				<para>
+					For command-line usage, refer to <xref linkend="pam-Publican_and_Maven"/>.
+				</para>
+			</step>
+			<step>
+				<title>Commit all-[server name].xml to GCode SVN</title>
+				<para>
+					Commit the file to GCode SVN, so the Hudson Build Server builds the doc from the correct file version.
+				</para>
+			</step>
+			<step>
+				<title>Request Hudson to Build a HTML-Single </title>
+				<para>
+					Generate the review document by instructing the Hudson Build Server to create a HTML-Single book.
+				</para>
+			</step>
+			<step>
+				<title>Record the Build ID Number</title>
+				<para>
+					After Hudson has successfully published the XML book to HTML-Single format, copy the direct link to the file and paste it into the ticket.
+				</para>
+			</step>
+			<step>
+				<title>Update GCode Ticket</title>
+				<para>
+					Add a comment to the GCode Documentation Ticket, stating that all review comments have been incorporated and that the enhancement is ready for editing.
+				</para>
+				<para>
+					If the changes require a re-review, make a comment to this effect.
+				</para>
+			</step>
+			<step>
+				<title>Send GCode Ticket to Next Phase</title>
+				<para>
+					If a re-review is required, notify the Editor that the content is ready for re-review.
+				</para>
+				<para>
+					If a re-review is not required, the ticket can be closed off according to the procedures in <xref linkend="procedure-Ticket_Closure_Procedures"/>.
+				</para>
+			</step>
+		</procedure>
+		
+		<procedure id="procedure-Ticket_Closure_Procedures">
+			<title>Ticket Closure Procedures</title>
+			<para>
+				This procedure details how to close off the ticket after all phases are satisfactorally completed.
+			</para>
+			<step>
+				<title>Create Combined XML File</title>
+				<para>
+					Run the <literal>mkbk</literal> script and create the <filename>all-[server name].xml</filename> file.
+				</para>
+				<para>
+					For command-line usage, refer to <xref linkend="pam-Publican_and_Maven"/>.
+				</para>
+			</step>
+			<step>
+				<title>Commit all-[server name].xml to GCode SVN</title>
+				<para>
+					Commit the file to GCode SVN, so the Hudson Build Server builds the doc from the correct file version.
+				</para>
+			</step>
+			<step>
+				<title>Update GCode Ticket</title>
+				<para>
+					In the ticket, mention that the change has been completed and the all-[book name].xml file is generated and committed to GCode SVN.
+				</para>
+				<para>
+					Update the status to Verified.
+				</para>
+				<para>
+					Save and Close the ticket.
+				</para>
+			</step>
+		</procedure>
+
 	</section>
 
 </chapter>
@@ -1350,8 +1740,275 @@ public class ExClient
 	<chapter id="bs-XML_Authoring_Resources" lang="en-US">
 	<title>XML Authoring Resources</title>
 	<para>
-		This is a test paragraph
+		The Mobicents User Documentation Suite is authored entirely in XML. For someone starting out with XML, there are many things to consider. What is the best authoring tool to use? What elements, and structure is definitely valid in Publican? How do I create screenshots that scale correctly?
 	</para>
+	<para>
+		This chapter discusses a number of helpful tips that will get a new content author up to speed quickly.
+	</para>
+	<section>
+		<title>XML Structure Tips</title>
+		<para>
+			In DocBook, the content that is being documented often benefits from advanced XML tagging. There are certain additions to structure that can be useful to help the reader in quickly grasping information. The following sections are grouped into common areas that you will use regularly in XML authoring.
+		</para>
+		<section>
+			<title>Lists - Bulleted and Numbered</title>
+			<para>
+				The two most common list types in DocBook are not named according to such programs as Microsoft Word, or Open Office. You would think that for a bulleted list, you would start the list using something like &lt;bullets&gt; or &lt;bulletedlist&gt;. Likewise, for a numbered list, you might consider looking for &lt;numlist&gt; or &lt;numberedlist&gt;.
+			</para>
+			<para>
+				In DocBook, these types of lists are referred to according to the following nomenclature:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Bulleted List - &lt;itemizedlist&gt;
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Numbered List - &lt;orderedlist&gt;
+					</para>
+				</listitem>
+			</itemizedlist>
+			<formalpara>
+				<title>&lt;itemizedlist&gt;</title>
+				<para>
+					An itemized list is used to replace a semi-colon separated list in a sentence.
+				</para>
+			</formalpara>
+			<para>
+				The XML form of an itemized list has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/itemizedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.
+			</para>
+			<example>
+				<title>&lt;itemizedlist&gt; Mandatory Elements</title>
+				
+<programlisting>&lt;itemizedlist&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item One.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Two.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Three.&lt;/para&gt;
+  &lt;/listitem&gt;
+&lt;/itemizedlist&gt;
+</programlisting>
+			</example>
+			<para>
+				The XML Structure looks like this when published:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Item One.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Two.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Three.
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+				You can further enhance the &lt;itemizedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;itemizedlist&gt; element. A title might assist the reader with understanding what a large list contains. It might be useful if The XML structure looks like this when published:
+			</para>
+			<itemizedlist>
+				<title>&lt;itemizedlist&gt; Title</title>
+				<listitem>
+					<para>
+						Item One.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Two.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Three.
+					</para>
+				</listitem>
+			</itemizedlist>
+			<formalpara>
+				<title>&lt;orderedlist&gt;</title>
+				<para>
+					An &lt;orderedlist&gt; is just like an &lt;itemizedlist&gt;, except it displays the content in number order. This type of list is better suited to listing small substeps in &lt;procedure&gt; lists.
+				</para>
+			</formalpara>
+			<para>
+				The XML form of an itemized list has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/orderedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.
+			</para>
+			<example>
+				<title>&lt;orderedlist&gt; Mandatory Elements</title>
+				
+<programlisting>&lt;orderedlist&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item One.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Two.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Three.&lt;/para&gt;
+  &lt;/listitem&gt;
+&lt;/orderedlist&gt;
+</programlisting>
+			</example>
+			<para>
+				You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element. A title might assist the reader with understanding what a large list contains. The XML structure looks like this when published:
+			</para>
+			<orderedlist>
+				<title>&lt;orderedlist&gt; Title</title>
+				<listitem>
+					<para>
+						Item One.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Two.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Three.
+					</para>
+				</listitem>
+			</orderedlist>
+			<important>
+				<title>&lt;orderedlist&gt; is no substitute for &lt;procedure&gt;</title>
+				<para>
+					If you are documenting a complex set of steps, it is better to use a &lt;procedure&gt; to contain the steps. Procedures can contain multiple steps, and offer greater content flexibility. For more information about &lt;procedure&gt;, refer to
+				</para>
+			</important>
+		</section>
+		
+		<section>
+			<title>Procedural Steps - </title>
+			<para>
+				When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitation about what level of detail each &lt;listitem&gt; tag can contain.
+			</para>
+			<para>
+				The best option for large workflows, or detailed steps, is the &lt;procedure&gt; element.
+			</para>
+			<para>
+				You may not be aware, but this element is used extensively throughout this user guide to capture the steps involved in the Authoring Process.
+			</para>
+			<para>
+				The biggest advantage to using a &lt;procedure&gt; element is that it uses the &lt;step&gt; element. &lt;step&gt; elements are classed as 'top-level' elements, and can contain a much wider variety of child elements than the &lt;listitem&gt; element used in &lt;itemizedlist&gt; and &lt;orderedlist&gt;.
+			</para>
+			<para>
+				The XML form of a procedure has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">DocBook.org &lt;procedure&gt; page</ulink>. Be sure to visit the pages of the child elements that the &lt;procedure&gt; tag supports, particularly the <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">&lt;step&gt; element</ulink>.
+			</para>
+			<para>
+				The minimum set of elements required for all procedure lists in the Mobicents UDS are described in the following example:
+			</para>
+			<example>
+				<title>&lt;procedure&gt; Mandatory Elements</title>
+				
+<programlisting>&lt;procedure&gt;
+  &lt;title&gt;&lt;procedure&gt; Title&lt;/title&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step One Title&lt;/title&gt;
+    &lt;para&gt;Step one info.&lt;/para&gt;
+  &lt;/step&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step Two Title&lt;/title&gt;
+    &lt;para&gt;Step two info.&lt;/step&gt;
+&lt;/procedure&gt;
+</programlisting>
+			</example>
+			<para>
+				The XML structure looks like this when published:
+			</para>
+			<procedure>
+				<title>&lt;procedure&gt; Title</title>
+				<step>
+					<title>Step One Title</title>
+					<para>
+						Step one info.
+					</para>
+				</step>
+				<step>
+					<title>Step Two Title</title>
+					<para>
+						Step two info.
+					</para>
+				</step>
+			</procedure>
+			
+			<para>
+				You can further enhance the &lt;procedure&gt; by adding in any number of supported child elements into each &lt;step&gt;. Each &lt;step&gt; can contain any number of &lt;para&gt; tags, and also permits &lt;itemizedlist&gt; and &lt;orderedlist&gt; tags. Be sure that the tags inserterd are compatible with the Publican Toolchain.
+			</para>
+			<example>
+				<title>&lt;procedure&gt; Extra Elements</title>
+				
+<programlisting>&lt;procedure&gt;
+  &lt;title&gt;&lt;procedure&gt; Title&lt;/title&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step 1 Title&lt;/title&gt;
+    &lt;para&gt;Step one info.  You can have multiple &lt;para&gt; elements, in one step.&lt;/para&gt;
+    &lt;para&gt;Second para to further describe step.  &lt;/para&gt;
+  &lt;/step&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step 2 Title&lt;/title&gt;
+    &lt;para&gt;If you find you need substeps, use an &lt;orderedlist&gt; to capture these:&lt;/para&gt;
+    &lt;orderedlist&gt;
+      &lt;title&gt;&lt;orderedlist&gt; instead of &lt;substeps&gt;&lt;/title&gt;
+      &lt;listitem&gt;
+        &lt;para&gt;Substep one.&lt;/para&gt;
+      &lt;/listitem&gt;
+      &lt;listitem&gt;
+        &lt;para&gt;Substep two, etc.&lt;/para&gt;
+      &lt;/listitem&gt;
+    &lt;/orderedlist&gt;
+  &lt;/step&gt;
+&lt;/procedure&gt;
+</programlisting>
+			</example>
+			<procedure>
+				<title>&lt;procedure&gt; Title</title>
+				<step>
+					<title>Step 1 Title</title>
+					<para>
+						Step one info. You can have multiple &lt;para&gt; elements, in one step.
+					</para>
+					<para>
+						Second para to further describe step.
+					</para>
+				</step>
+				<step>
+					<title>Step 2 Title</title>
+					<para>
+						If you find you need substeps, use an &lt;orderedlist&gt; to capture these:
+					</para>
+					<orderedlist>
+						<title>&lt;orderedlist&gt; instead of &lt;substeps&gt;</title>
+						<listitem>
+							<para>
+								Substep one.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Substep two, etc.
+							</para>
+						</listitem>
+					</orderedlist>
+				</step>
+			</procedure>
+
+		</section>
+
+	</section>
+
 </chapter>
 	<appendix id="app-Revision_History" lang="en-US">
 	<title>Revision History</title>

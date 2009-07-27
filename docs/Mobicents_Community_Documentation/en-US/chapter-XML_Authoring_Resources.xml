@@ -3,5 +3,184 @@
 ]>
 <chapter id="bs-XML_Authoring_Resources">
   <title>XML Authoring Resources</title>
-  <para>This is a test paragraph</para>
+  <para>The Mobicents User Documentation Suite is authored entirely  in XML.  For someone starting out with XML, there are many things to consider.  What is the best authoring tool to use?  What elements, and structure is definitely valid in Publican? How do I create screenshots that scale correctly?</para>
+  <para>This chapter discusses a number of helpful tips that will get a new content author up to speed quickly.</para>
+  <para/>
+  <section>
+    <title>XML Structure Tips</title>
+    <para>In DocBook, the content that is being documented often benefits from advanced XML tagging.  There are certain additions to structure that can be useful to help the reader in quickly grasping information.  The following sections are grouped into common areas that you will use regularly in XML authoring.</para>
+    <section>
+      <title>Lists - Bulleted and Numbered</title>
+      <para>The two most common list types in DocBook are not named according to such programs as Microsoft Word, or Open Office.  You would think that for a bulleted list, you would start the list using something like &lt;bullets&gt; or &lt;bulletedlist&gt;.  Likewise, for a numbered list, you might consider looking for &lt;numlist&gt; or &lt;numberedlist&gt;.</para>
+      <para>In DocBook, these types of lists are referred to according to the following nomenclature:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Bulleted List - &lt;itemizedlist&gt;</para>
+        </listitem>
+        <listitem>
+          <para>Numbered List - &lt;orderedlist&gt;</para>
+        </listitem>
+      </itemizedlist>
+      <formalpara>
+        <title>&lt;itemizedlist&gt;</title>
+        <para>An itemized list is used to replace a semi-colon separated list in a sentence.</para>
+      </formalpara>
+      <para>The  XML form of an itemized list has a number of mandatory elements.  For a complete list, refer to the  <ulink url="http://www.docbook.org/tdg/en/html/itemizedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.  </para>
+      <example>
+        <title>&lt;itemizedlist&gt; Mandatory Elements</title>
+        <programlisting>&lt;itemizedlist&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item One.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Two.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Three.&lt;/para&gt;
+  &lt;/listitem&gt;
+&lt;/itemizedlist&gt;</programlisting>
+      </example>
+      <para>The XML Structure looks like this when published:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Item One.</para>
+        </listitem>
+        <listitem>
+          <para>Item Two.</para>
+        </listitem>
+        <listitem>
+          <para>Item Three.</para>
+        </listitem>
+      </itemizedlist>
+      <para>You can further enhance the &lt;itemizedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;itemizedlist&gt; element.   A title might assist the reader with understanding what a large list contains.  It might be useful if The XML structure looks like this when published:</para>
+      <itemizedlist>
+        <title>&lt;itemizedlist&gt; Title</title>
+        <listitem>
+          <para>Item One.</para>
+        </listitem>
+        <listitem>
+          <para>Item Two.</para>
+        </listitem>
+        <listitem>
+          <para>Item Three.</para>
+        </listitem>
+      </itemizedlist>
+      <formalpara>
+        <title>&lt;orderedlist&gt;</title>
+        <para>An &lt;orderedlist&gt; is just like an &lt;itemizedlist&gt;, except  it displays the content in number order.  This type of list is better suited to listing small substeps  in &lt;procedure&gt; lists.  </para>
+      </formalpara>
+      <para>The  XML form of an itemized list has a number of mandatory elements.  For a complete list, refer to the  <ulink url="http://www.docbook.org/tdg/en/html/orderedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.  </para>
+      <example>
+        <title>&lt;orderedlist&gt; Mandatory Elements</title>
+        <programlisting>&lt;orderedlist&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item One.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Two.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Three.&lt;/para&gt;
+  &lt;/listitem&gt;
+&lt;/orderedlist&gt;</programlisting>
+      </example>
+      <para>You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element.   A title might assist the reader with understanding what a large list contains.  The XML structure looks like this when published:</para>
+      <orderedlist>
+        <title>&lt;orderedlist&gt; Title</title>
+        <listitem>
+          <para>Item One.</para>
+        </listitem>
+        <listitem>
+          <para>Item Two.</para>
+        </listitem>
+        <listitem>
+          <para>Item Three.</para>
+        </listitem>
+      </orderedlist>
+      <important>
+        <title>&lt;orderedlist&gt; is no substitute for &lt;procedure&gt;</title>
+        <para>If you are documenting a complex set of steps, it is better to use a &lt;procedure&gt; to contain the steps.   Procedures can contain multiple steps, and offer greater content flexibility.  For more information about &lt;procedure&gt;, refer to </para>
+      </important>
+    </section>
+    <section>
+      <title>Procedural Steps - </title>
+      <para>When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitation about what level of detail each &lt;listitem&gt; tag can contain.</para>
+      <para>The best option for large workflows, or detailed steps, is the &lt;procedure&gt; element.</para>
+      <para>You may not be aware, but this element is used extensively throughout this user guide to capture the steps involved in the Authoring Process.</para>
+      <para>The biggest advantage to using a &lt;procedure&gt; element is that it uses the &lt;step&gt; element.  &lt;step&gt; elements are classed as &apos;top-level&apos; elements, and can contain a much wider variety of child elements than the &lt;listitem&gt; element used in &lt;itemizedlist&gt; and &lt;orderedlist&gt;.</para>
+      <para>The  XML form of a procedure has a number of mandatory elements.  For a complete list, refer to the  <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">DocBook.org &lt;procedure&gt; page</ulink>.    Be sure to visit the pages of the child elements that the &lt;procedure&gt; tag supports, particularly the  <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">&lt;step&gt; element</ulink>.</para>
+      <para>The minimum set of elements required for all procedure lists in the Mobicents UDS are described in the following example:</para>
+      <example>
+        <title>&lt;procedure&gt; Mandatory Elements</title>
+        <programlisting>&lt;procedure&gt;
+  &lt;title&gt;&amp;lt;procedure&amp;gt; Title&lt;/title&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step One Title&lt;/title&gt;
+    &lt;para&gt;Step one info.&lt;/para&gt;
+  &lt;/step&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step Two Title&lt;/title&gt;
+    &lt;para&gt;Step two info.&lt;/step&gt;
+&lt;/procedure&gt;</programlisting>
+      </example>
+      <para>The XML structure looks like this when published:</para>
+      <procedure>
+        <title>&lt;procedure&gt; Title</title>
+        <step>
+          <title>Step One Title</title>
+          <para>Step one info.</para>
+        </step>
+        <step>
+          <title>Step Two Title</title>
+          <para>Step two info.</para>
+        </step>
+      </procedure>
+      <para>You can further enhance the &lt;procedure&gt; by adding in any number of supported child elements into each &lt;step&gt;.  Each &lt;step&gt; can contain any number of &lt;para&gt; tags, and also permits &lt;itemizedlist&gt; and &lt;orderedlist&gt; tags.  Be sure that the tags inserterd are compatible with the Publican Toolchain.  </para>
+      <example>
+        <title>&lt;procedure&gt; Extra Elements</title>
+        <programlisting>&lt;procedure&gt;
+  &lt;title&gt;&amp;lt;procedure&amp;gt; Title&lt;/title&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step 1 Title&lt;/title&gt;
+    &lt;para&gt;Step one info.  You can have multiple &amp;lt;para&amp;gt; elements, in one step.&lt;/para&gt;
+    &lt;para&gt;Second para to further describe step.  &lt;/para&gt;
+  &lt;/step&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step 2 Title&lt;/title&gt;
+    &lt;para&gt;If you find you need substeps, use an &amp;lt;orderedlist&amp;gt; to capture these:&lt;/para&gt;
+    &lt;orderedlist&gt;
+      &lt;title&gt;&amp;lt;orderedlist&amp;gt; instead of &amp;lt;substeps&amp;gt;&lt;/title&gt;
+      &lt;listitem&gt;
+        &lt;para&gt;Substep one.&lt;/para&gt;
+      &lt;/listitem&gt;
+      &lt;listitem&gt;
+        &lt;para&gt;Substep two, etc.&lt;/para&gt;
+      &lt;/listitem&gt;
+    &lt;/orderedlist&gt;
+  &lt;/step&gt;
+&lt;/procedure&gt;</programlisting>
+      </example>
+      <procedure>
+        <title>&lt;procedure&gt; Title</title>
+        <step>
+          <title>Step 1 Title</title>
+          <para>Step one info.  You can have multiple &lt;para&gt; elements, in one step.</para>
+          <para>Second para to further describe step.  </para>
+        </step>
+        <step>
+          <title>Step 2 Title</title>
+          <para>If you find you need substeps, use an &lt;orderedlist&gt; to capture these:</para>
+          <orderedlist>
+            <title>&lt;orderedlist&gt; instead of &lt;substeps&gt;</title>
+            <listitem>
+              <para>Substep one.</para>
+            </listitem>
+            <listitem>
+              <para>Substep two, etc.</para>
+            </listitem>
+          </orderedlist>
+        </step>
+      </procedure>
+    </section>
+  </section>
 </chapter>

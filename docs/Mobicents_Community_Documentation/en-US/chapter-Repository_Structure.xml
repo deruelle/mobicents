@@ -1,13 +1,13 @@
-﻿<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="rs-Repository_Structure">
   <title>Documentation Repository</title>
   <para>The Mobicents User Documentation Suite (UDS) is stored in the <ulink url="http://code.google.com/p/mobicents/source/browse/">Mobicents Google Code Subversion repository(GCode SVN)</ulink> . </para>
   <para>Because the GCode SVN contains the source code for the Mobicents Platform, the  repository is available to the public in read-only format.  For contributors to make changes to the repository in any way, the Mobicents project must grant specific read-write permissions to  the contributor&apos;s nominated Google account.     </para>
-  <tip>
+  <note>
     <para>To obtain read-write access, notify one of the project owners listed on the Google Code Project Home Page.  Ensure the Google account information is included in the request. </para>
-  </tip>
+  </note>
   <para>The most recent commit of the User Guide is located in the <filename>/trunk</filename> directory. Within this directory, each user guide is separated into the server folder to which it belongs.   Click on the links in the list to inspect the document repository structure.</para>
   <itemizedlist>
     <listitem>
