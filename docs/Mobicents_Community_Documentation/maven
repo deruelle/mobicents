@@ -1,0 +1,87 @@
+#! /usr/bin/env bash
+# :mode=shellscript:
+
+# short script for publish docs using JDocBook (all-*) files from mkbk script
+# for usage, call ./build_docs.bash without any arguments
+
+# EXAMPLES:
+
+# mvn compile -Denv.DOCNAME="SIP_Servlets_Server_User_Guide" -Phtml_single
+#     BECOMES
+# maven sss html-single
+#
+
+
+# JDocBook syntax example used to compile the SIP Servlets Server User Guide all-*.xml file:
+#   mvn compile -Denv.DOCNAME="SIP_Servlets_Server_User_Guide" -Phtml_single
+
+echo "Arg 1 [\$BK] (codename of book): $1"; BK=$(echo $1 | tr '[:upper:]' '[:lower:]')
+echo "Arg 2 [\$OUTPUT] (the Maven JDocBook output type): $2"; OUTPUT=$(echo $2 | tr '[:upper:]' '[:lower:]')
+#echo -n "Arg 3 (pass-through arg; 3rd arg to 'make', if exists): "; THIRD="$3"; echo $THIRD
+#echo -n "Arg 4 (pass-through arg; 4th arg to 'make', if exists): "; FOURTH="$4"; echo $FOURTH
+#echo -n "Arg 5 (pass-through arg; 5th arg to 'make', if exists): "; FIFTH="$5"; echo $FIFTH
+echo "-------------------------------------------------"
+
+pre="[MAVEN] "
+
+ALL_BKS="jss ms sss sps pig plat"
+
+
+PLAT="Platform_User_Guide"
+PIG="Platform_Installation_Guide"
+JSS="JAIN_SLEE_Server_User_Guide"
+MS="Media_Server_User_Guide"
+SSS="SIP_Servlets_Server_User_Guide"
+SPS="SIP_Presence_Service_User_Guide"
+
+set_docname() {
+	case $BK in
+		"plat") DOCNAME="$PLAT";;
+		"pig" ) DOCNAME="$PIG";;
+		"jss" ) DOCNAME="$JSS";;
+		"ms" ) DOCNAME="$MS";;
+		"sss") DOCNAME="$SSS";;
+		"sps") DOCNAME="$SPS";;
+	esac
+}
+
+
+build_bk() {
+	rm_target
+	set_docname
+	cmd="mvn compile -Denv.DOCNAME=$DOCNAME -P$OUTPUT"
+	#cmd="make DOCNAME=$DOCNAME CONDITION=$COND $THIRD $FOURTH $FIFTH"
+	echo -n "$pre"; echo "DOCNAME is '$DOCNAME'"
+	echo -n "$pre"; echo "Calling:"; echo ""
+	echo -n "$pre"; echo "	$cmd"
+	eval $cmd
+
+	if [ $? -ne 0 ]; then
+		echo -n "$pre"; echo "$DOCNAME did not build!"
+		exit 1
+	else
+		if [ "$OUTPUT" = "html-single" ]; then
+			echo -n "$pre"; echo "Publishing 'en-US/all-$DOCNAME.xml' to html-single format..."
+			mvn compile -Denv.DOCNAME=$DOCNAME -Phtml-single
+
+		echo -n "$pre"; echo "all-$DOCNAME.xml successfully published to html-single. Exiting successfully."
+		exit 0
+		
+		fi
+
+		if [ "$OUTPUT" = "pdf" ]; then
+			echo -n "$pre"; echo "Publishing 'en-US/all-$DOCNAME.xml' to PDF format..."
+			mvn compile -Denv.DOCNAME=$DOCNAME -Ppdf
+		
+		echo -n "$pre"; echo "all-$DOCNAME.xml successfully published to PDF. Exiting successfully."
+		exit 0
+		
+		fi
+	
+		
+		
+	
+	fi
+}
+
+
