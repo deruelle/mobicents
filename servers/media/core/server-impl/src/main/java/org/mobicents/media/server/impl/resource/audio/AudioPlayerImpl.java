@@ -109,7 +109,7 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
     }
 
     @Override
-    public void beforeStart() throws Exception {
+    public void beforeStart() throws Exception {    	
         closeAudioStream();
 
         if (file.endsWith("spx")) {
@@ -275,7 +275,7 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
         buffer.setSequenceNumber(seq);
     }
 
-    @Override
+   
     public Format[] getFormats() {
         return FORMATS;
     }
