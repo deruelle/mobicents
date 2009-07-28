@@ -50,6 +50,7 @@ public class BufferFactory {
         if (list.size() < size && buffer != null && buffer.getData() != null) {
             buffer.setOffset(0);
             buffer.setLength(0);
+            buffer.setDiscard(false);
             buffer.setHeader(null);
             list.add(buffer);
         }
