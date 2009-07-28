@@ -147,6 +147,12 @@ public class RecorderImpl extends AbstractSink implements Recorder {
         }
         super.stop();
     }
+    
+    @Override
+    public void start() {
+    	super.start();
+    	this.first = true;
+    }
 
     /**
      * Closes all previousle opened resources.
@@ -220,6 +226,11 @@ public class RecorderImpl extends AbstractSink implements Recorder {
         
         boolean bigEndian = fmt.getEndian() == 1;        
         Encoding encoding = getEncoding(fmt.getEncoding());
+        
+
+		// int frameSize = (channels == AudioSystem.NOT_SPECIFIED || sampleSizeInBits == AudioSystem.NOT_SPECIFIED) ?
+		// AudioSystem.NOT_SPECIFIED
+		// : ((sampleSizeInBits + 7) / 8) * channels;
         
         format = new javax.sound.sampled.AudioFormat(
                 encoding, sampleRate, sampleSizeInBits, channels, 1, sampleRate, bigEndian);
