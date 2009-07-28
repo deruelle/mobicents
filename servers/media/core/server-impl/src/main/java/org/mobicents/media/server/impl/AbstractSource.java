@@ -224,11 +224,13 @@ public abstract class AbstractSource extends BaseComponent
     
     public void run() {
         Buffer buffer = bufferFactory.allocate();        
-        evolve(buffer, sequenceNumber++);
+        evolve(buffer, sequenceNumber);
         
         if (buffer.isDiscard()) {
             return;
         }
+        
+        sequenceNumber++;
         
         if (otherParty.isAcceptable(buffer.getFormat())) {
             try {
