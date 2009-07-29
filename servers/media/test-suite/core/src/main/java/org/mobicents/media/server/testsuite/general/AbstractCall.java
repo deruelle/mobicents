@@ -256,8 +256,27 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 //					logger.error(ex);
 //				}
 				
-				
-				
+				for (int i = 0; i < rtpTraffic.size() - 1; i++) {
+					RtpPacket p1 = rtpTraffic.get(i);
+					RtpPacket p2 = rtpTraffic.get(i + 1);
+					int localJitter = (int) (p2.getTime().getTime() - p1.getTime().getTime());
+					if(localJitter> this.peakJitter)
+					 this.peakJitter = localJitter;
+					//Aprox
+					this.avgJitter+=localJitter;
+					this.avgJitter/=2;
+					
+				}
+				try {
+					if (graphDataDumpChannel != null) {
+						graphDataDumpChannel.write((sequence + AbstractTestCase._LINE_SEPARATOR).getBytes());
+						graphDataDumpChannel.write((avgJitter + AbstractTestCase._LINE_SEPARATOR).getBytes());
+						graphDataDumpChannel.write((peakJitter + AbstractTestCase._LINE_SEPARATOR).getBytes());
+					}
+					
+				} catch (IOException ex) {
+					logger.error(ex);
+				}
 				
 				for (int i = 0; i < rtpTraffic.size() - 1; i++) {
 					RtpPacket p1 = rtpTraffic.get(i);
@@ -274,11 +293,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 					try {
 						if (graphDataDumpChannel != null) {
 							int localJitter = (int) (p2.getTime().getTime() - p1.getTime().getTime());
-							if(localJitter> this.peakJitter)
-							 this.peakJitter = localJitter;
-							//Aprox
-							this.avgJitter+=localJitter;
-							this.avgJitter/=2;
+							
 							
 							graphDataDumpChannel.write((localJitter + AbstractTestCase._LINE_SEPARATOR).getBytes());
 						}
