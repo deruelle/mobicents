@@ -3,310 +3,122 @@
 <!-- chapter id nickname: ctms -->
 <chapter id="ctms-Configuring_the_Media_Server">
 	<title>Configuring the Media Server</title>
-	<para><!--After the Media Server has successfully started, you can then locate the JMX console at <ulink
-			url="http://localhost:8080/jmx-console"/> in the default distribution. Note that if you have configured the servlet container (for example, Tomcat) to service a different port, then you will need to supply a different port number in the URL.-->All endpoints are plugged into the JAIN SLEE server using JBoss Microcontainers.  To create a component for the Media Server, the appropriate component Factory must be used.  Each component within a factory has an identifier and name that is unique across the server implementation.  Because each component is unique in the Media Server, it can be referenced and pulled into other applications.  </para><!--<mediaobject
+	<para>
+		<!--After the Media Server has successfully started, you can then locate the JMX console at <ulink
+			url="http://localhost:8080/jmx-console"/> in the default distribution. Note that if you have configured the servlet container (for example, Tomcat) to service a different port, then you will need to supply a different port number in the URL.-->
+		All endpoints are plugged into the JAIN SLEE server using JBoss
+		Microcontainers. To create a component for the Media Server, the
+		appropriate component Factory must be used. Each component
+		within a factory has an identifier and name that is unique
+		across the server implementation. Because each component is
+		unique in the Media Server, it can be referenced and pulled into
+		other applications.
+	</para>
+	<!--<mediaobject
 		id="mediaobj-mms-MMSConfiguration-ss-JMXConsole.gif">
 		<imageobject>
-			<imagedata
-				align="center"
-				width="700"
-				fileref="images/mms-MMSConfiguration-ss-JMXConsole.gif"
-				format="GIF" />
+		<imagedata
+		align="center"
+		width="700"
+		fileref="images/mms-MMSConfiguration-ss-JMXConsole.gif"
+		format="GIF" />
 		</imageobject>
-	</mediaobject>-->
-	
-  <section>
-    <title>Application Wiring</title>
-    <para>The process of implementing an application in the Media Server involves specifying the path over which media information travels.  This process is referred to as "Wiring" the application.  Wiring connects media sources, components, and sinks together so data can interact with all stages of the data transfer process.</para>
-    <para>The following diagram provides an example of a basic wiring schematic for components in Media Server.</para>
-    <mediaobject>
-		  <imageobject>
-			<imagedata align="center" width="400" fileref="images/mms-ApplicationWiring-dia-Media_Flow_Path.png" format="PNG"></imagedata>
-    </imageobject>
-		<caption>Media Flow Path</caption>
-	</mediaobject>
-	<para>The primary media components depicted in the diagram are:</para>
-	<itemizedlist>
-	  <listitem><para>Source components, which generate media content (refer to <xref linkend="ctms-Media_Source_Interface"></xref> for the base interface).</para></listitem>
-	  <listitem><para>Sink components, which consume media content (refer to <xref linkend="ctms-Media_Sink_Interface"></xref> for the base interface.</para></listitem>
-	  <listitem><para>Inlets, which provide access to a media sink within the media flow (refer to <xref linkend="ctms-Inlet_Interface"></xref> for the base interface).</para></listitem>
-	  <listitem><para>Outlets, which access the output from an Inlet as a media source in the media flow (refer to <xref linkend="ctms-Outlet_Interface"></xref> for the base interface).</para></listitem>
-	  <listitem><para>Channels and Pipes, which join the elements that form a media flow path (refer to <xref linkend="Channels_and_Pipes"></xref> for the base interface).</para></listitem>
-  </itemizedlist>
-   <para>The components that can exist between a Source and Sink vary between each wiring implementation.  For example, some wiring implementations contain components that are not Source or Sink components as such, but provide access to components that emulate sources and sinks.  In the diagram, <literal>Component A</literal> represents a source (Input) and <literal>Component B</literal> represents a sink (Output) in the media flow.</para>
-    <para>Also note that <literal>Component A</literal> provides a Source to the implementation <literal>Composite A</literal>.  <literal>Composite A</literal> can use the Input received from <literal>Component A</literal> to supply the Source for the application.</para>
-    <formalpara>
-    <title>Media Sources and Sinks</title>
-    <para>The Media Source and Media Sink interfaces define the general wiring principle for a component, including media transition and handling.  Each media source object generates media after receiving a start() command, while each media sink implements the data handling logic within the receive method.  Each source and sink pair defines the connection method used to wire the components in a media stream together.</para>
-    </formalpara>
-  <para><xref linkend="ctms-Media_Source_Interface"></xref> describes the base interfaces for the Media Source container.</para>
-  <example id="ctms-Media_Source_Interface">
-			<title>Base Media Source Interface</title>
-			<programlisting linenumbering="unnumbered" role="JAVA"><![CDATA[
-public interface MediaSource extends Component {
-      /**
-      * Joins this source with media sink.
-      * 
-      * @param sink the media sink to join with.
-      */
-    public void connect(MediaSink sink);
-      /**
-      * Drops connection between this source and media sink.
-      * 
-      * @param sink the sink to disconnect.
-      */
-    public void disconnect(MediaSink sink);
-      /**
-      * Starts media production.
-      */
-    public void start();
-      /**
-      * Terminates media production.
-      */
-    public void stop();
-      /**
-      * Get possible formats in which this source can stream media.
-      * 
-      * @return an array of Format objects.
-      */
-    public Format[] getFormats();}
-      ]]>
-      </programlisting>
-    </example>
-    <para><xref linkend="ctms-Media_Sink_Interface"></xref> describes the base interfaces for the Media Sink container.</para>
-      <example id="ctms-Media_Sink_Interface">
-			<title>Base Media Sink Interface</title>
-			<programlisting linenumbering="unnumbered" role="JAVA"><![CDATA[
-public interface MediaSink extends Component {
-      /**
-     * Get possible formats which this consumer can handle.
-     * 
-     * @return an array of Format objects.
-     */
-    public Format[] getFormats();    
-      /**
-     * Checks is the specified format is acceptable by this source.
-     * This method is used by DEMUX to perform proper demultiplexing.
-     * 
-     * @param format the format to check.
-     * @return true if this source can handle specified format.
-     */
-    public boolean isAcceptable(Format format);
-    /**
-     * Joins this media sink with media source.
-     * The concrete media sink can allow to join with multiple sources
-     * 
-     * @param source the media source to join with.
-     */
-    public void connect(MediaSource source);
-    /**
-     * Breaks connection with media source.
-     * The concrete media sink can allow to join with multiple sources so
-     * this method requires the explicit source for disconnection.
-     *
-     * @param source the source to disconnect from.
-     */
-    public void disconnect(MediaSource source);
-    /**
-     * This method is called by media source when new media is available
-     * 
-     * @param buffer the Buffer object which contains the next portion of media.
-     */
-    public void receive(Buffer buffer);
-    
-    //public void dispose();
-}
-      ]]></programlisting>
-		</example>
-		<formalpara>
-		  <title>Inlets and Outlets</title>
-		  <para>Inlets and Outlets are used to aggregate several wired components into a single object..  <xref linkend="ctms-Inlet_Interface"></xref> describes the base interfaces for the Inlet container.</para>
-    </formalpara>
-    <example id="ctms-Inlet_Interface">
-			<title>Inlet Interface</title>
-			<programlisting linenumbering="unnumbered" role="JAVA"><![CDATA[
-public interface Inlet extends Component {
-      /**
-     * Provides access to the media sink.
-     * 
-     * @return the reference to the media sink.
-     */
-    public MediaSink getInput();
-}
-      ]]>
-      </programlisting>
-    </example>
-    <para><xref linkend="ctms-Outlet_Interface"></xref> describes the base interfaces for the Outlet container.</para>
-  <example id="ctms-Outlet_Interface">
-			<title>Outlet Interface</title>
-			<programlisting linenumbering="unnumbered" role="JAVA"><![CDATA[
-public interface Outlet extends Component {
-    /**
-     * Provides access to the media source.
-     * 
-     * @return the reference to the media source.
-     */
-    public MediaSource getOutput();
-}
-      ]]>
-      </programlisting>
-    </example>
-    <formalpara id="Channels_and_Pipes">
-      <title>Channels and Pipes</title>
-     <para>Channels allow Media Sources and Sinks to be joined with other channels by creating pipes between each component.  Using multiplexers and demultiplexers, the media stream can be merged or split.  Within the stream, different signal processors can be connected to increase performance or provide greater flexibility.  Media Server uses declarative channel construction to construct customized media flow paths by utilizing pipes.</para>
-    </formalpara>
-    <para><xref linkend="ctms-AudioProcessorFactory_Deployment_Descriptor"></xref> shows the AudioProcessorFactory deployment descriptor, which contains the codecFactories used by applications.</para>
-    <example id="ctms-AudioProcessorFactory_Deployment_Descriptor">
-			<title>AudioProcessorFactory Deployment Descriptor</title>
-			<programlisting linenumbering="unnumbered" role="XML"><![CDATA[
-...
-<bean name="AudioProcessorFactory"
-		class="org.mobicents.media.server.impl.dsp.DspFactory">
-		<property name="name">audio.processor</property>
-		<property name="codecFactories">
-			<list>
-				<inject bean="G711.UlawEncoderFactory" />
-				<inject bean="G711.UlawDecoderFactory" />
-				<inject bean="G711.AlawEncoderFactory" />
-				<inject bean="G711.AlawDecoderFactory" />
-				<inject bean="SpeexEncoderFactory" />
-				<inject bean="SpeexDecoderFactory" />
-				<inject bean="GSMEncoderFactory" />
-				<inject bean="GSMDecoderFactory" />
-				<inject bean="G729EncoderFactory" />
-				<inject bean="G729DecoderFactory" />
-			</list>
-		</property>
-</bean>
-...
-      ]]>
-      </programlisting>
-    </example>
-    <para>The codec factories listed in the deployment descriptor each represent a component that can be deployed inside a media stream.  To create a pipe to another component, the component name is appended to the &lt;property&gt; element inside the &lt;bean&gt; element.  <xref linkend="ctms-IVR_Pipes"></xref> shows a series of Interactive Voice Response (IVR) pipes.</para>
-    <example id="ctms-IVR_Pipes">
-			<title>IVR Pipes</title>
-			<programlisting linenumbering="unnumbered" role="XML"><![CDATA[
-<bean name="IVR-Pipe-1"
-		class="org.mobicents.media.server.resource.PipeFactory">
-		<property name="outlet">audio.processor</property>
-</bean>
-<bean name="IVR-Pipe-2"
-		class="org.mobicents.media.server.resource.PipeFactory">
-		<property name="inlet">audio.processor</property>
-		<property name="outlet">DeMux</property>
-</bean>
-<bean name="IVR-Pipe-3"
-		class="org.mobicents.media.server.resource.PipeFactory">
-		<property name="inlet">DeMux</property>
-		<property name="outlet">Rfc2833DetectorFactory</property>
-</bean>
-<bean name="IVR-Pipe-4"
-		class="org.mobicents.media.server.resource.PipeFactory">
-		<property name="inlet">DeMux</property>
-</bean>
-</bean>
-      ]]>
-      </programlisting>
-    </example>
-    <para>In <literal>IVR-Pipe-1</literal>, the <literal>audio.processor</literal> component is used to activate the codec factories for the media stream.  Notice how each pipe is connected; the <literal>outlet</literal> attribute is used as the <literal>inlet</literal> attribute value for the next pipe.</para>
-    <para>To use the channels together with the pipes, a channel declaration must be specified.  In this declaration, the components and pipes are explicitly stated.  <xref linkend="ctms-IVR_Channel_Declaration"></xref> shows the IVR-RxChannelFactory channel declaration, which contains element from <xref linkend="ctms-AudioProcessorFactory_Deployment_Descriptor"></xref> and <xref linkend="ctms-IVR_Pipes"></xref></para>
-    <example id="ctms-IVR_Channel_Declaration">
-			<title>IVR Channel Declaration</title>
-			<programlisting linenumbering="unnumbered" role="XML"><![CDATA[
-<bean name="IVR-RxChannelFactory"
-		class="org.mobicents.media.server.resource.ChannelFactory">
-		<property name="components">
-			<list>
-				<inject bean="DeMuxFactory" />
-				<inject bean="Rfc2833DetectorFactory" />
-				<inject bean="AudioProcessorFactory" />
-			</list>
-		</property>
-		<property name="pipes">
-			<list>
-				<inject bean="IVR-Pipe-1" />
-				<inject bean="IVR-Pipe-2" />
-				<inject bean="IVR-Pipe-3" />
-				<inject bean="IVR-Pipe-4" />
-			</list>
-		</property>
-  </bean>
-      ]]>
-      </programlisting>
-    </example>
-  </section>
-  <section>
-    <title>Media Buffer</title>
-    <para>The media transition process strongly depends on underlying layer capabilities.  In an IP-based network, the Real-time Transmission Protocol (RTP) is used to transmit data.  However, in a Time Division Multiplexing (TDM) network, a circuit channel is used for transmission.  For exchanging media data between components within the Media Server, a special container is used.</para>
-    <para>A Media Buffer is a media-data container within the Media server, which carries data from one processing component to the next.  A Buffer object maintains information such as the time stamp, length, data format, and header information required to process the media data.</para>
-    <para>A Buffer object contains the following attributes:</para>
-    <variablelist>
-      <varlistentry>
-        <term>data</term>
-        <listitem><para>Specifies the internal data object that retains the media chunk in the buffer.  An array of bytes is used by default.</para></listitem>
-      </varlistentry>
-     <varlistentry>
-        <term>offset</term>
-        <listitem><para>Specifies the offset into the data array where the valid data begins.</para></listitem>
-      </varlistentry>
-     <varlistentry>
-        <term>length</term>
-        <listitem><para>Specifies the valid data length present in the buffer.</para></listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>format</term>
-        <listitem><para>Specifies the data format present in the buffer.</para></listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>sequenceNumber</term>
-        <listitem><para>Specifies the sequence number of the buffer.</para></listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>timestamp</term>
-        <listitem><para>Specifies the time stamp (in relative units) of the buffer.</para></listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>duration</term>
-        <listitem><para>Specifies the duration (in relative units) of the buffer.</para></listitem>
-      </varlistentry>
-   </variablelist>
-  </section>
-  <section>
-   <title>Timer</title>
-   <para>The Timer provides a time source, and functions similar to a crystal oscillator.  This endpoint can be configured to specify the millisecond interval between two oscillations.  </para>
-   <para>The configurable aspect of the Timer is:</para>
-   <variablelist>
-    <varlistentry>
-      <term>heartBeat</term>
-      <listitem><para>Time interval (in milliseconds) between two subsequent oscillations.</para></listitem>
-    </varlistentry>
-  </variablelist>
-  </section>
-  <section>
-   <title>MainDeployer</title>
-   <para>The MainDeployer endpoint manages hot deployment of components and enpoints.  Hot-deployable components and endpoints are defined as those that can be added to or removed from the running server.</para>
-    <para>MainDeployer scans the <filename>/deploy</filename> directory, looking for configuration files that have changed since the last scan.  When MainDeployer detects any changes to the directory, any changes resulting from the removed configuration file are processed.  This includes re-deploying changed beans, adding new beans, or removing beans that are no longer required.</para>
-    <para>To understand the functionality of the MainDeployer endpoint, experiment by removing the <filename>ann-beans.xml</filename> configuration file from the <filename>/deploy</filename> directory while the server is running.  Observe how the server behaves once the file is removed from the folder.</para>
-   <para>The configurable aspects of MainDeployer are:</para>
-   <variablelist>
-    <varlistentry>
-      <term>path</term>
-      <listitem><para>Specifies the location of the configuration XML files.  Generally, this is the /deploy directory.</para></listitem>
-    </varlistentry>
-    <varlistentry>
-      <term>scanPeriod</term>
-      <listitem><para>Specifies the time (in milliseconds) that MainDeployer checks the specified path for changes to the directory.</para></listitem>
-    </varlistentry>
-    <varlistentry>
-      <term>fileFilter</term>
-      <listitem><para>Specifies the file extensions that will be deployed or monitored.  The FileFilter bean looks like &lt;something missing here, but it needs to be added&gt;.</para></listitem>
-    </varlistentry>
-  </variablelist>
-  </section>
+		</mediaobject>-->
+
+
+	<section>
+		<title>Timer</title>
+		<para>
+			The Timer provides a time source, and functions similar to a
+			crystal oscillator. This endpoint can be configured to
+			specify the millisecond interval between two oscillations.
+		</para>
+		<para>The configurable aspect of the Timer is:</para>
+		<variablelist>
+			<varlistentry>
+				<term>heartBeat</term>
+				<listitem>
+					<para>
+						Time interval (in milliseconds) between two
+						subsequent oscillations.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+	<section>
+		<title>MainDeployer</title>
+		<para>
+			The MainDeployer endpoint manages hot deployment of
+			components and enpoints. Hot-deployable components and
+			endpoints are defined as those that can be added to or
+			removed from the running server.
+		</para>
+		<para>
+			MainDeployer scans the
+			<filename>/deploy</filename>
+			directory, looking for configuration files that have changed
+			since the last scan. When MainDeployer detects any changes
+			to the directory, any changes resulting from the removed
+			configuration file are processed. This includes re-deploying
+			changed beans, adding new beans, or removing beans that are
+			no longer required.
+		</para>
+		<para>
+			To understand the functionality of the MainDeployer
+			endpoint, experiment by removing the
+			<filename>ann-beans.xml</filename>
+			configuration file from the
+			<filename>/deploy</filename>
+			directory while the server is running. Observe how the
+			server behaves once the file is removed from the folder.
+		</para>
+		<para>The configurable aspects of MainDeployer are:</para>
+		<variablelist>
+			<varlistentry>
+				<term>path</term>
+				<listitem>
+					<para>
+						Specifies the location of the configuration XML
+						files. Generally, this is the /deploy directory.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>scanPeriod</term>
+				<listitem>
+					<para>
+						Specifies the time (in milliseconds) that
+						MainDeployer checks the specified path for
+						changes to the directory.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>fileFilter</term>
+				<listitem>
+					<para>
+						Specifies the file extensions that will be
+						deployed or monitored. The FileFilter bean looks
+						like &lt;something missing here, but it needs to
+						be added&gt;.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
 	<section id="ctms-RTPFactory">
 		<title>RTPFactory</title>
-		<para><literal>RTPFactory</literal> is responsible for managing the actual RTP Socket. The reference of <literal>RTPFactory</literal> is passed to each endpoint which, in turn, leverage the <literal>RTPFactory</literal> to create Connections and decide on supported codecs.</para><!--TODO - This example must be updated with the new parameters and structure for the MainDeployer-->
-				
+		<para>
+			<literal>RTPFactory</literal>
+			is responsible for managing the actual RTP Socket. The
+			reference of
+			<literal>RTPFactory</literal>
+			is passed to each endpoint which, in turn, leverage the
+			<literal>RTPFactory</literal>
+			to create Connections and decide on supported codecs.
+		</para><!--TODO - This example must be updated with the new parameters and structure for the MainDeployer-->
+
 		<example id="ctms-The_RTPFactory_MBean">
 			<title>The RTPFactory MBean</title>
 			<programlisting linenumbering="unnumbered" role="XML"><![CDATA[<mbean
@@ -331,34 +143,73 @@ public interface Outlet extends Component {
 		<variablelist>
 			<varlistentry>
 				<term>formatMap</term>
-				<listitem><para>Specifies the relationship between the RTP payload type and format.  <xref linkend="ctms-Supported_RTP_Formats"></xref> describes the payload types and their supported formats.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the relationship between the RTP
+						payload type and format.
+						<xref linkend="ctms-Supported_RTP_Formats"></xref>
+						describes the payload types and their supported
+						formats.
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>bindAddress</term>
-				<listitem><para>Specifies the IP address to which the RTP socket is bound.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the IP address to which the RTP socket
+						is bound.
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>portRange</term>
-				<listitem><para>Specifies the port range within which the RTP socket will be created.  The first free port in the given range is assigned to the socket.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the port range within which the RTP
+						socket will be created. The first free port in
+						the given range is assigned to the socket.
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>jitter</term>
-				<listitem><para>Specifies the size of the jitter buffer (in milliseconds) for incoming packets.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the size of the jitter buffer (in
+						milliseconds) for incoming packets.
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>timer</term>
 				<listitem>
-					<para>Specifies the timer instance from which reading process is synchronized.</para>
+					<para>
+						Specifies the timer instance from which reading
+						process is synchronized.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>stunAddress</term>
-				<listitem><para>Specifies the location of the STUN server to use.  For more information regarding STUN, refer to <xref linkend="ctms-MMS_STUN_Support"></xref>.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the location of the STUN server to
+						use. For more information regarding STUN, refer
+						to
+						<xref linkend="ctms-MMS_STUN_Support"></xref>
+						.
+					</para>
+				</listitem>
 			</varlistentry>
 		</variablelist>
 		<formalpara>
 			<title>Supported RTP Formats</title>
-			<para>The <literal>RTPFactory</literal> is able to receive the following RTP media types:</para>
+			<para>
+				The
+				<literal>RTPFactory</literal>
+				is able to receive the following RTP media types:
+			</para>
 		</formalpara>
 		<table id="ctms-Supported_RTP_Formats" frame="all">
 			<title>Supported RTP Formats</title>
@@ -369,63 +220,103 @@ public interface Outlet extends Component {
 				<colspec colnum="4" colname="col4"></colspec>
 				<thead>
 					<row>
-					  <entry>Payload Type</entry>
-					  <entry>Format</entry>
+						<entry>Payload Type</entry>
+						<entry>Format</entry>
 						<entry>Specification</entry>
 						<entry>Description</entry>
 					</row>
 				</thead>
 				<tbody>
-				<row>
-					<entry>0</entry>
-          <entry>PCMU</entry>
-          <entry><ulink url="http://www.ietf.org/rfc/rfc1890.txt">RFC 1890</ulink></entry>
-          <entry>ITU G.711 U-law audio</entry>
-        </row>
-        <row>
-          <entry>3</entry>
-          <entry>GSM</entry>
-          <entry><ulink url="http://www.ietf.org/rfc/rfc1890.txt">RFC 1890</ulink></entry>
-          <entry>GSM full-rate audio</entry>
-        </row>
-        <row>
-          <entry>8</entry>
-          <entry>PCMA</entry>
-          <entry><ulink url="http://www.ietf.org/rfc/rfc1890.txt">RFC 1890</ulink></entry>
-          <entry>ITU G.711 A-law audio</entry>
-        </row>
-        <row>
-          <entry>18</entry>
-          <entry>G729</entry>
-          <entry>N/A</entry>
-          <entry>G.729 audio</entry>
-        </row>
-        <row>
-          <entry>31</entry>
-          <entry>H.261</entry>
-          <entry>N/A</entry>
-          <entry>Video</entry>
-        </row>
-        <row>
-          <entry>97</entry>
-          <entry>SPEEX</entry>
-          <entry>N/A</entry>
-          <entry>Speex narrow band audio</entry>
-        </row>
-        <row>
-          <entry>101</entry>
-          <entry>DTMF</entry>
-          <entry><ulink url="http://www.ietf.org/rfc/rfc2893.txt">RFC 2893</ulink></entry>
-          <entry>Dual-tone Multi-frequency (DTMF) Events</entry>
-        </row>
+					<row>
+						<entry>0</entry>
+						<entry>PCMU</entry>
+						<entry>
+							<ulink
+								url="http://www.ietf.org/rfc/rfc1890.txt">
+								RFC 1890
+							</ulink>
+						</entry>
+						<entry>ITU G.711 U-law audio</entry>
+					</row>
+					<row>
+						<entry>3</entry>
+						<entry>GSM</entry>
+						<entry>
+							<ulink
+								url="http://www.ietf.org/rfc/rfc1890.txt">
+								RFC 1890
+							</ulink>
+						</entry>
+						<entry>GSM full-rate audio</entry>
+					</row>
+					<row>
+						<entry>8</entry>
+						<entry>PCMA</entry>
+						<entry>
+							<ulink
+								url="http://www.ietf.org/rfc/rfc1890.txt">
+								RFC 1890
+							</ulink>
+						</entry>
+						<entry>ITU G.711 A-law audio</entry>
+					</row>
+					<row>
+						<entry>18</entry>
+						<entry>G729</entry>
+						<entry>N/A</entry>
+						<entry>G.729 audio</entry>
+					</row>
+					<row>
+						<entry>31</entry>
+						<entry>H.261</entry>
+						<entry>N/A</entry>
+						<entry>Video</entry>
+					</row>
+					<row>
+						<entry>97</entry>
+						<entry>SPEEX</entry>
+						<entry>N/A</entry>
+						<entry>Speex narrow band audio</entry>
+					</row>
+					<row>
+						<entry>101</entry>
+						<entry>DTMF</entry>
+						<entry>
+							<ulink
+								url="http://www.ietf.org/rfc/rfc2893.txt">
+								RFC 2893
+							</ulink>
+						</entry>
+						<entry>
+							Dual-tone Multi-frequency (DTMF) Events
+						</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>
 	</section>
 	<section id="ctms-Announcement_Server_Access_Points">
 		<title>Announcement Server Access Points</title>
-		<para>An Announcement Server endpoint provides access to an announcement service.  Upon receiving requests from the call agent, an Announcement Server will <quote>play</quote> a specified announcement.  A given announcement endpoint is not expected to support more than one connection at a time.  Connections to an Announcement Server are typically one-way (<quote>half-duplex</quote>), therefore, the Announcement Server is not expected to listen to audio signals from the connection.</para>
-    <para>Announcement endpoints do not transcode announced media; in order to achieve this, the application must use Packet Relay endpoints on the media path.  Also note that the announcement server endpoint can generate a tone such as, for example, DTMF.</para>
+		<para>
+			An Announcement Server endpoint provides access to an
+			announcement service. Upon receiving requests from the call
+			agent, an Announcement Server will
+			<quote>play</quote>
+			a specified announcement. A given announcement endpoint is
+			not expected to support more than one connection at a time.
+			Connections to an Announcement Server are typically one-way
+			(
+			<quote>half-duplex</quote>
+			), therefore, the Announcement Server is not expected to
+			listen to audio signals from the connection.
+		</para>
+		<para>
+			Announcement endpoints do not transcode announced media; in
+			order to achieve this, the application must use Packet Relay
+			endpoints on the media path. Also note that the announcement
+			server endpoint can generate a tone such as, for example,
+			DTMF.
+		</para>
 
 		<example id="ctms-The_AnnEndpointManagement_MBean">
 			<title>The AnnEndpointManagement MBean</title>
@@ -440,46 +331,123 @@ public interface Outlet extends Component {
 		</example>
 
 		<formalpara>
-			<title>Configuration of an Announcement Server Access Point</title>
-			<para>The configurable attributes of the Announcement Server are as follows:</para>
+			<title>
+				Configuration of an Announcement Server Access Point
+			</title>
+			<para>
+				The configurable attributes of the Announcement Server
+				are as follows:
+			</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
 				<term>localName</term>
 				<listitem>
-					<para>Specifies the name under which the endpoint is to be bound.</para>
-					<para>This parameter allows a set of enpoints to be specified, which are then created and bound automatically by the Announcement Server.  Consider the scenario where a total of 10 endpoints are required.  To specify this in the attribute, the following path is provided: <literal>/media/aap/[1..10]</literal>.  The <literal>[1..10]</literal> in the directory path tells the Announcement Server to create a set of 10 endpoints in the <literal>/aap</literal> directory, named according to the endpoint number, which start at one and finish at ten.  For example, <literal>/media/aap/1, media/aap/2, ... media/aap/10</literal>.</para>
+					<para>
+						Specifies the name under which the endpoint is
+						to be bound.
+					</para>
+					<para>
+						This parameter allows a set of enpoints to be
+						specified, which are then created and bound
+						automatically by the Announcement Server.
+						Consider the scenario where a total of 10
+						endpoints are required. To specify this in the
+						attribute, the following path is provided:
+						<literal>/media/aap/[1..10]</literal>
+						. The
+						<literal>[1..10]</literal>
+						in the directory path tells the Announcement
+						Server to create a set of 10 endpoints in the
+						<literal>/aap</literal>
+						directory, named according to the endpoint
+						number, which start at one and finish at ten.
+						For example,
+						<literal>
+							/media/aap/1, media/aap/2, ... media/aap/10
+						</literal>
+						.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>timer</term>
-				<listitem><para>Specifies the timer instance from which reading process is synchronized.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the timer instance from which reading
+						process is synchronized.
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>sourceFactory</term>
-				<listitem><para>Specifies the Java bean responsible for generating the source media.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the Java bean responsible for
+						generating the source media.
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>sinkFactory</term>
-				<listitem><para>Specifies the Java bean responsible for using the source media generated by the <literal>sourceFactory</literal> bean.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the Java bean responsible for using
+						the source media generated by the
+						<literal>sourceFactory</literal>
+						bean.
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>rtpFactory</term>
-				<listitem><para>Specifies the location of the RTP Factory.  For more information about the RTP Factory, refer to <xref linkend="ctms-RTPFactory"></xref></para></listitem>
+				<listitem>
+					<para>
+						Specifies the location of the RTP Factory. For
+						more information about the RTP Factory, refer to
+						<xref linkend="ctms-RTPFactory"></xref>
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>txChannelFactory</term>
-				<listitem><para>Specifies the instance of the custom transmission channel factory.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the instance of the custom
+						transmission channel factory.
+					</para>
+				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>rxChannelFactory</term>
-				<listitem><para>Specifies the instance of the custom receiver channel factory.</para></listitem>
+				<listitem>
+					<para>
+						Specifies the instance of the custom receiver
+						channel factory.
+					</para>
+				</listitem>
 			</varlistentry>
-    </variablelist>
+		</variablelist>
 	</section>
 	<section id="ctms-Interactive_Voice_Response">
 		<title>Interactive Voice Response</title>
-		<para>An Interactive Voice Response (<acronym>IVR</acronym>) endpoint provides access to an IVR service. Upon requests from the Call Agent, the IVR server <quote>plays</quote> announcements and tones, and <quote>listens</quote> to voice messages from the user. A given IVR endpoint is not expected to support more than one connection at a time. For example, if several connections were established to the same endpoint, then the same tones and announcements would be played simultaneously over all connections. IVR endpoints do not posses the capability of transcoding played or recorded media streams. IVRs record or play in the format that the data was delivered.</para>
+		<para>
+			An Interactive Voice Response (
+			<acronym>IVR</acronym>
+			) endpoint provides access to an IVR service. Upon requests
+			from the Call Agent, the IVR server
+			<quote>plays</quote>
+			announcements and tones, and
+			<quote>listens</quote>
+			to voice messages from the user. A given IVR endpoint is not
+			expected to support more than one connection at a time. For
+			example, if several connections were established to the same
+			endpoint, then the same tones and announcements would be
+			played simultaneously over all connections. IVR endpoints do
+			not posses the capability of transcoding played or recorded
+			media streams. IVRs record or play in the format that the
+			data was delivered.
+		</para>
 		<example id="ctms-The_IVREndpointManagement_MBean">
 			<title>The IVREndpointManagement MBean</title>
 			<programlisting linenumbering="unnumbered" role="XML"><![CDATA[<mbean
@@ -502,18 +470,27 @@ public interface Outlet extends Component {
 </mbean>]]></programlisting>
 		</example>
 		<formalpara>
-			<title>Configuration of the Interactive Voice Response Endpoint</title>
-			<para>The configurable attributes of the Interactive Voice Response endpoint are as follows:</para>
+			<title>
+				Configuration of the Interactive Voice Response Endpoint
+			</title>
+			<para>
+				The configurable attributes of the Interactive Voice
+				Response endpoint are as follows:
+			</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
 				<term>JndiName</term>
 				<listitem>
-					<para>The Java Naming and Directory Interface (<acronym>JNDI</acronym>) name under which the endpoint is to be bound.</para>
+					<para>
+						The Java Naming and Directory Interface (
+						<acronym>JNDI</acronym>
+						) name under which the endpoint is to be bound.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term> RtpFactoryName</term>
+				<term>RtpFactoryName</term>
 				<listitem>
 					<para>The JNDI name of RTPFactory.</para>
 				</listitem>
@@ -521,13 +498,25 @@ public interface Outlet extends Component {
 			<varlistentry>
 				<term>RecordDir</term>
 				<listitem>
-					<para>The directory where the recorded files should be created and stored.</para>
+					<para>
+						The directory where the recorded files should be
+						created and stored.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Channels</term>
 				<listitem>
-					<para>Controls the number of announcement endpoints available in the server instance , in an endpoints pool. Endpoints are not created dynamically. At any given time the number of endpoints in use can not exceed the <userinput>channels</userinput> value. It is not subject to change during runtime.</para>
+					<para>
+						Controls the number of announcement endpoints
+						available in the server instance , in an
+						endpoints pool. Endpoints are not created
+						dynamically. At any given time the number of
+						endpoints in use can not exceed the
+						<userinput>channels</userinput>
+						value. It is not subject to change during
+						runtime.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -539,66 +528,79 @@ public interface Outlet extends Component {
 			<varlistentry>
 				<term>DtmfMode</term>
 				<listitem>
-					<para>Controls DTMF detection mode. Possible values are: <userinput>RFC2833</userinput>, <userinput>INBAND</userinput> or <userinput>AUTO</userinput>.</para>
+					<para>
+						Controls DTMF detection mode. Possible values
+						are:
+						<userinput>RFC2833</userinput>
+						,
+						<userinput>INBAND</userinput>
+						or
+						<userinput>AUTO</userinput>
+						.
+					</para>
 				</listitem>
 			</varlistentry>
-		</variablelist><!--<varlistentry>
-					<term>PacketizationPeriod</term>
-					<listitem>
-						<para>The period of media stream packetization in milliseconds.</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>PCMA</term>
-					<listitem>
-						<para>Enable or disable G711 (A-law) codec support.</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>PCMU</term>
-					<listitem>
-						<para>Enable or disable G711 (U-law) codec support.</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>RecordDir</term>
-					<listitem>
-						<para>The directory where the recorded files should be created and stored.</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>DTMF</term>
-					<listitem>
-						<para>The dual-tone multi-frequency (<acronym>DTMF</acronym>) type supported. By default it is set to AUTO, but you can also specify INBAND or RFC2833. Note that if you select RFC2833, you <emphasis>also</emphasis> need to specify the DTMF Paylod property. For example:</para>
-						<programlisting
-							linenumbering="unnumbered"
-							role="XML"><![CDATA[
-<attribute
-	name="DTMF">
-detector.mode=INBAND
-dtmf.payload = 101
-</attribute>]]></programlisting>
-						<variablelist>
-							<varlistentry>
-								<term>detector.mode</term>
-								<listitem>
-									<para>Configures DTMF detector mode. Possible values are AUTO, INBAND or RFC2833.</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>dtmf.payload</term>
-								<listitem>
-									<para>Configures the payload number if RFC2833 mode is specified.</para>
-								</listitem>
-							</varlistentry>
-						</variablelist>
-					</listitem>
-				</varlistentry>
+		</variablelist>
+		<!--<varlistentry>
+			<term>PacketizationPeriod</term>
+			<listitem>
+			<para>The period of media stream packetization in milliseconds.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>PCMA</term>
+			<listitem>
+			<para>Enable or disable G711 (A-law) codec support.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>PCMU</term>
+			<listitem>
+			<para>Enable or disable G711 (U-law) codec support.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>RecordDir</term>
+			<listitem>
+			<para>The directory where the recorded files should be created and stored.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>DTMF</term>
+			<listitem>
+			<para>The dual-tone multi-frequency (<acronym>DTMF</acronym>) type supported. By default it is set to AUTO, but you can also specify INBAND or RFC2833. Note that if you select RFC2833, you <emphasis>also</emphasis> need to specify the DTMF Paylod property. For example:</para>
+			<programlisting
+			linenumbering="unnumbered"
+			role="XML"><![CDATA[
+			<attribute
+			name="DTMF">
+			detector.mode=INBAND
+			dtmf.payload = 101
+			</attribute>]]></programlisting>
+			<variablelist>
+			<varlistentry>
+			<term>detector.mode</term>
+			<listitem>
+			<para>Configures DTMF detector mode. Possible values are AUTO, INBAND or RFC2833.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>dtmf.payload</term>
+			<listitem>
+			<para>Configures the payload number if RFC2833 mode is specified.</para>
+			</listitem>
+			</varlistentry>
+			</variablelist>
+			</listitem>
+			</varlistentry>
 			</variablelist>-->
-				
+
 		<formalpara>
 			<title>Supported Media Types and Formats</title>
-			<para>The supported media types and formats are listed as follows:</para>
+			<para>
+				The supported media types and formats are listed as
+				follows:
+			</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
@@ -607,45 +609,52 @@ dtmf.payload = 101
 					<para>16-bit mono/stereo linear</para>
 				</listitem>
 			</varlistentry>
-		</variablelist><!--<formalpara>
-				<title>Supported RTP Formats</title>
-				<para>The endpoint is able to receive the follwing RTP media types:</para>
+		</variablelist>
+		<!--<formalpara>
+			<title>Supported RTP Formats</title>
+			<para>The endpoint is able to receive the follwing RTP media types:</para>
 			</formalpara>
 			<informaltable
-				frame="all">
-				<tgroup
-					cols="2"
-					align="left"
-					colsep="1"
-					rowsep="1">
-					<colspec
-						colnum="1"
-						colname="col1"/>
-					<colspec
-						colnum="2"
-						colname="col2"/>
-					<thead>
-						<row>
-							<entry>Media Type</entry>
-							<entry>Payload Number</entry>
-						</row>
-					</thead>
-					<tbody>
-						<row>
-							<entry>Audio: G711 (A-law) 8bit, 8kHz</entry>
-							<entry>8</entry>
-						</row>
-						<row>
-							<entry>Audio: G711 (U-law) 8bit, 8kHz</entry>
-							<entry>0</entry>
-						</row>
-					</tbody>
-				</tgroup>
+			frame="all">
+			<tgroup
+			cols="2"
+			align="left"
+			colsep="1"
+			rowsep="1">
+			<colspec
+			colnum="1"
+			colname="col1"/>
+			<colspec
+			colnum="2"
+			colname="col2"/>
+			<thead>
+			<row>
+			<entry>Media Type</entry>
+			<entry>Payload Number</entry>
+			</row>
+			</thead>
+			<tbody>
+			<row>
+			<entry>Audio: G711 (A-law) 8bit, 8kHz</entry>
+			<entry>8</entry>
+			</row>
+			<row>
+			<entry>Audio: G711 (U-law) 8bit, 8kHz</entry>
+			<entry>0</entry>
+			</row>
+			</tbody>
+			</tgroup>
 			</informaltable>-->
-			
+
 		<formalpara>
 			<title>Record Directory Configuration</title>
-			<para>You can specify the common directory where all the recorded files should be stored, or simply omit this attribute, in which case the default directory is null, and the application needs to pass an absolute directory path to record to.</para>
+			<para>
+				You can specify the common directory where all the
+				recorded files should be stored, or simply omit this
+				attribute, in which case the default directory is null,
+				and the application needs to pass an absolute directory
+				path to record to.
+			</para>
 		</formalpara>
 		<formalpara>
 			<title>Supported Packages</title>
@@ -654,24 +663,39 @@ dtmf.payload = 101
 		<itemizedlist>
 			<listitem>
 				<para>
-					<literal>org.mobicents.media.server.spi.events.Announcement</literal>
+					<literal>
+						org.mobicents.media.server.spi.events.Announcement
+					</literal>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<literal>org.mobicents.media.server.spi.events.Basic</literal>
+					<literal>
+						org.mobicents.media.server.spi.events.Basic
+					</literal>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<literal>org.mobicents.media.server.spi.events.AU</literal>
+					<literal>
+						org.mobicents.media.server.spi.events.AU
+					</literal>
 				</para>
 			</listitem>
 		</itemizedlist>
 	</section>
 	<section id="ctms-Packet_Relay_Endpoint">
 		<title>Packet Relay Endpoint</title>
-		<para>A packet relay endpoint is a specific form of conference bridge that typically only supports two connections. Packet relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between incompatible gateways (for example, gateways which do not support compatible compression algorithms, or gateways which operate over different transmission networks such as IP or ATM).</para>
+		<para>
+			A packet relay endpoint is a specific form of conference
+			bridge that typically only supports two connections. Packet
+			relays can be found in firewalls between a protected and an
+			open network, or in transcoding servers used to provide
+			interoperation between incompatible gateways (for example,
+			gateways which do not support compatible compression
+			algorithms, or gateways which operate over different
+			transmission networks such as IP or ATM).
+		</para>
 		<example id="ctms-The_PREndpointManagement_MBean">
 			<title>The PREndpointManagement MBean</title>
 			<programlisting linenumbering="unnumbered" role="XML"><![CDATA[<mbean
@@ -689,111 +713,144 @@ dtmf.payload = 101
 
 		<formalpara>
 			<title>Configuration of the Packet Relay Endpoint</title>
-			<para>The configurable attributes of the Packet Relay endpoint are as follows:</para>
+			<para>
+				The configurable attributes of the Packet Relay endpoint
+				are as follows:
+			</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
 				<term>JndiName</term>
 				<listitem>
-					<para>The JNDI name under which endpoint is to be bound.</para>
+					<para>
+						The JNDI name under which endpoint is to be
+						bound.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>RtpFactoryName</term>
 				<listitem>
-					<para>The JNDI name of <literal>RTPFactory</literal>.</para>
+					<para>
+						The JNDI name of
+						<literal>RTPFactory</literal>
+						.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Channels</term>
 				<listitem>
-					<para>Controls the number of announcement endpoints available in the server instance , in an endpoints pool. Endpoints are not created dynamically. At any given time, the number of endpoints in use cannot exceed the <userinput>channels</userinput> value. It is not subject to change during runtime.</para>
+					<para>
+						Controls the number of announcement endpoints
+						available in the server instance , in an
+						endpoints pool. Endpoints are not created
+						dynamically. At any given time, the number of
+						endpoints in use cannot exceed the
+						<userinput>channels</userinput>
+						value. It is not subject to change during
+						runtime.
+					</para>
 				</listitem>
 			</varlistentry>
-		</variablelist><!--</varlistentry>
-					<varlistentry>
-						<term>Jitter</term>
-						<listitem>
-							<para>The size of jitter buffer in milliseconds.</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>PacketizationPeriod</term>
-						<listitem>
-							<para>The period of media stream packetization in milliseconds.</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>PCMA</term>
-						<listitem>
-							<para>Enable or disable G711 (A-law) codec support.</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>PCMU</term>
-						<listitem>
-							<para>Enable or disable G711 (U-law) codec support.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<formalpara>
-					<title>Supported RTP Formats</title>
-					<para>This endpoint is able to receive the follwing RTP media types:</para>
-				</formalpara>
-				<informaltable
-					frame="all">
-					<tgroup
-						cols="2"
-						align="left"
-						colsep="1"
-						rowsep="1">
-						<colspec
-							colnum="1"
-							colname="col1"/>
-						<colspec
-							colnum="2"
-							colname="col2"/>
-						<thead>
-							<row>
-								<entry>Media Type</entry>
-								<entry>Payload Number</entry>
-							</row>
-						</thead>
-						<tbody>
-							<row>
-								<entry>Audio: G711 (A-law) 8bit, 8kHz</entry>
-								<entry>8</entry>
-							</row>
-							<row>
-								<entry>Audio: G711 (U-law) 8bit, 8kHz</entry>
-								<entry>0</entry>
-							</row>
-						</tbody>
-					</tgroup>
-				</informaltable>
-				<formalpara>
-					<title>DTMF Configuration</title>
-					<para>The dual-tone multi-frequency (<acronym>DTMF</acronym>) configuration is determined by the DTMF attribute. The properties are as follows:</para>
-				</formalpara>
-				<variablelist>
-					<varlistentry>
-						<term>detector.mode</term>
-						<listitem>
-							<para>Configures DTMF detector mode. Possible values are AUTO, INBAND or RFC2833.</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>dtmf.payload</term>
-						<listitem>
-							<para>Configures the payload number <emphasis>if</emphasis> RFC2833 mode is <emphasis>also</emphasis> specified.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>-->
-					
+		</variablelist>
+		<!--</varlistentry>
+			<varlistentry>
+			<term>Jitter</term>
+			<listitem>
+			<para>The size of jitter buffer in milliseconds.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>PacketizationPeriod</term>
+			<listitem>
+			<para>The period of media stream packetization in milliseconds.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>PCMA</term>
+			<listitem>
+			<para>Enable or disable G711 (A-law) codec support.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>PCMU</term>
+			<listitem>
+			<para>Enable or disable G711 (U-law) codec support.</para>
+			</listitem>
+			</varlistentry>
+			</variablelist>
+			<formalpara>
+			<title>Supported RTP Formats</title>
+			<para>This endpoint is able to receive the follwing RTP media types:</para>
+			</formalpara>
+			<informaltable
+			frame="all">
+			<tgroup
+			cols="2"
+			align="left"
+			colsep="1"
+			rowsep="1">
+			<colspec
+			colnum="1"
+			colname="col1"/>
+			<colspec
+			colnum="2"
+			colname="col2"/>
+			<thead>
+			<row>
+			<entry>Media Type</entry>
+			<entry>Payload Number</entry>
+			</row>
+			</thead>
+			<tbody>
+			<row>
+			<entry>Audio: G711 (A-law) 8bit, 8kHz</entry>
+			<entry>8</entry>
+			</row>
+			<row>
+			<entry>Audio: G711 (U-law) 8bit, 8kHz</entry>
+			<entry>0</entry>
+			</row>
+			</tbody>
+			</tgroup>
+			</informaltable>
+			<formalpara>
+			<title>DTMF Configuration</title>
+			<para>The dual-tone multi-frequency (<acronym>DTMF</acronym>) configuration is determined by the DTMF attribute. The properties are as follows:</para>
+			</formalpara>
+			<variablelist>
+			<varlistentry>
+			<term>detector.mode</term>
+			<listitem>
+			<para>Configures DTMF detector mode. Possible values are AUTO, INBAND or RFC2833.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>dtmf.payload</term>
+			<listitem>
+			<para>Configures the payload number <emphasis>if</emphasis> RFC2833 mode is <emphasis>also</emphasis> specified.</para>
+			</listitem>
+			</varlistentry>
+			</variablelist>-->
+
 	</section>
 	<section id="ctms-Conference_Bridge_Endpoint">
 		<title>Conference Bridge Endpoint</title>
-		<para>The Mobicents Media Server should be able to establish several connections between the endpoint and packet networks, or between the endpoint and other endpoints in the same gateway. The signals originating from these connections shall be mixed according to the connection <quote>mode</quote>. The precise number of connections an endpoint supports is a characteristic of the gateway, and may in fact vary according with the allocation of resources within the gateway. The conf endpoint can play an announcement directly on connections and hence only for the participant listening to an announcement, and can even detect DTMF for connection.</para>
+		<para>
+			The Mobicents Media Server should be able to establish
+			several connections between the endpoint and packet
+			networks, or between the endpoint and other endpoints in the
+			same gateway. The signals originating from these connections
+			shall be mixed according to the connection
+			<quote>mode</quote>
+			. The precise number of connections an endpoint supports is
+			a characteristic of the gateway, and may in fact vary
+			according with the allocation of resources within the
+			gateway. The conf endpoint can play an announcement directly
+			on connections and hence only for the participant listening
+			to an announcement, and can even detect DTMF for connection.
+		</para>
 		<example id="ctms-The_ConfEndpointManagement_MBean">
 			<title>The ConfEndpointManagement MBean</title>
 			<programlisting linenumbering="unnumbered" role="XML"><![CDATA[<mbean
@@ -811,122 +868,175 @@ dtmf.payload = 101
 </mbean>]]></programlisting>
 		</example>
 		<formalpara>
-			<title>Configuration of the Conference Bridge Endpoint</title>
-			<para>The configurable attributes of the Conference Bridge endpoint are as follows:</para>
+			<title>
+				Configuration of the Conference Bridge Endpoint
+			</title>
+			<para>
+				The configurable attributes of the Conference Bridge
+				endpoint are as follows:
+			</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
 				<term>JndiName</term>
 				<listitem>
-					<para>The JNDI name under which endpoint is to be bound.</para>
+					<para>
+						The JNDI name under which endpoint is to be
+						bound.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>RtpFactoryName</term>
 				<listitem>
-					<para>The JNDI name of <literal>RTPFactory</literal>.</para>
+					<para>
+						The JNDI name of
+						<literal>RTPFactory</literal>
+						.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Channels</term>
 				<listitem>
-					<para>Controls the number of announcement endpoints available in the server instance, in an endpoints pool. Endpoints are not created dynamically. At any given time, the number of endpoints in use cannot exceed the <userinput>Channels</userinput> value. It is not subject to change during runtime.</para>
+					<para>
+						Controls the number of announcement endpoints
+						available in the server instance, in an
+						endpoints pool. Endpoints are not created
+						dynamically. At any given time, the number of
+						endpoints in use cannot exceed the
+						<userinput>Channels</userinput>
+						value. It is not subject to change during
+						runtime.
+					</para>
 				</listitem>
 			</varlistentry>
-		</variablelist><!--</varlistentry>
-							<varlistentry>
-								<term>Jitter</term>
-								<listitem>
-									<para>The size of jitter buffer in milliseconds.</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>PacketizationPeriod</term>
-								<listitem>
-									<para>The period of media stream packetization in milliseconds.</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>PCMA</term>
-								<listitem>
-									<para>Enable or disable G711 (A-law) codec support.</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>PCMU</term>
-								<listitem>
-									<para>Enable or disable G711 (U-law) codec support.</para>
-								</listitem>
-							</varlistentry>
-						</variablelist>
-						<formalpara>
-							<title>Supported RTP Formats</title>
-							<para>This endpoint is able to receive the follwing RTP media  types:</para>
-						</formalpara>
-						<informaltable
-							id="ctms-RTP_Formats_Supported_by_the_Conference_Bridge_Endpoint"
-							frame="all">
-							<tgroup
-								cols="2"
-								align="left"
-								colsep="1"
-								rowsep="1">
-								<colspec
-									colnum="1"
-									colname="col1"/>
-								<colspec
-									colnum="2"
-									colname="col2"/>
-								<thead>
-									<row>
-										<entry>Media Type</entry>
-										<entry>Payload Number</entry>
-									</row>
-								</thead>
-								<tbody>
-									<row>
-										<entry>Audio: G711 (A-law) 8bit, 8kHz</entry>
-										<entry>8</entry>
-									</row>
-									<row>
-										<entry>Audio: G711 (U-law) 8bit, 8kHz</entry>
-										<entry>0</entry>
-									</row>
-								</tbody>
-							</tgroup>
-						</informaltable>
-						<formalpara>
-							<title>DTMF Configuration</title>
-							<para>The dual-tone multi-frequency (<acronym>DTMF</acronym>) configuration is determined by DTMF attribute. The properties are as follows:</para>
-						</formalpara>
-						<variablelist>
-							<varlistentry>
-								<term>detector.mode</term>
-								<listitem>
-									<para>Configures DTMF detector mode. Possible values are AUTO, INBAND or RFC2833.</para>
-								</listitem>
-							</varlistentry>
-							<varlistentry>
-								<term>
-									<literal>dtmf.payload</literal>
-								</term>
-								<listitem>
-									<para>Configures DTMF detector mode. Possible values are AUTO, INBAND and RFC2833.</para>
-								</listitem>
-							</varlistentry>
-						</variablelist>-->
-							
+		</variablelist>
+		<!--</varlistentry>
+			<varlistentry>
+			<term>Jitter</term>
+			<listitem>
+			<para>The size of jitter buffer in milliseconds.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>PacketizationPeriod</term>
+			<listitem>
+			<para>The period of media stream packetization in milliseconds.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>PCMA</term>
+			<listitem>
+			<para>Enable or disable G711 (A-law) codec support.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>PCMU</term>
+			<listitem>
+			<para>Enable or disable G711 (U-law) codec support.</para>
+			</listitem>
+			</varlistentry>
+			</variablelist>
+			<formalpara>
+			<title>Supported RTP Formats</title>
+			<para>This endpoint is able to receive the follwing RTP media  types:</para>
+			</formalpara>
+			<informaltable
+			id="ctms-RTP_Formats_Supported_by_the_Conference_Bridge_Endpoint"
+			frame="all">
+			<tgroup
+			cols="2"
+			align="left"
+			colsep="1"
+			rowsep="1">
+			<colspec
+			colnum="1"
+			colname="col1"/>
+			<colspec
+			colnum="2"
+			colname="col2"/>
+			<thead>
+			<row>
+			<entry>Media Type</entry>
+			<entry>Payload Number</entry>
+			</row>
+			</thead>
+			<tbody>
+			<row>
+			<entry>Audio: G711 (A-law) 8bit, 8kHz</entry>
+			<entry>8</entry>
+			</row>
+			<row>
+			<entry>Audio: G711 (U-law) 8bit, 8kHz</entry>
+			<entry>0</entry>
+			</row>
+			</tbody>
+			</tgroup>
+			</informaltable>
+			<formalpara>
+			<title>DTMF Configuration</title>
+			<para>The dual-tone multi-frequency (<acronym>DTMF</acronym>) configuration is determined by DTMF attribute. The properties are as follows:</para>
+			</formalpara>
+			<variablelist>
+			<varlistentry>
+			<term>detector.mode</term>
+			<listitem>
+			<para>Configures DTMF detector mode. Possible values are AUTO, INBAND or RFC2833.</para>
+			</listitem>
+			</varlistentry>
+			<varlistentry>
+			<term>
+			<literal>dtmf.payload</literal>
+			</term>
+			<listitem>
+			<para>Configures DTMF detector mode. Possible values are AUTO, INBAND and RFC2833.</para>
+			</listitem>
+			</varlistentry>
+			</variablelist>-->
+
 	</section>
 	<section id="ctms-MMS_STUN_Support">
 		<title>MMS STUN Support</title>
-		<para>When using Mobicents Media Server behind a routing device performing Network Address Translation, you may need to employ the Simple Traversal of User Datagram Protocol through Network Address Translators (abbreviated: <acronym>STUN</acronym>) protocol in order for the server to operate correctly. In general, it is recommended to avoid deploying the MMS behind a NAT, since doing so can incur significant performance penalties and failures. Nevertheless, the current MMS implementation does work with a static NAT, a.k.a. a one-to-one (1-1) NAT, in which no port-mapping occurs. Full Cone NAT should also work with Address-Restricted NAT.</para>
-		<para>For more information STUN NAT classification, refer to chapter 5 of <ulink url="http://www.faqs.org/rfcs/rfc3489.html">RFC3489 - STUN - Simple Traversal of User Datagram Protocol (UDP)</ulink>.</para>
+		<para>
+			When using Mobicents Media Server behind a routing device
+			performing Network Address Translation, you may need to
+			employ the Simple Traversal of User Datagram Protocol
+			through Network Address Translators (abbreviated:
+			<acronym>STUN</acronym>
+			) protocol in order for the server to operate correctly. In
+			general, it is recommended to avoid deploying the MMS behind
+			a NAT, since doing so can incur significant performance
+			penalties and failures. Nevertheless, the current MMS
+			implementation does work with a static NAT, a.k.a. a
+			one-to-one (1-1) NAT, in which no port-mapping occurs. Full
+			Cone NAT should also work with Address-Restricted NAT.
+		</para>
+		<para>
+			For more information STUN NAT classification, refer to
+			chapter 5 of
+			<ulink url="http://www.faqs.org/rfcs/rfc3489.html">
+				RFC3489 - STUN - Simple Traversal of User Datagram
+				Protocol (UDP)
+			</ulink>
+			.
+		</para>
 		<formalpara>
 			<title>MMS STUN Configuration</title>
-			<para>Each RTPFactory in the Media Server can have its own STUN preferences. The STUN options are specified in the <filename>jboss-service.xml</filename> configuration file. Here is an example of an RTPFactory MBean with static NAT configuration:</para>
+			<para>
+				Each RTPFactory in the Media Server can have its own
+				STUN preferences. The STUN options are specified in the
+				<filename>jboss-service.xml</filename>
+				configuration file. Here is an example of an RTPFactory
+				MBean with static NAT configuration:
+			</para>
 		</formalpara>
-		<example id="ctms-Static_NAT_configuration_of_an_Announcement_Endpoint_in_jboss-service.xml">
-			<title>Static NAT configuration of an Announcement Endpoint in jboss-service.xml</title>
+		<example
+			id="ctms-Static_NAT_configuration_of_an_Announcement_Endpoint_in_jboss-service.xml">
+			<title>
+				Static NAT configuration of an Announcement Endpoint in
+				jboss-service.xml
+			</title>
 			<programlisting linenumbering="unnumbered" role="XML"><![CDATA[
   <mbean
 	code="org.mobicents.media.server.impl.jmx.rtp.RTPFactory"
@@ -958,30 +1068,70 @@ dtmf.payload = 101
 		name="UsePortMapping">false</attribute>
 </mbean>]]></programlisting>
 		</example>
-		<para>There are four attributes related to STUN configuration:</para>
+		<para>
+			There are four attributes related to STUN configuration:
+		</para>
 		<variablelist>
 			<varlistentry>
 				<term>UseStun</term>
 				<listitem>
-					<para>A boolean attribute which enables or disables STUN for the current endpoint.</para>
+					<para>
+						A boolean attribute which enables or disables
+						STUN for the current endpoint.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>StunServerAddress</term>
 				<listitem>
-					<para>A string attribute; the address of a STUN server. In the <filename>jboss-service.xml</filename> configuration file example, this attribute is set to <ulink url="stun.ekiga.net"></ulink>.</para>
+					<para>
+						A string attribute; the address of a STUN
+						server. In the
+						<filename>jboss-service.xml</filename>
+						configuration file example, this attribute is
+						set to
+						<ulink url="stun.ekiga.net"></ulink>
+						.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>StunServerPort</term>
 				<listitem>
-					<para>A string attribute representing the port number of the STUN server. <filename>jboss-service.xml</filename> configuration file example, 3478 is the port of the Ekiga server.</para>
+					<para>
+						A string attribute representing the port number
+						of the STUN server.
+						<filename>jboss-service.xml</filename>
+						configuration file example, 3478 is the port of
+						the Ekiga server.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>UsePortMapping</term>
 				<listitem>
-					<para>A boolean attribute that specifies whether the NAT is mapping the port numbers. A NAT is mapping ports if the internal and external ports are <emphasis>not</emphasis> guaranteed to be the same for every connection through the NAT. In other words, if the client established a connection with the NAT at the hypothetical address 111.111.111.111, on port 1024, then the NAT will establish the second leg of the connection to some different (private) address, but on the same port, such as 192.168.1.1:1024. If these ports are the same (1024), then your NAT is not mapping the ports, and you can set this attribute to false, which improves the performance of the NAT traversal by doing the STUN lookup only once at boot-time, instead of doing it every time a new connection is established. NATs that don't map ports are also known as static NATs.</para>
+					<para>
+						A boolean attribute that specifies whether the
+						NAT is mapping the port numbers. A NAT is
+						mapping ports if the internal and external ports
+						are
+						<emphasis>not</emphasis>
+						guaranteed to be the same for every connection
+						through the NAT. In other words, if the client
+						established a connection with the NAT at the
+						hypothetical address 111.111.111.111, on port
+						1024, then the NAT will establish the second leg
+						of the connection to some different (private)
+						address, but on the same port, such as
+						192.168.1.1:1024. If these ports are the same
+						(1024), then your NAT is not mapping the ports,
+						and you can set this attribute to false, which
+						improves the performance of the NAT traversal by
+						doing the STUN lookup only once at boot-time,
+						instead of doing it every time a new connection
+						is established. NATs that don't map ports are
+						also known as static NATs.
+					</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
