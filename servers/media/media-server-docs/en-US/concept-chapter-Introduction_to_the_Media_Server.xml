@@ -140,7 +140,92 @@
 			components and configurations for your personal or business
 			use.
 		</para>
+		<para>
+			Form version 2.0.0, the Mobicents Media Server is available
+			either as embedded in JBoss AS 5.x.y or Standalone.
+		</para>
 	</section>
+
+	<section id="ittms-Technical_specification_and_capacity">
+		<title>Technical Specification and Capacity</title>
+
+		<para>The Mobicents Media Server is capable of</para>
+
+		<itemizedlist>
+			<listitem>
+				<para>
+					Media and Coders :
+					<itemizedlist>
+						<listitem>
+							<para>G711 (a-Law, u-Law)</para>
+						</listitem>
+						<listitem>
+							<para>GSM</para>
+						</listitem>
+						<listitem>
+							<para>SPEEX</para>
+						</listitem>
+						<listitem>
+							<para>G729</para>
+						</listitem>
+						<listitem>
+							<para>DTMF(RFC 2833, INBAND)</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</listitem>
+
+			<listitem>
+				<para>
+					Media Files :
+					<itemizedlist>
+						<listitem>
+							<para>WAV</para>
+						</listitem>
+						<listitem>
+							<para>SPX</para>
+						</listitem>
+						<listitem>
+							<para>GSM</para>
+						</listitem>
+						<listitem>
+							<para>MP3</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Signaling and control :
+					<itemizedlist>
+						<listitem>
+							<para>MGCP</para>
+						</listitem>
+						<listitem>
+							<para>Java Media Control API(JSR-309)</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Capacity : Typical media sessions per server
+					<itemizedlist>
+						<listitem>
+							<para>
+								G.711 @ 20 ms - upto 500 with dual-core
+								2.33GHz CPU 4GB RAM
+							</para>
+						</listitem>
+
+					</itemizedlist>
+				</para>
+			</listitem>
+		</itemizedlist>
+
+	</section>
+
+
 	<section id="ittms-Media_Server_Architecture">
 		<title>Media Server Architecture</title>
 		<para>
@@ -536,16 +621,15 @@
 
 
 				<section>
-					<title>Application Wiring</title>
+					<title>Wiring Components</title>
 					<para>
-						The process of implementing an application in
-						the Media Server involves specifying the path
-						over which media information travels. This
-						process is referred to as "Wiring" the
-						application. Wiring connects media sources,
-						components, and sinks together so data can
-						interact with all stages of the data transfer
-						process.
+						The process of defining an Endpoint in the Media
+						Server involves specifying the path over which
+						media information travels. This process is
+						referred to as "Wiring" the components. Wiring
+						connects media sources and sinks (components)
+						together so data can interact with all stages of
+						the data transfer process.
 					</para>
 					<para>
 						The following diagram provides an example of a
