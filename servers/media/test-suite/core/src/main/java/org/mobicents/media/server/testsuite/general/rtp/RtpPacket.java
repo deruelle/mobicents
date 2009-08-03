@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 /**
@@ -42,6 +43,30 @@ public class RtpPacket implements Serializable {
     private int length = 0;
     
     private Date time;
+    
+    public RtpPacket(ByteBuffer readerBuffer) {
+        int len = readerBuffer.limit();
+        int b = readerBuffer.get() & 0xff;
+        
+        version = (b & 0x0C) >> 6;
+        padding = (b & 0x20) == 0x020;
+        extensions = (b & 0x10) == 0x10;
+        cc = b & 0x0F;
+        
+        b = readerBuffer.get() & 0xff;
+        marker = (b & 0x80) == 0x80;
+        payloadType = b & 0x7F;
+
+        seqNumber = (readerBuffer.get() & 0xff) << 8;
+        seqNumber = seqNumber | (readerBuffer.get() & 0xff);
+
+        timestamp = readerBuffer.getInt();
+        ssrc = readerBuffer.getInt();
+        
+        payload = new byte[len - 12];
+        readerBuffer.get(payload, 0, payload.length);
+    }
+    
     
     /** Creates a new instance of RtpPacket */
     public RtpPacket(byte[] data) throws IOException {

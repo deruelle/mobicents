@@ -979,7 +979,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         }
     }
 
-    public Vector<Attribute> getCodec() {
+    public Vector<Attribute> getCodecs() {
         return attributerMap.get(this.fieldCodecBox.getSelectedItem());
     }
 

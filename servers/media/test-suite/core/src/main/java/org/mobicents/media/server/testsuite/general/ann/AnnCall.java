@@ -191,12 +191,7 @@ public class AnnCall extends AbstractCall {
 								cd.toString());
 						this.connectToPeer(sessionDesc);
 
-						this.receiveRTP = true;
-						// for now we do that like that this will go away with
-						// rtp socket
-						super.readerTask = this.readerThread.scheduleAtFixedRate(this, 0, super._READ_PERIOD,
-								TimeUnit.MILLISECONDS);
-
+						
 						ri = provider.getUniqueRequestIdentifier();
 						NotificationRequest notificationRequest = new NotificationRequest(this,
 								super.endpointIdentifier, ri);
@@ -323,8 +318,10 @@ public class AnnCall extends AbstractCall {
 
 			CreateConnection crcx = new CreateConnection(this, this.callIdentifier, ei, ConnectionMode.SendRecv);
 			// int localPort = this.datagramChannel.socket().getLocalPort();
-			int localPort = super.datagramChannel.socket().getLocalPort();
-			crcx.setRemoteConnectionDescriptor(new ConnectionDescriptor(super.getLocalDescriptor(localPort)));
+			int localPort = super.socket.getLocalPort();
+			String sdp = super.getLocalDescriptor(localPort);
+			System.err.println(sdp);
+			crcx.setRemoteConnectionDescriptor(new ConnectionDescriptor(sdp));
 			crcx.setTransactionHandle(this.provider.getUniqueTransactionHandler());
 			
 			super.testCase.addCall(crcx, this);
@@ -357,13 +354,10 @@ public class AnnCall extends AbstractCall {
 		if (ri != null) {
 			super.testCase.removeCall(ri.toString());
 		}
-		this.receiveRTP = false;
-
-		if (this.readerTask != null) {
-			this.readerTask.cancel(true);
-		}
-		if (this.state == CallState.IN_ERROR) {
-
+	
+		
+		if (this.state == CallState.IN_ERROR || this.state == CallState.TIMED_OUT) {
+			this.setLocalFlowState(AnnCallState.TERMINATED);
 		} else {
 
 			// FIXME: Should in case of forced stop this indicate error?
@@ -403,7 +397,12 @@ public class AnnCall extends AbstractCall {
 		int port = md.getMedia().getMediaPort();
 
 		SocketAddress sa = new InetSocketAddress(InetAddress.getAllByName(cAddress)[0], port);
-		super.datagramChannel.connect(sa);
+
+		// for now we do that like that this will go away with
+		// rtp socket
+		super.socket.setPeer(InetAddress.getAllByName(cAddress)[0], port);
+	
+
 
 	}
 }

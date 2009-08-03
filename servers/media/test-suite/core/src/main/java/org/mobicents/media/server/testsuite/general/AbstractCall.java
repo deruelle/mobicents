@@ -6,6 +6,7 @@ package org.mobicents.media.server.testsuite.general;
 
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,19 +14,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -37,6 +28,9 @@ import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.testsuite.general.rtp.RtpPacket;
+import org.mobicents.media.server.testsuite.general.rtp.RtpSocket;
+import org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactory;
+import org.mobicents.media.server.testsuite.general.rtp.RtpSocketListener;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
@@ -44,7 +38,7 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
  * 
  * @author baranowb
  */
-public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable, Serializable {
+public abstract class AbstractCall implements JainMgcpExtendedListener, Serializable, RtpSocketListener {
 
 	protected transient Logger logger = Logger.getLogger(AbstractCall.class);
 	// We are serializable, just in case.
@@ -74,12 +68,8 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 	// Below is part we dont want to propagate to other side :)
 	protected transient AbstractTestCase testCase;
 	// RTP part
-	protected transient DatagramChannel datagramChannel;
-	// protected transient DatagramSocket socket = null;
-	protected transient final ScheduledExecutorService readerThread;
-	protected transient ScheduledFuture readerTask;
-	protected transient boolean receiveRTP;
 
+    protected transient RtpSocket socket;
 	// MGCP part
 	protected transient JainMgcpStackProviderImpl provider;
 
@@ -96,7 +86,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 		try {
 
 			this.sequence = _GLOBAL_SEQ.incrementAndGet();
-                        this.readerThread = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("CallThreadFactory-"+this.getClass().getName()+"-"+this.sequence));
+
 			this.setDumpDir(this.testCase.getTestDumpDirectory());
 			this.fos = new FileOutputStream(dataFileName);
 			this.dataDumpChannel = new ObjectOutputStream(fos);
@@ -106,18 +96,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 			finished = true;
 		} finally {
 			if (!finished) {
-				try {
-					if (datagramChannel.isConnected() || datagramChannel.isOpen()) {
-						datagramChannel.close();
-						// This will close socket.
-					}
-					this.datagramChannel = null;
-				} catch (Exception e) {
-				}
-				// if (socket != null && (socket.isBound() ||
-				// socket.isConnected())) {
-				// socket.close();
-				// }
+
 				try {
 					if (dataDumpChannel != null) {
 						dataDumpChannel.close();
@@ -148,32 +127,29 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 		this.graphDataFileName = new File(testDumpDirectory, this.sequence + "_graph.txt");
 	}
 
-	
-	
 	public java.io.File getGraphDataFileName() {
 		return graphDataFileName;
 	}
 
 	protected void initSocket() throws IOException {
-		this.datagramChannel = DatagramChannel.open();
-		this.datagramChannel.configureBlocking(false);
-		DatagramSocket socket = this.datagramChannel.socket();
+		if (this.testCase != null && this.testCase.getSocketFactory() != null) {
+			RtpSocketFactory factory = this.testCase.getSocketFactory();
+			this.socket = factory.createSocket();
+			socket.addListener(this);
 
-		InetAddress bindAddress = this.testCase.getClientTestNodeAddress();
-		// this.socket = new DatagramSocket();
-		for (int i = 1024; i < 65535; i++) {
-			try {
-				SocketAddress address = new InetSocketAddress(bindAddress, i);
-				// socket = new DatagramSocket(address);
-				socket.bind(address);
-				logger.debug("Socket created port = " + socket.getLocalPort() + " address = " + socket.getLocalAddress());
-				return;
-			} catch (SocketException e) {
-				// e.printStackTrace();
-				continue;
-			}
 		}
-		throw new SocketException();
+	}
+
+	protected void releaseSocket() {
+		try {
+			if (this.socket != null) {
+				this.socket.close();
+				this.socket = null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public List<RtpPacket> getRtp() throws IOException {
@@ -238,34 +214,20 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 		case ENDED:
 		case IN_ERROR:
 		case TIMED_OUT:
-			this.receiveRTP = false;
-			try {
-				if (datagramChannel != null && (datagramChannel.isConnected() || datagramChannel.isOpen())) {
-					datagramChannel.close();
-				}
-				this.datagramChannel = null;
-			} catch (Exception e) {
-			}
+			this.releaseSocket();
 
-			if (rtpTraffic != null && rtpTraffic.size()>0) {
-//				try {
-//					if (graphDataDumpChannel != null) {
-//						graphDataDumpChannel.write(("Call ID: "+this.getCallID()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-//					}
-//				} catch (IOException ex) {
-//					logger.error(ex);
-//				}
-				
+			if (rtpTraffic != null && rtpTraffic.size() > 0) {
+
 				for (int i = 0; i < rtpTraffic.size() - 1; i++) {
 					RtpPacket p1 = rtpTraffic.get(i);
 					RtpPacket p2 = rtpTraffic.get(i + 1);
 					int localJitter = (int) (p2.getTime().getTime() - p1.getTime().getTime());
-					if(localJitter> this.peakJitter)
-					 this.peakJitter = localJitter;
-					//Aprox
-					this.avgJitter+=localJitter;
-					this.avgJitter/=2;
-					
+					if (localJitter > this.peakJitter)
+						this.peakJitter = localJitter;
+					// Aprox
+					this.avgJitter += localJitter;
+					this.avgJitter /= 2;
+
 				}
 				try {
 					if (graphDataDumpChannel != null) {
@@ -273,11 +235,11 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 						graphDataDumpChannel.write((avgJitter + AbstractTestCase._LINE_SEPARATOR).getBytes());
 						graphDataDumpChannel.write((peakJitter + AbstractTestCase._LINE_SEPARATOR).getBytes());
 					}
-					
+
 				} catch (IOException ex) {
 					logger.error(ex);
 				}
-				
+
 				for (int i = 0; i < rtpTraffic.size() - 1; i++) {
 					RtpPacket p1 = rtpTraffic.get(i);
 					RtpPacket p2 = rtpTraffic.get(i + 1);
@@ -293,11 +255,10 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 					try {
 						if (graphDataDumpChannel != null) {
 							int localJitter = (int) (p2.getTime().getTime() - p1.getTime().getTime());
-							
-							
+
 							graphDataDumpChannel.write((localJitter + AbstractTestCase._LINE_SEPARATOR).getBytes());
 						}
-						
+
 					} catch (IOException ex) {
 						logger.error(ex);
 					}
@@ -305,7 +266,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 				}
 				try {
 					if (dataDumpChannel != null) {
-						RtpPacket p1 = rtpTraffic.get(rtpTraffic.size()-1);
+						RtpPacket p1 = rtpTraffic.get(rtpTraffic.size() - 1);
 						dataDumpChannel.writeObject(p1);
 					}
 				} catch (IOException ex) {
@@ -313,28 +274,9 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 				}
 				this.rtpTraffic.clear();
 			}
-			// for (int index = 0; index < this.rtpTraffic.size(); index++) {
-			// // for(RtpPacket packet:this.rtpTraffic){
-			// RtpPacket packet = this.rtpTraffic.remove(0);
-			// // logger.info("Dumping data to file: "+packet);
-			//
-			// try {
-			// if (dataDumpChannel != null) {
-			// dataDumpChannel.writeObject(packet);
-			// }
-			// } catch (IOException ex) {
-			// logger.error(ex);
-			// }
-			// }
-			// This is cause here we get like 60 packets, dunno why....
-			
+
 			this.rtpTraffic = null;
 
-			// receiveRTP = false;
-			// if (socket != null && (socket.isBound() || socket.isConnected()))
-			// {
-			// socket.close();
-			// }
 			try {
 				if (dataDumpChannel != null) {
 					dataDumpChannel.close();
@@ -351,13 +293,9 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 				}
 			} catch (Exception e) {
 				logger.error(e);
-			}finally
-                        {
-                            if(this.readerThread!=null)
-                            {
-                                this.readerThread.shutdownNow();
-                            }
-                        }
+			} finally {
+
+			}
 			break;
 
 		default:
@@ -407,60 +345,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 			e.printStackTrace();
 		}
 
-		// System.out.println("Local SDP: " + localSDP.toString());
-
 		return localSDP.toString();
-	}
-
-	// Run method for read, we are run in readerThread
-	public void run() {
-		try {
-			if (receiveRTP) {
-
-				// byte[] buffer = new byte[172];
-				// DatagramPacket packet = new DatagramPacket(buffer,
-				// buffer.length);
-				ByteBuffer packetBuffer = ByteBuffer.allocate(172);
-				try {
-					// socket.receive(packet);
-					long received = 0;
-					int readCount = 0;
-					int readMaxCount = 4;
-					while (received != 172 && readCount < readMaxCount) {
-						received += datagramChannel.read(packetBuffer);
-						readCount++;
-					}
-
-					// RtpPacket rtp = new RtpPacket(packetBuffer.array());
-
-					packetBuffer.flip();
-					RtpPacket rtp = new RtpPacket(packetBuffer.array());
-					rtp.setTime(new Date(System.currentTimeMillis()));
-
-					
-					if (rtpTraffic != null) {
-						rtpTraffic.add(rtp);
-					} else {
-
-					}
-
-					// FIXME: add calcualtion of jiiter stuff
-				} catch (SocketException e) {
-					// This will happen on read, as we odnt sync it can be that
-					// flag receiveRTP is fale but read thread is already in
-					// while block.
-					e.printStackTrace();
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (java.nio.channels.NotYetConnectedException e) {
-					e.printStackTrace();
-				}
-			}
-
-		} finally {
-
-		}
 	}
 
 	public abstract void start();
@@ -476,5 +361,23 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 	public void setTimeoutHandle(ScheduledFuture<?> timeoutHandle) {
 		this.timeoutHandle = timeoutHandle;
 	}
+    ////////////////////
+	// SOCKET METHODS //
+	////////////////////
 
+	public void error(Exception e) {
+		//FIXME?
+		
+		
+	}
+
+	public void receive(RtpPacket packet) {
+		if(this.rtpTraffic!=null)
+		{
+			this.rtpTraffic.add(packet);
+		}
+		
+	}
+	
+	
 }

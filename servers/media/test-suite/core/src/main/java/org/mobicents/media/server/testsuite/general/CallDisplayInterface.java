@@ -40,7 +40,7 @@ public interface CallDisplayInterface {
      * Get codec Vector used to create SDP
      * @return
      */
-    public Vector<Attribute> getCodec();
+    public Vector<Attribute> getCodecs();
 
     public void updateCallView();
     public File getDefaultDataDumpDirectory();

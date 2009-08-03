@@ -162,7 +162,7 @@ executeTest(){
 
       "$JAVA" $JAVA_OPTS \
 	-classpath "$RUN_CLASSPATH" \
-	org.mobicents.media.server.testsuite.cli.CLIRunner "$*"
+	org.mobicents.media.server.testsuite.cli.CLIRunner $*
 
 
 

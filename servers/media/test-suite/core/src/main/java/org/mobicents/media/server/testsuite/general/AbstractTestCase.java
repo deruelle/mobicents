@@ -19,6 +19,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,6 +37,8 @@ import javax.sdp.Attribute;
 import javax.sdp.SdpFactory;
 
 import org.mobicents.media.server.testsuite.general.file.FileUtils;
+import org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactory;
+import org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactoryImpl;
 import org.mobicents.media.server.testsuite.gui.ext.CallStateTableModel;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
@@ -62,17 +65,15 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	protected transient SdpFactory sdpFactory;
 	protected transient CallDisplayInterface callDisplay;
 	protected Map<Long, AbstractCall> callSequenceToCall;
+	
 	// We mix view, but this is easier to achieve perf with that.
 	protected transient CallStateTableModel model;
 	// protected part - some variables that we might use.
 	protected InetAddress clientTestNodeAddress;
 	protected InetAddress serverJbossBindAddress;
-	// some mgcp magic
-	protected transient JainMgcpStackImpl stack;
-	protected transient JainMgcpStackProviderImpl provider;
-	// We need this to map TXID to Call :)
-	protected transient Map<Integer, AbstractCall> mgcpTransactionToProxy = new HashMap<Integer, AbstractCall>();
-	protected transient Map<String, AbstractCall> requestIdIdToProxy = new HashMap<String, AbstractCall>();
+	
+	
+	
 	// timestamp :), its used for files
 	protected long testTimesTamp = System.currentTimeMillis();
 	protected transient File testDumpDirectory;
@@ -90,6 +91,17 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	protected long totalCalls;
 	protected long maxErrorCallNumber;
 
+	
+	protected transient RtpSocketFactory socketFactory;
+	
+	//FIXME: this will go into MGCP test case, will be removed from here
+	// some mgcp magic
+	protected transient JainMgcpStackImpl stack;
+	protected transient JainMgcpStackProviderImpl provider;
+	// We need this to map TXID to Call :)
+	protected transient Map<Integer, AbstractCall> mgcpTransactionToProxy = new HashMap<Integer, AbstractCall>();
+	protected transient Map<String, AbstractCall> requestIdIdToProxy = new HashMap<String, AbstractCall>();
+	
 	public AbstractTestCase() {
 		this.callSequenceToCall = new HashMap<Long, AbstractCall>();
 		// model = new CallStateTableModel(this.callSequenceToCall);
@@ -101,7 +113,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
 	}
 
-	public AbstractTestCase(CallDisplayInterface cdi) throws UnknownHostException, IllegalStateException {
+	public AbstractTestCase(CallDisplayInterface cdi) throws IllegalStateException, SocketException, IOException {
 		setCallDisplay(cdi);
 		model = new CallStateTableModel(this.callSequenceToCall);
 		AbstractCall.resetSequence();
@@ -109,8 +121,32 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
                 NamedThreadFactory timeGuardThreadFactory = new NamedThreadFactory("GuardThreadFactoryTestCaseFactory");
                 executors = Executors.newScheduledThreadPool(3,executorsThreadFactory);
                 timeGuard = Executors.newScheduledThreadPool(5,timeGuardThreadFactory);
+                this.init();
+                
+                
 	}
 
+	private void init() throws SocketException, IOException
+	{
+		if(this.socketFactory==null)
+		{
+			this.socketFactory = new RtpSocketFactoryImpl();
+			this.socketFactory.setTimer(new TimerImpl());
+			//this.socketFactory.setPortRange("5000-10000");
+			
+		}
+		
+		if(this.socketFactory!=null)
+		{
+			
+			this.socketFactory.setBindAddress(this.callDisplay.getLocalAddress());
+			this.socketFactory.setFormatMap(this.callDisplay.getCodecs());
+			this.socketFactory.start();
+		}
+	}
+	
+	
+	
 	protected void incrementOngoignCall() {
 		this.ongoingCallNumber++;
 		this.totalCalls++;
@@ -206,6 +242,8 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		return this.totalCalls;
 	}
 
+	
+	
 	public void stop(boolean onGracefull) {
 		
 		synchronized (this.testState) {
@@ -254,7 +292,12 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					
+					try {
+						this.socketFactory.stop();
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					// Now lets serialize.
 					
 					serialize();
@@ -319,15 +362,20 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		return this.testState;
 	}
 
-	public void setCallDisplay(CallDisplayInterface cdi) throws UnknownHostException, IllegalStateException {
+	public RtpSocketFactory getSocketFactory() {
+		return socketFactory;
+	}
+
+	public void setCallDisplay(CallDisplayInterface cdi) throws IllegalStateException, SocketException, IOException {
 		this.callDisplay = cdi;
 
 		this.clientTestNodeAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
 		this.serverJbossBindAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
 
+		
 		this.sdpFactory = SdpFactory.getInstance();
 		this.testDumpDirectory = new File(cdi.getDefaultDataDumpDirectory(), "" + this.testTimesTamp);
-
+		
 		if (!this.testDumpDirectory.exists()) {
 
 			if (!this.testDumpDirectory.mkdirs()) {
@@ -342,6 +390,8 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 			}
 		}
 
+		this.init();
+		
 	}
 
 	// This method is used on loaded test case
@@ -383,7 +433,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	public abstract AbstractCall getNewCall();
 
 	Vector<Attribute> getSDPAttributes() {
-		return this.callDisplay.getCodec();
+		return this.callDisplay.getCodecs();
 	}
 
 	public SdpFactory getSdpFactory() {

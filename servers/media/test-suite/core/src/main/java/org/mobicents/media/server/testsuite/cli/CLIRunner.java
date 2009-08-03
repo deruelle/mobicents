@@ -14,9 +14,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -122,7 +124,7 @@ public class CLIRunner implements CallDisplayInterface {
 		sb.append("--concurrentcalls : concurrent calls, default is -1, which means unbound\n");
 		sb.append("--maxcalls        : max calls, default is -1, which means unbound\n");
 		sb.append("--datadir         : data dump directory, default is ./datadump\n");
-		sb.append("--audiofile       : audio file url, if requried, default is file:/...../target/audio/ulaw_13s.wav\n");
+		sb.append("--audiofile       : audio file url, if requried, default is file:/./../../target/audio/ulaw_13s.wav\n");
 		sb.append("--audiocodec      : audio codec to be used if requried, default is \'0 pcmu/8000\', value should be specifiedd in \'\'\n");
 		sb.append("--testtype        : test type, currently there is only one available: AnnTest\n");
 		sb.append("--maxfail         : specifies how many calls may fail until testtool will stop sending requests to server, default is -1, which means unbound\n");
@@ -180,7 +182,7 @@ public class CLIRunner implements CallDisplayInterface {
 	 * org.mobicents.media.server.testsuite.general.CallDisplayInterface#getCodec
 	 * ()
 	 */
-	public Vector<Attribute> getCodec() {
+	public Vector<Attribute> getCodecs() {
 		return this.codec;
 	}
 
@@ -406,12 +408,14 @@ public class CLIRunner implements CallDisplayInterface {
 			log.info("Starting test case, prest 'q' to exit test");
 		} catch (UnknownHostException ex) {
 			log.log(Level.SEVERE, null, ex);
+			return ;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, null, e);
 			return;
 		}
 
 		try {
+			
 			this.testCase.start();
 			while (this.testCase.getTestState() != TestState.Stoped) {
 				try {
@@ -459,7 +463,6 @@ public class CLIRunner implements CallDisplayInterface {
 
 		Getopt getOpt = new Getopt("CLIRunner", args, _GETOPT_PARAMS_STRING, _LONG_OPTS);
 		getOpt.setOpterr(true);
-
 		int c = -1;
 		String v = null;
 
@@ -668,7 +671,7 @@ enum TestTypeEnum {
 		throw new RuntimeException("There is no such test type, valid are: " + AnnTest + ", value passed:" + v);
 	}
 
-	public AbstractTestCase getTestCaseForType(CallDisplayInterface cdi) throws UnknownHostException {
+	public AbstractTestCase getTestCaseForType(CallDisplayInterface cdi) throws IllegalStateException, SocketException, IOException {
 		if (this.toString().equals(AnnTest.toString())) {
 
 			AnnouncementTest at = new AnnouncementTest();
