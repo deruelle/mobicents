@@ -11,7 +11,7 @@
   
   <groupId>org.mobicents.tools</groupId>
   <artifactId>maven-library-plugin</artifactId>
-  <version>1.0.0-BETA2-SNAPSHOT</version>
+  <version>1.0.0.BETA1</version>
   
   <packaging>maven-plugin</packaging>
   <name>Mobicents :: Tools :: mobicents-library-plugin</name>
@@ -188,9 +188,9 @@
   </reporting>
   
   <scm>
-    <connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/maven-library-plugin</connection>
-    <developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/maven-library-plugin</developerConnection>
-    <url>http://mobicents.googlecode.com/svn/trunk/servers/jain-slee/tools/maven-library-plugin</url>
+    <connection>scm:svn:https://mobicents.googlecode.com/svn/tags/tools/maven-library-plugin/maven-library-plugin-1.0.0.BETA1</connection>
+    <developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/tools/maven-library-plugin/maven-library-plugin-1.0.0.BETA1</developerConnection>
+    <url>http://mobicents.googlecode.com/svn/tags/tools/maven-library-plugin/maven-library-plugin-1.0.0.BETA1</url>
   </scm>
   
   <!-- dupe info from parent, but it's only way to retrieve the parent without checkout -->
