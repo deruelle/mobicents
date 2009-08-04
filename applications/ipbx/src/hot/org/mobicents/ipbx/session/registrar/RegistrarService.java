@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
@@ -76,6 +78,12 @@ public class RegistrarService {
 	public static final String MIN_EXPIRES_HEADER 	= "Min-Expires";
 	public static final String CSEQ_HEADER 	= "CSeq";
 	public static final String DATE_HEADER 	= "Date";
+	
+
+	private  String _255 = "\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
+	private String privateIPRegex ="(?:10"+_255+_255+_255+")|(?:172\\.1[6-9]"+_255+_255+")" +
+				"|(?:172\\.2[0-9]"+_255+_255+")|(?:172\\.3[0-1]"+_255+_255+")|(192\\.168"+_255+_255+")";
+	private Pattern privateIPpattern =Pattern.compile(privateIPRegex);
 	
 	private int minExpires = 60;
 	private int maxExpires = 86400;
@@ -142,6 +150,7 @@ public class RegistrarService {
 			        // invalid, and the server MUST return a 400 (Invalid Request) and skip the remaining steps.  				
 					while (it.hasNext()) {
 						Address contact = it.next();
+						if(contact.getURI().toString().contains("0.0.0.0")) continue;
 						if (contact.isWildcard()) {
 							wildcard = true;
 							if (it.hasNext() || contacts.size() > 0 || request.getExpires() > 0) {
@@ -149,6 +158,31 @@ public class RegistrarService {
 							}
 						}
 						contacts.add(contact);
+						if(contact.getURI().isSipURI()){ 
+						  log.debug("found sip contact with URI "+ contact.getURI().toString());
+						  Matcher ipMatcher =privateIPpattern.matcher(((SipURI)contact.getURI()).getHost()); 
+						  if(ipMatcher.matches()){
+							int receiveFromIndex = request.getHeader("Via").indexOf("received=")+9;
+							int receiveToIndex = request.getHeader("Via").indexOf(";",receiveFromIndex);
+							String publicIP = request.getHeader("Via").substring(receiveFromIndex);
+							if(receiveToIndex>-1){
+								publicIP = request.getHeader("Via").substring(receiveFromIndex,receiveToIndex);
+							}
+							int rportFromIndex = request.getHeader("Via").indexOf("rport=")+6;
+							int rportToIndex = request.getHeader("Via").indexOf(";",rportFromIndex);
+							int publicPort = -1;
+							if(rportToIndex>-1){
+								publicPort = Integer.parseInt(request.getHeader("Via").substring(rportFromIndex,rportToIndex));
+							} else {
+								publicPort = Integer.parseInt(request.getHeader("Via").substring(rportFromIndex));
+							}
+							log.info("the contact URI is private, we replace its host by "+publicIP+", Via ='"+request.getHeader("Via")+"' ,receiveFromIndex ="+receiveFromIndex+", receiveToIndex ="+receiveToIndex);
+							((SipURI)contact.getURI()).setHost(publicIP);
+							log.info("and we replace its port ("+((SipURI)contact.getURI()).getPort()+") by"+publicPort);
+							((SipURI)contact.getURI()).setPort(publicPort);
+							log.info("new contact URI :"+contact.getURI().toString());
+						  }
+						}
 					}								
 					processContacts(request, wildcard, registration, contacts);
 				}						

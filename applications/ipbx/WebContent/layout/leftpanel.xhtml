@@ -9,10 +9,14 @@
 		switchType="client">
 		<f:facet name="header">My Phones</f:facet>
 		<a4j:form>
-			<rich:dataTable id="registration"
-				value="#{dataLoader.loadRegistrations()}" var="registration"
-				rows="10" rowClasses="leftpanelcolumn">
-				<rich:column>
+			<rich:dataTable id="registrationsid"
+				value="#{dataLoader.loadRegistrations()}" 
+				var="registration"
+				rows="10" 
+				rowClasses="leftpanelcolumn"
+				onRowMouseOver="this.style.backgroundColor='#F9F9F9'"
+                onRowMouseOut="this.style.backgroundColor='#FFFFFF'">
+				<rich:column style="border-right:0">
 					<f:facet name="header">Phone</f:facet>
 
 					
@@ -35,20 +39,20 @@
 						bindings)</span>
 					</a4j:region>
 				</rich:column>
-				<rich:column width="20">
-					<f:facet name="header">
+				<rich:column width="20" style="border-right:0;border-left:0;">
+					<f:facet name="header" >
 					Ring
 					</f:facet>
 					<h:selectBooleanCheckbox id="selectedCb"
 						value="#{registration.selected}">
-						<a4j:support event="onchange" reRender="registration"
+						<a4j:support event="onchange" reRender="registrationsid"
 							actionListener="#{registrationAction.select(registration)}" eventsQueue="workspaceQueue"></a4j:support>
 					</h:selectBooleanCheckbox>
 				</rich:column>
 				<rich:column width="20">
 					<a4j:commandLink immediate="true" value=""
 						action="#{registrationAction.remove(registration)}"
-						reRender="registration">
+						reRender="registrationsid">
 						<h:graphicImage value="/img/trash.png" style="border:0" />
 					</a4j:commandLink>
 				</rich:column>
@@ -64,7 +68,7 @@
 			<rich:spacer width="15"></rich:spacer>
 			<a4j:commandLink value="Add phone" id="addPhone"
 				action="#{registrationAction.addRegistration()}"
-				reRender="registration,messages"
+				reRender="registrationsid,messages"
 				eventsQueue="workspaceQueue">
 				
 			</a4j:commandLink>
@@ -85,7 +89,9 @@
 			<f:facet name="header">Contacts</f:facet>
 <div style="overflow:auto;width:300px;height:220px">
 			<rich:dataTable id="contacts" value="#{dataLoader.loadContacts()}"
-				var="contact" rows="30">
+				var="contact" rows="30"
+				onRowMouseOver="this.style.backgroundColor='#F9F9F9'"
+                onRowMouseOut="this.style.backgroundColor='#FFFFFF'">>
 
 				<rich:column styleClass="leftpanelcolumn">
 				

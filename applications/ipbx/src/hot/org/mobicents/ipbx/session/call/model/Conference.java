@@ -85,4 +85,8 @@ public class Conference {
 	public String getConferenceUri() {
 		return "sip:conference-" + this.getId() + "@" + PbxConfiguration.getProperty("pbx.hostname");
 	}
+	
+	public String toString() {
+		return getId() + " " + getEndpointName();
+	}
 }

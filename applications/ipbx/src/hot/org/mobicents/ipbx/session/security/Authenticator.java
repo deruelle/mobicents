@@ -45,7 +45,7 @@ public class Authenticator
         	identity.addRole("basic");
         	if(user.getRoles() != null) {
         		for(Role role: user.getRoles()) {
-        			identity.addRole(role.getRole());
+        			identity.addRole(role.getRole()); 
         		}
         	}
         	return true;

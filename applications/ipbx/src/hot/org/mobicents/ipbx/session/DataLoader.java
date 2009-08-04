@@ -8,7 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.*;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -19,8 +19,8 @@ import org.mobicents.ipbx.entity.History;
 import org.mobicents.ipbx.entity.User;
 
 @Name("dataLoader")
-@Scope(ScopeType.APPLICATION)
-@Startup
+@Scope(ScopeType.STATELESS)
+@AutoCreate
 @Transactional
 public class DataLoader {
 	// This is a temporary hack to make the history work

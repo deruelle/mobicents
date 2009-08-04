@@ -297,7 +297,7 @@ public class PbxEventHandler {
 			mediaController.createLink(MsLinkMode.FULL_DUPLEX)
 			.join(participant.getConference().getEndpointName(),
 					connection.getEndpoint().getLocalName());
-			log.info("Join " + participant.toString() + " in " + participant.getConference().getEndpointName());
+			System.out.println("RRRRRRRRRRRRRRRRRRRRRR Join " + participant.toString() + " in " + participant.getConference().getEndpointName());
 		} else {
 			throw new IllegalStateException("Participant doesnt have conference assigned " 
 					+ participant.toString());
@@ -333,58 +333,63 @@ public class PbxEventHandler {
 	
 	
 	@Observer("linkConnected")
-	public synchronized void doLinkConnected(MsLinkEvent event) {
-		
-		MsEndpoint endpoint = event.getSource().getEndpoints()[0];
-		
-		CallParticipant participant = 
-			(CallParticipant) sipSession.getAttribute("participant");
-		
-		log.info("Link connected for " + participant);
-		
-		mediaSessionStore.setMsEndpoint(endpoint);
-		ivrHelper.detectDtmf();
-		
-		participant.setCallState(CallState.CONNECTED);
-		
-		Conference conf = participant.getConference();
-		// We should upgrade the call state to "active" for all participants (most already have it)
-		CallParticipant[] ps = conf.getParticipants();
-		for(CallParticipant p : ps) {
-			if(p!=participant) {
+	public void doLinkConnected(MsLinkEvent event) {
+		synchronized (PR_JNDI_NAME) {
 
-				if(p.getCallState().equals(CallState.CONNECTED)) {
-					p.setCallState(CallState.INCALL);
-					try {
-						endRingback(p);
-					} catch (Exception e) {}
+			MsEndpoint endpoint = event.getSource().getEndpoints()[0];
+
+			CallParticipant participant = 
+				(CallParticipant) sipSession.getAttribute("participant");
+
+			log.info("Link connected for " + participant);
+
+			mediaSessionStore.setMsEndpoint(endpoint);
+			ivrHelper.detectDtmf();
+
+			participant.setCallState(CallState.CONNECTED);
+
+			Conference conf = participant.getConference();
+			
+			// We should upgrade the call state to "active" for all participants (most already have it)
+			CallParticipant[] ps = conf.getParticipants();
+			for(CallParticipant p : ps) {
+				if(p!=participant) {
+
+					if(p.getCallState().equals(CallState.CONNECTED)) {
+						p.setCallState(CallState.INCALL);
+						try {
+							endRingback(p);
+						} catch (Exception e) {}
+						participant.setCallState(CallState.INCALL);
+
+						// Many of these are not needed, but it's hard to debug what is missing in corner cases
+						WorkspaceStateManager.instance().getWorkspace(p.getName()).setOngoing(participant);
+						WorkspaceStateManager.instance().getWorkspace(participant.getName()).setOngoing(p);
+						WorkspaceStateManager.instance().getWorkspace(participant.getName()).setOngoing(participant);
+						WorkspaceStateManager.instance().getWorkspace(p.getName()).setOngoing(p);
+					}
+
+				}
+				if(p.getCallState().equals(CallState.INCALL)) {
 					participant.setCallState(CallState.INCALL);
-					
 					// Many of these are not needed, but it's hard to debug what is missing in corner cases
-					WorkspaceStateManager.instance().getWorkspace(p.getName()).setOngoing(participant);
 					WorkspaceStateManager.instance().getWorkspace(participant.getName()).setOngoing(p);
+					WorkspaceStateManager.instance().getWorkspace(p.getName()).setOngoing(participant);
 					WorkspaceStateManager.instance().getWorkspace(participant.getName()).setOngoing(participant);
 					WorkspaceStateManager.instance().getWorkspace(p.getName()).setOngoing(p);
+				}	
+			}
+
+			// And if this is the first participant in the conference, let's determine which endpoint we use
+			if(participant != null) {
+				participant.setMsLink(event.getSource());
+				if(conf.getEndpoint() == null) {
+					conf.setEndpoint(endpoint);
+					System.out.println("RRRRRRRRRRRRRRRRRRRR conf endpoint assigned - " + endpoint.getLocalName());
+					playRingback(participant);
 				}
-				
 			}
-			if(p.getCallState().equals(CallState.INCALL)) {
-				participant.setCallState(CallState.INCALL);
-				// Many of these are not needed, but it's hard to debug what is missing in corner cases
-				WorkspaceStateManager.instance().getWorkspace(participant.getName()).setOngoing(p);
-				WorkspaceStateManager.instance().getWorkspace(p.getName()).setOngoing(participant);
-				WorkspaceStateManager.instance().getWorkspace(participant.getName()).setOngoing(participant);
-				WorkspaceStateManager.instance().getWorkspace(p.getName()).setOngoing(p);
-			}	
-		}
-		
-		// And if this is the first participant in the conference, let's determine which endpoint we use
-		if(participant != null) {
-			participant.setMsLink(event.getSource());
-			if(conf.getEndpoint() == null) {
-				conf.setEndpoint(endpoint);
-				playRingback(participant);
-			}
+
 		}
 	}
 	
@@ -409,5 +414,31 @@ public class PbxEventHandler {
 			user = turi.getPhoneNumber();
 		}
 		return user;
+	}
+	
+	@Observer("PUBLISH")
+	public void doPublish(SipServletRequest request) throws ServletException,
+			Exception {
+		request.createResponse(200).send();
+	}
+	
+	@Observer("OPTIONS")
+	public void doOptions(SipServletRequest request) throws ServletException,
+			Exception {
+		request.createResponse(200).send();
+	}
+	
+	@Observer("SUBSCRIBE")
+	public void doSubscribe(SipServletRequest request) throws ServletException,
+			Exception {
+		SipServletResponse response = request.createResponse(200);
+		response.addHeader("Expires", "200");
+		response.send();
+	}
+	
+	@Observer("INFO")
+	public void doInfo(SipServletRequest request) throws ServletException,
+			Exception {
+		request.createResponse(200).send();
 	}
 }
