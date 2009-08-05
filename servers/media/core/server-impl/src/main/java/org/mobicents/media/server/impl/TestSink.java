@@ -34,7 +34,6 @@ public class TestSink extends AbstractSink {
     }
 
     public void onMediaTransfer(Buffer buffer) {
-        System.out.println("src=" + name + ", recv=" + buffer);
     }
 
 }

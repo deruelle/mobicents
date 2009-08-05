@@ -29,16 +29,17 @@ package org.mobicents.media.server.impl.resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.AbstractSinkSet;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  * Combines several signals for transmission over a single medium. A
@@ -49,10 +50,9 @@ import org.mobicents.media.server.spi.Connection;
  * <br>Multiplexer combines data and sends them, it is used as output for components.
  * @author Oleg Kulikov
  */
-public class Multiplexer extends AbstractSink implements Outlet {
+public class Multiplexer extends AbstractSinkSet implements Outlet {
 
     private Format[] inputFormats = null;
-    private Map<String, Input> inputs = new ConcurrentHashMap<String, Input>();
     private Output output;
     private Buffer buff;
 
@@ -66,6 +66,32 @@ public class Multiplexer extends AbstractSink implements Outlet {
         output = new Output(name);
     }
 
+    public void connect(MediaSink sink) {
+        output.connect(sink);
+    }
+
+    public void disconnect(MediaSink sink) {
+        output.disconnect(sink);
+    }
+
+    @Override
+    public AbstractSink createSink(MediaSource otherParty) {
+        Input input = new Input(getName() + "[input]");
+        input.setEndpoint(getEndpoint());
+        input.setConnection(getConnection());
+        return input;
+    }
+
+    @Override
+    public void start() {
+        output.start();
+    }
+
+    @Override
+    public void stop() {
+        output.stop();
+    }
+    
     /**
      * This method allows to access identifier from the inner source 
      * and sink implemetation.
@@ -99,37 +125,32 @@ public class Multiplexer extends AbstractSink implements Outlet {
         super.setConnection(connection);
         output.setConnection(connection);
 
-        Collection<Input> list = inputs.values();
-        for (Input input : list) {
-            input.setConnection(connection);
+        Collection<AbstractSink> streams = getStreams();
+        for (AbstractSink stream : streams) {
+            stream.setConnection(connection);
         }
     }
 
     @Override
-    public void connect(MediaSource source) {
-        Input input = new Input(getName());
-        inputs.put(source.getId(), input);
-        source.connect(input);
-        input.start();
+    public void setEndpoint(Endpoint endpoint) {
+        super.setEndpoint(endpoint);
+        output.setEndpoint(endpoint);
+        
+        Collection<AbstractSink> list = getStreams();
+        for (AbstractSink stream : list) {
+            stream.setEndpoint(endpoint);
+        }
     }
-
-    @Override
-    public void disconnect(MediaSource source) {
-        Input input = inputs.remove(source.getId());
-        source.disconnect(input);
-        input.stop();
-        input.setConnection(null);
-    }
-
+    
     /**
      * Reassemblies the list of used formats. This method is called each time
      * when connected/disconnected source
      */
     private void reassemblyFormats() {
         ArrayList list = new ArrayList();
-        Collection<Input> sources = inputs.values();
-        for (Input input : sources) {
-            Format[] fmts = input.getOtherPartyFormats();
+        Collection<AbstractSink> streams = getStreams();
+        for (AbstractSink stream : streams) {
+            Format[] fmts = ((Input)stream).getOtherPartyFormats();
             for (Format format : fmts) {
                 if (!list.contains(format)) {
                     list.add(format);
@@ -161,7 +182,7 @@ public class Multiplexer extends AbstractSink implements Outlet {
          * @param name the name of parent MUX.
          */
         public Input(String name) {
-            super("input." + name);
+            super(name);
         }
 
         @Override
@@ -218,7 +239,7 @@ public class Multiplexer extends AbstractSink implements Outlet {
          * @param name the name of parent MUX.
          */
         public Output(String name) {
-            super("output." + name);
+            super(name);
         }
 
         @Override
@@ -264,15 +285,18 @@ public class Multiplexer extends AbstractSink implements Outlet {
         public void evolve(Buffer buffer, long sequenceNumber) {
             if (!stopped) {
                 buffer.copy(buff);
-                buffer.setSequenceNumber(sequenceNumber);
-                buffer.setTimeStamp(System.currentTimeMillis());
             }
         }
     }
 
     @Override
-    public void onMediaTransfer(Buffer buffer)  throws IOException {
+    public void onMediaTransfer(Buffer buffer) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void destroySink(AbstractSink sink) {
+    }
+
 }
 

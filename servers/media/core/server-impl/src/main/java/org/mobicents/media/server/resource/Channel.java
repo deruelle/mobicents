@@ -60,7 +60,7 @@ public class Channel {
     
     //The list of internal pipes
     private List<Pipe> pipes = new ArrayList();
-    private Proxy localPipe = new Proxy("local-pipe");
+    private Proxy localPipe = new Proxy("Channel");
     
     //The external sink to which this channel is attached
 //    private MediaSink sink;
@@ -80,6 +80,8 @@ public class Channel {
     
     private Channel txChannel;
     private Channel rxChannel;
+    
+    private HashMap<String, ? extends Component> components;
     
     /**
      * Constructs new channel with specified components.
@@ -103,6 +105,10 @@ public class Channel {
         this.exhaust = localPipe.getOutput();
     }
     
+    protected Channel(HashMap<String, ? extends Component> components) {
+        this.components = components;
+    }
+    
     public Format[] getFormats() {
         return null;
     }
@@ -116,7 +122,27 @@ public class Channel {
     }
     
     public void setEndpoint(Endpoint endpoint) {
+        Collection<MediaSource> list = sources.values();        
+        for (MediaSource s : list) {
+            s.setEndpoint(endpoint);
+        }
+        Collection<MediaSink> list1 = sinks.values();        
+        for (MediaSink s : list1) {
+            s.setEndpoint(endpoint);
+        }
         
+        Collection<Inlet> list2 = inlets.values();        
+        for (Inlet s : list2) {
+            s.setEndpoint(endpoint);
+        }
+
+        Collection<Outlet> list3 = outlets.values();        
+        for (Outlet s : list3) {
+            s.setEndpoint(endpoint);
+        }
+        
+        intake.setEndpoint(endpoint);
+        exhaust.setEndpoint(endpoint);
     }
     
     public void setConnection(Connection connection) {
@@ -232,6 +258,7 @@ public class Channel {
             pipe.open(inlet, outlet);
             pipes.add(pipe);
         }
+ 
     }
     
     /**
@@ -384,14 +411,6 @@ public class Channel {
     }
     
     private Format[] getSubset(Format[] f1, Format[] f2) {
-/*        if (f1.length == 0) {
-            return f2;
-        }
-        
-        if (f2.length == 0) {
-            return f1;
-        }
-*/        
         ArrayList<Format> list = new ArrayList();        
         for (int i = 0; i < f1.length; i++) {
             for (int j = 0; j < f2.length; j++) {
@@ -409,95 +428,4 @@ public class Channel {
     public long getPacketsTransmitted() {
         return exhaust.getPacketsTransmitted();
     }
-/*    private class LocalPipe extends BaseComponent implements Inlet, Outlet {
-    
-        private LocalInput input;
-        private LocalOutput output;
-        
-        
-        private class LocalInput extends AbstractSink implements MediaSink {
-            
-            public LocalInput(String name) {
-                super(name);
-            }
-            
-            protected Format[] getOtherPartyFormats() {
-                return otherParty != null ? otherParty.getFormats() : new Format[0];
-            }
-            
-            public Format[] getFormats() {
-                return output.getOtherPartyFormats();
-            }
-
-            public boolean isAcceptable(Format format) {
-                return output.isAcceptable(format);
-            }
-
-            public void onMediaTransfer(Buffer buffer) {
-                output.send(buffer);
-            }
-            
-        }
-        
-        private class LocalOutput extends AbstractSource implements MediaSource {
-
-            public LocalOutput(String name) {
-                super(name);
-            }
-            
-            public void start() {
-            }
-
-            public void stop() {
-            }
-
-            protected Format[] getOtherPartyFormats() {
-                return otherParty != null ? otherParty.getFormats() : new Format[0];
-            }
-            
-            protected boolean isAcceptable(Format f) {
-                return otherParty != null && otherParty.isAcceptable(f);
-            }
-            
-            public Format[] getFormats() {
-                return input.getOtherPartyFormats();
-            }
-            
-            public void send(Buffer buffer) {
-                if (otherParty != null) {
-                    this.otherParty.receive(buffer);
-                }
-            }
-
-            @Override
-            public void evolve(Buffer buffer, long sequenceNumber) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        }
-        
-        public LocalPipe(String name) {
-            super(name);
-                input = new LocalInput("input." + name);
-                output = new LocalOutput("output." + name);
-        }
-        
-        public MediaSink getInput() {
-            return input;
-        }
-
-
-        public MediaSource getOutput() {
-            return output;
-        }
-
-        public void start() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        public void stop() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-        
-    }
-*/    
 }

@@ -55,13 +55,10 @@ public class SpectraAnalyzer extends AbstractSink {
 
     public void onMediaTransfer(Buffer buffer) throws IOException {
         byte[] data = (byte[]) buffer.getData();
+        
         int len = Math.min(16000 - offset, buffer.getLength());
         System.arraycopy(data, buffer.getOffset(), localBuffer, offset, len);
         offset += len;
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("append " + len + " bytes to the local buffer, buff size=" + offset);
-        }
 
         // buffer full?
         if (offset == 16000) {
@@ -70,7 +67,6 @@ public class SpectraAnalyzer extends AbstractSink {
             for (int i = 0; i < media.length; i++) {
                 media[i] = (localBuffer[j++] & 0xff) | (localBuffer[j++] << 8);
             }
-
             // resampling
             Complex[] signal = new Complex[8192];
             double k = (double) (media.length - 1) / (double) (signal.length);

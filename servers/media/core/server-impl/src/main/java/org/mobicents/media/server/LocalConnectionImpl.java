@@ -106,4 +106,9 @@ public class LocalConnectionImpl extends ConnectionImpl {
         return txChannel != null ? txChannel.getPacketsTransmitted() : 0;
     }
     
+    @Override
+    public String toString() {
+        return "Local Connection [" + getEndpoint().getLocalName() + ", idx=" + getIndex() + "]";
+    }
+    
 }

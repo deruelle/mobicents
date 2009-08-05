@@ -24,53 +24,36 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.resource.test;
+package org.mobicents.media.server.impl;
 
-import org.mobicents.media.Component;
-import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.Outlet;
+import org.mobicents.media.SinkSet;
 
 /**
  *
  * @author kulikov
  */
-public class SineGeneratorFactory implements ComponentFactory {
+public abstract class AbstractOutlet extends BaseComponent implements Outlet {
 
-    private String name;
-    private int f;
-    private short A;
-
-    public short getA() {
-        return A;
-    }
-
-    public int getF() {
-        return f;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setA(short A) {
-        this.A = A;
-    }
-
-    public void setF(int f) {
-        this.f = f;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public AbstractOutlet(String name) {
+        super(name);
     }
     
-    
-    public Component newInstance(Endpoint endpoint) throws ResourceUnavailableException {
-        SineGenerator gen = new SineGenerator(endpoint, name);
-        gen.setAmplitude(A);
-        gen.setFrequency(f);
-        return gen;
+    public void connect(MediaSink sink) {
+        sink.connect(this);
+    }
+
+    public void disconnect(MediaSink sink) {
+        sink.disconnect(this);
+    }
+
+    public void connect(SinkSet sink) {
+        sink.connect(this);
+    }
+
+    public void disconnect(SinkSet sink) {
+        sink.disconnect(this);
     }
 
 }

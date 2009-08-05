@@ -24,7 +24,7 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.resource.test;
+package org.mobicents.media.server.impl.resource.prelay;
 
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
@@ -35,42 +35,20 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
  *
  * @author kulikov
  */
-public class SineGeneratorFactory implements ComponentFactory {
+public class BridgeFactory implements ComponentFactory {
 
     private String name;
-    private int f;
-    private short A;
-
-    public short getA() {
-        return A;
-    }
-
-    public int getF() {
-        return f;
-    }
-
+    
     public String getName() {
         return name;
     }
-
-    public void setA(short A) {
-        this.A = A;
-    }
-
-    public void setF(int f) {
-        this.f = f;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
     
+    public void setName(String name) {
+        this.name = name;        
+    }
     
     public Component newInstance(Endpoint endpoint) throws ResourceUnavailableException {
-        SineGenerator gen = new SineGenerator(endpoint, name);
-        gen.setAmplitude(A);
-        gen.setFrequency(f);
-        return gen;
+        return new Bridge(name);
     }
 
 }

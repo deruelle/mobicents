@@ -123,7 +123,6 @@ public abstract class DtmfBuffer extends AbstractSink implements DtmfDetector, S
                     return;
                 }
 
-                System.out.println("Send DTMF " + eventId);
                 DtmfEvent dtmfEvent = new DtmfEvent(this, eventId);
                 super.sendEvent(dtmfEvent);
 

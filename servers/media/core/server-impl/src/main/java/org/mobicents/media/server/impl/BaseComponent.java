@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.jboss.util.id.UID;
 import org.mobicents.media.Component;
+import org.mobicents.media.server.ConnectionImpl;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -111,7 +112,24 @@ public abstract class BaseComponent implements Component {
     
     @Override
     public String toString() {
-        return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
+        StringBuffer buffer = new StringBuffer();
+        
+        buffer.append(getName());
+        buffer.append(" (endpoint=");
+        
+        if (getEndpoint() != null) {
+            buffer.append(getEndpoint().getLocalName());
+        } else {
+            buffer.append("unknown");
+        }
+                
+        if (getConnection() != null) {
+            buffer.append(", connection=");
+            buffer.append(((ConnectionImpl)getConnection()).getIndex());
+        } 
+        buffer.append(")");
+        
+        return buffer.toString();
     }
     
     public void resetStats() {

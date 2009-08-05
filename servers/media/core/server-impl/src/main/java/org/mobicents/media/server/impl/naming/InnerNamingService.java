@@ -77,8 +77,7 @@ public class InnerNamingService implements NamingService {
 			enp.setLocalName(name);
 			enp.setTimer(factory.getTimer());
 			enp.setRtpFactory(factory.getRtpFactory());
-			enp.setRxChannelFactory(factory.getRxChannelFactory());
-			enp.setTxChannelFactory(factory.getTxChannelFactory());
+                        enp.setConnectionFactory(factory.getConnectionFactory());
 			enp.setSourceFactory(factory.getSourceFactory());
 			enp.setSinkFactory(factory.getSinkFactory());
 			try {

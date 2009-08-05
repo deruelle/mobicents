@@ -53,13 +53,11 @@ public class Rfc2833DetectorImpl extends DtmfBuffer implements DtmfDetector {
     }
 
     public void onMediaTransfer(Buffer buffer) throws IOException {
-        System.out.println("Receive " + buffer);
         byte[] data = (byte[]) buffer.getData();
         int offset = buffer.getOffset();
         
         String digit = TONE[data[offset]];
         double v = data[offset + 1] & 0x3F;
-        System.out.println("Digit =" + digit + ", vol=" + v +", reguired=" + volume);
         if (v >= Math.abs(volume)) {
             push(digit);
         }

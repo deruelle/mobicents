@@ -29,6 +29,7 @@ package org.mobicents.media.server.impl.resource.audio;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  * 
@@ -56,7 +57,7 @@ public class RecorderFactory implements ComponentFactory {
         this.recordDir = recordDir;
     }
 
-    public Component newInstance(Endpoint endpoint) {
+    public Component newInstance(Endpoint endpoint)  throws ResourceUnavailableException {
         RecorderImpl p = new RecorderImpl(this.name);
         p.setEndpoint(endpoint);
         if (recordDir != null) {

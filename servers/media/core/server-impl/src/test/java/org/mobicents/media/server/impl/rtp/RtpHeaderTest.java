@@ -190,7 +190,6 @@ public class RtpHeaderTest {
         assertEquals(2072, h2.getSeqNumber());
         assertEquals(2770325173L, h2.getTimestamp());
         assertEquals(1463638458L, h2.getSsrc());
-        System.out.println(h.getSsrc());
     }
     
     @AfterClass

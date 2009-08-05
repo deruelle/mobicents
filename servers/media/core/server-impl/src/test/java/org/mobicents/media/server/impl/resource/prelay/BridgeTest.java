@@ -15,9 +15,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Utils;
+import org.mobicents.media.server.ConnectionFactory;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.clock.TimerImpl;
-import org.mobicents.media.server.impl.resource.cnf.ConferenceSourceFactory;
 import org.mobicents.media.server.impl.resource.fft.AnalyzerFactory;
 import org.mobicents.media.server.impl.resource.fft.SpectrumEvent;
 import org.mobicents.media.server.impl.resource.test.SineGeneratorFactory;
@@ -45,9 +45,9 @@ public class BridgeTest {
     private SineGeneratorFactory g1,  g2;
     private AnalyzerFactory a1,  a2;
     private ArrayList<double[]> s1,  s2;
-    private PacketRelaySourceFactory prSourceFactory;
-    private PacketRelaySinkFactory prSinkFactory;
     private ChannelFactory channelFactory;
+    private BridgeFactory packetRelayFactory;
+    
     private Semaphore semaphore;
     private boolean res;
     
@@ -72,15 +72,13 @@ public class BridgeTest {
 
         timer = new TimerImpl();
 
-        prSourceFactory = new PacketRelaySourceFactory();
-        prSourceFactory.setName("pr-source");
-
-        prSinkFactory = new PacketRelaySinkFactory();
-        prSinkFactory.setName("pr-sink");
-
         channelFactory = new ChannelFactory();
         channelFactory.start();
 
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setRxChannelFactory(channelFactory);
+        connectionFactory.setTxChannelFactory(channelFactory);
+        
         a1 = new AnalyzerFactory();
         a1.setName("a1");
 
@@ -108,14 +106,10 @@ public class BridgeTest {
 
         cnf.setTimer(timer);
 
-        e1.setRxChannelFactory(channelFactory);
-        e1.setTxChannelFactory(channelFactory);
+        e1.setConnectionFactory(connectionFactory);
+        e2.setConnectionFactory(connectionFactory);
 
-        e2.setRxChannelFactory(channelFactory);
-        e2.setTxChannelFactory(channelFactory);
-
-        cnf.setTxChannelFactory(channelFactory);
-        cnf.setRxChannelFactory(channelFactory);
+        cnf.setConnectionFactory(connectionFactory);
 
         e1.setSourceFactory(g1);
         e2.setSourceFactory(g2);
@@ -123,8 +117,9 @@ public class BridgeTest {
         e1.setSinkFactory(a1);
         e2.setSinkFactory(a2);
         
-        cnf.setSourceFactory(prSourceFactory);
-        cnf.setSinkFactory(prSinkFactory);
+        packetRelayFactory = new BridgeFactory();
+        packetRelayFactory.setName("Packet-Relay");
+        cnf.setGroupFactory(packetRelayFactory);
 
         e1.start();
         e2.start();

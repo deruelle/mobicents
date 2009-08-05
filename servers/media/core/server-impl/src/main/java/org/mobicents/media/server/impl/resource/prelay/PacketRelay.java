@@ -24,8 +24,9 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.resource;
+package org.mobicents.media.server.impl.resource.prelay;
 
+import org.mobicents.media.server.impl.resource.*;
 import java.io.IOException;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
@@ -41,26 +42,19 @@ import org.mobicents.media.server.impl.BaseComponent;
  *
  * @author kulikov
  */
-public class Proxy extends BaseComponent implements Inlet, Outlet {
+public class PacketRelay extends BaseComponent implements Inlet, Outlet {
 
+    private final static Format[] FORMATS = new Format[]{Format.ANY};
+    
     private Input input;
     private Output output;
     
-    private Format[] formats;
     private Buffer buff;
     
-    public Proxy(String name) {
+    public PacketRelay(String name) {
         super(name);
         input = new Input(name);
         output = new Output(name);
-    }
-    
-    public Format[] getFormats() {
-        return formats;
-    }
-    
-    public void setFormat(Format[] formats) {
-        this.formats = formats;
     }
     
     public void start() {
@@ -110,8 +104,8 @@ public class Proxy extends BaseComponent implements Inlet, Outlet {
             output.run();
         }
 
-        public Format[] getFormats() {
-            return formats != null ? formats : output.getOtherPartyFormats();
+        public Format[] getFormats() {            
+            return output.isConnected() ? output.getOtherPartyFormats() : FORMATS;
         }
         
         public Format[] getOtherPartyFormats() {
@@ -119,8 +113,9 @@ public class Proxy extends BaseComponent implements Inlet, Outlet {
         }
 
         public boolean isAcceptable(Format format) {
-            if (formats != null) {
-                for (Format fmt: formats) {
+            Format[] fmts = getFormats();
+            if (fmts != null) {
+                for (Format fmt: fmts) {
                     if (fmt.matches(format)) {
                         return true;
                     }
@@ -159,7 +154,7 @@ public class Proxy extends BaseComponent implements Inlet, Outlet {
         }
         
         public Format[] getFormats() {
-            return formats != null? formats : input.getOtherPartyFormats();
+            return input.isConnected() ? input.getOtherPartyFormats() : new Format[0];
         }
      
     }

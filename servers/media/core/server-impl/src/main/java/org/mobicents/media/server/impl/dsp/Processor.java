@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.mobicents.media.Buffer;
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
@@ -76,6 +77,24 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         return output;
     }
 
+    public void connect(MediaSource source) {
+        input.connect(source);
+    }
+
+    public void disconnect(MediaSource source) {
+        input.disconnect(source);
+    }
+
+
+    public void connect(MediaSink sink) {
+        output.connect(sink);
+    }
+
+    public void disconnect(MediaSink sink) {
+        output.disconnect(sink);
+    }
+
+    
     /**
      * (Non Java-doc.)
      * 
@@ -319,6 +338,5 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             return "Processor.Output[" + getName() + "]";
         }
     }
-
 
 }

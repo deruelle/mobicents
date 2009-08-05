@@ -7,7 +7,7 @@ package org.mobicents.media.server.impl.resource.echo;
 
 import org.mobicents.media.server.*;
 import java.net.URL;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +22,6 @@ import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.TimerImpl;
-import org.mobicents.media.server.impl.resource.audio.AudioPlayerEvent;
 import org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.resource.ChannelFactory;
@@ -47,8 +46,7 @@ public class EchoTest {
     private AudioPlayerFactory playerFactory;
     private TestSinkFactory sinkFactory;
     
-    private EchoSinkFactory echoSinkFactory;
-    private EchoSourceFactory echoSourceFactory;
+    private EchoFactory echoFactory;
     
     private ChannelFactory channelFactory;
     
@@ -76,14 +74,15 @@ public class EchoTest {
         
         sinkFactory = new TestSinkFactory();
         
-        echoSinkFactory = new EchoSinkFactory();
-        echoSinkFactory.setName("echo.sink");
-        
-        echoSourceFactory = new EchoSourceFactory();
-        echoSourceFactory.setName("echo.source");
+        echoFactory = new EchoFactory();
+        echoFactory.setName("echo");
         
         channelFactory = new ChannelFactory();
         channelFactory.start();
+        
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setRxChannelFactory(channelFactory);
+        connectionFactory.setTxChannelFactory(channelFactory);
         
         transmittor = new EndpointImpl("test/announcement/sender");
         transmittor.setTimer(timer);
@@ -91,20 +90,15 @@ public class EchoTest {
         transmittor.setSourceFactory(playerFactory);
         transmittor.setSinkFactory(sinkFactory);
         
-        transmittor.setTxChannelFactory(channelFactory);
-        transmittor.setRxChannelFactory(channelFactory);
-        
+        transmittor.setConnectionFactory(connectionFactory);
         transmittor.start();
         
         echo = new EndpointImpl("test/announcement/receiver");
         echo.setTimer(timer);
         
-        echo.setSourceFactory(echoSourceFactory);
-        echo.setSinkFactory(echoSinkFactory);
+        echo.setGroupFactory(echoFactory);
         
-        echo.setRxChannelFactory(channelFactory);
-        echo.setTxChannelFactory(channelFactory);
-        
+        echo.setConnectionFactory(connectionFactory);
         echo.start();        
     }
 
@@ -131,7 +125,7 @@ public class EchoTest {
         player.start();
 
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
-        assertEquals(150, count);
+        assertTrue("Expected other number of packets", Math.abs(150 - count) < 10);
         
         assertEquals(true, echo.isInUse());
         assertEquals(true, transmittor.isInUse());

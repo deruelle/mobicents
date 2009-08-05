@@ -3,6 +3,7 @@ package org.mobicents.media.server.impl.resource.dtmf;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  * 
@@ -20,7 +21,7 @@ public class Rfc2833DetectorFactory implements ComponentFactory {
 		this.name = name;
 	}
 
-	public Component newInstance(Endpoint endpoint) {
+	public Component newInstance(Endpoint endpoint) throws ResourceUnavailableException {
 		Rfc2833DetectorImpl detector = new Rfc2833DetectorImpl(this.name);
 		detector.setEndpoint(endpoint);
 		return detector;

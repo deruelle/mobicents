@@ -29,16 +29,17 @@ package org.mobicents.media.server.impl.resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.AbstractSourceSet;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  * A Demultiplexer is a media processing component that takes an interleaved 
@@ -47,11 +48,10 @@ import org.mobicents.media.server.spi.Connection;
  * 
  * @author Oleg Kulikov
  */
-public class Demultiplexer extends AbstractSource implements Inlet {
+public class Demultiplexer extends AbstractSourceSet implements Inlet {
 
     private Format[] outputFormats = new Format[0];
     private Input input = null;
-    private Map<String, Output> branches = new ConcurrentHashMap<String, Output>();
     private Buffer buff;
 
     /**
@@ -73,25 +73,44 @@ public class Demultiplexer extends AbstractSource implements Inlet {
         return input;
     }
 
-    /**
-     * This method allows to access identifier from the inner source 
-     * and sink implemetation.
-     * 
-     * @return the unique identifer of this component.
-     */
-    private String getIdentifier() {
-        return getId();
+    public void connect(MediaSource source) {
+        input.connect(source);
     }
 
+    public void disconnect(MediaSource source) {
+        input.disconnect(source);
+    }
+
+    @Override
+    public AbstractSource createSource(MediaSink otherParty) {
+        Output output = new Output(getName() + "[output]");
+        output.setEndpoint(getEndpoint());
+        output.setConnection(getConnection());
+        return output;
+    }
+    
     @Override
     public void setConnection(Connection connection) {
         super.setConnection(connection);
         input.setConnection(connection);
-        for (Output out : branches.values()) {
-            out.setConnection(connection);
+        
+        Collection<AbstractSource> list = getStreams();
+        for (AbstractSource stream : list) {
+            stream.setConnection(connection);
         }
     }
 
+    @Override
+    public void setEndpoint(Endpoint endpoint) {
+        super.setEndpoint(endpoint);
+        input.setEndpoint(endpoint);
+        
+        Collection<AbstractSource> list = getStreams();
+        for (AbstractSource stream : list) {
+            stream.setEndpoint(endpoint);
+        }
+    }
+    
     /**
      * (Non Java-doc).
      * 
@@ -101,35 +120,15 @@ public class Demultiplexer extends AbstractSource implements Inlet {
         return input.getOtherPartyFormats();
     }
 
-    @Override
-    public void connect(MediaSink sink) {
-        Output out = new Output(getName());
-        out.setConnection(getConnection());
-        branches.put(sink.getId(), out);
-        out.connect(sink);
-    }
-
-    @Override
-    public void disconnect(MediaSink sink) {
-        //remove reference from the branches list
-        Output out = (Output) branches.remove(sink.getId());
-        //disconnect and clean references to the removed output      
-        if (out != null) {
-            out.disconnect(sink);
-            out.setConnection(null);
-            out.setEndpoint(null);
-        }
-    }
-
     /**
      * Reassemblies the list of used formats. This method is called each time
      * when connected/disconnected source
      */
     private void reassemblyFormats() {
         ArrayList list = new ArrayList();
-        Collection<Output> outputs = branches.values();
-        for (Output output : outputs) {
-            Format[] fmts = output.getOtherPartyFormats();
+        Collection<AbstractSource> streams = getStreams();
+        for (AbstractSource stream : streams) {
+            Format[] fmts = ((Output)stream).getOtherPartyFormats();
             for (Format format : fmts) {
                 if (!list.contains(format)) {
                     list.add(format);
@@ -139,20 +138,6 @@ public class Demultiplexer extends AbstractSource implements Inlet {
 
         outputFormats = new Format[list.size()];
         list.toArray(outputFormats);
-    }
-
-    @Override
-    public void evolve(Buffer buffer, long sequenceNumber) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * Returns the number of outputs.
-     * 
-     * @return the number of active outputs.
-     */
-    public int getBranchCount() {
-        return branches.size();
     }
 
     @Override
@@ -176,7 +161,7 @@ public class Demultiplexer extends AbstractSource implements Inlet {
          * The name of the demultiplxer.
          */
         public Input(String name) {
-            super("input." + name);
+            super(name + "[input]");
         }
 
         /**
@@ -185,11 +170,9 @@ public class Demultiplexer extends AbstractSource implements Inlet {
          * @see org.mobicents.media.MediaSink#isAcceptable(org.mobicents.media.Format) 
          */
         public boolean isAcceptable(Format fmt) {
-            Collection<Output> list = branches.values();
-            for (Output output : list) {
-                if (output.isAcceptable(fmt)) {
-                    return true;
-                }
+            Collection<AbstractSource> streams = getStreams();
+            for (AbstractSource stream : streams) {
+                if (((Output)stream).isAcceptable(fmt)) return true;
             }
             return false;
         }
@@ -211,9 +194,9 @@ public class Demultiplexer extends AbstractSource implements Inlet {
          */
         public void onMediaTransfer(Buffer buffer) throws IOException {
             buff = buffer;
-            Collection<Output> streams = branches.values();
-            for (Output output : streams) {
-                output.run();
+            Collection<AbstractSource> streams = getStreams();
+            for (AbstractSource stream : streams) {
+                ((Output) stream).run();
             }
             buffer.dispose();
         }
@@ -235,12 +218,7 @@ public class Demultiplexer extends AbstractSource implements Inlet {
     private class Output extends AbstractSource {
 
         public Output(String parent) {
-            super("output." + parent);
-        }
-
-        @Override
-        public String getId() {
-            return getIdentifier();
+            super(parent);
         }
 
         @Override
@@ -284,4 +262,14 @@ public class Demultiplexer extends AbstractSource implements Inlet {
             buffer.copy(buff);
         }
     }
+
+    @Override
+    public void evolve(Buffer buffer, long sequenceNumber) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void destroySource(AbstractSource source) {
+    }
+
 }

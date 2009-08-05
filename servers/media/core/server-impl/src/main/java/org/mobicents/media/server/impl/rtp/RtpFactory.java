@@ -114,7 +114,6 @@ public class RtpFactory {
     }
 
     public void stop() {
-        System.out.println("++++++ !!!!!! STOPED RTPFACTORY ");
         transceiver.stop();
     }
 
@@ -207,7 +206,7 @@ public class RtpFactory {
      * @throws StunException
      * @throws IOException
      */
-    public RtpSocket getRTPSocket() throws SocketException, IOException, StunException {
+    public RtpSocket getRTPSocket() {
         RtpSocket rtpSocket = new RtpSocket(transceiver, timer, formatMap, this);
         return rtpSocket;
     }

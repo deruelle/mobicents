@@ -24,37 +24,36 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.resource.cnf;
+package org.mobicents.media.server.impl;
 
-import org.mobicents.media.Component;
-import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.EndpointImpl;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.Inlet;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.SourceSet;
 
 /**
  *
  * @author kulikov
  */
-public class ConferenceSinkFactory implements ComponentFactory {
+public abstract class AbstractInlet extends BaseComponent implements Inlet {
 
-    private String name;
-
-    public String getName() {
-        return name;
+    public AbstractInlet(String name) {
+        super(name);
+    }
+    
+    public void connect(MediaSource source) {
+        source.connect(this);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void disconnect(MediaSource source) {
+        source.disconnect(this);
     }
-        
-    public Component newInstance(Endpoint endpoint) {
-        CnfLocalSource source = (CnfLocalSource) ((EndpointImpl)endpoint).getSource();
-        if (source != null) {
-            return source.getBridge().getSink();
-        } else {
-            ConferenceBridge bridge = new ConferenceBridge(endpoint, name);
-            return bridge.getSink();
-        }
+
+    public void connect(SourceSet source) {
+        source.connect(this);
+    }
+
+    public void disconnect(SourceSet source) {
+        source.disconnect(this);
     }
 
 }

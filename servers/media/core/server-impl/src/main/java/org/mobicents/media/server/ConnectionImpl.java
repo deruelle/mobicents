@@ -138,7 +138,6 @@ public abstract class ConnectionImpl implements Connection {
 
 
     public void addListener(ConnectionListener listener) {
-        System.out.println("ADDED LISTENER" + listener);
         this.connectionListeners.put(listener, listener);
     }
 
@@ -179,5 +178,5 @@ public abstract class ConnectionImpl implements Connection {
        txChannel = null;
        
         setState(ConnectionState.CLOSED);
-    }
+    }    
 }

@@ -29,6 +29,7 @@ package org.mobicents.media.server.impl.resource.audio;
 
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  *
@@ -45,7 +46,7 @@ public class AudioPlayerFactory implements ComponentFactory {
         this.name = name;
     }
         
-    public AudioPlayerImpl newInstance(Endpoint endpoint) {
+    public AudioPlayerImpl newInstance(Endpoint endpoint) throws ResourceUnavailableException {
         AudioPlayerImpl p = new AudioPlayerImpl(name, endpoint.getTimer());
         p.setEndpoint(endpoint);
         return p;

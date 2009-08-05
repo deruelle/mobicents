@@ -9,7 +9,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +23,7 @@ import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.ConnectionFactory;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
@@ -33,8 +33,6 @@ import org.mobicents.media.server.impl.dsp.audio.g711.alaw.DecoderFactory;
 import org.mobicents.media.server.impl.dsp.audio.g711.alaw.EncoderFactory;
 import org.mobicents.media.server.impl.resource.DemuxFactory;
 import org.mobicents.media.server.impl.resource.audio.RecorderFactory;
-import org.mobicents.media.server.impl.resource.fft.AnalyzerFactory;
-import org.mobicents.media.server.impl.resource.test.SineGeneratorFactory;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.resource.ChannelFactory;
@@ -58,14 +56,10 @@ public class DtmfTransitionTest {
     
     private EndpointImpl sender,  receiver;
     private EndpointImpl packetRelayEnp;
-    
-    private PacketRelaySourceFactory prSourceFactory;
-    private PacketRelaySinkFactory prSinkFactory;
+
+    private BridgeFactory packetRelayFactory;
     private ChannelFactory prChannelFactory;
-    
-//    private ChannelFactory senderChannelFactory;
-//    private ChannelFactory receiverChannelFactory;
-    
+        
     private Semaphore semaphore;
 
     private DspFactory dspFactory;
@@ -101,6 +95,8 @@ public class DtmfTransitionTest {
 
     @After
     public void tearDown() {
+        rtpFactory1.stop();
+        rtpFactory2.stop();
     }
 
     private void setupRTP() throws Exception {
@@ -163,7 +159,11 @@ public class DtmfTransitionTest {
         // creating transparent channels
         ChannelFactory senderChannelFactory = new ChannelFactory();
         senderChannelFactory.start();
-        sender.setTxChannelFactory(senderChannelFactory);
+        
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setTxChannelFactory(senderChannelFactory);
+        
+        sender.setConnectionFactory(connectionFactory);
 
         // creating source
         TestSourceFactory genFactory = new TestSourceFactory();
@@ -219,6 +219,9 @@ public class DtmfTransitionTest {
         rxChannFact.setComponents(componentsIVR);
         rxChannFact.setPipes(pipes);
 
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setRxChannelFactory(rxChannFact);
+        
         // Create RecorderFactory - sink for endpoint
         RecorderFactory recFact = new RecorderFactory();
         recFact.setName("RecorderFactory");
@@ -227,7 +230,7 @@ public class DtmfTransitionTest {
         receiver.setSinkFactory(recFact);
 
         receiver.setTimer(timer);
-        receiver.setRxChannelFactory(rxChannFact);
+        receiver.setConnectionFactory(connectionFactory);
 
         // start IVREndpoint
         receiver.start();
@@ -258,20 +261,19 @@ public class DtmfTransitionTest {
         prChannelFactory.setComponents(components);
         prChannelFactory.setPipes(pipes);
 
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setTxChannelFactory(prChannelFactory);
+        connectionFactory.setRxChannelFactory(prChannelFactory);
+        
         // configuring Packet relay endpoint
-        prSourceFactory = new PacketRelaySourceFactory();
-        prSourceFactory.setName("pr-source");
-
-        prSinkFactory = new PacketRelaySinkFactory();
-        prSinkFactory.setName("pr-sink");
+        packetRelayFactory = new BridgeFactory();
+        packetRelayFactory.setName("Packet-Relay");
 
         packetRelayEnp = new EndpointImpl("/pr/test/cnf");
-        packetRelayEnp.setSourceFactory(prSourceFactory);
-        packetRelayEnp.setSinkFactory(prSinkFactory);
-
+        packetRelayEnp.setGroupFactory(packetRelayFactory);
+        
         packetRelayEnp.setTimer(timer);
-        packetRelayEnp.setTxChannelFactory(prChannelFactory);
-        packetRelayEnp.setRxChannelFactory(prChannelFactory);
+        packetRelayEnp.setConnectionFactory(connectionFactory);
         packetRelayEnp.setRtpFactory(rtpFactories2);
 
         // strating packet relay endpoint
@@ -280,10 +282,10 @@ public class DtmfTransitionTest {
     /**
      * Test of getSink method, of class Bridge.
      */
-    // @Test
+//    @Test
     public void testSimpleTransmission() throws Exception {
-        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_RECV);
-        Connection rxConnection = receiver.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_ONLY);
+        Connection rxConnection = receiver.createLocalConnection(ConnectionMode.RECV_ONLY);
 
         Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.RECV_ONLY);
         Connection txC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_ONLY);
@@ -292,6 +294,8 @@ public class DtmfTransitionTest {
         txC.setOtherParty(rxConnection);
 
         MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
+        MediaSink det1 = (MediaSink) rxConnection.getComponent("test-sink", Connection.CHANNEL_RX);
+        det1.start();
         gen1.start();
 
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
@@ -320,6 +324,8 @@ public class DtmfTransitionTest {
         txC.setOtherParty(rxConnection);
 
         MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
+        MediaSink det1 = (MediaSink) rxConnection.getComponent("test-sink", Connection.CHANNEL_RX);
+        det1.start();
         gen1.start();
 
         semaphore.tryAcquire(2, TimeUnit.SECONDS);
@@ -339,7 +345,6 @@ public class DtmfTransitionTest {
             list.clear();
             runRtpTransmission();
             assertEquals(false, list.isEmpty());
-            System.out.println("Pass...." + i);
         }
     }
 
@@ -379,62 +384,25 @@ public class DtmfTransitionTest {
 
     private class TestSource extends AbstractSource implements Runnable {
 
-        private int seq;
-        private Timer timer;
-        private ScheduledFuture worker;
-
         public TestSource(String name, Timer timer) {
             super(name);
-            this.timer = timer;
-        }
-
-        public void start() {
-            // worker = timer.synchronize(this);
-            run();
-            run();
-            run();
-            run();
-        }
-
-        public void stop() {
-            // worker.cancel(true);
+            setSyncSource(timer);
         }
 
         public Format[] getFormats() {
             return new Format[]{AVProfile.DTMF, AVProfile.SPEEX};
         }
 
-        public void run() {
-            Buffer buffer = new Buffer();
-            buffer.setSequenceNumber(seq++);
+
+        @Override
+        public void evolve(Buffer buffer, long sequenceNumber) {
+            buffer.setSequenceNumber(sequenceNumber);
             buffer.setDuration(20);
-            buffer.setTimeStamp(seq * 20);
+            buffer.setTimeStamp(sequenceNumber * 20);
             buffer.setFormat(AVProfile.DTMF);
             buffer.setData(new byte[320]);
             buffer.setLength(4);
             buffer.setOffset(0);
-            if (otherParty != null) {
-                System.out.println("Sending to " + otherParty);
-                try {
-                    otherParty.receive(buffer);
-                } catch (Exception e) {
-                }
-            }
-        }
-
-        @Override
-        public void connect(MediaSink otherParty) {
-            super.connect(otherParty);
-        }
-
-        @Override
-        public void disconnect(MediaSink otherParty) {
-            super.disconnect(otherParty);
-        }
-
-        @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
-            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 
@@ -445,21 +413,16 @@ public class DtmfTransitionTest {
         }
 
         public Format[] getFormats() {
-            return new Format[]{AVProfile.DTMF, AVProfile.SPEEX, AVProfile.PCMA};
+            return new Format[]{AVProfile.DTMF};
         }
 
         public boolean isAcceptable(Format format) {
-//			System.out.println("testSing format = "+ format);
             return format.matches(AVProfile.DTMF);
-        }
-
-        public void receive(Buffer buffer) {
-            list.add(buffer);
         }
 
         @Override
         public void onMediaTransfer(Buffer buffer) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            list.add(buffer);
         }
     }
 }

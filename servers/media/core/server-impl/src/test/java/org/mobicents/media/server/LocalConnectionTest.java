@@ -58,11 +58,15 @@ public class LocalConnectionTest {
         channelFactory = new ChannelFactory();
         channelFactory.start();
         
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setRxChannelFactory(channelFactory);
+        connectionFactory.setTxChannelFactory(channelFactory);
+        
         sender = new EndpointImpl("test/announcement/sender");
         sender.setTimer(timer);
         
         sender.setSourceFactory(sourceFactory);
-        sender.setTxChannelFactory(channelFactory);
+        sender.setConnectionFactory(connectionFactory);
         
         sender.start();
         
@@ -70,7 +74,7 @@ public class LocalConnectionTest {
         receiver.setTimer(timer);
         
         receiver.setSinkFactory(sinkFactory);
-        receiver.setRxChannelFactory(channelFactory);
+        receiver.setConnectionFactory(connectionFactory);
         
         receiver.start();        
     }

@@ -56,7 +56,10 @@ public class TransmissionTesterTest {
 
     @Test
     public void testFailure() {
-        tester.start();
+        try {
+            tester.start();
+        } catch (Exception e) {
+        }
         assertFalse("Test passed", tester.isPassed());
     }
 

@@ -37,15 +37,16 @@ import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.resource.audio.EndpointTransmittor;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.resource.ChannelFactory;
-import org.mobicents.media.server.resource.UnknownComponentException;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.ResourceGroup;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
@@ -61,13 +62,15 @@ public class EndpointImpl implements Endpoint {
     private Timer timer;
     private ComponentFactory sourceFactory;
     private ComponentFactory sinkFactory;
+    private ComponentFactory groupFactory;
     
-    private ChannelFactory rxChannelFactory;
-    private ChannelFactory txChannelFactory;
+    private ConnectionFactory connectionFactory;
     
     private Hashtable<String, RtpFactory> rtpFactory;
     private MediaSource source;
     private MediaSink sink;
+    
+    private ResourceGroup resourceGroup;
     
     /** The list of indexes available for connection enumeration within endpoint */
     private ArrayList<Integer> index = new ArrayList();
@@ -78,8 +81,8 @@ public class EndpointImpl implements Endpoint {
     protected ReentrantLock state = new ReentrantLock();
     
     private SdpFactory sdpFactory = SdpFactory.getInstance();
-    
-    private static final Logger logger = Logger.getLogger(EndpointImpl.class);
+    private HashMap <String, EndpointTransmittor> transmittors = new HashMap();
+    private final Logger logger = Logger.getLogger(EndpointImpl.class);
 
     public EndpointImpl() {
     }
@@ -120,11 +123,22 @@ public class EndpointImpl implements Endpoint {
     public void start() throws ResourceUnavailableException {
         if (sourceFactory != null) {
             source = (MediaSource) sourceFactory.newInstance(this);
-        }
-        if (sinkFactory != null) {
-            sink = (MediaSink) sinkFactory.newInstance(this);
+            source.setEndpoint(this);
         }
         
+        if (sinkFactory != null) {
+            sink = (MediaSink) sinkFactory.newInstance(this);
+            sink.setEndpoint(this);
+        }
+        
+        if (groupFactory != null) {
+            resourceGroup = (ResourceGroup) groupFactory.newInstance(this);
+            sink = resourceGroup.getSink();
+            sink.setEndpoint(this);
+            
+            source = resourceGroup.getSource();
+            source.setEndpoint(this);
+        }
         logger.info("Started " + localName);
     }
 
@@ -160,14 +174,22 @@ public class EndpointImpl implements Endpoint {
         return sinkFactory;
     }
 
-    public ChannelFactory getRxChannelFactory() {
-        return rxChannelFactory;
-    }
-
-    public void setRxChannelFactory(ChannelFactory rxChannelFactory) {
-        this.rxChannelFactory = rxChannelFactory;
+    public ComponentFactory getGroupFactory() {
+        return groupFactory;
     }
     
+    public void setGroupFactory(ComponentFactory groupFactory) {
+        this.groupFactory = groupFactory;
+    }
+    
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+    
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+        
     public void setRtpFactory(Hashtable<String, RtpFactory> rtpFactory) {
         this.rtpFactory = rtpFactory;
     }
@@ -177,19 +199,14 @@ public class EndpointImpl implements Endpoint {
     }
     
 
-    public ChannelFactory getTxChannelFactory() {
-        return txChannelFactory;
-    }
-
-    public void setTxChannelFactory(ChannelFactory txChannelFactory) {
-        this.txChannelFactory = txChannelFactory;
-    }
-
-    protected Channel createRxChannel(Connection connection) throws UnknownComponentException {
+    protected Channel createRxChannel(Connection connection) throws ResourceUnavailableException {
+        ChannelFactory rxChannelFactory = connectionFactory.getRxChannelFactory();
         if (rxChannelFactory != null && sink != null) {
             Channel rxChannel = rxChannelFactory.newInstance(this);
             rxChannel.setConnection(connection);
+            rxChannel.setEndpoint(this);
             rxChannel.connect(sink);
+//            rxChannel.connect(rxLocalChannel);
             sink.start();
             return rxChannel;
         } else return null;
@@ -199,23 +216,47 @@ public class EndpointImpl implements Endpoint {
         if (channel != null && sink != null) {
             channel.disconnect(sink);
             channel.setConnection(null);
+            channel.setEndpoint(null);
+            ChannelFactory rxChannelFactory = connectionFactory.getRxChannelFactory();
             rxChannelFactory.release(channel);
         }
     }
 
-    protected Channel createTxChannel(Connection connection) throws UnknownComponentException {
+    protected Channel createTxChannel(Connection connection) throws ResourceUnavailableException {
+        ChannelFactory txChannelFactory = connectionFactory.getTxChannelFactory();
         if (txChannelFactory != null && source != null) {
-            Channel txChannel = txChannelFactory.newInstance(this);
+            Channel txChannel = txChannelFactory.newInstance(this);  
+            txChannel.setEndpoint(this);
             txChannel.setConnection(connection);
-            txChannel.connect(source);
+            
+            EndpointTransmittor transmittor = new EndpointTransmittor("Endpoint[output]", getTimer());
+            transmittor.setEndpoint(this);
+            transmittor.setConnection(connection);
+            
+            transmittor.getInput().connect(source);         
+            txChannel.connect(transmittor.getOutput());
+            
+            transmittor.start();
+            transmittors.put(connection.getId(), transmittor);
+  
+//            txChannel.connect(source);
             return txChannel;
         } else return null;
     }
 
     protected void releaseTxChannel(Channel channel) {
         if (channel != null && source != null) {
-            channel.disconnect(source);
+            
+            EndpointTransmittor transmittor = transmittors.remove(channel.getConnection().getId());
+            transmittor.stop();
+            
+            transmittor.getInput().disconnect(source);         
+            channel.disconnect(transmittor.getOutput());
+  
             channel.setConnection(null);
+            channel.setEndpoint(null);
+            
+            ChannelFactory txChannelFactory = connectionFactory.getTxChannelFactory();
             txChannelFactory.release(channel);
         }
     }
@@ -227,6 +268,9 @@ public class EndpointImpl implements Endpoint {
     public Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
         state.lock();
         try {
+            if (logger.isDebugEnabled()) {
+                logger.debug(getLocalName() + ", creating RTP connection, mode=" + mode);
+            }
             RtpConnectionImpl connection = new RtpConnectionImpl(this, mode);
             connections.put(connection.getId(), connection);
             this.isInUse = true;
@@ -242,13 +286,15 @@ public class EndpointImpl implements Endpoint {
     public Connection createLocalConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
         state.lock();
         try {
+            if (logger.isDebugEnabled()) {
+                logger.debug(getLocalName() + ", creating Local connection, mode=" + mode);
+            }
             LocalConnectionImpl connection = new LocalConnectionImpl(this, mode);
             connections.put(connection.getId(), connection);
             this.isInUse = true;
             return connection;
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Could not create RTP connection", e);
+            logger.error("Could not create Local connection", e);
             throw new ResourceUnavailableException(e.getMessage());
         } finally {
             state.unlock();
@@ -260,6 +306,9 @@ public class EndpointImpl implements Endpoint {
         try {
             ConnectionImpl connection = (ConnectionImpl) connections.remove(connectionID);
             if (connection != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(getLocalName() + ", Deleting connection " + connection.getIndex());
+                }
                 connection.close();
                 index.add(connection.getIndex());
             }

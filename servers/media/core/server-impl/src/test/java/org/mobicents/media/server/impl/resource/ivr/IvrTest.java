@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.Format;
+import org.mobicents.media.server.ConnectionFactory;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.dsp.DspFactory;
@@ -172,6 +173,9 @@ public class IvrTest {
         rxChannFact.setComponents(components);
         rxChannFact.setPipes(pipes);
 
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setRxChannelFactory(rxChannFact);
+        
         // Create RecorderFactory - sink for endpoint
         recFact = new RecorderFactory();
         recFact.setName("RecorderFactory");
@@ -180,7 +184,7 @@ public class IvrTest {
         ivrEnp.setSinkFactory(recFact);
 
         ivrEnp.setTimer(timer);
-        ivrEnp.setRxChannelFactory(rxChannFact);
+        ivrEnp.setConnectionFactory(connectionFactory);
         ivrEnp.setRtpFactory(rtpFactories1);
 
         // start IVREndpoint
@@ -229,6 +233,10 @@ public class IvrTest {
         channelFactory.setComponents(annConponents);
         channelFactory.setPipes(annPipes);
 
+        ConnectionFactory connectionFactory1 = new ConnectionFactory();
+        connectionFactory1.setTxChannelFactory(channelFactory);
+        connectionFactory1.setRxChannelFactory(channelFactory);
+        
         // creating source
         AudioPlayerFactory genFactory = new AudioPlayerFactory();
         genFactory.setName("test-source");
@@ -236,8 +244,7 @@ public class IvrTest {
         // configuring sender
         sender = new EndpointImpl("/ivr/test/sender");
         sender.setTimer(timer);
-        sender.setTxChannelFactory(channelFactory);
-        sender.setRxChannelFactory(channelFactory);
+        sender.setConnectionFactory(connectionFactory1);
         sender.setSourceFactory(genFactory);
         sender.setRtpFactory(rtpFactories2);
         sender.start();
@@ -360,7 +367,6 @@ public class IvrTest {
         }
 
         public void update(NotifyEvent event) {
-            System.out.println("DTMF event: " + event.getEventID());
             if (event.getEventID() == eventId) {
                 receivedEvent = true;
             }

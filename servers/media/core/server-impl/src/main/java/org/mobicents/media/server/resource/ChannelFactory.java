@@ -38,6 +38,7 @@ import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  * Factory class for creating channels.
@@ -66,7 +67,7 @@ public class ChannelFactory {
      * @return
      * @throws org.mobicents.media.server.resource.UnknownComponentException
      */
-    public Channel newInstance(Endpoint endpoint) throws UnknownComponentException {
+    public Channel newInstance(Endpoint endpoint) throws  ResourceUnavailableException {
         if (!started) {
             throw new IllegalStateException("Factory is not started");
         }
@@ -83,7 +84,7 @@ public class ChannelFactory {
      * @return channel instance.
      * @throws org.mobicents.media.server.resource.UnknownComponentException
      */
-    private Channel createNewChannel(Endpoint endpoint) throws UnknownComponentException {
+    private Channel createNewChannel(Endpoint endpoint) throws ResourceUnavailableException {
         //creating components
         HashMap<String, MediaSource> sources = new HashMap<String, MediaSource>();
         HashMap<String, MediaSink> sinks = new HashMap<String, MediaSink>();
@@ -116,7 +117,11 @@ public class ChannelFactory {
         
         //creating pipes
         for (PipeFactory pipeFactory : pipes) {
-            pipeFactory.openPipe(channel);
+            try {
+                pipeFactory.openPipe(channel);
+            } catch (UnknownComponentException e) {
+                throw new ResourceUnavailableException(e);
+            }
         }
         
         return channel;

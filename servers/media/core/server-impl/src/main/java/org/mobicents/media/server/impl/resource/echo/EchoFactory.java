@@ -24,36 +24,31 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.resource.prelay;
+
+package org.mobicents.media.server.impl.resource.echo;
 
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author kulikov
  */
-public class PacketRelaySourceFactory implements ComponentFactory {
+public class EchoFactory implements ComponentFactory {
 
     private String name;
     
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+        
     public Component newInstance(Endpoint endpoint) {
-        PacketRelaySink sink = (PacketRelaySink) ((EndpointImpl)endpoint).getSink();
-        if (sink != null) {
-            return sink.getBridge().getSource();
-        } else {
-            Bridge bridge = new Bridge(endpoint);
-            return bridge.getSource();
-        }
+        return new Echo(name);
     }
+
 }

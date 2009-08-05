@@ -24,7 +24,6 @@ import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.TimerImpl;
-import org.mobicents.media.server.impl.resource.audio.AudioPlayerEvent;
 import org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
@@ -109,12 +108,16 @@ public class RtpConnectionDefaultFormatsTest {
         channelFactory = new ChannelFactory();
         channelFactory.start();
         
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setRxChannelFactory(channelFactory);
+        connectionFactory.setTxChannelFactory(channelFactory);
+        
         sender = new EndpointImpl("test/announcement/sender");
         sender.setTimer(timer);
         
         sender.setRtpFactory(rtpFactories1);
         sender.setSourceFactory(playerFactory);
-        sender.setTxChannelFactory(channelFactory);
+        sender.setConnectionFactory(connectionFactory);
         
         sender.start();
         
@@ -123,7 +126,7 @@ public class RtpConnectionDefaultFormatsTest {
         
         receiver.setRtpFactory(rtpFactories2);
         receiver.setSinkFactory(sinkFactory);
-        receiver.setRxChannelFactory(channelFactory);
+        receiver.setConnectionFactory(connectionFactory);
         
         receiver.start();        
     }
@@ -178,7 +181,7 @@ public class RtpConnectionDefaultFormatsTest {
     private class TestSinkFactory implements ComponentFactory {
 
         public Component newInstance(Endpoint endpoint) {
-            return new TestSink("test-sink");
+            return new TestSink("Tester[detector]");
         }
         
     }

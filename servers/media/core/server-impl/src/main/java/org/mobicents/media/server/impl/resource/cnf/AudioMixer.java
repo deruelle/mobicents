@@ -28,28 +28,30 @@ package org.mobicents.media.server.impl.resource.cnf;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.AbstractSinkSet;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class AudioMixer extends AbstractSink implements Outlet {
+public class AudioMixer extends AbstractSinkSet implements Outlet {
 
     protected final static AudioFormat LINEAR = new AudioFormat(
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN, 
             AudioFormat.SIGNED);
     protected final static Format[] formats = new Format[]{LINEAR};
-    private ConcurrentHashMap<MediaSource, MixerInputStream> inputs = new ConcurrentHashMap<MediaSource, MixerInputStream>();
     private int packetSize;
     private int packetPeriod = 20;
     private int jitter = 60;
@@ -86,47 +88,12 @@ public class AudioMixer extends AbstractSink implements Outlet {
     }
 
     /**
-     * Gets the numbers of input streams used for mixing.
-     * 
-     * @return the numbers of streams.
-     */
-    public int size() {
-        return inputs.size();
-    }
-
-    /**
      * (Non Java-doc.)
      * 
      * @see org.mobicents.media.Outlet#getOutput(). 
      */
     public MediaSource getOutput() {
         return mixerOutput;
-    }
-
-    @Override
-    public void connect(MediaSource stream) {
-        MixerInputStream input = new MixerInputStream(this, jitter);
-        inputs.put(stream, input);
-        input.connect(stream);
-        input.start();
-    }
-
-    @Override
-    public void disconnect(MediaSource stream) {
-        MixerInputStream input = (MixerInputStream) inputs.remove(stream);
-        if (input != null) {
-            input.stop();
-            input.disconnect(stream);
-        }
-    }
-
-    /**
-     * Gets the number of active input streams.
-     * 
-     * @return the number of active streams.
-     */
-    public int getInputCount() {
-        return inputs.size();
     }
 
     @Override
@@ -140,10 +107,26 @@ public class AudioMixer extends AbstractSink implements Outlet {
     }
 
     @Override
-    public String toString() {
-        return "AudioMixer[" + getName() + "]";
+    public void setEndpoint(Endpoint endpoint) {
+        super.setEndpoint(endpoint);
+        mixerOutput.setEndpoint(endpoint);
+        System.out.println("Set endpoint " + endpoint);
+        Collection<AbstractSink> streams = getStreams();
+        for (AbstractSink stream : streams) {
+            stream.setEndpoint(endpoint);
+        }
     }
 
+    @Override
+    public void setConnection(Connection connection) {
+        super.setConnection(connection);
+        mixerOutput.setConnection(connection);
+        Collection<AbstractSink> streams = getStreams();
+        for (AbstractSink stream : streams) {
+            stream.setConnection(connection);
+        }
+    }
+    
     /**
      * Converts inner byte representation of the signal into 
      * 16bit per sample array
@@ -229,11 +212,12 @@ public class AudioMixer extends AbstractSink implements Outlet {
      * @see org.mobicents.media.server.impl.AbstractSource#evolve(org.mobicents.media.Buffer, long). 
      */
     public void evolve(Buffer buffer, long seq) {
-        Collection<MixerInputStream> streams = inputs.values();
+        Collection<AbstractSink> streams = getStreams();
         ArrayList<byte[]> frames = new ArrayList();
-        for (MixerInputStream stream : streams) {
-            if (stream.isReady()) {
-                frames.add(stream.read(packetPeriod));
+        for (AbstractSink stream : streams) {
+            MixerInputStream input = (MixerInputStream) stream;
+            if (input.isReady()) {
+                frames.add(input.read(packetPeriod));
             }
         }
 
@@ -247,6 +231,8 @@ public class AudioMixer extends AbstractSink implements Outlet {
         buffer.setSequenceNumber(seq);
 
         buffer.setFormat(LINEAR);
+        buffer.setEOM(false);
+        buffer.setDiscard(false);
     }
 
     /**
@@ -274,4 +260,24 @@ public class AudioMixer extends AbstractSink implements Outlet {
     public Format[] getFormats() {
         return formats;
     }
+
+    public void connect(MediaSink sink) {
+        getOutput().connect(sink);
+    }
+
+    public void disconnect(MediaSink sink) {
+        getOutput().disconnect(sink);
+    }
+
+    @Override
+    public AbstractSink createSink(MediaSource otherParty) {
+                MixerInputStream input = new MixerInputStream(this, jitter);
+                return input;
+    }
+
+    @Override
+    public void destroySink(AbstractSink sink) {
+        ((MixerInputStream) sink).mixer = null;
+    }
+
 }

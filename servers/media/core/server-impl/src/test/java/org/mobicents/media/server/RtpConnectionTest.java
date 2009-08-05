@@ -89,12 +89,16 @@ public class RtpConnectionTest {
         channelFactory = new ChannelFactory();
         channelFactory.start();
 
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setRxChannelFactory(channelFactory);
+        connectionFactory.setTxChannelFactory(channelFactory);
+        
         sender = new EndpointImpl("test/announcement/sender");
         sender.setTimer(timer);
 
         sender.setRtpFactory(rtpFactories1);
         sender.setSourceFactory(sourceFactory);
-        sender.setTxChannelFactory(channelFactory);
+        sender.setConnectionFactory(connectionFactory);
 
         sender.start();
 
@@ -103,7 +107,7 @@ public class RtpConnectionTest {
 
         receiver.setRtpFactory(rtpFactories2);
         receiver.setSinkFactory(sinkFactory);
-        receiver.setRxChannelFactory(channelFactory);
+        receiver.setConnectionFactory(connectionFactory);
 
         receiver.start();
     }

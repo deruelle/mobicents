@@ -133,11 +133,9 @@ public class PlayerTest {
 			switch (event.getEventID()) {
 			case NotifyEvent.STARTED:
 				started = true;
-				System.out.println("The Player started");
 				break;
 			case NotifyEvent.STOPPED:
 				stopped = true;
-				System.out.println("The Player Stopped");
 				break;
 			case NotifyEvent.RX_FAILED:
 				completed = false;
@@ -145,7 +143,6 @@ public class PlayerTest {
 				semaphore.release();
 
 				FailureEventImpl failEvent = (FailureEventImpl) event;
-				System.out.println(failEvent.getException());
 				logger.error("Player failed " + failEvent.getException());
 				break;
 

@@ -25,19 +25,18 @@
  * Boston, MA  02110-1301  USA
  */
 
-
-package org.mobicents.media.server.impl.resource.prelay;
+package org.mobicents.media.server.impl.resource.cnf;
 
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  *
  * @author kulikov
  */
-public class PacketRelaySinkFactory implements ComponentFactory {
+public class CnfBridgeFactory implements ComponentFactory {
 
     private String name;
     
@@ -49,14 +48,8 @@ public class PacketRelaySinkFactory implements ComponentFactory {
         this.name = name;
     }
     
-    public Component newInstance(Endpoint endpoint) {
-        PacketRelaySource source = (PacketRelaySource) ((EndpointImpl)endpoint).getSource();
-        if (source != null) {
-            return source.getBridge().getSink();
-        } else {
-            Bridge bridge = new Bridge(endpoint);
-            return bridge.getSink();
-        }
+    public Component newInstance(Endpoint endpoint) throws ResourceUnavailableException {
+        return new ConferenceBridge(name);
     }
-    
+
 }

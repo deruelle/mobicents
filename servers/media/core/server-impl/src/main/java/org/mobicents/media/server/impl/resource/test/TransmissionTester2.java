@@ -94,6 +94,8 @@ public class TransmissionTester2 implements NotificationListener {
     
     @SuppressWarnings("static-access")
     public void start() {
+        s.clear();
+        
         det.start();
         gen.start();
         
@@ -131,12 +133,16 @@ public class TransmissionTester2 implements NotificationListener {
     private boolean verify(ArrayList<double[]> spectra, int[] F) {
         int errorCount = 0;
         if (spectra.size() == 0) {
-            msg = "Spectra not received";
+            msg = "Data not received";
             return false;
         }
         
         for (double[] ss : spectra) {            
             int[] ext = getFreq(ss);
+            if (ext.length == 0) {
+                msg = "Received silence [" + spectra.size() + " seconds]";
+                return false;
+            }
             boolean r = checkFreq(ext, F, FREQ_ERROR);
             if (!r) {
                 errorCount++;
@@ -165,7 +171,6 @@ public class TransmissionTester2 implements NotificationListener {
         for (int i = 0; i < len; i++) {
             ss[i] = s[i] / max;
             ss[i] = ss[i] < 0.7 ? 0 : ss[i];
-//            System.out.println(i + " " + ss[i]);
         }
 
         double[] diff = diff(ss);

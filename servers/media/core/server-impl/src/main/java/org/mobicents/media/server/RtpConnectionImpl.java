@@ -28,7 +28,6 @@ package org.mobicents.media.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,8 +40,8 @@ import javax.sdp.SdpException;
 import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 
-import net.java.stun4j.StunException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.resource.Demultiplexer;
@@ -72,6 +71,8 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
     private Multiplexer mux;
     private Format[] formats;
 
+    private final static Logger logger = Logger.getLogger(RtpConnectionImpl.class);
+    
     public RtpConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) throws ResourceUnavailableException {
         super(endpoint, mode);
         sdpFactory = endpoint.getSdpFactory();
@@ -79,34 +80,43 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         Hashtable<String, RtpFactory> factories = endpoint.getRtpFactory();
         Set<String> mediaTypes = factories.keySet();
 
+        //Creating RTP sockets for each media type
         for (String mediaType : mediaTypes) {
-            try {
-                rtpSockets.put(mediaType, factories.get(mediaType).getRTPSocket());
-            } catch (SocketException e) {
-                throw new ResourceUnavailableException(e);
-            } catch (IOException e) {
-                throw new ResourceUnavailableException(e);
-            } catch (StunException e) {
-                throw new ResourceUnavailableException(e);
+            RtpSocket rtpSocket = factories.get(mediaType).getRTPSocket();
+            
+            rtpSocket.getReceiveStream().setEndpoint(endpoint);
+            rtpSocket.getReceiveStream().setConnection(this);
+            
+            rtpSocket.getSendStream().setEndpoint(endpoint);
+            rtpSocket.getSendStream().setConnection(this);
+            
+            rtpSockets.put(mediaType, rtpSocket);
+            
+            if (logger.isDebugEnabled()) {
+                logger.debug("Endpoint=" + endpoint.getLocalName() + 
+                        ", index=" + getIndex() + ", allocated RTP socket[" + mediaType + "], RTP formats: " + rtpSocket.getRtpMap());
             }
         }
 
-        // create demux and join with txChannel
-        demux = new Demultiplexer("Demux[rtpCnnection=" + this.getId() + "]");
+        //Incoming data should be multiplexed into single stream
+        //Outgoing stream, up side down, have to be demultiplexed 
+        //and streamed by different RTP sockets
+        demux = new Demultiplexer("Demultiplexer[RTP]");
+        demux.setEndpoint(endpoint);
         demux.setConnection(this);
 
-        mux = new Multiplexer("Mux[rtpCnnection=" + this.getId() + "]");
+        mux = new Multiplexer("Multiplexer[RTP]");
+        mux.setEndpoint(endpoint);
         mux.setConnection(this);
 
-        // join demux and rtp sockets
+        // join multiplexer and rtp receive stream
         Collection<RtpSocket> sockets = rtpSockets.values();
         for (RtpSocket socket : sockets) {
             mux.connect(socket.getReceiveStream());
-//            demux.connect(socket.getSendStream());
             socket.setListener(this);
         }
 
-        //creating tx channel
+        //creating tx channel using endpoint's factory
         try {
             txChannel = endpoint.createTxChannel(this);
             rxChannel = endpoint.createRxChannel(this);
@@ -114,38 +124,59 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             throw new ResourceUnavailableException(e);
         }
 
-        //connect tx channel with Demultiplexer Input
-        //and demux will split data between rtp sockets
+        //checks connecttion mode and which channels were actualy created
+        if (mode == ConnectionMode.SEND_ONLY || mode == ConnectionMode.SEND_RECV) {
+            if (txChannel == null) {
+                throw new ResourceUnavailableException("Mode not supported");
+            }
+        }
+
+        if (mode == ConnectionMode.RECV_ONLY || mode == ConnectionMode.SEND_RECV) {
+            if (rxChannel == null) {
+                throw new ResourceUnavailableException("Mode not supported");
+            }
+        }
+        
+        //determine formats supported Endpoint        
+        //and connect channels with MUX/DEMUX
         Format[] rxFormats = new Format[0];
-        if (rxChannel != null && mode != ConnectionMode.SEND_ONLY) {
+        if (rxChannel != null) {
             rxFormats = rxChannel.getInputFormats();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Endpoint=" + endpoint.getLocalName() + 
+                        ", index=" + getIndex() + ", rx formats=[" + 
+                        getSupportedFormatList(rxFormats) + "]");
+            }
             rxChannel.connect(mux.getOutput());
         }
 
         Format[] txFormats = new Format[0];
         if (txChannel != null) {
             txFormats = txChannel.getOutputFormats();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Endpoint=" + endpoint.getLocalName() + 
+                        ", index=" + getIndex() + ", tx formats=[" + 
+                        getSupportedFormatList(txFormats) + "]");
+            }
             txChannel.connect(demux.getInput());
         }
 
+        //merge supported formats and create local descriptor
         formats = this.mergeFormats(rxFormats, txFormats);
-        /*        if (formats.length == 0) {
-        ArrayList<Format> list = new ArrayList();
-        sockets = rtpSockets.values();
-        for (RtpSocket socket : sockets) {
-        list.addAll(socket.getRtpMap().values());
-        }
-        formats = new Format[list.size()];
-        list.toArray(formats);
-        }
-         */
-        // when demux already connected to channel
-        // all supported formats are known and we can generate
-        // local descriptor and update rtp map
-
         createLocalDescriptor(formats);
+        
         setMode(mode);
         setState(ConnectionState.HALF_OPEN);
+        
+        if (logger.isDebugEnabled()) {
+            String fs = "";
+            for (Format fmt: formats) {
+                fs = fs.length() == 0 ? fmt.toString() : fs + ";" + fmt.toString();
+            }
+            logger.info("Endpoint=" + endpoint.getLocalName() + 
+                        ", index=" + getIndex() + 
+                        ", successfully created, endpoint's formats{" + fs + "}, state=" + getState());
+        }
     }
 
     private String createLocalDescriptor(Format[] supported) {
@@ -178,6 +209,11 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
                 HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
                 HashMap<Integer, Format> subset = subset(rtpMap, supported);
 
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Endpoint=" + getEndpoint().getLocalName() + 
+                        ", index=" + getIndex() + ", RTP format subset[" + mediaType + "]: " + subset);
+                }
+                
                 int port = rtpSocket.getLocalPort();
                 descriptions.add(createMediaDescription(mediaType, port, subset));
             }
@@ -224,11 +260,22 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
 
             HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);
             HashMap<Integer, Format> subset = this.subset(offer, supported);
-
+            
+            if (logger.isDebugEnabled()) {
+                logger.debug("Endpoint=" + getEndpoint().getLocalName() + 
+                        ", index=" + getIndex() + " offer= " + offer + ", supported=" 
+                        + this.getSupportedFormatList(supported) + ", subset=" + subset);
+            }
+            
             if (subset.isEmpty()) {
                 throw new IOException("Codecs are not negotiated");
             }
+            
             subset = this.prefferAudio(subset);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Endpoint=" + getEndpoint().getLocalName() + 
+                        ", index=" + getIndex() + " selected preffered = " + subset);
+            }
             
             int port = md.getMedia().getMediaPort();
             rtpSocket.setPeer(address, port);
@@ -245,13 +292,16 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             demux.connect(rtpSocket.getSendStream());
             rtpSocket.getReceiveStream().start();
             rtpSocket.getSendStream().start();
-            System.out.println("Send stream started!!!!");
         }
 
         demux.start();
         mux.getOutput().start();
 
         setState(ConnectionState.OPEN);
+        if (logger.isDebugEnabled()) {
+              logger.debug("Endpoint=" + getEndpoint().getLocalName() + 
+                        ", index=" + getIndex() +  " state = " + getState());
+        }
     }
 
     public void setOtherParty(Connection other) throws IOException {
@@ -318,10 +368,17 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         Collection<RtpSocket> sockets = rtpSockets.values();
         for (RtpSocket socket : sockets) {
             socket.getReceiveStream().stop();
+            socket.getSendStream().stop();
 
             mux.disconnect(socket.getReceiveStream());
             demux.disconnect(socket.getSendStream());
 
+            socket.getReceiveStream().setEndpoint(null);
+            socket.getSendStream().setEndpoint(null);
+            
+            socket.getReceiveStream().setConnection(null);
+            socket.getSendStream().setConnection(null);
+            
             socket.release();
         }
 
@@ -351,26 +408,23 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         getEndpoint().deleteConnection(this.getId());
     }
 
+    private boolean isContains(ArrayList<Format> list, Format fmt) {
+        for (Format format : list) {
+            if (format.matches(fmt)) return true;
+        }
+        return false;
+    }
+    
     private Format[] mergeFormats(Format[] f1, Format[] f2) {
         ArrayList<Format> list = new ArrayList();
         for (Format f : f1) {
             list.add(f);
         }
 
-        if (list.isEmpty()) {
-            for (Format f : f2) {
+        for (Format f : f2) {
+            if (!isContains(list, f)) {
                 list.add(f);
             }
-        } else {
-            ArrayList<Format> list2 = new ArrayList();
-            for (Format f : f2) {
-                for (Format ff : list) {
-                    if (!ff.matches(f)) {
-                        list2.add(f);
-                    }
-                }
-            }
-            list.addAll(list2);
         }
 
         Format[] res = new Format[list.size()];
@@ -412,6 +466,19 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
     
     public long getPacketsTransmitted(String media) {
         return rtpSockets.get(media).getSendStream().getBytesReceived();
+    }
+    
+    protected String getSupportedFormatList(Format[] formats) {
+        String s = "";
+        for (int i = 0; i < formats.length; i++) {
+            s += formats[i] + ";";
+        }
+        return s;
+    }
+    
+    @Override
+    public String toString() {
+        return "RTP Connection [" + getEndpoint().getLocalName() + ", idx=" + getIndex() + "]";
     }
     
 }

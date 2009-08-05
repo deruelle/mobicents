@@ -29,6 +29,7 @@ package org.mobicents.media.server.impl.resource.test;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  *
@@ -65,7 +66,7 @@ public class MeanderDetectorFactory implements ComponentFactory {
     }
 
         
-    public Component newInstance(Endpoint endpoint) {
+    public Component newInstance(Endpoint endpoint) throws ResourceUnavailableException {
         MeanderDetector det = new MeanderDetector(name);
         det.setAmplitude(A);
         det.setPeriod(T);

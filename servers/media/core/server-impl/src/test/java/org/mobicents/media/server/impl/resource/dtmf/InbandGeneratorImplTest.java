@@ -90,10 +90,6 @@ public class InbandGeneratorImplTest implements NotificationListener {
             if (ext.length == 0) {
                 return false;
             }
-            for (int k = 0; k < ext.length; k++) {
-                System.out.println(ext[k]);
-            }
-            System.out.println("-----------------");
             boolean r = Utils.checkFreq(ext, F, FREQ_ERROR);
             if (!r) {
                 errorCount++;

@@ -15,6 +15,7 @@
  */
 package org.mobicents.media.server.impl.resource.test;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
@@ -45,6 +46,8 @@ public class SineGenerator extends AbstractSource implements Runnable {
     private int pSize;
     
     private double time;
+    
+    private Logger logger = Logger.getLogger(SineGenerator.class);
     
     public SineGenerator(String name, Timer timer) {
         super(name);

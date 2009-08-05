@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Format;
+import org.mobicents.media.server.ConnectionFactory;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.dsp.DspFactory;
@@ -55,8 +56,8 @@ public class TranscodingBridgeTest {
     private SineGeneratorFactory g1,  g2;
     private AnalyzerFactory a1,  a2;
     private ArrayList<double[]> s1,  s2;
-    private PacketRelaySourceFactory prSourceFactory;
-    private PacketRelaySinkFactory prSinkFactory;
+    
+    private BridgeFactory packetRelayFactory;
     private ChannelFactory prChannelFactory;
     private ChannelFactory channelFactory;
     private Semaphore semaphore;
@@ -69,6 +70,8 @@ public class TranscodingBridgeTest {
 
     private TransmissionTester2 tester;
     private Proxy proxy;
+    
+    private ConnectionFactory connectionFactory;
     
     public TranscodingBridgeTest() {
     }
@@ -140,20 +143,19 @@ public class TranscodingBridgeTest {
         prChannelFactory.setComponents(components);
         prChannelFactory.setPipes(pipes);
 
+        ConnectionFactory prConnectionFactory = new ConnectionFactory();
+        prConnectionFactory.setRxChannelFactory(prChannelFactory);
+        prConnectionFactory.setTxChannelFactory(prChannelFactory);
+        
         // configuring Packet relay endpoint
-        prSourceFactory = new PacketRelaySourceFactory();
-        prSourceFactory.setName("pr-source");
-
-        prSinkFactory = new PacketRelaySinkFactory();
-        prSinkFactory.setName("pr-sink");
+        packetRelayFactory = new BridgeFactory();
+        packetRelayFactory.setName("Packet-Relay");
 
         packetRelayEnp = new EndpointImpl("/pr/test/cnf");
-        packetRelayEnp.setSourceFactory(prSourceFactory);
-        packetRelayEnp.setSinkFactory(prSinkFactory);
+        packetRelayEnp.setGroupFactory(packetRelayFactory);
 
         packetRelayEnp.setTimer(timer);
-        packetRelayEnp.setTxChannelFactory(prChannelFactory);
-        packetRelayEnp.setRxChannelFactory(prChannelFactory);
+        packetRelayEnp.setConnectionFactory(prConnectionFactory);
         packetRelayEnp.setRtpFactory(rtpFactories1);
 
         // strating packet relay endpoint
@@ -163,6 +165,10 @@ public class TranscodingBridgeTest {
         channelFactory = new ChannelFactory();
         channelFactory.start();
 
+        connectionFactory = new ConnectionFactory();
+        connectionFactory.setRxChannelFactory(channelFactory);
+        connectionFactory.setTxChannelFactory(channelFactory);
+        
         setupTester();
         setupEcho();
     }
@@ -182,8 +188,7 @@ public class TranscodingBridgeTest {
         // configuring sender
         testerEndpoint = new EndpointImpl("/pr/test/sender");
         testerEndpoint.setTimer(timer);
-        testerEndpoint.setTxChannelFactory(channelFactory);
-        testerEndpoint.setRxChannelFactory(channelFactory);
+        testerEndpoint.setConnectionFactory(connectionFactory);
         testerEndpoint.setSourceFactory(genFactory);
         testerEndpoint.setSinkFactory(detFactory);
         testerEndpoint.start();
@@ -212,10 +217,9 @@ public class TranscodingBridgeTest {
         Hashtable<String, RtpFactory> rtpFactories2 = new Hashtable();
         rtpFactories2.put("audio", rtpFactory2);
         
-        echoEndpoint = new EndpointImpl("/pr/test/sender");
+        echoEndpoint = new EndpointImpl("/pr/test/echo");
         echoEndpoint.setTimer(timer);
-        echoEndpoint.setTxChannelFactory(channelFactory);
-        echoEndpoint.setRxChannelFactory(channelFactory);
+        echoEndpoint.setConnectionFactory(connectionFactory);
         echoEndpoint.setSinkFactory(sinkFactory);
         echoEndpoint.setSourceFactory(sourceFactory);
         echoEndpoint.setRtpFactory(rtpFactories2);
@@ -247,12 +251,13 @@ public class TranscodingBridgeTest {
 
     private void runRtpTransmission() throws Exception {
         Connection txConnection = testerEndpoint.createLocalConnection(ConnectionMode.SEND_RECV);
-        Connection rxConnection = echoEndpoint.createConnection(ConnectionMode.SEND_RECV);
 
         Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_RECV);
+        rxC.setOtherParty(txConnection);
+        
+        Connection rxConnection = echoEndpoint.createConnection(ConnectionMode.SEND_RECV);
         Connection txC = packetRelayEnp.createConnection(ConnectionMode.SEND_RECV);
 
-        rxC.setOtherParty(txConnection);
         txC.setRemoteDescriptor(rxConnection.getLocalDescriptor());
         rxConnection.setRemoteDescriptor(txC.getLocalDescriptor());
 
@@ -262,14 +267,13 @@ public class TranscodingBridgeTest {
         testerEndpoint.deleteAllConnections();
 
         packetRelayEnp.deleteAllConnections();
-        assertTrue(tester.getMessage(), tester. isPassed());        
+        assertTrue(tester.getMessage(), tester.isPassed());        
     }
 
     @Test
     public void testRtpTransmission() throws Exception {
         for (int i = 0; i < 3; i++) {
             runRtpTransmission();
-            System.out.println("Pass...." + i);
         }
     }
 

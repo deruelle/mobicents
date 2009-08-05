@@ -1,22 +1,37 @@
 /*
- * Mobicents Media Gateway
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
  *
- * The source code contained in this file is in in the public domain.
- * It can be used in any project or product without prior permission,
- * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
- * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * AND DATA ACCURACY.  We do not warrant or make any representations
- * regarding the use of the software or the  results thereof, including
- * but not limited to the correctness, accuracy, reliability or
- * usefulness of the software.
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
 package org.mobicents.media.server.impl;
 
 import java.io.IOException;
+import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.Outlet;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -39,7 +54,7 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
     private NotifyEvent evtStarted;
     private NotifyEvent evtStopped;
     
-    
+    private Logger logger;
     /**
      * Creates new instance of sink with specified name.
      * 
@@ -47,23 +62,34 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
      */
     public AbstractSink(String name) {
         super(name);
+        logger = Logger.getLogger(getClass());
         evtStarted = new NotifyEventImpl(this, NotifyEvent.STARTED);
         evtStopped = new NotifyEventImpl(this, NotifyEvent.STOPPED);
     }
 
+    public boolean isMultipleConnectionsAllowed() {
+        return false;
+    }
+    
     /**
      * (Non Java-doc).
      * 
      * @see org.mobicents.media.MediaSink#connect(MediaStream).
      */
     public void connect(MediaSource otherParty) {
-        AbstractSource source = ((AbstractSource) otherParty);
-
-        if (source.otherParty != this) {
-            source.otherParty = this;
+        if (otherParty == null) {
+            throw new IllegalArgumentException("Other party can not be null");
         }
-
-        if (this.otherParty == null) {
+        
+        if (otherParty instanceof AbstractSource && !otherParty.isMultipleConnectionsAllowed()) {
+            AbstractSource source = ((AbstractSource) otherParty);
+            source.otherParty = this;
+            this.otherParty = source;
+            
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " is connected to " + otherParty);
+            }
+        } else {
             otherParty.connect(this);
         }
     }
@@ -74,18 +100,35 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
      * @see org.mobicents.media.MediaSink#disconnect(MediaStream).
      */
     public void disconnect(MediaSource otherParty) {
-        AbstractSource source = ((AbstractSource) otherParty);
-
-        if (source.otherParty != null) {
-            source.otherParty = null;
-        } else {
+        if (otherParty == null) {
+            throw new IllegalArgumentException("Other party can not be null");
         }
-
-        if (this.otherParty != null) {
+        
+        if (otherParty instanceof AbstractSource && !otherParty.isMultipleConnectionsAllowed()) {
+            if (otherParty == this.otherParty) {
+                AbstractSource source = ((AbstractSource) otherParty);
+                source.otherParty = null;
+                this.otherParty = null;
+                if (logger.isDebugEnabled()) {
+                    logger.debug(this + " is disconnected from " + otherParty);
+                }
+            } else {
+                throw new IllegalArgumentException(otherParty + " was not connected to " + this);
+            }
+        } else {
             otherParty.disconnect(this);
         }
     }
 
+    
+    public void connect(Outlet outlet) {
+        connect(outlet.getOutput());
+    }
+
+    public void disconnect(Outlet outlet) {
+        disconnect(outlet.getOutput());
+    }        
+    
     /**
      * (Non Java-doc).
      * 
@@ -141,11 +184,15 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
     public void receive(Buffer buffer) throws IOException {
         if (started) {
             try {
+                if (logger.isTraceEnabled()) {
+                    logger.trace(this + " arrive " + buffer + " from " + otherParty);
+                }
                 onMediaTransfer(buffer);
                 packetsReceived++;
                 bytesReceived += buffer.getLength();
             } catch (Exception e) {
                 failed(NotifyEvent.RX_FAILED, e);
+            e.printStackTrace();
             } finally {
                 buffer.dispose();
             }

@@ -20,6 +20,8 @@ import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
+import org.mobicents.media.SinkSet;
+import org.mobicents.media.SourceSet;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
@@ -578,6 +580,38 @@ public class ChanneWithPipesTest {
         }
 
         public void stop() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void connect(MediaSource source) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void disconnect(MediaSource source) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void connect(SourceSet source) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void disconnect(SourceSet source) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void connect(MediaSink sink) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void disconnect(MediaSink sink) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void connect(SinkSet sink) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void disconnect(SinkSet sink) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
         

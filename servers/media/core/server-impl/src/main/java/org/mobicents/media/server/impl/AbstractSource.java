@@ -28,8 +28,11 @@ package org.mobicents.media.server.impl;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.ReentrantLock;
+import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.BufferFactory;
+import org.mobicents.media.Format;
+import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.spi.Timer;
@@ -65,6 +68,9 @@ public abstract class AbstractSource extends BaseComponent
     private NotifyEvent evtCompleted;
     private NotifyEvent evtStopped;
     
+    private boolean warn;
+    private Logger logger;
+    
     /**
      * Creates new instance of source with specified name.
      * 
@@ -72,6 +78,7 @@ public abstract class AbstractSource extends BaseComponent
      */
     public AbstractSource(String name) {
         super(name);
+        logger = Logger.getLogger(getClass());
         evtStarted = new NotifyEventImpl(this, NotifyEvent.STARTED);
         evtCompleted = new NotifyEventImpl(this, NotifyEvent.COMPLETED);
         evtStopped = new NotifyEventImpl(this, NotifyEvent.STOPPED);
@@ -128,6 +135,9 @@ public abstract class AbstractSource extends BaseComponent
                 thread = timer.synchronize(this);
             }
             started = true;
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " started");
+            }
             started();
         } catch (Exception e) {
             failed(NotifyEvent.START_FAILED, e);
@@ -149,6 +159,9 @@ public abstract class AbstractSource extends BaseComponent
                 thread = null;
             }
             started = false;
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " stopped");
+            }
             stopped();
             afterStop();
         } finally {
@@ -162,18 +175,31 @@ public abstract class AbstractSource extends BaseComponent
      */
     public void afterStop() {
     }
+    
+    @Override
+    public boolean isMultipleConnectionsAllowed() {
+        return false;
+    }
+    
     /**
      * (Non Java-doc).
      * 
      * @see org.mobicents.media.MediaSource#connect(MediaSink).
      */
     public void connect(MediaSink otherParty) {
-        AbstractSink sink = (AbstractSink) otherParty;
-        if (sink.otherParty == null) {
-            sink.otherParty = this;
+        //check argument
+        if (otherParty == null) {
+            throw new IllegalArgumentException("Other party can not be null");
         }
-
-        if (this.otherParty == null) {
+        
+        if (otherParty instanceof AbstractSink && !otherParty.isMultipleConnectionsAllowed()) {
+            AbstractSink sink = (AbstractSink) otherParty;
+            sink.otherParty = this;
+            this.otherParty = sink;
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " is connected to " + otherParty);
+            }
+        } else {
             otherParty.connect(this);
         }
     }
@@ -184,18 +210,33 @@ public abstract class AbstractSource extends BaseComponent
      * @see org.mobicents.media.MediaSource#diconnection(MediaSink).
      */
     public void disconnect(MediaSink otherParty) {
-        AbstractSink sink = (AbstractSink) otherParty;
-        
-        if (sink.otherParty != null) {
-            sink.otherParty = null;
-        } else {
+        //check argument
+        if (otherParty == null) {
+            throw new IllegalArgumentException("Other party can not be null");
         }
-
-        if (this.otherParty != null) {
+        
+        if (otherParty instanceof AbstractSink && !otherParty.isMultipleConnectionsAllowed()) {
+            if (otherParty == this.otherParty) {
+                AbstractSink sink = (AbstractSink) otherParty;
+                sink.otherParty = null;
+                this.otherParty = null;
+                if (logger.isDebugEnabled()) {
+                    logger.debug(this + " is disconnected from " + otherParty);
+                }
+            } else throw new IllegalArgumentException(otherParty + " was not connected to " + this);
+        } else {
             otherParty.disconnect(this);
         }
     }
 
+    public void connect(Inlet inlet) {
+        connect(inlet.getInput());
+    }
+
+    public void disconnect(Inlet inlet) {
+        disconnect(inlet.getInput());
+    }
+    
     /**
      * (Non Java-doc).
      * 
@@ -222,9 +263,23 @@ public abstract class AbstractSource extends BaseComponent
      */
     public abstract void evolve(Buffer buffer, long sequenceNumber);
     
+    protected String getSupportedFormatList() {
+        String s = "";
+        Format[] formats = otherParty.getFormats();
+        for (int i = 0; i < formats.length; i++) {
+            s += formats[i] + ";";
+        }
+        return s;
+    }
+    
     public void run() {
-        Buffer buffer = bufferFactory.allocate();        
-        evolve(buffer, sequenceNumber);
+        Buffer buffer = bufferFactory.allocate(); 
+        try {
+            evolve(buffer, sequenceNumber);
+        } catch (Exception e) {
+            logger.error("Not able to evolve data", e);
+            return;
+        }
         
         if (buffer.isDiscard()) {
             return;
@@ -232,13 +287,31 @@ public abstract class AbstractSource extends BaseComponent
         
         sequenceNumber++;
         
-        if (otherParty.isAcceptable(buffer.getFormat())) {
-            try {
-                otherParty.receive(buffer);                
+        boolean isAcceptable = false;
+        try {
+            isAcceptable = otherParty.isAcceptable(buffer.getFormat());
+        } catch (Exception e) {
+            logger.error("Could not check formats of the other party", e);
+        }
+
+        if (isAcceptable) {
+            try {                
+                if (logger.isTraceEnabled()) {
+                    logger.trace(this + " sending " + buffer + " to " + otherParty);
+                }
+                otherParty.receive(buffer);                                
                 packetsTransmitted++;
                 bytesTransmitted += buffer.getLength();
+                warn = false;
             } catch (Exception e) {
+                logger.error("Can not deliver packet to " + otherParty, e);
                 failed(NotifyEvent.TX_FAILED, e);
+            }
+        } else {
+            if (!warn) {
+                logger.warn(this + " fmt={" + buffer.getFormat() + "} is not acceptable by " + otherParty + 
+                        "supported formats: [" + getSupportedFormatList() + "]");
+                warn = true;
             }
         } 
             

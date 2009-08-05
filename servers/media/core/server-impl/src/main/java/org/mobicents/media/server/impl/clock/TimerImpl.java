@@ -70,7 +70,7 @@ public class TimerImpl implements Timer {
      *         synchronized task
      */
     public ScheduledFuture synchronize(Runnable task) {
-        return timer.scheduleAtFixedRate(task, 0, heartBeat, TimeUnit.MILLISECONDS);
+        return timer.scheduleAtFixedRate(task, heartBeat, heartBeat, TimeUnit.MILLISECONDS);
     }
 
     public long getTimestamp() {

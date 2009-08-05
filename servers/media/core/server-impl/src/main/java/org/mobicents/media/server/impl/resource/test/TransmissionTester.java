@@ -58,11 +58,11 @@ public class TransmissionTester implements NotificationListener {
     private String msg = "Not started yet";
     
     public TransmissionTester(Timer timer) {
-        gen = new MeanderGenerator("test-gen", timer);
+        gen = new MeanderGenerator("Tester[generator]", timer);
         gen.setAmplitude(A);
         gen.setPeriod(T);
         
-        det = new MeanderDetector("test-det");
+        det = new MeanderDetector("Tester[detector]");
         det.setAmplitude(A);
         det.setPeriod(T);
         det.addListener(this); 
@@ -80,6 +80,7 @@ public class TransmissionTester implements NotificationListener {
         this.sink = sink;
         gen.connect(sink);
     }
+    
     
     public void connect(MediaSource source) {
         this.source = source;

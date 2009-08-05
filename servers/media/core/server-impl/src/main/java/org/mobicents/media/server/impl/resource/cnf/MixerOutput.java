@@ -44,10 +44,10 @@ public class MixerOutput extends AbstractSource {
      * @param mixer
      */
     public MixerOutput(AudioMixer mixer) {
-        super("MixerOutput");
+        super("AudioMixer[Output]");
         this.mixer = mixer;
     }
-
+    
     @Override
     public void evolve(Buffer buffer, long sequenceNumber) {
         mixer.evolve(buffer, sequenceNumber);

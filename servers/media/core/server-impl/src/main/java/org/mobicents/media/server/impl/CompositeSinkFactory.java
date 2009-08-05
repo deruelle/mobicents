@@ -24,53 +24,51 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.resource.test;
+package org.mobicents.media.server.impl;
 
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
+import org.mobicents.media.server.resource.ChannelFactory;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  *
  * @author kulikov
  */
-public class SineGeneratorFactory implements ComponentFactory {
+public class CompositeSinkFactory implements ComponentFactory {
 
     private String name;
-    private int f;
-    private short A;
-
-    public short getA() {
-        return A;
-    }
-
-    public int getF() {
-        return f;
-    }
-
+    
+    private ChannelFactory channelFactory;
+    private ComponentFactory sinkFactory;
+    
     public String getName() {
         return name;
     }
-
-    public void setA(short A) {
-        this.A = A;
-    }
-
-    public void setF(int f) {
-        this.f = f;
-    }
-
-    public void setName(String name) {
+    
+    public void setNam(String name) {
         this.name = name;
     }
     
+    public ComponentFactory getSinkFactory() {
+        return sinkFactory;
+    }
     
-    public Component newInstance(Endpoint endpoint) throws ResourceUnavailableException {
-        SineGenerator gen = new SineGenerator(endpoint, name);
-        gen.setAmplitude(A);
-        gen.setFrequency(f);
-        return gen;
+    public void setSinkFactory(ComponentFactory sinkFactory) {
+        this.sinkFactory = sinkFactory;
+    }
+    
+    public ChannelFactory getChannelFactory() {
+        return channelFactory;
+    }
+
+    public void setChannelFactory(ChannelFactory channelFactory) {
+        this.channelFactory = channelFactory;
+    }
+    
+    public Component newInstance(Endpoint endpoint) {
+        CompositeSink compositeSink = new CompositeSink(name);
+        return compositeSink;
     }
 
 }

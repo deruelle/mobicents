@@ -24,37 +24,46 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.resource.cnf;
+package org.mobicents.media.server.impl.resource.echo;
 
-import org.mobicents.media.Component;
-import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.EndpointImpl;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.BaseComponent;
+import org.mobicents.media.server.spi.ResourceGroup;
 
 /**
  *
  * @author kulikov
  */
-public class ConferenceSourceFactory implements ComponentFactory {
+public class Echo extends BaseComponent implements ResourceGroup {
 
-    private String name;
-
-    public String getName() {
-        return name;
+    private EchoSink sink;
+    private EchoSource source;
+    
+    public Echo(String name) {
+        super(name);
+        source = new EchoSource(name + ".source");
+        sink = new EchoSink(name +".sink", source);
+    }
+    
+    public MediaSink getSink() {
+        return sink;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public MediaSource getSource() {
+        return source;
     }
-        
-    public Component newInstance(Endpoint endpoint) {
-        CnfLocalSink sink = (CnfLocalSink) ((EndpointImpl)endpoint).getSink();
-        if (sink != null) {
-            return sink.getBridge().getSource();
-        } else {
-            ConferenceBridge bridge = new ConferenceBridge(endpoint, name);
-            return bridge.getSource();
-        }
+
+
+    public void start() {
+        sink.start();
+        source.start();
     }
+
+    public void stop() {
+        sink.stop();
+        source.stop();
+    }
+
 
 }
