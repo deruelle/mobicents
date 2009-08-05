@@ -178,6 +178,9 @@
 	<bean name="TxChannelFactory"
 		class="org.mobicents.media.server.resource.ChannelFactory" />
 
+        <bean name="AnnConnectionFactory" class="org.mobicents.media.server.ConnectionFactory">
+            <property name="txChannelFactory"><inject bean="TxChannelFactory"/></property>
+        </bean>    
 
 	<!-- ANNOUNCEMENT  -->
 	<bean name="Announcement-Access-Point"
@@ -202,8 +205,8 @@
 				</entry>
 			</map>
 		</property>
-		<property name="txChannelFactory">
-			<inject bean="TxChannelFactory" />
+		<property name="connectionFactory">
+			<inject bean="AnnConnectionFactory" />
 		</property>
 	</bean>
 
@@ -215,6 +218,10 @@
 
 	<bean name="RxChannelFactory"
 		class="org.mobicents.media.server.resource.ChannelFactory" />
+
+        <bean name="IVRConnectionFactory" class="org.mobicents.media.server.ConnectionFactory">
+            <property name="rxChannelFactory"><inject bean="RxChannelFactory"/></property>
+        </bean>    
 
 	<!-- IVR  -->
 	<bean name="IVREndpoint"
@@ -240,8 +247,8 @@
 			</map>
 		</property>
 
-		<property name="rxChannelFactory">
-			<inject bean="RxChannelFactory" />
+		<property name="connectionFactory">
+			<inject bean="IVRConnectionFactory" />
 		</property>
 	</bean>
 

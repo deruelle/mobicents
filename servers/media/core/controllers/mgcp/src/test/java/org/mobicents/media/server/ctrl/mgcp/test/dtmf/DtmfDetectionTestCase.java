@@ -55,7 +55,7 @@ public class DtmfDetectionTestCase extends MgcpMicrocontainerTest implements Jai
         super.setUp();
         semaphore = new Semaphore(0);
 
-        txConnection = createConnection(AAP, ConnectionMode.SendRecv, null);
+        txConnection = createConnection(AAP, ConnectionMode.SendOnly, null);
         rxConnection = createConnection(IVR, ConnectionMode.SendRecv, txConnection.getLocalSdp());
 
         modifyConnection(txConnection, rxConnection.getLocalSdp());

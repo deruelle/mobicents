@@ -20,6 +20,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Format;
+import org.mobicents.media.server.ConnectionFactory;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 import static org.junit.Assert.*;
@@ -84,8 +85,12 @@ public class PlayAnnouncementTest {
         sender = new EndpointImpl("test/announcement/sender");
         sender.setTimer(timer);
         
+                ConnectionFactory connectionFactory = new ConnectionFactory();
+                connectionFactory.setRxChannelFactory(channelFactory);
+                connectionFactory.setTxChannelFactory(channelFactory);
+        
         sender.setSourceFactory(playerFactory);
-        sender.setTxChannelFactory(channelFactory);
+        sender.setConnectionFactory(connectionFactory);
         
         sender.start();
         
@@ -93,7 +98,7 @@ public class PlayAnnouncementTest {
         receiver.setTimer(timer);
         
         receiver.setSinkFactory(sinkFactory);
-        receiver.setRxChannelFactory(channelFactory);
+        receiver.setConnectionFactory(connectionFactory);
         
         receiver.start();        
     }

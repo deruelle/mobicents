@@ -42,7 +42,7 @@ public class CA implements JainMgcpExtendedListener {
 
 			EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/aap/1", "127.0.0.1:" + MgcpMicrocontainerTest.REMOTE_PORT);
 
-			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
+			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendOnly);
 
 			String sdpData = "v=0\r\n" + "o=4855 13760799956958020 13760799956958020" + " IN IP4  127.0.0.1\r\n"
 					+ "s=mysession session\r\n" + "p=+46 8 52018010\r\n" + "c=IN IP4  127.0.0.1\r\n" + "t=0 0\r\n"
@@ -73,7 +73,7 @@ public class CA implements JainMgcpExtendedListener {
 
 			EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/aap/2", "127.0.0.1:" + MgcpMicrocontainerTest.REMOTE_PORT);
 
-			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
+			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendOnly);
 
 			String sdpData = "v=0\r\n" + "o=4855 13760799956958020 13760799956958020" + " IN IP4  127.0.0.1\r\n"
 					+ "s=mysession session\r\n" + "p=+46 8 52018010\r\n" + "c=IN IP4  127.0.0.1\r\n" + "t=0 0\r\n"

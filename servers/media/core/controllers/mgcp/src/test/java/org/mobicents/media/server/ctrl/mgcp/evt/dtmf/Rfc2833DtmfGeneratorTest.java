@@ -17,22 +17,19 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Format;
+import org.mobicents.media.server.ConnectionFactory;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 import org.mobicents.media.server.ctrl.mgcp.Request;
-import org.mobicents.media.server.ctrl.mgcp.evt.dtmf.DtmfGenerator;
-import org.mobicents.media.server.ctrl.mgcp.evt.dtmf.DtmfGeneratorFactory;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorFactory;
-import org.mobicents.media.server.impl.rtp.RtpHeader;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.resource.ChannelFactory;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
-import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**
  * 
@@ -85,8 +82,12 @@ public class Rfc2833DtmfGeneratorTest {
 		sender = new EndpointImpl("test/announcement/sender");
 		sender.setTimer(timer);
 
+                ConnectionFactory connectionFactory = new ConnectionFactory();
+                connectionFactory.setRxChannelFactory(channelFactory);
+                connectionFactory.setTxChannelFactory(channelFactory);
+                
 		sender.setSourceFactory(rfc2833Factory);
-		sender.setTxChannelFactory(channelFactory);
+		sender.setConnectionFactory(connectionFactory);
 		sender.start();
 
 		sinkFactory = new TestSinkFactory();
@@ -95,7 +96,7 @@ public class Rfc2833DtmfGeneratorTest {
 		receiver.setTimer(timer);
 
 		receiver.setSinkFactory(sinkFactory);
-		receiver.setRxChannelFactory(channelFactory);
+		receiver.setConnectionFactory(connectionFactory);
 
 		receiver.start();
 
