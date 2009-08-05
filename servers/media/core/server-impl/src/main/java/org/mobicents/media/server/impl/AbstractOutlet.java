@@ -28,7 +28,6 @@ package org.mobicents.media.server.impl;
 
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.Outlet;
-import org.mobicents.media.SinkSet;
 
 /**
  *
@@ -45,14 +44,6 @@ public abstract class AbstractOutlet extends BaseComponent implements Outlet {
     }
 
     public void disconnect(MediaSink sink) {
-        sink.disconnect(this);
-    }
-
-    public void connect(SinkSet sink) {
-        sink.connect(this);
-    }
-
-    public void disconnect(SinkSet sink) {
         sink.disconnect(this);
     }
 

@@ -28,7 +28,6 @@ package org.mobicents.media.server.impl;
 
 import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.SourceSet;
 
 /**
  *
@@ -45,14 +44,6 @@ public abstract class AbstractInlet extends BaseComponent implements Inlet {
     }
 
     public void disconnect(MediaSource source) {
-        source.disconnect(this);
-    }
-
-    public void connect(SourceSet source) {
-        source.connect(this);
-    }
-
-    public void disconnect(SourceSet source) {
         source.disconnect(this);
     }
 
