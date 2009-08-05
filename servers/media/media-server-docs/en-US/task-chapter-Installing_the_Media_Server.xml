@@ -43,7 +43,7 @@
 			JBoss Application Server or Standalone. This section details
 			how to install the Mobicents Media Server that comes bundled
 			with JBoss Application Server 5. For installation of
-			Standalone Mobicents Media Server, refer to XXXXX
+			Standalone Mobicents Media Server, refer to <xref linkend="itms-binary-Standalone_Media_Server-Installing_Configuring_and_Running" />
 		</para>
 
 		<section
@@ -63,7 +63,7 @@
 							Once unzipped, the JBoss AS embedded Media
 							Server binary release requires
 							<emphasis>at least</emphasis>
-							&MS_SIZE;
+							&MS_EMB_SIZE;
 							of free disk space. Keep in mind that disk
 							space requirements may change from release
 							to release.
@@ -155,7 +155,7 @@
 					</para>
 					<screen>
 						~]$ mv
-						<quote>&MS_ZIP;
+						<quote>&MS_EMB_ZIP;
 						</quote>
 						<quote>
 							ms-
@@ -187,7 +187,7 @@
 											&lt;version&gt;
 										</replaceable>
 										]$ jar -xvf
-										<quote>&MS_ZIP;
+										<quote>&MS_EMB_ZIP;
 										</quote>
 									</screen>
 								</para>
@@ -196,8 +196,8 @@
 								<para>
 									Linux:
 									<screen>
-										mss-jboss-&lt;version&gt;]$
-										unzip &quot;&SSS_MSS4J_ZIP;&quot;
+										ms-&lt;version&gt;]$
+										unzip &quot;&MS_EMB_ZIP;&quot;
 									</screen>
 								</para>
 							</listitem>
@@ -222,7 +222,7 @@
 						ms-
 						<replaceable>&lt;version&gt;</replaceable>
 						]$ rm
-						<quote>&MS_ZIP;
+						<quote>&MS_EMB_ZIP;
 						</quote>
 					</screen>
 				</step>
@@ -294,7 +294,7 @@
 							<screen>
 								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
 								Downloads&bsol;ms-&lt;version&gt;&bsol;jar
-								-xvf &quot;&MS_ZIP;&quot;
+								-xvf &quot;&MS_EMB_ZIP;&quot;
 							</screen>
 						</listitem>
 					</orderedlist>
@@ -305,7 +305,7 @@
 						JBoss embedded Media Server files (in this
 						example, the folder named
 						<filename>
-							mms-jboss-
+							ms-
 							<replaceable>&lt;version&gt;</replaceable>
 						</filename>
 						) is moved to a user-defined location for
@@ -321,8 +321,8 @@
 					</para>
 					<screen>
 						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-						Downloads&bsol;mss-jboss-&lt;version&gt;&bsol;delete
-						&quot;&MS_ZIP;&quot;
+						Downloads&bsol;ms-&lt;version&gt;&bsol;delete
+						&quot;&MS_EMB_ZIP;&quot;
 					</screen>
 				</step>
 			</procedure>
@@ -342,7 +342,7 @@
 				<quote>Started in 23s:648ms</quote>
 				):
 			</para>
-			<programlisting><![CDATA[11:23:07,656 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 23s:648ms]]></programlisting>
+			<programlisting><![CDATA[11:27:34,663 INFO  [ServerImpl] JBoss (Microcontainer) [5.1.0.GA (build: SVNTag=JBoss_5_1_0_GA date=200905221053)] Started in 37s:637ms]]></programlisting>
 			<procedure>
 				<title>Running the Media Server on Linux</title>
 				<step>
@@ -413,8 +413,7 @@
 						menu and navigate to the correct folder:
 					</para>
 					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-						Downloads&gt; cd &quot;ms-&lt;version&gt;&quot;
+						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&gt; cd &quot;ms-&lt;version&gt;&quot;
 					</screen>
 				</step>
 				<step>
@@ -428,8 +427,7 @@
 									batch file:
 								</para>
 								<screen>
-									C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-									Downloads&bsol;ms-&lt;version&gt;&gt;bin&bsol;run.bat
+									C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;bin&bsol;run.bat
 								</screen>
 							</listitem>
 							<listitem>
@@ -438,9 +436,7 @@
 									executable Java archive:
 								</para>
 								<screen>
-									C:&bsol;Users&bsol;&lt;user&gt;My
-									Downloads&bsol;mss-jboss-&lt;version&gt;&gt;java
-									-jar bin&bsol;run.jar
+									C:&bsol;Users&bsol;&lt;user&gt;My Downloads&bsol;ms-&lt;version&gt;&gt;java -jar bin&bsol;run.jar
 								</screen>
 							</listitem>
 						</itemizedlist>
@@ -528,8 +524,7 @@
 						) is included in the command line argument.
 					</para>
 					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-						Downloads&bsol;ms-&lt;version&gt;&gt;bin&bsol;shutdown.bat
+						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;bin&bsol;shutdown.bat
 						-S
 					</screen>
 					<stepalternatives>
@@ -543,9 +538,7 @@
 								server:
 							</para>
 							<screen>
-								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-								Downloads&bsol;ms-&lt;version&gt;&gt;java
-								-jar bin&bsol;shutdown.jar -S
+								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;java -jar bin&bsol;shutdown.jar -S
 							</screen>
 						</step>
 					</stepalternatives>
@@ -639,7 +632,8 @@
 			</table>
 			<para>
 				The Media Server uses a number of XML configuration
-				files that control various aspects of the server.
+				files that control various aspects of the server. In case of embedded Media Server all the files related Media Server are placed in 
+				mms-jboss-5.1.0.GA-&lt;version&gt;/jboss-5.1.0.GA/server/default/deploy/mobicents-media-server
 				<xref
 					linkend="tab-mms-JBoss_Core_Configuration_File_Set" />
 				describes the location of the key configuration files,
@@ -661,7 +655,7 @@
 					</thead>
 					<tbody>
 						<row>
-							<entry>conf/bootstrap-beans.xml</entry>
+							<entry>mobicents-media-server.sar/META-INF/jboss-beans.xml</entry>
 							<entry>
 								Specifies which additional
 								microcontainer deployments are loaded as
@@ -673,25 +667,16 @@
 								the bootstrap configuration files
 								require no alteration.
 							</entry>
-						</row>
+						</row>						
 						<row>
-							<entry>conf/log4j.properties</entry>
-							<entry>
-								Specifies the Apache
-								<literal>log4j</literal>
-								framework category priorities and
-								appenders used by the Media Server.
-							</entry>
-						</row>
-						<row>
-							<entry>deploy/ann-beans.xml</entry>
+							<entry>mobicents-media-server/ann-beans.xml</entry>
 							<entry>
 								Specifies the configuration for
 								announcement access points.
 							</entry>
 						</row>
 						<row>
-							<entry>deploy/ivr-beans.xml</entry>
+							<entry>mobicents-media-server/ivr-beans.xml</entry>
 							<entry>
 								Specifies the configuration for
 								Interactive Voice Response (IVR)
@@ -699,28 +684,28 @@
 							</entry>
 						</row>
 						<row>
-							<entry>deploy/prelay-beans.xml</entry>
+							<entry>mobicents-media-server/prelay-beans.xml</entry>
 							<entry>
 								Specifies the configuration for Packet
 								Relay endpoints.
 							</entry>
 						</row>
 						<row>
-							<entry>deploy/cnf-beans.xml</entry>
+							<entry>mobicents-media-server/cnf-beans.xml</entry>
 							<entry>
 								Specifies the configuration for
 								Conference endpoints.
 							</entry>
 						</row>
 						<row>
-							<entry>deploy/test-beans.xml</entry>
+							<entry>mobicents-media-server/test-beans.xml</entry>
 							<entry>
 								Specifies the endpoint for test
 								capabilities.
 							</entry>
 						</row>
 						<row>
-							<entry>deploy/mgcp-conf.xml</entry>
+							<entry>mgcp-controller-service.sar/META-INF/jboss-beans.xml</entry>
 							<entry>
 								Specifies the configuration for the MGCP
 								controller.
@@ -763,7 +748,7 @@
 			JBoss Application Server or Standalone. This section details
 			how to install the Standalone Mobicents Media Server. For
 			installation of JBoss embedded Mobicents Media Server, refer
-			to XXXXX
+			to <xref linkend="itms-binary-JBoss_Media_Server-Installing_Configuring_and_Running" />
 		</para>
 
 		<section
@@ -783,7 +768,7 @@
 							Once unzipped, the Standalone Media Server
 							binary release requires
 							<emphasis>at least</emphasis>
-							&MS_SIZE;
+							&MS_STA_SIZE;
 							of free disk space. Keep in mind that disk
 							space requirements may change from release
 							to release.
@@ -855,11 +840,7 @@
 						included in this directory name.
 					</para>
 					<screen>
-						~]$ mkdir
-						<quote>
-							ms-
-							<replaceable>&lt;version&gt;</replaceable>
-						</quote>
+						~]$ mkdir <quote>ms-<replaceable>&lt;version&gt;</replaceable></quote>
 					</screen>
 				</step>
 				<step>
@@ -867,22 +848,13 @@
 						Move the downloaded zip file into the directory:
 					</para>
 					<screen>
-						~]$ mv
-						<quote>&MS_ZIP;
-						</quote>
-						<quote>
-							ms-
-							<replaceable>&lt;version&gt;</replaceable>
-						</quote>
+						~]$ mv <quote>&MS_STA_ZIP;</quote> <quote>ms-<replaceable>&lt;version&gt;</replaceable></quote>
 					</screen>
 				</step>
 				<step>
 					<para>Move into the directory:</para>
 					<screen>
-						~]$ cd
-						<quote>
-							ms-
-							<replaceable>&lt;version&gt;</replaceable>
+						~]$ cd <quote>ms-<replaceable>&lt;version&gt;</replaceable>
 						</quote>
 					</screen>
 				</step>
@@ -895,13 +867,7 @@
 								<para>
 									Java:
 									<screen>
-										ms-
-										<replaceable>
-											&lt;version&gt;
-										</replaceable>
-										]$ jar -xvf
-										<quote>&MS_ZIP;
-										</quote>
+										ms-<replaceable>&lt;version&gt;</replaceable>]$ jar -xvf <quote>&MS_STA_ZIP;</quote>
 									</screen>
 								</para>
 							</listitem>
@@ -909,8 +875,7 @@
 								<para>
 									Linux:
 									<screen>
-										mss-jboss-&lt;version&gt;]$
-										unzip &quot;&SSS_MSS4J_ZIP;&quot;
+										ms-&lt;version&gt;]$unzip &quot;&MS_STA_ZIP;&quot;
 									</screen>
 								</para>
 							</listitem>
@@ -932,11 +897,7 @@
 						space is an issue.
 					</para>
 					<screen>
-						ms-
-						<replaceable>&lt;version&gt;</replaceable>
-						]$ rm
-						<quote>&MS_ZIP;
-						</quote>
+						ms-<replaceable>&lt;version&gt;</replaceable>]$ rm	<quote>&MS_STA_ZIP;</quote>
 					</screen>
 				</step>
 			</procedure>
@@ -1005,9 +966,7 @@
 								into the current folder.
 							</para>
 							<screen>
-								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-								Downloads&bsol;ms-&lt;version&gt;&bsol;jar
-								-xvf &quot;&MS_ZIP;&quot;
+								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;ms-&lt;version&gt;&bsol;jar -xvf &quot;&MS_STA_ZIP;&quot;
 							</screen>
 						</listitem>
 					</orderedlist>
@@ -1033,9 +992,7 @@
 						space is an issue.
 					</para>
 					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-						Downloads&bsol;mms-standalone-&lt;version&gt;&bsol;delete
-						&quot;&MS_ZIP;&quot;
+						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;ms-&lt;version&gt;&bsol;delete &quot;&MS_STA_ZIP;&quot;
 					</screen>
 				</step>
 			</procedure>
@@ -1060,8 +1017,7 @@
 						contents was extracted to)
 					</para>
 					<screen>
-						downloads]$ cd
-						&quot;mms-standalone-&lt;version&gt;&quot;
+						downloads]$ cd &quot;mms-standalone-&lt;version&gt;&quot;
 					</screen>
 				</step>
 				<step>
@@ -1093,8 +1049,7 @@
 					directory:
 				</para>
 				<screen>
-					mms-standalone-&lt;version&gt;]$ java -jar
-					bin/run.jar
+					mms-standalone-&lt;version&gt;]$ java -jar bin/run.jar
 				</screen>
 			</note>
 			<procedure>
@@ -1123,9 +1078,7 @@
 						menu and navigate to the correct folder:
 					</para>
 					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-						Downloads&gt; cd
-						&quot;mms-standalone-&lt;version&gt;&quot;
+						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&gt;cd &quot;mms-standalone-&lt;version&gt;&quot;
 					</screen>
 				</step>
 				<step>
@@ -1139,8 +1092,7 @@
 									batch file:
 								</para>
 								<screen>
-									C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-									Downloads&bsol;mms-standalone&lt;version&gt;&gt;bin&bsol;run.bat
+									C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;mms-standalone&lt;version&gt;&gt;bin&bsol;run.bat
 								</screen>
 							</listitem>
 							<listitem>
@@ -1149,9 +1101,7 @@
 									executable Java archive:
 								</para>
 								<screen>
-									C:&bsol;Users&bsol;&lt;user&gt;My
-									Downloads&bsol;mms-standalone-&lt;version&gt;&gt;java
-									-jar bin&bsol;run.jar
+									C:&bsol;Users&bsol;&lt;user&gt;My Downloads&bsol;mms-standalone-&lt;version&gt;&gt;java	-jar bin&bsol;run.jar
 								</screen>
 							</listitem>
 						</itemizedlist>
@@ -1181,8 +1131,7 @@
 						distribution's install directory.
 					</para>
 					<screen>
-						~]$ cd
-						&quot;mms-standalone-&lt;version&gt;&quot;
+						~]$ cd &quot;mms-standalone-&lt;version&gt;&quot;
 					</screen>
 				</step>
 				<step>

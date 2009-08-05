@@ -39,10 +39,12 @@ If this final separator is missing, then the documentation will be wrong. -->
 
 <!-- Media Server User Guide -->
 <!ENTITY MS_VERSION "1.1.0 GA">
-<!ENTITY MS_SIZE "110 MB">
-<!ENTITY MS_ZIP "mobicents-media-server-all-1.1.0.GA.zip">
-<!ENTITY MS_JBOSS_HOME_BIN_LIN "jboss-4.2.3.GA/bin/">
-<!ENTITY MS_JBOSS_HOME_BIN_WIN "jboss-4.2.3.GA\bin\">
+<!ENTITY MS_EMB_SIZE "110 MB">
+<!ENTITY MS_STA_SIZE "110 MB">
+<!ENTITY MS_EMB_ZIP "mms-jboss-5.1.0.GA-2.0.0.BETA1-0906151159.zip">
+<!ENTITY MS_STA_ZIP "mms-standalone-2.0.0.BETA1-0907120424.zip">
+<!ENTITY MS_JBOSS_HOME_BIN_LIN "jboss-5.1.0.GA/bin/">
+<!ENTITY MS_JBOSS_HOME_BIN_WIN "jboss-5.1.0.GA\bin\">
 
 <!-- SIP Servlet Server Installation Guide -->
 <!ENTITY SSS_MSS4J_VERSION "1.0.0">
