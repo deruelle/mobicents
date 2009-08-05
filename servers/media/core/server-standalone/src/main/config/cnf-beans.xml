@@ -31,16 +31,16 @@
 		</property>
 	</bean>
 
-	<bean name="CnfBridgeSink"
-		class="org.mobicents.media.server.impl.resource.cnf.ConferenceSinkFactory">
-		<property name="name">cnf.sink</property>
+	<bean name="CnfBridgeFactory"
+		class="org.mobicents.media.server.impl.resource.cnf.CnfBridgeFactory">
+		<property name="name">cnf.bridge</property>
 	</bean>
 
-	<bean name="CnfBridgeSource"
-		class="org.mobicents.media.server.impl.resource.cnf.ConferenceSourceFactory">
-		<property name="name">cnf.source</property>
-	</bean>
-	
+        <bean name="CnfConnectionFactory" class="org.mobicents.media.server.ConnectionFactory">
+            <property name="txChannelFactory"><inject bean="Cnf-Dsp-ChannelFactory"/></property>
+            <property name="rxChannelFactory"><inject bean="Cnf-Dsp-ChannelFactory"/></property>
+        </bean>    
+
         <!-- Conference with RTP and DSP  -->
 	<bean name="CnfEndpoint-1"
 		class="org.mobicents.media.server.EndpointImpl">
@@ -51,14 +51,10 @@
 			<inject bean="Timer" />
 		</property>
 		
-                <property name="sourceFactory">
-			<inject bean="CnfBridgeSource" />
+                <property name="groupFactory">
+			<inject bean="CnfBridgeFactory" />
 		</property>
 		
-                <property name="sinkFactory">
-			<inject bean="CnfBridgeSink" />
-		</property>
-                
 		<property name="rtpFactory">
 			<map class="java.util.Hashtable" keyClass="java.lang.String"
 				valueClass="org.mobicents.media.server.impl.rtp.RtpFactory">
@@ -71,13 +67,15 @@
 			</map>
 		</property>
                 
-		<property name="txChannelFactory">
-			<inject bean="Cnf-Dsp-ChannelFactory" />
-		</property>
-		<property name="rxChannelFactory">
-			<inject bean="Cnf-Dsp-ChannelFactory" />
+		<property name="connectionFactory">
+			<inject bean="CnfConnectionFactory" />
 		</property>
 	</bean>
+
+        <bean name="CnfLocalConnectionFactory" class="org.mobicents.media.server.ConnectionFactory">
+            <property name="txChannelFactory"><inject bean="Cnf-DefaultChannelFactory"/></property>
+            <property name="rxChannelFactory"><inject bean="Cnf-DefaultChannelFactory"/></property>
+        </bean>    
 
         <!-- Conference local bridge  -->
 	<bean name="CnfEndpoint-local"
@@ -89,20 +87,13 @@
 			<inject bean="Timer" />
 		</property>
 		
-                <property name="sourceFactory">
-			<inject bean="CnfBridgeSource" />
+                <property name="groupFactory">
+			<inject bean="CnfBridgeFactory" />
 		</property>
-		
-                <property name="sinkFactory">
-			<inject bean="CnfBridgeSink" />
+		<property name="connectionFactory">
+			<inject bean="CnfLocalConnectionFactory" />
 		</property>
                 
-		<property name="txChannelFactory">
-			<inject bean="Cnf-DefaultChannelFactory" />
-		</property>
-		<property name="rxChannelFactory">
-			<inject bean="Cnf-DefaultChannelFactory" />
-		</property>
 	</bean>
 
 </deployment>
