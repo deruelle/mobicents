@@ -26,6 +26,8 @@ public class Format implements Cloneable, Serializable {
     private long encodingCode;	// This is set during equals/matches comparisons via isSameEncoding.  Allows for fast string comparisons.
     private int hash;
     
+    public final static Format ANY = new Format("ANY");
+    
     public Format(String encoding) {
         this.encoding = encoding;
         hash = encoding.hashCode();
@@ -78,8 +80,16 @@ public class Format implements Cloneable, Serializable {
     public boolean matches(Format format) {
         if (format == null) {
             return false;
-        //System.out.println("matches null? " + MediaCGUtils.formatToStr(this));
         }
+        
+        if (this == ANY) {
+            return true;
+        }
+        
+        if (format == ANY) {
+            return true;
+        }
+        
         if (!FormatUtils.isOneAssignableFromTheOther(getClass(), format.getClass())) {
             return false;
         }

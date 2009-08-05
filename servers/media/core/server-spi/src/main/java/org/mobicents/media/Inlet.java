@@ -40,4 +40,8 @@ public interface Inlet extends Component {
      * @return the reference to the media sink.
      */
     public MediaSink getInput();
+    
+    public void connect(MediaSource source);
+    public void disconnect(MediaSource source);
+    
 }

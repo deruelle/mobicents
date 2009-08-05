@@ -1,15 +1,28 @@
 /*
- * Mobicents Media Gateway
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
  *
- * The source code contained in this file is in in the public domain.
- * It can be used in any project or product without prior permission,
- * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
- * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * AND DATA ACCURACY.  We do not warrant or make any representations
- * regarding the use of the software or the  results thereof, including
- * but not limited to the correctness, accuracy, reliability or
- * usefulness of the software.
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
 
 package org.mobicents.media;
@@ -56,6 +69,27 @@ public interface MediaSink extends Component {
      * @param source the source to disconnect from.
      */
     public void disconnect(MediaSource source);
+    
+    /**
+     * Flags which indicates that multiple connections to this sink are allowed.
+     * 
+     * @return true if multiple connections are allowed
+     */
+    public boolean isMultipleConnectionsAllowed();
+    
+    /**
+     * Create connection between outlet and this sink.
+     * 
+     * @param outlet the outlet to connect with
+     */
+    public void connect(Outlet outlet);
+    
+    /**
+     * Disconnects specified outlet from this sink.
+     * 
+     * @param outlet the outlet to disconnect.
+     */
+    public void disconnect(Outlet outlet);
     
     /**
      * This methos is called by media source when new media is available

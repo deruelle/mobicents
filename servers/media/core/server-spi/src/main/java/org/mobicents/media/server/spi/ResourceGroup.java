@@ -24,23 +24,17 @@
  *
  * Boston, MA  02110-1301  USA
  */
+package org.mobicents.media.server.spi;
 
-package org.mobicents.media;
-
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.Component;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
 
 /**
- * Acts as a factory of any media components.
- * 
+ *
  * @author kulikov
  */
-public interface ComponentFactory {
-    /**
-     * Constructs new component.
-     * 
-     * @param endpoint the endpoint which creates this component.
-     * @return new instance of the component.
-     */
-    public Component newInstance(Endpoint endpoint) throws ResourceUnavailableException;
+public interface ResourceGroup extends Component {
+    public MediaSink getSink();
+    public MediaSource getSource();
 }

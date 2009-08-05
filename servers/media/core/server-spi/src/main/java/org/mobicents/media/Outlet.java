@@ -40,4 +40,8 @@ public interface Outlet extends Component {
      * @return the reference to the media source.
      */
     public MediaSource getOutput();
+    
+    public void connect(MediaSink sink);
+    public void disconnect(MediaSink sink);
+    
 }
