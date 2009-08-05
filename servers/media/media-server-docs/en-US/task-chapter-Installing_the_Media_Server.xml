@@ -141,37 +141,17 @@
 						that the version number of the binary is
 						included in this directory name.
 					</para>
-					<screen>
-						~]$ mkdir
-						<quote>
-							ms-
-							<replaceable>&lt;version&gt;</replaceable>
-						</quote>
-					</screen>
+					<screen>~]$ mkdir <quote>ms-<replaceable>&lt;version&gt;</replaceable></quote></screen>
 				</step>
 				<step>
 					<para>
 						Move the downloaded zip file into the directory:
 					</para>
-					<screen>
-						~]$ mv
-						<quote>&MS_EMB_ZIP;
-						</quote>
-						<quote>
-							ms-
-							<replaceable>&lt;version&gt;</replaceable>
-						</quote>
-					</screen>
+					<screen>~]$ mv <quote>&MS_EMB_ZIP;</quote> <quote>ms-<replaceable>&lt;version&gt;</replaceable></quote></screen>
 				</step>
 				<step>
 					<para>Move into the directory:</para>
-					<screen>
-						~]$ cd
-						<quote>
-							ms-
-							<replaceable>&lt;version&gt;</replaceable>
-						</quote>
-					</screen>
+					<screen>~]$ cd	<quote>ms-<replaceable>&lt;version&gt;</replaceable></quote></screen>
 				</step>
 				<step>
 					<para>
@@ -181,24 +161,13 @@
 							<listitem>
 								<para>
 									Java:
-									<screen>
-										ms-
-										<replaceable>
-											&lt;version&gt;
-										</replaceable>
-										]$ jar -xvf
-										<quote>&MS_EMB_ZIP;
-										</quote>
-									</screen>
+									<screen>ms-<replaceable>&lt;version&gt;</replaceable>]$ jar -xvf <quote>&MS_EMB_ZIP;</quote></screen>
 								</para>
 							</listitem>
 							<listitem>
 								<para>
 									Linux:
-									<screen>
-										ms-&lt;version&gt;]$
-										unzip &quot;&MS_EMB_ZIP;&quot;
-									</screen>
+									<screen>ms-&lt;version&gt;]$ unzip &quot;&MS_EMB_ZIP;&quot;</screen>
 								</para>
 							</listitem>
 						</itemizedlist>
@@ -218,13 +187,7 @@
 						Consider deleting the archive, if free disk
 						space is an issue.
 					</para>
-					<screen>
-						ms-
-						<replaceable>&lt;version&gt;</replaceable>
-						]$ rm
-						<quote>&MS_EMB_ZIP;
-						</quote>
-					</screen>
+					<screen>ms-<replaceable>&lt;version&gt;</replaceable>]$ rm <quote>&MS_EMB_ZIP;</quote></screen>
 				</step>
 			</procedure>
 			<procedure>
@@ -291,11 +254,7 @@
 								command to extract the archive contents
 								into the current folder.
 							</para>
-							<screen>
-								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-								Downloads&bsol;ms-&lt;version&gt;&bsol;jar
-								-xvf &quot;&MS_EMB_ZIP;&quot;
-							</screen>
+							<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;ms-&lt;version&gt;&bsol;jar -xvf &quot;&MS_EMB_ZIP;&quot;</screen>
 						</listitem>
 					</orderedlist>
 				</step>
@@ -319,11 +278,7 @@
 						Consider deleting the archive, if free disk
 						space is an issue.
 					</para>
-					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-						Downloads&bsol;ms-&lt;version&gt;&bsol;delete
-						&quot;&MS_EMB_ZIP;&quot;
-					</screen>
+					<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;ms-&lt;version&gt;&bsol;delete &quot;&MS_EMB_ZIP;&quot; </screen>
 				</step>
 			</procedure>
 		</section>
@@ -361,9 +316,7 @@
 						<filename>bin/run.sh</filename>
 						start script is executable.
 					</para>
-					<screen>
-						ms-&lt;version&gt;]$ chmod +x bin/run.sh
-					</screen>
+					<screen>ms-&lt;version&gt;]$ chmod +x bin/run.sh</screen>
 				</step>
 				<step>
 					<para>
@@ -383,9 +336,7 @@
 					<filename>bin</filename>
 					directory:
 				</para>
-				<screen>
-					ms-&lt;version&gt;]$ java -jar bin/run.jar
-				</screen>
+				<screen>ms-&lt;version&gt;]$ java -jar bin/run.jar</screen>
 			</note>
 			<procedure>
 				<title>
@@ -412,9 +363,7 @@
 						<guilabel>Start</guilabel>
 						menu and navigate to the correct folder:
 					</para>
-					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&gt; cd &quot;ms-&lt;version&gt;&quot;
-					</screen>
+					<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&gt; cd &quot;ms-&lt;version&gt;&quot;</screen>
 				</step>
 				<step>
 					<para>
@@ -426,18 +375,14 @@
 									<filename>run.bat</filename>
 									batch file:
 								</para>
-								<screen>
-									C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;bin&bsol;run.bat
-								</screen>
+								<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;bin&bsol;run.bat</screen>
 							</listitem>
 							<listitem>
 								<para>
 									<filename>run.jar</filename>
 									executable Java archive:
 								</para>
-								<screen>
-									C:&bsol;Users&bsol;&lt;user&gt;My Downloads&bsol;ms-&lt;version&gt;&gt;java -jar bin&bsol;run.jar
-								</screen>
+								<screen>C:&bsol;Users&bsol;&lt;user&gt;My Downloads&bsol;ms-&lt;version&gt;&gt;java -jar bin&bsol;run.jar</screen>
 							</listitem>
 						</itemizedlist>
 					</para>
@@ -463,18 +408,14 @@
 						Change the working directory to the binary
 						distribution's install directory.
 					</para>
-					<screen>
-						~]$ cd &quot;ms-&lt;version&gt;&quot;
-					</screen>
+					<screen>~]$ cd &quot;ms-&lt;version&gt;&quot;</screen>
 				</step>
 				<step>
 					<para>
 						(Optional) Ensure that the bin/shutdown.sh start
 						script is executable:
 					</para>
-					<screen>
-						ms-&lt;version&gt;]$ chmod +x bin/shutdown.sh
-					</screen>
+					<screen>ms-&lt;version&gt;]$ chmod +x bin/shutdown.sh</screen>
 				</step>
 				<step>
 					<para>
@@ -486,9 +427,7 @@
 						<option>--shutdown</option>
 						) as a command line argument:
 					</para>
-					<screen>
-						ms-&lt;version&gt;]$ ./bin/shutdown.sh -S
-					</screen>
+					<screen>ms-&lt;version&gt;]$ ./bin/shutdown.sh -S</screen>
 				</step>
 			</procedure>
 			<note>
@@ -499,9 +438,7 @@
 					<option>-S</option>
 					option can also be used to shut down the server:
 				</para>
-				<screen>
-					ms-&lt;version&gt;]$ java -jar bin/shutdown.jar -S
-				</screen>
+				<screen>ms-&lt;version&gt;]$ java -jar bin/shutdown.jar -S</screen>
 			</note>
 			<procedure>
 				<title>
@@ -523,10 +460,7 @@
 						<option>--shutdown</option>
 						) is included in the command line argument.
 					</para>
-					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;bin&bsol;shutdown.bat
-						-S
-					</screen>
+					<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;bin&bsol;shutdown.bat -S</screen>
 					<stepalternatives>
 						<step>
 							<para>
@@ -537,9 +471,7 @@
 								option can also be used to shut down the
 								server:
 							</para>
-							<screen>
-								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;java -jar bin&bsol;shutdown.jar -S
-							</screen>
+							<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My	Downloads&bsol;ms-&lt;version&gt;&gt;java -jar bin&bsol;shutdown.jar -S</screen>
 						</step>
 					</stepalternatives>
 				</step>
@@ -847,16 +779,11 @@
 					<para>
 						Move the downloaded zip file into the directory:
 					</para>
-					<screen>
-						~]$ mv <quote>&MS_STA_ZIP;</quote> <quote>ms-<replaceable>&lt;version&gt;</replaceable></quote>
-					</screen>
+					<screen>~]$ mv <quote>&MS_STA_ZIP;</quote> <quote>ms-<replaceable>&lt;version&gt;</replaceable></quote></screen>
 				</step>
 				<step>
 					<para>Move into the directory:</para>
-					<screen>
-						~]$ cd <quote>ms-<replaceable>&lt;version&gt;</replaceable>
-						</quote>
-					</screen>
+					<screen>~]$ cd <quote>ms-<replaceable>&lt;version&gt;</replaceable></quote></screen>
 				</step>
 				<step>
 					<para>
@@ -866,17 +793,13 @@
 							<listitem>
 								<para>
 									Java:
-									<screen>
-										ms-<replaceable>&lt;version&gt;</replaceable>]$ jar -xvf <quote>&MS_STA_ZIP;</quote>
-									</screen>
+									<screen>ms-<replaceable>&lt;version&gt;</replaceable>]$ jar -xvf <quote>&MS_STA_ZIP;</quote></screen>
 								</para>
 							</listitem>
 							<listitem>
 								<para>
 									Linux:
-									<screen>
-										ms-&lt;version&gt;]$unzip &quot;&MS_STA_ZIP;&quot;
-									</screen>
+									<screen>ms-&lt;version&gt;]$unzip &quot;&MS_STA_ZIP;&quot;</screen>
 								</para>
 							</listitem>
 						</itemizedlist>
@@ -896,9 +819,7 @@
 						Consider deleting the archive, if free disk
 						space is an issue.
 					</para>
-					<screen>
-						ms-<replaceable>&lt;version&gt;</replaceable>]$ rm	<quote>&MS_STA_ZIP;</quote>
-					</screen>
+					<screen>ms-<replaceable>&lt;version&gt;</replaceable>]$ rm	<quote>&MS_STA_ZIP;</quote></screen>
 				</step>
 			</procedure>
 			<procedure>
@@ -965,9 +886,7 @@
 								command to extract the archive contents
 								into the current folder.
 							</para>
-							<screen>
-								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;ms-&lt;version&gt;&bsol;jar -xvf &quot;&MS_STA_ZIP;&quot;
-							</screen>
+							<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;ms-&lt;version&gt;&bsol;jar -xvf &quot;&MS_STA_ZIP;&quot;</screen>
 						</listitem>
 					</orderedlist>
 				</step>
@@ -991,9 +910,7 @@
 						Consider deleting the archive, if free disk
 						space is an issue.
 					</para>
-					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;ms-&lt;version&gt;&bsol;delete &quot;&MS_STA_ZIP;&quot;
-					</screen>
+					<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;ms-&lt;version&gt;&bsol;delete &quot;&MS_STA_ZIP;&quot;</screen>
 				</step>
 			</procedure>
 		</section>
@@ -1048,9 +965,7 @@
 					<filename>bin</filename>
 					directory:
 				</para>
-				<screen>
-					mms-standalone-&lt;version&gt;]$ java -jar bin/run.jar
-				</screen>
+				<screen>mms-standalone-&lt;version&gt;]$ java -jar bin/run.jar</screen>
 			</note>
 			<procedure>
 				<title>
@@ -1091,18 +1006,14 @@
 									<filename>run.bat</filename>
 									batch file:
 								</para>
-								<screen>
-									C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;mms-standalone&lt;version&gt;&gt;bin&bsol;run.bat
-								</screen>
+								<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;mms-standalone&lt;version&gt;&gt;bin&bsol;run.bat</screen>
 							</listitem>
 							<listitem>
 								<para>
 									<filename>run.jar</filename>
 									executable Java archive:
 								</para>
-								<screen>
-									C:&bsol;Users&bsol;&lt;user&gt;My Downloads&bsol;mms-standalone-&lt;version&gt;&gt;java	-jar bin&bsol;run.jar
-								</screen>
+								<screen>C:&bsol;Users&bsol;&lt;user&gt;My Downloads&bsol;mms-standalone-&lt;version&gt;&gt;java	-jar bin&bsol;run.jar</screen>
 							</listitem>
 						</itemizedlist>
 					</para>
@@ -1154,10 +1065,7 @@
 						<option>--shutdown</option>
 						) as a command line argument:
 					</para>
-					<screen>
-						mms-standalone-&lt;version&gt;]$
-						./bin/shutdown.sh -S
-					</screen>
+					<screen>mms-standalone-&lt;version&gt;]$./bin/shutdown.sh -S</screen>
 				</step>
 			</procedure>
 			<note>
@@ -1168,10 +1076,7 @@
 					<option>-S</option>
 					option can also be used to shut down the server:
 				</para>
-				<screen>
-					mms-standalone-&lt;version&gt;]$ java -jar
-					bin/shutdown.jar -S
-				</screen>
+				<screen>mms-standalone-&lt;version&gt;]$ java -jar	bin/shutdown.jar -S</screen>
 			</note>
 			<procedure>
 				<title>
@@ -1193,11 +1098,7 @@
 						<option>--shutdown</option>
 						) is included in the command line argument.
 					</para>
-					<screen>
-						C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-						Downloads&bsol;mms-standalone-&lt;version&gt;&gt;bin&bsol;shutdown.bat
-						-S
-					</screen>
+					<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;mms-standalone-&lt;version&gt;&gt;bin&bsol;shutdown.bat -S</screen>
 					<stepalternatives>
 						<step>
 							<para>
@@ -1208,11 +1109,7 @@
 								option can also be used to shut down the
 								server:
 							</para>
-							<screen>
-								C:&bsol;Users&bsol;&lt;user&gt;&bsol;My
-								Downloads&bsol;mms-standalone-&lt;version&gt;&gt;java
-								-jar bin&bsol;shutdown.jar -S
-							</screen>
+							<screen>C:&bsol;Users&bsol;&lt;user&gt;&bsol;My Downloads&bsol;mms-standalone-&lt;version&gt;&gt;java -jar bin&bsol;shutdown.jar -S</screen>
 						</step>
 					</stepalternatives>
 				</step>
