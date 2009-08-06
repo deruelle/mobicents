@@ -37,7 +37,7 @@
 		<module>server-spi</module>
 		<module>server-impl</module>
 		<module>controllers</module>
-		<module>server-standalone</module>
+		<module>server-standalone</module>		
 	</modules>
 	<!-- This should go in parent.xml -->
 	<dependencyManagement>
@@ -79,6 +79,7 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
+				<module>docs</module>
 				<module>server-spi</module>
 				<module>server-impl</module>
 				<module>server-sar</module>
