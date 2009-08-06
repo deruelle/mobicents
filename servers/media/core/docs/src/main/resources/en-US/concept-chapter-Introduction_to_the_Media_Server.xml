@@ -1,0 +1,45 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY PLATFORM_NAME "${platform.name}">
+<!ENTITY VERSION "${version}">
+<!ENTITY YEAR "${year}">
+]>
+<chapter id="ittms-Introduction_to_the_Media_Server">
+	<title>Introduction to the &PLATFORM_NAME; Media Server</title>
+	<section
+		id="ittms-Overview-Media_Servers">
+		<title>
+			Introduction
+		</title>
+
+		<para>
+			Let us talk here what is Media Server in layman's language. What is hardware media server and what is software media server.
+		</para>
+	</section>
+
+	<section id="ittms-Reasoning_and_Need_for_Media_Server">
+		<title>The Justification for S/w Media Server</title>
+
+		<para>The Mobicents Media Server is capable of</para>
+
+		
+
+	</section>
+
+
+	<section id="ittms-Media_Server_Use Case">
+		<title>Media Server Use Case</title>
+		<para>
+			Where is it used?
+		</para>
+		
+	</section>
+	
+	<section id="ittms-What_is_Mobicents_Media_Server">
+		<title>What is &PLATFORM_NAME; Media Server</title>
+		<para>
+			What is Mobicents Media Server?
+		</para>
+		
+	</section>
+</chapter>

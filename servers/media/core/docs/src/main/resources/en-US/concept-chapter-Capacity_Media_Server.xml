@@ -1,0 +1,33 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY PLATFORM_NAME "${platform.name}">
+<!ENTITY VERSION "${version}">
+<!ENTITY YEAR "${year}">
+
+]>
+<chapter id="chapter-Capacity_Media_Server">
+	<title>Technical Specification and Capacity of &PLATFORM_NAME; Media Server</title>
+	<para>
+		para for some intro
+	</para>
+	
+		<section
+		id="itms-Technical_Specification_Media_Server">
+		<title>
+		    Technical Specification of &PLATFORM_NAME; Media Server
+		</title>
+		<para>
+		  something here
+		</para>
+		</section>
+
+		<section
+		id="itms-Capacity_Media_Server">
+		<title>
+		    Capacity of &PLATFORM_NAME; Media Server
+		</title>
+		<para>
+		  something here
+		</para>
+		</section>
+</chapter>

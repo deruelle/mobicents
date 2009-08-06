@@ -1,0 +1,430 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>org.mobicents.servers.media</groupId>
+		<artifactId>mms-core</artifactId>
+		<version>2.0.0.BETA2-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>Mobicents_Media_Server_User_Guide_en-US</artifactId>
+	<modelVersion>4.0.0</modelVersion>
+
+	<packaging>jdocbook</packaging>
+
+	<properties>
+		<product.name>Media Server</product.name>
+		<year>2009</year>
+		<bookid>Media_Server_User_Guide</bookid>
+		<release.size>90MB</release.size>
+		<translation>en-US</translation>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>community</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<platform.name>Mobicents</platform.name>
+				<holder>Red Hat</holder>
+				<release.integrated.filename>
+					mms-jboss-5.1.0.GA-${version}.zip
+				</release.integrated.filename>
+				<release.integrated.filesize>
+					110 Mb
+				</release.integrated.filesize>
+				<release.standalone.filename>
+					mms-standalone-${version}.zip
+				</release.standalone.filename>
+				<release.standalone.filesize>
+					11.5 Mb
+				</release.standalone.filesize>	
+				
+				<author.email.ivelin>ivelin.atanasoff.ivanov (at) gmail.com</author.email.ivelin>
+				<author.email.eduardo>emmartins (at) gmail.com</author.email.eduardo>
+				<author.email.vladimir>vladimir.ralev (at) gmail.com</author.email.vladimir>
+				<author.email.jean>jean.deruelle (at) gmail.com</author.email.jean>
+				<author.email.oleg>oleg.kulikoff (at) gmail.com</author.email.oleg>
+				<author.email.amit>amit.bhayani (at) gmail.com</author.email.amit>
+				<author.email.luis>lbbbarreiro (at) gmail.com</author.email.luis>
+				<author.email.alexandre>brainslog (at) gmail.com</author.email.alexandre>
+				<author.email.bartosz>baranowb (at) gmail.com</author.email.bartosz>							<author.email.pavel>pavel.slegr (at) gmail.com</author.email.pavel>								
+			</properties>
+		</profile>
+		<profile>
+			<id>jbcp</id>
+			<properties>
+				<platform.name>JBoss Communications</platform.name>
+				<holder>Red Hat</holder>
+				<release.integrated.filename>
+					mms-jboss-5.1.0.GA-${version}.zip
+				</release.integrated.filename>
+				<release.integrated.filesize>
+					110 Mb
+				</release.integrated.filesize>
+				<release.standalone.filename>
+					mms-standalone-${version}.zip
+				</release.standalone.filename>
+				<release.standalone.filesize>
+					11.5 Mb
+				</release.standalone.filesize>	
+				
+				<author.email.ivelin>iivanov (at) redhat.com</author.email.ivelin>
+				<author.email.eduardo>emmartins (at) redhat.com</author.email.eduardo>
+				<author.email.vladimir>vralev (at) redhat.com</author.email.vladimir>
+				<author.email.jean>jderuell (at) redhat.com</author.email.jean>
+				<author.email.oleg>okulikov (at) redhat.com</author.email.oleg>
+				<author.email.amit>abhayani (at) redhat.com</author.email.amit>
+				<author.email.luis>lbarreiro (at) redhat.com</author.email.luis>
+				<author.email.alexandre>amendonc (at) redhat.com</author.email.alexandre>
+				<author.email.bartosz>bbaranow (at) redhat.com</author.email.bartosz>							<author.email.pavel>pslegr (at) redhat.com</author.email.pavel>								
+			</properties>
+		</profile>
+
+
+
+
+
+
+
+
+		<profile>
+			<id>all</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jboss.maven.plugins</groupId>
+						<artifactId>maven-jdocbook-plugin</artifactId>
+						<configuration>
+							<formats>
+								<format>
+									<formatName>pdf</formatName>
+									<!--note: "main-pdf" changed name to "pdf.xsl" between jbossorg-docbook-xslt
+										version 1.0.0 and version 1.1.0 -->
+									<!--<stylesheetResource>classpath:/xslt/org/jboss/main-pdf.xsl</stylesheetResource>-->
+									<stylesheetResource>
+										classpath:/xslt/org/jboss/pdf.xsl
+									</stylesheetResource>
+									<finalName>
+										${env.DOCNAME}.pdf
+									</finalName>
+								</format>
+								<format>
+									<formatName>html</formatName>
+									<!--note: "main-html" changed name to "xhtml.xsl" between jbossorg-docbook-xslt
+										version 1.0.0 and version 1.1.0 -->
+									<!--<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>-->
+									<stylesheetResource>
+										classpath:/xslt/org/jboss/xhtml.xsl
+									</stylesheetResource>
+									<finalName>index.html</finalName>
+								</format>
+								<format>
+									<formatName>html_single</formatName>
+									<!--note: "nochunk-html.xsl" changed name to "xhtml-single.xsl" between jbossorg-docbook-xslt
+										version 1.0.0 and version 1.1.0 -->
+									<!--<stylesheetResource>classpath:/xslt/org/jboss/nochunk-html.xsl</stylesheetResource>-->
+									<stylesheetResource>
+										classpath:/xslt/org/jboss/xhtml-single.xsl
+									</stylesheetResource>
+									<finalName>index.html</finalName>
+								</format>
+							</formats>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>hudson</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jboss.maven.plugins</groupId>
+						<artifactId>maven-jdocbook-plugin</artifactId>
+						<configuration>
+							<formats>
+								<format>
+									<formatName>html</formatName>
+									<!--note: "main-html" changed name to "xhtml.xsl" between jbossorg-docbook-xslt
+										version 1.0.0 and version 1.1.0 -->
+									<!--<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>-->
+									<stylesheetResource>
+										classpath:/xslt/org/jboss/xhtml.xsl
+									</stylesheetResource>
+									<finalName>index.html</finalName>
+								</format>
+								<format>
+									<formatName>html_single</formatName>
+									<!--note: "nochunk-html.xsl" changed name to "xhtml-single.xsl" between jbossorg-docbook-xslt
+										version 1.0.0 and version 1.1.0 -->
+									<!--<stylesheetResource>classpath:/xslt/org/jboss/nochunk-html.xsl</stylesheetResource>-->
+									<stylesheetResource>
+										classpath:/xslt/org/jboss/xhtml-single.xsl
+									</stylesheetResource>
+									<finalName>index.html</finalName>
+								</format>
+							</formats>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>html</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jboss.maven.plugins</groupId>
+						<artifactId>maven-jdocbook-plugin</artifactId>
+						<configuration>
+							<formats>
+								<format>
+									<formatName>html</formatName>
+									<!--note: "main-html" changed name to "xhtml.xsl" between jbossorg-docbook-xslt
+										version 1.0.0 and version 1.1.0 -->
+									<!--<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>-->
+									<stylesheetResource>
+										classpath:/xslt/org/jboss/xhtml.xsl
+									</stylesheetResource>
+									<finalName>index.html</finalName>
+								</format>
+							</formats>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>html_single</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jboss.maven.plugins</groupId>
+						<artifactId>maven-jdocbook-plugin</artifactId>
+						<configuration>
+							<formats>
+								<format>
+									<formatName>html_single</formatName>
+									<!--note: "nochunk-html.xsl" changed name to "xhtml-single.xsl" between jbossorg-docbook-xslt
+										version 1.0.0 and version 1.1.0 -->
+									<!--<stylesheetResource>classpath:/xslt/org/jboss/nochunk-html.xsl</stylesheetResource>-->
+									<stylesheetResource>
+										classpath:/xslt/org/jboss/xhtml-single.xsl
+									</stylesheetResource>
+									<finalName>index.html</finalName>
+								</format>
+							</formats>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>pdf</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jboss.maven.plugins</groupId>
+						<artifactId>maven-jdocbook-plugin</artifactId>
+						<configuration>
+							<formats>
+								<format>
+									<formatName>pdf</formatName>
+									<!--note: "main-pdf" changed name to "pdf.xsl" between jbossorg-docbook-xslt
+										version 1.0.0 and version 1.1.0 -->
+									<!--<stylesheetResource>classpath:/xslt/org/jboss/main-pdf.xsl</stylesheetResource>-->
+									<stylesheetResource>
+										classpath:/xslt/org/jboss/pdf.xsl
+									</stylesheetResource>
+									<finalName>
+										${env.DOCNAME}.pdf
+									</finalName>
+								</format>
+							</formats>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+
+
+
+
+	</profiles>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+
+		<plugins>
+
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/docbook/resources
+							</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jboss.maven.plugins</groupId>
+				<artifactId>maven-jdocbook-plugin</artifactId>
+				<version>2.2.0</version>
+				<extensions>true</extensions>
+				<dependencies>
+					<dependency>
+						<groupId>org.jboss</groupId>
+						<artifactId>jbossorg-docbook-xslt</artifactId>
+						<version>1.1.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jboss</groupId>
+						<artifactId>jbossorg-jdocbook-style</artifactId>
+						<version>1.1.0</version>
+						<type>jdocbook-style</type>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<sourceDocumentName>
+						Media_Server_User_Guide.xml
+					</sourceDocumentName>
+					<sourceDirectory>
+						${project.build.directory}/docbook/resources
+					</sourceDirectory>
+					<imageResource>
+						<directory>
+							${basedir}/src/main/resources/${translation}
+						</directory>
+						<includes>
+							<include>images/*</include>
+						</includes>
+					</imageResource>
+					<formats>
+						<format>
+							<formatName>pdf</formatName>
+							<stylesheetResource>
+								classpath:/xslt/org/jboss/pdf.xsl
+							</stylesheetResource>
+							<finalName>
+								Media_Server_User_Guide.pdf
+							</finalName>
+						</format>
+						<format>
+							<formatName>html</formatName>
+							<stylesheetResource>
+								classpath:/xslt/org/jboss/xhtml.xsl
+							</stylesheetResource>
+							<finalName>index.html</finalName>
+						</format>
+						<format>
+							<formatName>html_single</formatName>
+							<stylesheetResource>
+								classpath:/xslt/org/jboss/xhtml-single.xsl
+							</stylesheetResource>
+							<finalName>index.html</finalName>
+						</format>
+					</formats>
+					<options>
+						<xincludeSupported>true</xincludeSupported>
+						<!-- needed for uri-resolvers; can be ommitted if using 'current' uri scheme -->
+						<!-- could also locate the docbook dependency and inspect its version... -->
+						<docbookVersion>1.72.0</docbookVersion>
+					</options>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<pluginRepositories>
+		<!--original repository-->
+		<pluginRepository>
+			<id>jboss</id>
+			<name>JBoss Plugin Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>jboss</id>
+			<name>JBoss Plugin Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>snapshots.jboss</id>
+			<name>JBoss Snapshots</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>people.apache</id>
+			<name>People Apache plugin repository</name>
+			<url>
+				http://people.apache.org/repo/m2-snapshot-repository
+			</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>
