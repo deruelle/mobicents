@@ -10,7 +10,7 @@
     <parent>
         <artifactId>mobicents</artifactId>
         <groupId>org.mobicents</groupId>
-        <version>4-SNAPSHOT</version>
+        <version>12</version>
         <relativePath>../../../parent/pom.xml</relativePath>
     </parent>
     <properties>
