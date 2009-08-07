@@ -71,6 +71,8 @@ public abstract class AbstractSource extends BaseComponent
     private boolean warn;
     private Logger logger;
     
+    private boolean completed = false;
+    
     /**
      * Creates new instance of source with specified name.
      * 
@@ -176,7 +178,6 @@ public abstract class AbstractSource extends BaseComponent
     public void afterStop() {
     }
     
-    @Override
     public boolean isMultipleConnectionsAllowed() {
         return false;
     }
@@ -299,6 +300,12 @@ public abstract class AbstractSource extends BaseComponent
                 if (logger.isTraceEnabled()) {
                     logger.trace(this + " sending " + buffer + " to " + otherParty);
                 }
+                completed = buffer.isEOM();
+                
+                if(completed){
+                	buffer.setEOM(false);
+                }
+                
                 otherParty.receive(buffer);                                
                 packetsTransmitted++;
                 bytesTransmitted += buffer.getLength();
@@ -315,7 +322,7 @@ public abstract class AbstractSource extends BaseComponent
             }
         } 
             
-        if (buffer.isEOM()) {
+        if (completed) {
             completed();
         }
     }
