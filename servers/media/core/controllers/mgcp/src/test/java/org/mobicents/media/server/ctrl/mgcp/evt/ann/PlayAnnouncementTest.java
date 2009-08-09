@@ -36,145 +36,146 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class PlayAnnouncementTest {
 
-    private Timer timer;
-    private EndpointImpl sender;
-    private EndpointImpl receiver;
-    
-    private AudioPlayerFactory playerFactory;
-    private TestSinkFactory sinkFactory;
-    
-    private ChannelFactory channelFactory;
-    
-    private Semaphore semaphore;
-    private boolean res;
-    private int count;
-    
-    private MgcpController controller;
-    
-    public PlayAnnouncementTest() {
-    }
+	private Timer timer;
+	private EndpointImpl sender;
+	private EndpointImpl receiver;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+	private AudioPlayerFactory playerFactory;
+	private TestSinkFactory sinkFactory;
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+	private ChannelFactory channelFactory;
 
-    @Before
-    public void setUp() throws Exception {
-        semaphore = new Semaphore(0);
-        res = false;
-        
-        timer = new TimerImpl();
-        
-        playerFactory = new AudioPlayerFactory();
-        playerFactory.setName("audio.player");
-        
-        sinkFactory = new TestSinkFactory();
-        
-        channelFactory = new ChannelFactory();
-        channelFactory.start();
-        
-        sender = new EndpointImpl("test/announcement/sender");
-        sender.setTimer(timer);
-        
-                ConnectionFactory connectionFactory = new ConnectionFactory();
-                connectionFactory.setRxChannelFactory(channelFactory);
-                connectionFactory.setTxChannelFactory(channelFactory);
-        
-        sender.setSourceFactory(playerFactory);
-        sender.setConnectionFactory(connectionFactory);
-        
-        sender.start();
-        
-        receiver = new EndpointImpl("test/announcement/receiver");
-        receiver.setTimer(timer);
-        
-        receiver.setSinkFactory(sinkFactory);
-        receiver.setConnectionFactory(connectionFactory);
-        
-        receiver.start();        
-    }
+	private Semaphore semaphore;
+	private boolean res;
+	private int pcmaCount;
 
-    @After
-    public void tearDown() {
-    }
+	private MgcpController controller;
 
-    /**
-     * Test of doVerify method, of class PlayAnnouncement.
-     */
-    @Test
-    public void testSignal() throws Exception {
-        
-        System.out.println("======1");
-        Connection rxConnection = receiver.createLocalConnection(ConnectionMode.RECV_ONLY);
-        System.out.println("======2");
-        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_ONLY);
-        
-        txConnection.setOtherParty(rxConnection);
-        
-        URL url = PlayAnnouncementTest.class.getClassLoader().getResource(
-		 "addf8-Alaw-GW.wav");
-        String s = url.toExternalForm();
-        RequestIdentifier id = new RequestIdentifier("1");
-        NotifiedEntity ne = new NotifiedEntity("localhost");
-        PlayAnnouncementFactory factory = new PlayAnnouncementFactory();
-        factory.setResourceName("audio.player");
-        PlayAnnouncement signal = (PlayAnnouncement) factory.getInstance(controller, s);
-        
-        Request request = new Request(controller, id, null, sender, ne);
-        
-        signal.doVerify(sender);
-        signal.start(request);
-        
-        System.out.println("Started");
-        semaphore.tryAcquire(10, TimeUnit.SECONDS);
-        assertEquals(150, count);
-        
-        receiver.deleteConnection(rxConnection.getId());
-        sender.deleteConnection(txConnection.getId());
-        
-    }
+	public PlayAnnouncementTest() {
+	}
 
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
 
-    private class TestSinkFactory implements ComponentFactory {
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
 
-        public Component newInstance(Endpoint endpoint) {
-            return new TestSink("test-sink");
-        }
-        
-    }
+	@Before
+	public void setUp() throws Exception {
+		semaphore = new Semaphore(0);
+		res = false;
 
-    private class TestSink extends AbstractSink {
+		timer = new TimerImpl();
 
-        public TestSink(String name) {
-            super(name);
-        }
-        
-        public Format[] getFormats() {
-            return new Format[] {AVProfile.PCMA};
-        }
+		playerFactory = new AudioPlayerFactory();
+		playerFactory.setName("audio.player");
 
-        public boolean isAcceptable(Format format) {
-            return true;
-        }
+		sinkFactory = new TestSinkFactory();
 
-        public void receive(Buffer buffer) {
-            count++;
-        }
+		channelFactory = new ChannelFactory();
+		channelFactory.start();
 
-        @Override
-        public void onMediaTransfer(Buffer buffer) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-        
-    }
-    
+		sender = new EndpointImpl("test/announcement/sender");
+		sender.setTimer(timer);
+
+		ConnectionFactory connectionFactory = new ConnectionFactory();
+		connectionFactory.setRxChannelFactory(channelFactory);
+		connectionFactory.setTxChannelFactory(channelFactory);
+
+		sender.setSourceFactory(playerFactory);
+		sender.setConnectionFactory(connectionFactory);
+
+		sender.start();
+
+		receiver = new EndpointImpl("test/announcement/receiver");
+		receiver.setTimer(timer);
+
+		receiver.setSinkFactory(sinkFactory);
+		receiver.setConnectionFactory(connectionFactory);
+
+		receiver.start();
+	}
+
+	@After
+	public void tearDown() {
+	}
+
+	/**
+	 * Test of doVerify method, of class PlayAnnouncement.
+	 */
+	@Test
+	public void testSignal() throws Exception {
+
+		System.out.println("======1");
+		Connection rxConnection = receiver.createLocalConnection(ConnectionMode.RECV_ONLY);
+		System.out.println("======2");
+		Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_ONLY);
+
+		txConnection.setOtherParty(rxConnection);
+
+		URL url = PlayAnnouncementTest.class.getClassLoader().getResource("addf8-Alaw-GW.wav");
+		String s = url.toExternalForm();
+		RequestIdentifier id = new RequestIdentifier("1");
+		NotifiedEntity ne = new NotifiedEntity("localhost");
+		PlayAnnouncementFactory factory = new PlayAnnouncementFactory();
+		factory.setResourceName("audio.player");
+		PlayAnnouncement signal = (PlayAnnouncement) factory.getInstance(controller, s);
+
+		Request request = new Request(controller, id, null, sender, ne);
+
+		signal.doVerify(sender);
+		signal.start(request);
+
+		System.out.println("Started");
+		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+		
+		assertEquals(150, pcmaCount);
+
+		receiver.deleteConnection(rxConnection.getId());
+		sender.deleteConnection(txConnection.getId());
+
+	}
+
+	private class TestSinkFactory implements ComponentFactory {
+
+		public Component newInstance(Endpoint endpoint) {
+			return new TestSink("test-sink");
+		}
+
+	}
+
+	private class TestSink extends AbstractSink {
+
+		public TestSink(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			return new Format[] { AVProfile.PCMA };
+		}
+
+		public boolean isAcceptable(Format format) {
+			return true;
+		}
+
+		public void receive(Buffer buffer) {
+			if (buffer.getFormat().equals(Endpoint.PCMA)) {
+				pcmaCount++;
+			}
+		}
+
+		@Override
+		public void onMediaTransfer(Buffer buffer) throws IOException {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+	}
+
 }
