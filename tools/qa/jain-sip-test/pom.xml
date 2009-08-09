@@ -15,7 +15,7 @@
     </parent>
     <properties>
         <!-- MOBICENTS TOOL VERSIONS -->
-        <mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA1-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
+        <mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
     </properties>
     <description />
     <dependencies>
