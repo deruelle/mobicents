@@ -14,9 +14,11 @@ import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
  */
 public class Connection {
     private ConnectionIdentifier id;
+    private ConnectionIdentifier secondConnId;
     private String sdp;
     private String remoteSDP;
     private EndpointIdentifier endpoint;
+    private EndpointIdentifier secondEndpoint;
 
     public Connection(ConnectionIdentifier id) {
         this.id = id;
@@ -49,6 +51,22 @@ public class Connection {
     public String getRemoteSDP() {
         return remoteSDP;
     }
+
+	public EndpointIdentifier getSecondEndpoint() {
+		return secondEndpoint;
+	}
+
+	public void setSecondEndpoint(EndpointIdentifier secondEndpoint) {
+		this.secondEndpoint = secondEndpoint;
+	}
+
+	public ConnectionIdentifier getSecondConnId() {
+		return secondConnId;
+	}
+
+	public void setSecondConnId(ConnectionIdentifier secondConnId) {
+		this.secondConnId = secondConnId;
+	}
     
     
 }

@@ -4,7 +4,6 @@ import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpListener;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
-import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
@@ -16,172 +15,210 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
-import java.net.InetAddress;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
 import org.jboss.test.kernel.junit.MicrocontainerTest;
-import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public abstract class MgcpMicrocontainerTest extends MicrocontainerTest implements JainMgcpListener {
 
-//    protected static long TRANSACTION_TIMES_OUT_FOR = 31000;
-    protected static long STACKS_START_FOR = 1000;
-    protected static long STACKS_SHUT_DOWN_FOR = 500;    // timeout values depend on pc
-//    protected static long MESSAGES_ARRIVE_FOR = 3000;
-//    protected static long RETRANSMISSION_TRANSACTION_TIMES_OUT_FOR = 5000;
-    protected static final String LOCAL_ADDRESS = "127.0.0.1";
-    
-    protected static final int CA_PORT = 2724;
-    public static final int REMOTE_PORT = 2427;
-    
-    protected InetAddress caIPAddress = null;
-    protected JainMgcpStackImpl caStack = null;
-    protected JainMgcpStackProviderImpl caProvider = null;
-    protected CallIdentifier callID;
-    protected HashMap<String, Connection> connections = new HashMap();
+	// protected static long TRANSACTION_TIMES_OUT_FOR = 31000;
+	protected static long STACKS_START_FOR = 1000;
+	protected static long STACKS_SHUT_DOWN_FOR = 500; // timeout values depend on pc
+	// protected static long MESSAGES_ARRIVE_FOR = 3000;
+	// protected static long RETRANSMISSION_TRANSACTION_TIMES_OUT_FOR = 5000;
+	protected static final String LOCAL_ADDRESS = "127.0.0.1";
 
-    private Semaphore semaphore = new Semaphore(0);
-    private JainMgcpResponseEvent response;
-    private boolean op = false;
-    
-    public MgcpMicrocontainerTest(String name) {
-        super(name);
-    }
+	protected static final int CA_PORT = 2724;
+	public static final int REMOTE_PORT = 2427;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        caIPAddress = InetAddress.getByName(LOCAL_ADDRESS);
-        caStack = new JainMgcpStackImpl(caIPAddress, CA_PORT);
-        caProvider = (JainMgcpStackProviderImpl) caStack.createProvider();
-        caProvider.addJainMgcpListener(this);
-        
-        callID = caProvider.getUniqueCallIdentifier();
-    }
+	protected InetAddress caIPAddress = null;
+	protected JainMgcpStackImpl caStack = null;
+	protected JainMgcpStackProviderImpl caProvider = null;
+	protected CallIdentifier callID;
+	protected HashMap<String, Connection> connections = new HashMap();
 
-    @Override
-    public void tearDown() throws java.lang.Exception {
+	private Semaphore semaphore = new Semaphore(0);
+	private JainMgcpResponseEvent response;
+	private boolean op = false;
 
-        System.out.println("CLOSE THE STACK");
+	public MgcpMicrocontainerTest(String name) {
+		super(name);
+	}
 
-        if (caStack != null) {
-            caStack.close();
-            caStack = null;
-        }
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		caIPAddress = InetAddress.getByName(LOCAL_ADDRESS);
+		caStack = new JainMgcpStackImpl(caIPAddress, CA_PORT);
+		caProvider = (JainMgcpStackProviderImpl) caStack.createProvider();
+		caProvider.addJainMgcpListener(this);
 
-        sleep(STACKS_SHUT_DOWN_FOR);
-    }
+		callID = caProvider.getUniqueCallIdentifier();
+	}
 
-    public Connection createConnection(String endpointName, ConnectionMode mode, String sdp) throws Exception {
-        EndpointIdentifier endpointID = new EndpointIdentifier(endpointName, "127.0.0.1:" + REMOTE_PORT);
-        CreateConnection createConnection = new CreateConnection(this, callID, endpointID, mode);
-        if (sdp != null) {
-            ConnectionDescriptor cd = new ConnectionDescriptor(sdp);
-            createConnection.setRemoteConnectionDescriptor(cd);
-        }
-        createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+	@Override
+	public void tearDown() throws java.lang.Exception {
 
-        this.response = null;
-        this.op = true;
-        
-        caProvider.sendMgcpEvents(new JainMgcpEvent[]{createConnection});
-        semaphore.tryAcquire(5, TimeUnit.SECONDS);
+		System.out.println("CLOSE THE STACK");
 
-        this.op = false;
-        if (response == null) {
-            throw new Exception("Time out");
-        }
+		if (caStack != null) {
+			caStack.close();
+			caStack = null;
+		}
 
-        CreateConnectionResponse resp = (CreateConnectionResponse) response;
-        if (resp.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
-            Connection conn = new Connection(resp.getConnectionIdentifier());
-            conn.setEndpoint(resp.getSpecificEndpointIdentifier());
-            conn.setLocalSdp(resp.getLocalConnectionDescriptor().toString());
-            return conn;
-        }
+		sleep(STACKS_SHUT_DOWN_FOR);
+	}
 
-        throw new Exception(resp.getReturnCode().getComment());
-    }
+	public Connection createLocalConnection(String endpointName, ConnectionMode mode, String secondEndpoint)
+			throws Exception {
+		EndpointIdentifier endpointID = new EndpointIdentifier(endpointName, "127.0.0.1:" + REMOTE_PORT);
+		CreateConnection createConnection = new CreateConnection(this, callID, endpointID, mode);
 
-    public void modifyConnection(Connection connection, String remoteSdp) throws Exception {
-        ModifyConnection modifyConnection = new ModifyConnection(this, callID,
-                connection.getEndpoint(), connection.getId());
-        ConnectionDescriptor connectionDescriptor = new ConnectionDescriptor(remoteSdp);
-        modifyConnection.setRemoteConnectionDescriptor(connectionDescriptor);
-        modifyConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
-        
-        this.response = null;
-        this.op = true;
-        
-        caProvider.sendMgcpEvents(new JainMgcpEvent[]{modifyConnection});
-        semaphore.tryAcquire(5, TimeUnit.SECONDS);
+		EndpointIdentifier secEndpointID = new EndpointIdentifier(secondEndpoint, "127.0.0.1:" + REMOTE_PORT);
+		createConnection.setSecondEndpointIdentifier(secEndpointID);
 
-        this.op = false;
-        if (response == null) {
-            throw new Exception("Time out");
-        }
+		createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
 
-        ModifyConnectionResponse resp = (ModifyConnectionResponse) response;
-        if (resp.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
-            connection.setRemoteSDP(remoteSdp);
-        }
-    }
+		this.response = null;
+		this.op = true;
 
-    public void deleteConnectionConnection(Connection connection) throws Exception {
-        DeleteConnection deleteConnection = new DeleteConnection(this, callID, connection.getEndpoint(), connection.getId());
-        deleteConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
-        
-        this.response = null;
-        this.op = true;
-        
-        caProvider.sendMgcpEvents(new JainMgcpEvent[]{deleteConnection});
-        semaphore.tryAcquire(5, TimeUnit.SECONDS);
-        
-        this.op = false;
-        if (response == null) {
-            throw new Exception("Time out");
-        }
+		caProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
+		semaphore.tryAcquire(5, TimeUnit.SECONDS);
 
-        DeleteConnectionResponse resp = (DeleteConnectionResponse) response;
-        if (resp.getReturnCode().getValue() != ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
-            throw new Exception("Could not delete connections: " + resp.getReturnCode().getComment());
-        }
-    }
-    
+		this.op = false;
+		if (response == null) {
+			throw new Exception("Time out");
+		}
 
-    protected static void sleep(long sleepFor) {
-        try {
-            Thread.sleep(sleepFor);
-        } catch (InterruptedException ex) {
-            // Ignore
-        }
-    }
+		CreateConnectionResponse resp = (CreateConnectionResponse) response;
+		if (resp.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
+			Connection conn = new Connection(resp.getConnectionIdentifier());
+			conn.setEndpoint(resp.getSpecificEndpointIdentifier());
+			if (resp.getLocalConnectionDescriptor() != null) {
+				conn.setLocalSdp(resp.getLocalConnectionDescriptor().toString());
+			}
 
-    public void processMgcpResponseEvent(JainMgcpResponseEvent event) {
-        this.response = event;
-        if (this.op) semaphore.release();
-    }
-    
-    public void transactionEnded(int paramInt) {
-        // TODO Auto-generated method stub
-    }
+			conn.setSecondEndpoint(resp.getSecondEndpointIdentifier());
+			conn.setSecondConnId(resp.getSecondConnectionIdentifier());
 
-    public void transactionRxTimedOut(JainMgcpCommandEvent paramJainMgcpCommandEvent) {
-        // TODO Auto-generated method stub
-    }
+			return conn;
+		}
 
-    public void transactionTxTimedOut(JainMgcpCommandEvent paramJainMgcpCommandEvent) {
-        // TODO Auto-generated method stub
-    }
+		throw new Exception(resp.getReturnCode().getComment());
+	}
 
-    
+	public Connection createConnection(String endpointName, ConnectionMode mode, String sdp) throws Exception {
+		EndpointIdentifier endpointID = new EndpointIdentifier(endpointName, "127.0.0.1:" + REMOTE_PORT);
+		CreateConnection createConnection = new CreateConnection(this, callID, endpointID, mode);
+		if (sdp != null) {
+			ConnectionDescriptor cd = new ConnectionDescriptor(sdp);
+			createConnection.setRemoteConnectionDescriptor(cd);
+		}
+		createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+		this.response = null;
+		this.op = true;
+
+		caProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
+		semaphore.tryAcquire(5, TimeUnit.SECONDS);
+
+		this.op = false;
+		if (response == null) {
+			throw new Exception("Time out");
+		}
+
+		CreateConnectionResponse resp = (CreateConnectionResponse) response;
+		if (resp.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
+			Connection conn = new Connection(resp.getConnectionIdentifier());
+			conn.setEndpoint(resp.getSpecificEndpointIdentifier());
+			conn.setLocalSdp(resp.getLocalConnectionDescriptor().toString());
+			return conn;
+		}
+
+		throw new Exception(resp.getReturnCode().getComment());
+	}
+
+	public void modifyConnection(Connection connection, String remoteSdp) throws Exception {
+		ModifyConnection modifyConnection = new ModifyConnection(this, callID, connection.getEndpoint(), connection
+				.getId());
+		ConnectionDescriptor connectionDescriptor = new ConnectionDescriptor(remoteSdp);
+		modifyConnection.setRemoteConnectionDescriptor(connectionDescriptor);
+		modifyConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+		this.response = null;
+		this.op = true;
+
+		caProvider.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
+		semaphore.tryAcquire(5, TimeUnit.SECONDS);
+
+		this.op = false;
+		if (response == null) {
+			throw new Exception("Time out");
+		}
+
+		ModifyConnectionResponse resp = (ModifyConnectionResponse) response;
+		if (resp.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
+			connection.setRemoteSDP(remoteSdp);
+		}
+	}
+
+	public void deleteConnectionConnection(Connection connection) throws Exception {
+		DeleteConnection deleteConnection = new DeleteConnection(this, callID, connection.getEndpoint(), connection
+				.getId());
+		deleteConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+		this.response = null;
+		this.op = true;
+
+		caProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
+		semaphore.tryAcquire(5, TimeUnit.SECONDS);
+
+		this.op = false;
+		if (response == null) {
+			throw new Exception("Time out");
+		}
+
+		DeleteConnectionResponse resp = (DeleteConnectionResponse) response;
+		if (resp.getReturnCode().getValue() != ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
+			throw new Exception("Could not delete connections: " + resp.getReturnCode().getComment());
+		}
+	}
+
+	protected static void sleep(long sleepFor) {
+		try {
+			Thread.sleep(sleepFor);
+		} catch (InterruptedException ex) {
+			// Ignore
+		}
+	}
+
+	public void processMgcpResponseEvent(JainMgcpResponseEvent event) {
+		this.response = event;
+		if (this.op)
+			semaphore.release();
+	}
+
+	public void transactionEnded(int paramInt) {
+		// TODO Auto-generated method stub
+	}
+
+	public void transactionRxTimedOut(JainMgcpCommandEvent paramJainMgcpCommandEvent) {
+		// TODO Auto-generated method stub
+	}
+
+	public void transactionTxTimedOut(JainMgcpCommandEvent paramJainMgcpCommandEvent) {
+		// TODO Auto-generated method stub
+	}
+
 }
