@@ -125,7 +125,8 @@ public class NotificationRequestAction implements Callable<JainMgcpResponseEvent
                     //connection = endpoint.getConnection(connectionID.toString());
                     connectionActivity = controller.getActivity(endpoint.getLocalName(), connectionID.toString());
                     if (connectionActivity == null) {
-                        reject(ReturnCode.Connection_Was_Deleted);
+                        return reject(ReturnCode.Connection_Was_Deleted);
+                        
                     }
 
                     connection = connectionActivity.getMediaConnection();
