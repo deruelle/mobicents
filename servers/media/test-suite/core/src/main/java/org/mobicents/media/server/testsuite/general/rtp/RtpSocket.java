@@ -9,6 +9,8 @@ package org.mobicents.media.server.testsuite.general.rtp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
 
 /**
  * Start time:09:28:08 2009-08-03<br>
@@ -23,7 +25,7 @@ public interface RtpSocket {
 	 */
 	void close();
 
-	
+	public SelectionKey getSelectionKey();
 
 	
 	public void setPeer(InetAddress address, int port) throws IOException;
@@ -54,4 +56,24 @@ public interface RtpSocket {
 	 * @param rtpPacket
 	 */
 	void receive(RtpPacket rtpPacket);
+
+	/**
+	 * @return
+	 */
+	DatagramChannel getChannel();
+	public boolean isChannelOpen();
+
+	/**
+	 * 
+	 */
+	void release();
+
+	/**
+	 * @param bindAddress
+	 * @param i
+	 * @param j
+	 */
+	int init(InetAddress bindAddress, int lowPOrt, int highPort) throws SocketException, IOException;
+
+
 }

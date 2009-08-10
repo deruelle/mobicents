@@ -316,7 +316,7 @@ public class AnnCall extends AbstractCall {
 					.getServerJbossBindAddress().getHostAddress()
 					+ ":" + super.testCase.getCallDisplayInterface().getRemotePort());
 
-			CreateConnection crcx = new CreateConnection(this, this.callIdentifier, ei, ConnectionMode.SendRecv);
+			CreateConnection crcx = new CreateConnection(this, this.callIdentifier, ei, ConnectionMode.SendOnly);
 			// int localPort = this.datagramChannel.socket().getLocalPort();
 			int localPort = super.socket.getLocalPort();
 			String sdp = super.getLocalDescriptor(localPort);

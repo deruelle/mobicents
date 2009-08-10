@@ -20,42 +20,28 @@ import java.nio.channels.spi.SelectorProvider;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Start time:14:52:37 2009-08-03<br>
  * Project: mobicents-media-server-test-suite<br>
+ * This class represent similar usability as Transceiver in mms, however it does
+ * only reiceve and math poper socket, this is due that mms sends data on single
+ * port, thus we can not use the same scheme as mms.
  * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class Transceiver implements Runnable {
-	private DatagramSocket socket;
-	protected DatagramChannel channel;
-	private Selector readSelector;
-	private InetAddress bindAddress;
-	private int localPort;
+
 	private int bufferSize = 8196;
 	private ByteBuffer readerBuffer = ByteBuffer.allocate(bufferSize);
 	private volatile boolean started = false;
-	private HashMap<SocketAddress, RtpSocket> rtpSockets;
+	private HashMap<SelectionKey, RtpSocket> rtpSockets;
+	private Selector readSelector;
 
-	public Transceiver(HashMap<SocketAddress, RtpSocket> rtpSockets, InetAddress bindAddress, int localPort) throws SocketException, IOException {
+	public Transceiver(HashMap<SelectionKey, RtpSocket> rtpSockets, Selector readSelector) throws SocketException, IOException {
 		this.rtpSockets = rtpSockets;
-		this.bindAddress = bindAddress;
-		this.localPort = localPort;
-
-		channel = DatagramChannel.open();
-		channel.configureBlocking(false);
-
-		socket = channel.socket();
-
-		// creating local address and trying to bind socket to this
-		// address
-		InetSocketAddress address = new InetSocketAddress(bindAddress, localPort);
-		socket.bind(address);
-
-		readSelector = SelectorProvider.provider().openSelector();
-		channel.register(readSelector, SelectionKey.OP_READ);
+		this.readSelector = readSelector;
 	}
 
 	public void start() {
@@ -66,11 +52,7 @@ public class Transceiver implements Runnable {
 	public void stop() {
 		started = false;
 		try {
-			channel.disconnect();
-			channel.close();
-			socket.disconnect();
-			socket.close();
-			readSelector.close();
+
 		} catch (Exception e) {
 		}
 	}
@@ -83,36 +65,53 @@ public class Transceiver implements Runnable {
 	}
 
 	public void send(byte[] data, int len, SocketAddress remoteAddress) throws IOException {
-		ByteBuffer byteBuffer1 = ByteBuffer.wrap(data);
-		int count = 0;
-
-		while (count < len) {
-			count += channel.send(byteBuffer1, remoteAddress);
-			byteBuffer1.compact();
-			byteBuffer1.flip();
-		}
+		// ByteBuffer byteBuffer1 = ByteBuffer.wrap(data);
+		// int count = 0;
+		//
+		// while (count < len) {
+		// count += channel.send(byteBuffer1, remoteAddress);
+		// byteBuffer1.compact();
+		// byteBuffer1.flip();
+		// }
 	}
 
 	public void run() {
 		while (started) {
+
 			try {
 				readSelector.select();
-				SocketAddress remoteAddress = channel.receive(readerBuffer);
 
-				readerBuffer.flip();
-				RtpSocket rtpSocket = rtpSockets.get(remoteAddress);
-				
-				if (rtpSocket != null) {
-					RtpPacket rtpPacket = new RtpPacket(readerBuffer);
-					rtpPacket.setTime(new Date(System.currentTimeMillis()));
-					rtpSocket.receive(rtpPacket);
-				}
+				long receiveStamp = System.currentTimeMillis();
+				Set<SelectionKey> keys = readSelector.selectedKeys();
 
-				readerBuffer.clear();
-			} catch (IOException e) {
-				if (started) {
-					notifyError(e);
+				for (SelectionKey sk : keys) {
+					try {
+						RtpSocket socket = this.rtpSockets.get(sk);
+						if (socket == null) {
+							// this can happen, its legal
+							continue;
+						}
+						DatagramChannel channel = socket.getChannel();
+						if (channel == null || !socket.isChannelOpen()) {
+							continue;
+						}
+						channel.read(readerBuffer);
+						readerBuffer.flip();
+
+						RtpPacket rtpPacket = new RtpPacket(readerBuffer);
+						rtpPacket.setTime(new Date(receiveStamp));
+						socket.receive(rtpPacket);
+
+						readerBuffer.clear();
+					} catch (IOException e) {
+						if (started) {
+							notifyError(e);
+						}
+					}
 				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
 	}

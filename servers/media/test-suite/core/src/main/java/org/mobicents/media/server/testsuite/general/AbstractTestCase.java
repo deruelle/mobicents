@@ -131,7 +131,6 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		if(this.socketFactory==null)
 		{
 			this.socketFactory = new RtpSocketFactoryImpl();
-			this.socketFactory.setTimer(new TimerImpl());
 			//this.socketFactory.setPortRange("5000-10000");
 			
 		}

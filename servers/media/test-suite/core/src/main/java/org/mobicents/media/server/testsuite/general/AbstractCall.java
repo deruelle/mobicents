@@ -143,7 +143,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Serializ
 	protected void releaseSocket() {
 		try {
 			if (this.socket != null) {
-				this.socket.close();
+				this.socket.release();
 				this.socket = null;
 			}
 

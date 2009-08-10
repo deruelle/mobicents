@@ -39,14 +39,7 @@ public interface RtpSocketFactory {
 	public void stop();
 
 	public void start() throws SocketException, IOException;
-	/**
-	 * Set execturo, this will read data from sockets
-	 * 
-	 * @param executor
-	 */
-	public void setTimer(Timer executor);
 
-	public Timer getTimer();
 
 	/**
 	 * Gets the IP address to which trunk is bound. All endpoints of the trunk
@@ -70,15 +63,18 @@ public interface RtpSocketFactory {
 	 * 
 	 * @return the string in format "lowPort-highPort".
 	 */
-	public int getPort();
+	public String getPortRange();
 
+	
+	public int getLowPort();
+	public int getHighPort();
 	/**
 	 * Modify port used to create RTP stream.
 	 * 
 	 * @param portRange
 	 *            the string in format "lowPort-highPort"
 	 */
-	public void setPort(int port);
+	public void setPortRange(String portRange);
 
 	// FIXME: should we reuse org.mobicents.media.Format?
 

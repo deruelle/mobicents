@@ -14,10 +14,12 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.spi.SelectorProvider;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,7 +31,7 @@ import javax.sdp.Attribute;
 
 import org.apache.log4j.Logger;
 
-import org.mobicents.media.server.testsuite.general.Timer;
+
 
 /**
  * Start time:09:56:52 2009-08-03<br>
@@ -41,24 +43,49 @@ public class RtpSocketFactoryImpl implements RtpSocketFactory {
 
 	private static final Logger log = Logger.getLogger(RtpSocketFactoryImpl.class);
 
+
+	private String localPortRange="1024-6000";
+	private int lowPort = 1024;
+	private int highPort = 6000;
 	private InetAddress bindAddress;
+	
 
-	private int localPort=6006;
-
-
-	private Timer timer;
 	private Vector<Attribute> formatMap;
-
-	protected volatile HashMap<SocketAddress, RtpSocket> rtpSockets = new HashMap<SocketAddress, RtpSocket>();
+	private Selector readSelector;
+	private LinkedList<RtpSocket> notUsedSockets = new LinkedList<RtpSocket>();
+	protected volatile HashMap<SelectionKey, RtpSocket> rtpSockets = new HashMap<SelectionKey, RtpSocket>();
 	private Transceiver transceiver;
 
+	
+	
+	public RtpSocketFactoryImpl() throws IOException {
+		super();
+		readSelector = SelectorProvider.provider().openSelector();
+		
+	}
+
 	public RtpSocket createSocket() throws SocketException, IOException {
-		RtpSocket rtpSocket = new RtpSocketImpl(transceiver, timer, formatMap, this);
+//		RtpSocket rtpSocket = new RtpSocketImpl(formatMap, this);
+//		return rtpSocket;
+		
+		RtpSocket rtpSocket = notUsedSockets.poll();
+
+		if (rtpSocket == null) {
+
+			rtpSocket = new RtpSocketImpl(formatMap, this);
+			rtpSocket.init(bindAddress, this.lowPort, this.highPort);
+		} else if (!rtpSocket.isChannelOpen()) {
+			log.error("The RTPSocket's DatagramChannel is closed. Re init() RtpSocket ");
+			rtpSocket.init(bindAddress, lowPort, highPort);
+		}
+
 		return rtpSocket;
 	}
 
 	public void releaseSocket(RtpSocket rtpSocket) {
-		rtpSockets.remove(((RtpSocketImpl)rtpSocket).remoteAddress);
+		
+		this.rtpSockets.remove(rtpSocket.getSelectionKey());
+		this.notUsedSockets.add(rtpSocket);
 	}
 
 	/*
@@ -72,17 +99,6 @@ public class RtpSocketFactoryImpl implements RtpSocketFactory {
 	}
 
 	
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactory#getTimer
-	 * ()
-	 */
-	public Timer getTimer() {
-		return this.timer;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -106,18 +122,6 @@ public class RtpSocketFactoryImpl implements RtpSocketFactory {
 
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactory#setTimer
-	 * (java.util.concurrent.ScheduledExecutorService)
-	 */
-	public void setTimer(Timer executor) {
-		this.timer = executor;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -130,6 +134,16 @@ public class RtpSocketFactoryImpl implements RtpSocketFactory {
 			this.transceiver.stop();
 			this.transceiver = null;
 		}
+		for(RtpSocket socket:rtpSockets.values())
+		{
+			socket.close();
+		}
+		rtpSockets.clear();
+		for(RtpSocket socket:this.notUsedSockets)
+		{
+			socket.close();
+		}
+		this.notUsedSockets.clear();
 		log.info("Stopped RTP Factory");
 
 	}
@@ -138,19 +152,18 @@ public class RtpSocketFactoryImpl implements RtpSocketFactory {
 	 * @see org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactory#getBindAddress()
 	 */
 	public String getBindAddress() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.bindAddress.toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactory#start()
 	 */
 	public void start() throws SocketException, IOException {
-		InetSocketAddress address = new InetSocketAddress(bindAddress, localPort);
+		
         
-        log.info("Binding RTP transceiver to " + bindAddress + ":" + localPort);
+        log.info("Binding RTP transceiver to " + bindAddress + ":" + localPortRange);
         
-        transceiver = new Transceiver(rtpSockets, bindAddress, localPort);
+        transceiver = new Transceiver(rtpSockets, readSelector);
         transceiver.start();
 		
 	}
@@ -158,17 +171,50 @@ public class RtpSocketFactoryImpl implements RtpSocketFactory {
 	/* (non-Javadoc)
 	 * @see org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactory#getPort()
 	 */
-	public int getPort() {
-		return this.localPort;
+	public String getPortRange() {
+		return this.localPortRange;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.media.server.testsuite.general.rtp.RtpSocketFactory#setPort(int)
 	 */
-	public void setPort(int port) {
-		this.localPort = port;
+	public void setPortRange(String port) {
+		this.localPortRange = port;
 		
 	}
+
+	public int getLowPort() {
+		return lowPort;
+	}
+
+	public void setLowPort(int lowPort) {
+		this.lowPort = lowPort;
+	}
+
+	public int getHighPort() {
+		return highPort;
+	}
+
+	public void setHighPort(int hightPort) {
+		this.highPort = hightPort;
+	}
+
+	/**
+	 * @param rtpSocketImpl
+	 * @return
+	 * @throws ClosedChannelException 
+	 */
+	public SelectionKey registerSocket(RtpSocketImpl rtpSocketImpl) throws ClosedChannelException {
+		
+		SelectionKey key=rtpSocketImpl.getSelectionKey();
+		if(key==null)
+		{
+			key=rtpSocketImpl.getChannel().register(this.readSelector, SelectionKey.OP_READ);
+		}
+		this.rtpSockets.put(key, rtpSocketImpl);
+		return key;
+	}
+
 
 	
 
