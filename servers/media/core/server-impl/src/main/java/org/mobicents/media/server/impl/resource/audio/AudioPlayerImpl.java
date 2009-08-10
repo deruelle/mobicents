@@ -264,7 +264,7 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
         
         if (buffer.getLength() == 0) {
             eom = true;
-            padding(buffer);
+            //padding(buffer);
         } else if (buffer.getLength() < packetSize) {
             padding(buffer);
         }
@@ -274,6 +274,8 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
         buffer.setTimeStamp(getSyncSource().getTimestamp());
         buffer.setEOM(eom);
         buffer.setSequenceNumber(seq);
+        
+        
     }
 
    
