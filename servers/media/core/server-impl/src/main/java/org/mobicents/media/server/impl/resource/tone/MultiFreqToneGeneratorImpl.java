@@ -23,7 +23,7 @@ public class MultiFreqToneGeneratorImpl extends AbstractSource implements MultiF
 	private double dt;
 	private int pSize;
 
-	private short A = Short.MAX_VALUE / 2;
+	private short A = (short)(Short.MAX_VALUE /2);
 
 	private int volume = 0;
 

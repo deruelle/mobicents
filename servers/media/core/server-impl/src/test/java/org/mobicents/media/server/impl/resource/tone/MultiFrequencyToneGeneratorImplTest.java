@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -20,7 +22,7 @@ import org.mobicents.media.server.spi.resource.FrequencyBean;
 /**
  * 
  * @author amit.bhayani
- *
+ * 
  */
 public class MultiFrequencyToneGeneratorImplTest implements NotificationListener {
 
@@ -30,7 +32,9 @@ public class MultiFrequencyToneGeneratorImplTest implements NotificationListener
 	private Timer timer;
 	private MultiFreqToneGeneratorImpl gen;
 	private MultiFreqToneDetectorImpl det;
-	private ArrayList<int[]> s;
+	private Semaphore semaphore;
+
+	private boolean eventDetcted = false;
 
 	PlayerImpl p;
 
@@ -47,6 +51,9 @@ public class MultiFrequencyToneGeneratorImplTest implements NotificationListener
 
 	@Before
 	public void setUp() {
+		semaphore = new Semaphore(0);
+		eventDetcted = false;
+
 		timer = new TimerImpl();
 		gen = new MultiFreqToneGeneratorImpl("Gen", timer);
 		List<FrequencyBean> freq = new ArrayList<FrequencyBean>();
@@ -55,7 +62,7 @@ public class MultiFrequencyToneGeneratorImplTest implements NotificationListener
 		FrequencyBean f2 = new FrequencyBean(941, 2000, 100);
 		FrequencyBean f3 = new FrequencyBean(1800, 2800, 100);
 		FrequencyBean f4 = new FrequencyBean(700, 1600, 100);
-		FrequencyBean f5 = new FrequencyBean(0, 0, 200);
+		FrequencyBean f5 = new FrequencyBean(0, 0, 100);
 
 		freq.add(f1);
 		freq.add(f2);
@@ -65,12 +72,10 @@ public class MultiFrequencyToneGeneratorImplTest implements NotificationListener
 
 		gen.setFreqBeanList(freq);
 
-		gen.setVolume(0);
-
 		det = new MultiFreqToneDetectorImpl("det");
 		det.setFreqBean(f3);
+		det.setVolume(-30);
 		det.addListener(this);
-		s = new ArrayList();
 
 		p = new PlayerImpl("MulFreqtestPlayer");
 	}
@@ -85,67 +90,33 @@ public class MultiFrequencyToneGeneratorImplTest implements NotificationListener
 	@Test
 	@SuppressWarnings("static-access")
 	public void testDigit0() throws Exception {
-		// gen.connect(p);
+		//gen.connect(p);
 		gen.connect(det);
-		// p.start();
+		//p.start();
 
 		det.start();
 		gen.start();
 
-		Thread.currentThread().sleep(2000);
+		semaphore.tryAcquire(2, TimeUnit.SECONDS);
+
+		assertTrue("MultiFreqToneEvent detected ", eventDetcted);
 		gen.stop();
 		det.stop();
 		p.stop();
 
-		Thread.currentThread().sleep(1000);
-		assertTrue(verify(s, new int[] { 1800, 2800 }));
+		semaphore.tryAcquire(1, TimeUnit.SECONDS);
+
 	}
-
-	private boolean verify(ArrayList<int[]> ext, int[] F) {
-
-		if (ext.size() != 1) {
-			return false;
-		}
-		System.out.println("-----------------");
-		int[] freqs = ext.get(0);
-		for (int i =0; i<freqs.length; i++) {
-			System.out.println("Expected Freq "+ F[i] + " Received "+ freqs[i]);
-		}
-
-		System.out.println("-----------------");
-		boolean r = checkFreq(freqs, F);
-
-		return r;
-	}
-	
-    private boolean checkFreq(int[] ext, int[] F) {
-    	 double error = 0;
-        if (ext.length < F.length) {
-            return false;
-        }
-        for (int i = 0; i < F.length; i++) {
-        	//1.8% variation is ok
-        	error = Math.abs(F[i]* 0.018);
-        	System.out.println("error margin = "+ error);
-            if (Math.abs(ext[i] - F[i]) > error) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
 	public void update(NotifyEvent event) {
 		switch (event.getEventID()) {
 		case MultiFreqToneEvent.MF_TONE_EVENTID:
-			// System.out.print("received spectrum event = ");
-			MultiFreqToneEvent evt = (MultiFreqToneEvent) event;
-			// for(double d : evt.getSpectra()){
-			// System.out.print("freq = "+ d);
-			// }
 
-			// somem(evt.getSpectra(), new int[] { 941, 1633 });
-			s.add(evt.getFrequencies());
+			MultiFreqToneEvent evt = (MultiFreqToneEvent) event;
+			System.out.print("received MultiFreqToneEvent event = " + evt);
+			eventDetcted = true;
+			semaphore.release();
+
 			break;
 		}
 	}
