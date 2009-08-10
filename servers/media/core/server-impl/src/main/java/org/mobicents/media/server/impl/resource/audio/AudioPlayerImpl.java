@@ -261,9 +261,10 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
             failed(NotifyEvent.TX_FAILED, e);
             return;
         }
-
+        
         if (buffer.getLength() == 0) {
             eom = true;
+            padding(buffer);
         } else if (buffer.getLength() < packetSize) {
             padding(buffer);
         }
