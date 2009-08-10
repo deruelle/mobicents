@@ -55,8 +55,8 @@ public abstract class EventDetector implements NotificationListener {
 	private Endpoint endpoint;
 	private Connection connection;
 	private RequestedAction[] actions;
-	private String params;
-	private Component component;
+	protected String params;
+	protected Component component;
 
 	private Request request;
 
