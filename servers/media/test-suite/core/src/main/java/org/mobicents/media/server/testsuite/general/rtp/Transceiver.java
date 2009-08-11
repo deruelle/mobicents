@@ -17,7 +17,6 @@ import java.nio.channels.Selector;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -102,7 +101,7 @@ public class Transceiver implements Runnable {
 			}
 
 			try {
-				readSelector.select(5);
+				readSelector.select(2);
 
 				long receiveStamp = System.currentTimeMillis();
 				Set<SelectionKey> keys = readSelector.selectedKeys();

@@ -509,7 +509,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
 	public void processMgcpResponseEvent(JainMgcpResponseEvent response) {
 		
-		System.out.println("Recived response "+ response);
+		//System.out.println("Recived response "+ response);
 		
 		try {
 
