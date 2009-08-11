@@ -10,23 +10,16 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.SocketException;
-import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.ScheduledFuture;
 
 import javax.sdp.Attribute;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.Buffer;
-import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.rtp.RtpHeader;
-import org.mobicents.media.server.testsuite.general.Timer;
 
 /**
  * Start time:10:17:34 2009-08-03<br>
@@ -54,6 +47,7 @@ public class RtpSocketImpl implements RtpSocket {
 	private DatagramChannel channel;
 	private DatagramSocket socket;
 	private SelectionKey key;
+
 	/**
 	 * 
 	 * @param transceiver
@@ -66,10 +60,14 @@ public class RtpSocketImpl implements RtpSocket {
 		this.rtpMap.addAll(formatMap);
 		this.localAddress = this.rtpSocketFactoryImpl.getBindAddress();
 
-		
 	}
 
 	public int init(InetAddress localAddress, int lowPort, int highPort) throws SocketException, IOException {
+
+		if (this.key != null) {
+			this.key.cancel();
+			this.key = null;
+		}
 		channel = DatagramChannel.open();
 		channel.configureBlocking(false);
 
@@ -90,7 +88,7 @@ public class RtpSocketImpl implements RtpSocket {
 				bound = true;
 				// if stunHost is assigned then stun ussage is supposed
 				// discovering paublic address
-			
+
 			} catch (SocketException e) {
 				// increment port number util upper limit is not reached
 				localPort++;
@@ -106,9 +104,8 @@ public class RtpSocketImpl implements RtpSocket {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.media.server.testsuite.general.rtp.RtpSocket#addListener
-	 * (org.mobicents.media.server.testsuite.general.rtp.RtpSocketListener)
+	 * @see org.mobicents.media.server.testsuite.general.rtp.RtpSocket#addListener
+	 *      (org.mobicents.media.server.testsuite.general.rtp.RtpSocketListener)
 	 */
 	public void addListener(RtpSocketListener listener) {
 		this.dataSinks.add(listener);
@@ -118,9 +115,8 @@ public class RtpSocketImpl implements RtpSocket {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.media.server.testsuite.general.rtp.RtpSocket#removeListener
-	 * (org.mobicents.media.server.testsuite.general.rtp.RtpSocketListener)
+	 * @see org.mobicents.media.server.testsuite.general.rtp.RtpSocket#removeListener
+	 *      (org.mobicents.media.server.testsuite.general.rtp.RtpSocketListener)
 	 */
 	public void removeListener(RtpSocketListener listener) {
 		this.dataSinks.remove(listener);
@@ -132,22 +128,22 @@ public class RtpSocketImpl implements RtpSocket {
 		this.rtpMap.addAll(this.rtpSocketFactoryImpl.getFormatMap());
 	}
 
-
 	public boolean isChannelOpen() {
 		return (this.channel != null && this.channel.isOpen());
 	}
+
 	public void release() {
-		
 
 		this.resetRtpMap();
 		if (socket != null) {
 			socket.disconnect();
-			socket.close();
+			// socket.close();
 		}
 
 		dataSinks.clear();
 		this.rtpSocketFactoryImpl.releaseSocket(this);
 	}
+
 	/**
 	 * Closes socket
 	 * 
@@ -161,8 +157,8 @@ public class RtpSocketImpl implements RtpSocket {
 			}
 		}
 
-		
 	}
+
 	/**
 	 * Assigns remote end.
 	 * 
@@ -176,12 +172,12 @@ public class RtpSocketImpl implements RtpSocket {
 		remotePort = port;
 		remoteInetSocketAddress = new InetSocketAddress(remoteAddress, remotePort);
 		channel.connect(remoteInetSocketAddress);
-		this.key=rtpSocketFactoryImpl.registerSocket(this);
+		this.key = rtpSocketFactoryImpl.registerSocket(this);
 
 		if (log.isDebugEnabled()) {
-			log.debug("Connect RTP socket[" + localAddress + ":" + localPort + " to " + remoteAddress + ":" + remotePort);
+			log.debug("Connect RTP socket[" + localAddress + ":" + localPort + " to " + remoteAddress + ":"
+					+ remotePort);
 		}
-
 	}
 
 	/**
@@ -210,9 +206,8 @@ public class RtpSocketImpl implements RtpSocket {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.mobicents.media.server.testsuite.general.rtp.RtpSocket#receive(org
-	 * .mobicents.media.server.testsuite.general.rtp.RtpPacket)
+	 * @see org.mobicents.media.server.testsuite.general.rtp.RtpSocket#receive(org
+	 *      .mobicents.media.server.testsuite.general.rtp.RtpPacket)
 	 */
 	public void receive(RtpPacket rtpPacket) {
 		for (RtpSocketListener l : this.dataSinks)
@@ -220,16 +215,21 @@ public class RtpSocketImpl implements RtpSocket {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.mobicents.media.server.testsuite.general.rtp.RtpSocket#getSelectionKey()
 	 */
 	public SelectionKey getSelectionKey() {
-		
+
 		return this.key;
 	}
-	public DatagramChannel getChannel()
-	{
+
+	public void setSelectionKey(SelectionKey key) {
+		this.key = key;
+	}
+
+	public DatagramChannel getChannel() {
 		return this.channel;
 	}
 }
-

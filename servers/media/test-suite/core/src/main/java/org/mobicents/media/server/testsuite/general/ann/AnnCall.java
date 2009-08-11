@@ -11,9 +11,7 @@ import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
-import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
-import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
@@ -28,19 +26,20 @@ import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
-import java.util.concurrent.TimeUnit;
-
 import java.util.logging.Level;
+
 import javax.sdp.MediaDescription;
 import javax.sdp.SdpException;
 import javax.sdp.SdpParseException;
 import javax.sdp.SessionDescription;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.testsuite.general.AbstractCall;
 import org.mobicents.media.server.testsuite.general.AbstractTestCase;
@@ -320,7 +319,7 @@ public class AnnCall extends AbstractCall {
 			// int localPort = this.datagramChannel.socket().getLocalPort();
 			int localPort = super.socket.getLocalPort();
 			String sdp = super.getLocalDescriptor(localPort);
-			System.err.println(sdp);
+			//System.err.println(sdp);
 			crcx.setRemoteConnectionDescriptor(new ConnectionDescriptor(sdp));
 			crcx.setTransactionHandle(this.provider.getUniqueTransactionHandler());
 			

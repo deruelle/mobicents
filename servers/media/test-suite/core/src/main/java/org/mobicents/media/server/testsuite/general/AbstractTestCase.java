@@ -508,13 +508,16 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	}
 
 	public void processMgcpResponseEvent(JainMgcpResponseEvent response) {
+		
+		System.out.println("Recived response "+ response);
+		
 		try {
 
 			AbstractCall cp = getCall(response);
 			if (cp != null) {
 				cp.processMgcpResponseEvent(response);
 			} else {
-				// System.err.println("NO CALL");
+				System.err.println("NO CALL");
 			}
 		} catch (RuntimeException re) {
 			re.printStackTrace();
