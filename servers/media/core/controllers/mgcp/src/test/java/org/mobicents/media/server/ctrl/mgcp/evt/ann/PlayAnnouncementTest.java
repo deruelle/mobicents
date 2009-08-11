@@ -136,7 +136,7 @@ public class PlayAnnouncementTest {
 		System.out.println("Started");
 		semaphore.tryAcquire(10, TimeUnit.SECONDS);
 		
-		assertEquals(150, pcmaCount);
+		assertTrue("The amount of packets dos not match", Math.abs(150 - pcmaCount) < 10);
 
 		receiver.deleteConnection(rxConnection.getId());
 		sender.deleteConnection(txConnection.getId());
