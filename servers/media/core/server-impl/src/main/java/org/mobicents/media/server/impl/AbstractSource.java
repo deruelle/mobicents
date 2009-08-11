@@ -74,7 +74,7 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
         super(name);
         logger = Logger.getLogger(getClass());
         evtStarted = new NotifyEventImpl(this, NotifyEvent.STARTED);
-        evtCompleted = new NotifyEventImpl(this, NotifyEvent.COMPLETED);
+        evtCompleted = new NotifyEventImpl(this, NotifyEvent.COMPLETED);        
         evtStopped = new NotifyEventImpl(this, NotifyEvent.STOPPED);
     }
 
