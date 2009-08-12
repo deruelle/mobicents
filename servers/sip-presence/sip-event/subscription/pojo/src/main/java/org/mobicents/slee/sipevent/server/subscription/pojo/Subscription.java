@@ -201,7 +201,7 @@ public class Subscription implements Serializable {
 	
 	public int getRemainingExpires() {
 		long remainingExpires = expires - (System.currentTimeMillis()-lastRefreshDate) / 1000;		
-		if (expires < 0) {
+		if (remainingExpires < 0) {
 			return 0;
 		}
 		else {
