@@ -5,7 +5,7 @@
 <section>
 	<title>We Need Feedback!</title>
 	<para>
-		If you find a typographical error in this manual, or if you have thought of a way to make this manual better, we would love to hear from you! Please submit a report in Bugzilla: <ulink url="http://bugzilla.redhat.com/bugzilla/">http://bugzilla.redhat.com/bugzilla/</ulink> against the product <application>&PRODUCT;.</application>
+		If you find a typographical error in this manual, or if you have thought of a way to make this manual better, we would love to hear from you! Please submit a report in Bugzilla: <ulink url="http://code.google.com/p/mobicents/issues/list">http://code.google.com/p/mobicents/issues/list</ulink> against the product <application>&PRODUCT;.</application>
 	</para>
 	<para>
 		When submitting a bug report, be sure to mention the manual&#39;s identifier: <citetitle>&BOOKID;</citetitle>

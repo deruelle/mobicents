@@ -13,33 +13,148 @@
 		</title>
 
 		<para>
-			Let us talk here what is Media Server in layman's language. What is hardware media server and what is software media server.
+			In the world of telephony, a media server is the name given to the computing component that processes the audio and/or video streams associated with telephone calls or connections. Conference services are a particular example of how media servers can be used, as a special 'engine' is needed to mix audio streams together so that conference participants can hear all of the other participants. Conferencing servers may also need other specialized functions like "loudest talker" detection, or transcoding of audio streams, and also interpreting DTMF tones used to navigate menus also known as Interactive Voice Response (IVR). For video processing, it may be needed to change video streams, for example transcode from one video codec to another or rescale (transrate) a picture from one size to another. This media processing functions are the core responsibility of a media server. Few of the real Media Server Use Cases are defined here.
 		</para>
+		<para>
+			Media Server can be Hardware Media Server or Software Based. The Hardware Media Server uses the hardware components for processing the audio/video. Depending on which hardware media server, there would be individual hardware dedicated to do specific job for example reduction of echo etc.  In case of Software Media Server all the audio/video processing is done by a software, no specifc hardware is used. 
+		</para>		
 	</section>
 
 	<section id="ittms-Reasoning_and_Need_for_Media_Server">
 		<title>The Justification for S/w Media Server</title>
 
-		<para>The Mobicents Media Server is capable of</para>
+<para>Today, all communications can be routed through computers. Widespread access to broadband Internet and the ubiquity of Internet Protocol (<acronym>IP</acronym>) enable the convergence of voice, data and video. Media Servers provide the ability to switch voice media between a network and its access point. Using Digital  Subscriber Line (<acronym>DSL</acronym>) and fast-Internet cable technology, a software media server converts, compresses and packetizes voice data for transmission back-and-forth across the Internet backbone for landline and wireless phones. Media gateways sit at the intersection of Public Switched Telephone Networks (				<acronym>PSTN</acronym>s) and wireless or IP-based networks. </para>
+
+
+			<para>
+				Multiple market demands are pushing companies to
+				converge all of their media services using media
+				gateways with Voice-over-IP (
+				<acronym>VoIP</acronym>
+				) capabilities. Companies have expectations for such
+				architectures, which include:
+			</para>
+		
+		<variablelist>
+			<varlistentry>
+				<term>Lowering initial costs</term>
+				<listitem>
+					<para>
+						Capital investment is decreased because low-cost
+						commodity hardware can be used for multiple
+						functions.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Lowering development costs</term>
+				<listitem>
+					<para>
+						Open system hardware and software standards with
+						well-defined applications reduce costs, and
+						Application Programming Interfaces (
+						<acronym>API</acronym>
+						s) accelerate development.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Handling multiple media types</term>
+				<listitem>
+					<para>
+						Companies want
+						<acronym>VoIP</acronym>
+						solutions today, but also need to choose
+						extensible solutions that will handle video in
+						the near future.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>
+					Lowering the costs of deployment and maintenance
+				</term>
+				<listitem>
+					<para>
+						Standardized, modular systems reduce training
+						costs and maintenance while simultaneously
+						improving uptime.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Enabling rapid time-to-market</term>
+				<listitem>
+					<para>
+						Early market entry hits the window of
+						opportunity and maximizes revenue.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
 
 		
 
 	</section>
-
-
+	
 	<section id="ittms-Media_Server_Use Case">
 		<title>Media Server Use Case</title>
 		<para>
-			Where is it used?
+			Media Server's are heavily used in conventional applications across various market segments for example the Mobile / PSTN service provider have media server's to play announcements like "The user is busy, please call after some time" or to record the voice message whne the called party is busy and to re-play the same message when asked for.
 		</para>
+		<para>
+			The IVR Applications used by various segments of industry, for example IVR system used in banks to let their customers know their balance by calling a Toll-Free-Number or do other banking transactions.
+		</para>
+		<para>
+		     Developing a converged application has now become very easy with availability of Open Source &PLATFORM_NAME; Media Server. Appart from conventional Applications like IVR, Conferencing, various Tone (like busy, congestion etc) generation/detection below are few of the Converged Applications that can be developed using Mobicents Media Server
+		</para>
+		
+		<variablelist>
+			<varlistentry>
+				<term>Use Case 1</term>
+				<listitem>
+					<para>
+						bla bla bla
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Use Case 2</term>
+				<listitem>
+					<para>
+						bla bla bla
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>use Case 3</term>
+				<listitem>
+					<para>
+						bla bla bla
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>		
 		
 	</section>
 	
 	<section id="ittms-What_is_Mobicents_Media_Server">
 		<title>What is &PLATFORM_NAME; Media Server</title>
 		<para>
-			What is Mobicents Media Server?
+		      With telephony networks moving more towards VoIP technology, and using Session Initiation Protocol (SIP), the idea of media servers has started to gain some traction. Typically, an application (the 'application server') has the controlling logic, and controls a remote media server (or multiple servers) over an IP connection using various industry recognized standard protocols like MGCP, MEGACO (H.248), MSML, VoiceXML etc. The &PLATFORM_NAME; Media Server is first and only open source media server available as of today that has support for MGCP. The Mobicents also has JSR-309 Standard Api implementation to control media servers irrespective of underlying protocol used. Hence Application's developed on any platform can control &PLATFORM_NAME; Media Server using JSR-309 API.
 		</para>
-		
+		<para>
+		The Mobicents Media Server core is based on software components only. This property allows to easy scale from development environment on a single server to production deployment in a distributed network environment. Mobicents Media Server binary is distributed in two forms: standalone server which is recommended for production deployments and integrated with JBoss 5 Application server which is more preferred for development purposes.
+		</para>
+		<para>
+			Because Mobicents Media Server is Java based, it is cross
+			platform, easy to install and run on any operating system
+			that supports Java. The available source code is a powerful
+			tool to debug the server and understand processing logic. It
+			also gives you the flexibility to create customized
+			components and configurations for your personal or business
+			use.
+		</para>
+	
 	</section>
 </chapter>
