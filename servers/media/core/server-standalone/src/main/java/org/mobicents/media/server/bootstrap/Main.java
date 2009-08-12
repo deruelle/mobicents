@@ -78,11 +78,7 @@ public class Main {
 		Main main = new Main();
 
 		logger.info("Booting from " + bootURL);
-		System.out.println("Booting from " + bootURL);
-		main.boot(bootURL);
-
-		logger.info("Starting main deployer");
-		// main.start();
+		main.boot(bootURL);		
 	}
 
 	/**

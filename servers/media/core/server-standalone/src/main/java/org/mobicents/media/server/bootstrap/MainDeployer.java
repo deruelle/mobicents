@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.plugins.deployment.xml.BasicXMLDeployer;
+import org.mobicents.media.server.impl.Version;
 
 /**
  * 
@@ -103,11 +104,32 @@ public class MainDeployer {
 	}
 
 	public void start(Kernel kernel, BasicXMLDeployer kernelDeployer) {
+
+		Version version = Version.instance;
 		this.kernel = kernel;
 		this.kernelDeployer = kernelDeployer;
 
-		activeScan = executor.scheduleAtFixedRate(new HDScanner(), initialDelay, scanPeriod, TimeUnit.MILLISECONDS);
-		logger.info("Successfuly started");
+		// If scanPeriod is set to -ve, reset to 0
+		if (scanPeriod < 0) {
+			this.scanPeriod = 0;
+		}
+
+		// If scanPeriod is set to less than 1 sec but greater than 0 millisec, re-set to 1 sec
+		if (scanPeriod < 1000 && scanPeriod > 0) {
+			this.scanPeriod = 1000;
+		}
+
+		// hot-deployment disabled for scan period set to 0
+		if (!(scanPeriod == 0)) {
+			(new HDScanner()).run();
+			activeScan = executor.scheduleAtFixedRate(new HDScanner(), scanPeriod, scanPeriod, TimeUnit.MILLISECONDS);
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("scanPeriod is set to 0. Hot deployment disabled");
+			}
+			(new HDScanner()).run();
+		}
+		logger.info("[[[[[[[[[ " + version.toString() + " Started " + "]]]]]]]]]");
 	}
 
 	public void stop() {
