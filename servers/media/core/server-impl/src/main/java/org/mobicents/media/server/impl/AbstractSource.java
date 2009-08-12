@@ -263,14 +263,20 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
 
     protected String getSupportedFormatList() {
         String s = "";
-        Format[] formats = otherParty.getFormats();
-        for (int i = 0; i < formats.length; i++) {
-            s += formats[i] + ";";
+        if (otherParty != null) {
+            Format[] formats = otherParty.getFormats();
+            for (int i = 0; i < formats.length; i++) {
+                s += formats[i] + ";";
+            }
         }
         return s;
     }
 
     public void run() {
+        if (otherParty == null) {
+            return;
+        }
+        
         Buffer buffer = bufferFactory.allocate();
         try {
             evolve(buffer, sequenceNumber);
