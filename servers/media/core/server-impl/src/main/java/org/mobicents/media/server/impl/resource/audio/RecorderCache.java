@@ -71,7 +71,7 @@ public class RecorderCache extends InputStream {
             try {
                 semaphore.acquire();
             } catch (InterruptedException e) {
-                throw new IOException(e);
+                throw new IOException(e.getMessage());
             }
         }
         
