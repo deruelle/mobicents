@@ -206,6 +206,10 @@
 			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/server/subscription-control-du" />
 			<param name="dest.dir" value="${release.dir}/sip-presence/xdms/server-subscription-control-DU" />
 		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../user-profile/du" />
+			<param name="dest.dir" value="${release.dir}/sip-presence/user-profile" />
+		</antcall>
 		<antcall target="build-xcap-client" inheritall="false">
 			<param name="mvn.executable" value="${mvn.executable}" />
 			<param name="jboss.home" value="${release.dir}/tmp" />
