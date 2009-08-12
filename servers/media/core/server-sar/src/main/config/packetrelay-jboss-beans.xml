@@ -47,14 +47,19 @@
 	</bean>
 
 
-	<bean name="PacketRelaySourceFactory"
-		class="org.mobicents.media.server.impl.resource.prelay.PacketRelaySourceFactory">
-		<property name="name">pr-source</property>
+	<bean name="PacketRelayConnectionFactory"
+		class="org.mobicents.media.server.ConnectionFactory">
+		<property name="txChannelFactory">
+			<inject bean="PR-TxChannelFactory" />
+		</property>
+		<property name="rxChannelFactory">
+			<inject bean="PR-RxChannelFactory" />
+		</property>
 	</bean>
 
-	<bean name="PacketRelaySinkFactory"
-		class="org.mobicents.media.server.impl.resource.prelay.PacketRelaySinkFactory">
-		<property name="name">pr-sink</property>
+	<bean name="PacketRelayBridgeFactory"
+		class="org.mobicents.media.server.impl.resource.prelay.BridgeFactory">
+		<property name="name">packet.relay</property>
 	</bean>
 
 	<bean name="PacketRelayEndpoint"
@@ -76,19 +81,12 @@
 				</entry>
 			</map>
 		</property>
-		<property name="txChannelFactory">
-			<inject bean="PR-TxChannelFactory" />
+		<property name="connectionFactory">
+			<inject bean="PacketRelayConnectionFactory" />
 		</property>
-		<property name="rxChannelFactory">
-			<inject bean="PR-RxChannelFactory" />
+		<property name="groupFactory">
+			<inject bean="PacketRelayBridgeFactory" />
 		</property>
-		<property name="sinkFactory">
-			<inject bean="PacketRelaySinkFactory" />
-		</property>
-		<property name="sourceFactory">
-			<inject bean="PacketRelaySourceFactory" />
-		</property>
-
 	</bean>
 
 

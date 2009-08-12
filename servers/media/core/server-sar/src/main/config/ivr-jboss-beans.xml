@@ -6,7 +6,7 @@
 
 	<bean name="IVR-TxChannelFactory"
 		class="org.mobicents.media.server.resource.ChannelFactory" />
-		
+
 	<bean name="IVR-Pipe-1"
 		class="org.mobicents.media.server.resource.PipeFactory">
 		<property name="outlet">audio.processor</property>
@@ -46,6 +46,16 @@
 		</property>
 	</bean>
 
+	<bean name="IVRConnectionFactory"
+		class="org.mobicents.media.server.ConnectionFactory">
+		<property name="txChannelFactory">
+			<inject bean="IVR-TxChannelFactory" />
+		</property>
+		<property name="rxChannelFactory">
+			<inject bean="IVR-RxChannelFactory" />
+		</property>
+	</bean>
+
 	<!-- IVR  -->
 	<bean name="IVREndpoint"
 		class="org.mobicents.media.server.EndpointImpl">
@@ -72,11 +82,8 @@
 				</entry>
 			</map>
 		</property>
-		<property name="txChannelFactory">
-			<inject bean="IVR-TxChannelFactory" />
-		</property>
-		<property name="rxChannelFactory">
-			<inject bean="IVR-RxChannelFactory" />
+		<property name="connectionFactory">
+			<inject bean="IVRConnectionFactory" />
 		</property>
 	</bean>
 
