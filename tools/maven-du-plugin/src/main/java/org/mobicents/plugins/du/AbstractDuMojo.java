@@ -400,30 +400,9 @@ public abstract class AbstractDuMojo extends AbstractMojo {
         continue;
       }
 
-      if (dependency.getScope() != null && !filterWithProperties(dependency.getScope(),properties).equals(artifact.getScope())) {
+      if (dependency.getVersion() != null && !filterWithProperties(dependency.getVersion(),properties).equals(artifact.getBaseVersion())) {
         if (getLog().isDebugEnabled()) {
-          getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getScope ("+artifact.getScope()+","+filterWithProperties(dependency.getScope(),properties)+") doesn't match.");
-        }
-        continue;
-      }
-
-      if (dependency.getType() != null && !filterWithProperties(dependency.getType(),properties).equals(artifact.getType())) {
-        if (getLog().isDebugEnabled()) {
-          getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getType ("+artifact.getType()+","+filterWithProperties(dependency.getType(),properties)+") doesn't match.");
-        }
-        continue;
-      }
-
-      if (dependency.getVersion() != null && !filterWithProperties(dependency.getVersion(),properties).equals(artifact.getVersion())) {
-        if (getLog().isDebugEnabled()) {
-          getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getVersion ("+artifact.getVersion()+","+filterWithProperties(dependency.getVersion(),properties)+") doesn't match.");
-        }
-        continue;
-      }
-
-      if (dependency.getClassifier() != null && !filterWithProperties(dependency.getClassifier(),properties).equals(artifact.getClassifier())) {
-        if (getLog().isDebugEnabled()) {
-          getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getClassifier ("+artifact.getClassifier()+","+filterWithProperties(dependency.getClassifier(),properties)+") doesn't match.");
+          getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getVersion ("+artifact.getBaseVersion()+","+filterWithProperties(dependency.getVersion(),properties)+") doesn't match.");
         }
         continue;
       }
