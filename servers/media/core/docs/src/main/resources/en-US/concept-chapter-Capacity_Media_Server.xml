@@ -7,18 +7,70 @@
 ]>
 <chapter id="chapter-Capacity_Media_Server">
 	<title>Technical Specification and Capacity of &PLATFORM_NAME; Media Server</title>
-	<para>
-		para for some intro
-	</para>
+	
 	
 		<section
 		id="itms-Technical_Specification_Media_Server">
 		<title>
 		    Technical Specification of &PLATFORM_NAME; Media Server
 		</title>
-		<para>
-		  something here
-		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					Media and Coders :
+					<itemizedlist>
+						<listitem>
+							<para>G711 (a-Law, u-Law)</para>
+						</listitem>
+						<listitem>
+							<para>GSM</para>
+						</listitem>
+						<listitem>
+							<para>SPEEX</para>
+						</listitem>
+						<listitem>
+							<para>G729</para>
+						</listitem>
+						<listitem>
+							<para>DTMF(RFC 2833, INBAND)</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</listitem>
+
+			<listitem>
+				<para>
+					Media Files :
+					<itemizedlist>
+						<listitem>
+							<para>WAV</para>
+						</listitem>
+						<listitem>
+							<para>SPX</para>
+						</listitem>
+						<listitem>
+							<para>GSM</para>
+						</listitem>
+						<listitem>
+							<para>MP3</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Signaling and control :
+					<itemizedlist>
+						<listitem>
+							<para>MGCP</para>
+						</listitem>
+						<listitem>
+							<para>Java Media Control API(JSR-309)</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</listitem>
+		</itemizedlist>
 		</section>
 
 		<section
@@ -26,8 +78,21 @@
 		<title>
 		    Capacity of &PLATFORM_NAME; Media Server
 		</title>
-		<para>
-		  something here
-		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					Capacity : Typical media sessions per server
+					<itemizedlist>
+						<listitem>
+							<para>
+								G.711 @ 20 ms - upto 500 with dual-core
+								2.33GHz CPU 4GB RAM
+							</para>
+						</listitem>
+
+					</itemizedlist>
+				</para>
+			</listitem>
+		</itemizedlist>
 		</section>
 </chapter>

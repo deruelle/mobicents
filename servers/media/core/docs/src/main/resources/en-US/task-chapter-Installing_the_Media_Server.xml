@@ -930,7 +930,7 @@
 				Standalone Media Server has started successfully if the
 				last line of output is similar to the following
 			</para>
-			<programlisting><![CDATA[1473 [MMSDeployerScanner] INFO  org.mobicents.media.server.bootstrap.MainDeployer  - Deployed file:/home/abhayani/workarea/mobicents/binaries/mms/2.x/mms-standalone-2.0.0.BETA1-0907120424/deploy/mgcp-conf.xm]]></programlisting>
+			<programlisting><![CDATA[2100 [main] INFO  org.mobicents.media.server.bootstrap.MainDeployer  - [[[[[[[[[ Mobicents Media Server: release.version=2.0.0.BETA2-SNAPSHOT Started ]]]]]]]]]]]></programlisting>
 			<procedure>
 				<title>
 					Running the Standalone Media Server on Linux
@@ -941,9 +941,7 @@
 						directory (the one in which the zip file's
 						contents was extracted to)
 					</para>
-					<screen>
-						downloads]$ cd &quot;mms-standalone-&lt;version&gt;&quot;
-					</screen>
+					<screen>downloads]$ cd &quot;mms-standalone-&lt;version&gt;&quot;</screen>
 				</step>
 				<step>
 					<para>
@@ -951,9 +949,7 @@
 						<filename>bin/run.sh</filename>
 						start script is executable.
 					</para>
-					<screen>
-						ms-&lt;version&gt;]$ chmod +x bin/run.sh
-					</screen>
+					<screen>ms-&lt;version&gt;]$ chmod +x bin/run.sh</screen>
 				</step>
 				<step>
 					<para>
