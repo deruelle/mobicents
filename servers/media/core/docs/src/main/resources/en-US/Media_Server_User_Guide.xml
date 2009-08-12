@@ -11,9 +11,9 @@
 		
 	<xi:include href="task-chapter-Installing_the_Media_Server.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 	
-	<xi:include href="concept-chapter-Architecture_Media_Server.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-	
 	<xi:include href="concept-chapter-Capacity_Media_Server.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+	<xi:include href="concept-chapter-Architecture_Media_Server.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 	
 	<xi:include href="concept-chapter-Configuring_the_Media_Server.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 	
