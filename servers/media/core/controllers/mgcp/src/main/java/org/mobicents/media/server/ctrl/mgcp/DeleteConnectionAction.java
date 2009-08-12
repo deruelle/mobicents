@@ -122,6 +122,9 @@ public class DeleteConnectionAction implements Callable {
         JainMgcpResponseEvent response = null;
         if (endpointID != null && callID == null && connectionID == null) {
             response = this.endpointDeleteConnections(endpointID.getLocalEndpointName());
+        } else if (endpointID != null && callID != null && connectionID == null) {
+        	//TODO : Delete all connection of Endpoint that belong to given callId
+        	response = this.endpointDeleteConnections(endpointID.getLocalEndpointName());
         } else if (endpointID != null && callID != null && connectionID != null) {
             response = this.deleteConnection(endpointID.getLocalEndpointName(), connectionID.toString());
         } else {
