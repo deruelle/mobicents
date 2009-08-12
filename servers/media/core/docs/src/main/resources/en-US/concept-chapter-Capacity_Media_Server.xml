@@ -70,6 +70,28 @@
 					</itemizedlist>
 				</para>
 			</listitem>
+			<listitem>
+				<para>
+					Audio processing :
+					<itemizedlist>
+						<listitem>
+							<para>Audio transcoding, bridging and conference</para>
+						</listitem>
+						<listitem>
+							<para>DTMF detection and generation.Both Inband as well as RFC2833</para>
+						</listitem>
+						<listitem>
+							<para>Inband generation/detection of other Tones like busy, congestion etc possible </para>
+						</listitem>
+						 <listitem>
+							<para>Text-To-Speech Support</para>
+						</listitem>
+						<listitem>
+							<para>Capability to generate silence/comfort noise</para>
+						</listitem>						
+					</itemizedlist>
+				</para>
+			</listitem>			
 		</itemizedlist>
 		</section>
 
