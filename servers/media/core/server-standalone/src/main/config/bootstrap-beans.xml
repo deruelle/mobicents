@@ -208,6 +208,11 @@
 		<property name="name">audio.player</property>
 	</bean>
 
+	<bean name="AdvancedAudioPlayerFactory"
+		class="org.mobicents.media.server.impl.resource.audio.AdvancedAudioPlayerFactory">
+		<property name="name">advanced.audio.player</property>
+	</bean>
+
 	<bean name="RecorderFactory"
 		class="org.mobicents.media.server.impl.resource.audio.RecorderFactory">
 		<property name="name">audio.recorder</property>

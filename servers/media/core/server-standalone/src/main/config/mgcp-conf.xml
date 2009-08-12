@@ -20,6 +20,12 @@
 		<property name="resourceName">audio.player</property>
 	</bean>
 
+	<bean name="AdvancedAnnouncement"
+		class="org.mobicents.media.server.ctrl.mgcp.evt.ann.AnnSignalFactory">
+		<property name="eventName">pa</property>
+		<property name="resourceName">advanced.audio.player</property>
+	</bean>
+
 	<bean name="Announcement.OC"
 		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
 		<property name="eventName">oc</property>
@@ -63,6 +69,7 @@
 		<property name="generators">
 			<list>
 				<inject bean="PlayRecord" />
+				<inject bean="AdvancedAnnouncement" />
 			</list>
 		</property>
 	</bean>
