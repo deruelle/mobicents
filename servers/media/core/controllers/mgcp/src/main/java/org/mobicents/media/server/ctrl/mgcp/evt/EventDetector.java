@@ -146,11 +146,11 @@ public abstract class EventDetector implements NotificationListener {
 	}
 
 	public void update(NotifyEvent event) {
-		System.out.println("Receive event :" + event.getEventID() + ", expected=" + this.eventID + ", actions="
-				+ actions.length);
+//		System.out.println("Receive event :" + event.getEventID() + ", expected=" + this.eventID + ", actions="
+//				+ actions.length);
 		if (event.getEventID() == this.eventID) {
 			for (RequestedAction action : actions) {
-				System.out.println("Perform action " + event + "," + action);
+				//System.out.println("Perform action " + event + "," + action);
 				performAction(event, action);
 			}
 		}
