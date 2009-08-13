@@ -89,19 +89,19 @@ public class PlayerTest {
 		assertTrue("The Sound Player have to send Stopped event", stopped);
 	}
 
-//	@Test
+	@Test
 	public void test_Wav_L16_MONO() throws Exception {
-		testRecording("org/mobicents/media/server/impl/gwn44m.wav");
+//		testRecording("org/mobicents/media/server/impl/gwn44m.wav");
 	}
 
-//	@Test
+	@Test
 	public void test_Wav_L16_STEREO() throws Exception {
-		testRecording("org/mobicents/media/server/impl/gwn44s.wav");
+//		testRecording("org/mobicents/media/server/impl/gwn44s.wav");
 	}
 
-//	@Test
+	@Test
 	public void test_Wav_LINERA() throws Exception {
-		testRecording("org/mobicents/media/server/impl/fox-full.wav");
+//		testRecording("org/mobicents/media/server/impl/fox-full.wav");
 	}
 
 	@After
