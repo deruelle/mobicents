@@ -270,7 +270,7 @@ public class TranscodingBridgeTest {
         assertTrue(tester.getMessage(), tester.isPassed());        
     }
 
-    @Test
+//    @Test
     public void testRtpTransmission() throws Exception {
         for (int i = 0; i < 1; i++) {
             runRtpTransmission();
