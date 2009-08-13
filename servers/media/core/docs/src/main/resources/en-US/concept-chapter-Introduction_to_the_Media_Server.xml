@@ -96,48 +96,6 @@
 		
 
 	</section>
-	
-	<section id="ittms-Media_Server_Use Case">
-		<title>Media Server Use Case</title>
-		<para>
-			Media Server's are heavily used in conventional applications across various market segments for example the Mobile / PSTN service provider have media server's to play announcements like "The user is busy, please call after some time" or to record the voice message whne the called party is busy and to re-play the same message when asked for.
-		</para>
-		<para>
-			The IVR Applications used by various segments of industry, for example IVR system used in banks to let their customers know their balance by calling a Toll-Free-Number or do other banking transactions.
-		</para>
-		<para>
-		     Developing a converged application has now become very easy with availability of Open Source &PLATFORM_NAME; Media Server. Appart from conventional Applications like IVR, Conferencing, various Tone (like busy, congestion etc) generation/detection below are few of the Converged Applications that can be developed using Mobicents Media Server
-		</para>
-		
-		<variablelist>
-			<varlistentry>
-				<term>Use Case 1</term>
-				<listitem>
-					<para>
-						bla bla bla
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>Use Case 2</term>
-				<listitem>
-					<para>
-						bla bla bla
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>use Case 3</term>
-				<listitem>
-					<para>
-						bla bla bla
-					</para>
-				</listitem>
-			</varlistentry>
-		</variablelist>		
-		
-	</section>
-	
 	<section id="ittms-What_is_Mobicents_Media_Server">
 		<title>What is &PLATFORM_NAME; Media Server</title>
 		<para>
@@ -156,5 +114,83 @@
 			use.
 		</para>
 	
+	</section>	
+	<section id="ittms-Media_Server_Use Case">
+		<title>Media Server Use Case</title>
+		<para>
+			Media Server's are heavily used in conventional applications across various market segments for example the Mobile / PSTN service provider have media server's to play announcements like "The user is busy, please call after some time" or to record the voice message when the called party is busy and to re-play the same message when asked for.
+		</para>
+		<para>
+			The IVR Applications used by various segments of industry, for example IVR system used in banks to let their customers know their balance by calling a Toll-Free-Number or do other banking transactions.
+		</para>
+		<para>
+		     Developing a converged application has now become very easy with availability of Open Source &PLATFORM_NAME; Media Server. Appart from conventional Applications like IVR, Conferencing, various Tone (like busy, congestion etc) generation/detection below are few Use Cases that can be developed using Mobicents Media Server and Mobicents Platform.
+		</para>
+		
+		<variablelist>
+			<varlistentry>
+				<term>Developing Converged Applications</term>
+				<listitem>
+					<para>
+						A Converged Application delivers data, voice, video to end user on any device like Public Switch Telephone Network (land line/mobile) or VoIP Phones or any other device on any network like SS7, IP etc. There is no limitation on what kind of Converged Application can be developed by using the Mobicents Media Server. 
+						
+						  <itemizedlist>
+						  <listitem>
+						      <para>
+						
+						Imagine a 'Click-to-Call' application on your business portal where customer can reach your Customer Executive by clicking a link on your site. 
+						      </para>
+						    </listitem>	
+						  
+						  
+						    <listitem>
+						      <para>						  
+						A virtual class room where every student is logged to a session using their personal SIP/Mobile phones and tutor is taking class using his/her own phone. 
+						      </para>
+						    </listitem>	
+						   <listitem>
+						      <para>
+						Imagine a call routing to your mobile phone as soon as you swipe the Credit Card and IVR system asking for your password (DTMF) to authorize the transaction. Now somebody who wants to make illicit use of your Credit Card needs to have not only your mobile but your password too. 
+						      </para>
+						    </listitem>	
+						   <listitem>
+						      <para>
+						 A online Furniture (or any goods that has high cost of delivering to door step) Shopping Portal makes a call to customer a day before delivery intimating delivery date and time and gives an option to Customer to change it either via Sopping Portal or directly through IVR (DTMF) such that there is almost zero probability to find the door locked once your truck reaches Customer door step. 
+						      </para>
+						    </listitem>						    
+						  
+						  </itemizedlist>						
+					</para>				
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Innovation in Traditional Telco Value Added Service</term>
+				<listitem>
+					<para>
+						As explained in above paragraphs, traditional telco value added service's like Ring Back Tone (RBT), Voice Message, Call Forwarding, Call Blocking are quite common terms now. But to subscribe/unsbscribe for each of these service, to manage these service is hassle as each of them are different service in it-self. How about a Portal where customer can log in and manage all its service that he/she is subscribed to? The Portal also gives an Rule based call routing option to let user decide where the call gets routed (his/her mobile,land phone,business phone,home phone etc) depending on which time of day the call arrives. How about letting the user record the converstaion by press of a button and latter through Portal user can listen, download, forward mail as attachment. Let user upload his/her favorite mp3 songs on portal which then can be used as personalized RBT for individual callers calling the user. Let user record the message like "This Phone is out of service for next 6 months. Please call after 6 months" and play it when any unwanted caller calls ;). Basically its a call-blocking service but with much more flexibility!  Even Presence service can be leveraged to develop more interesting apps.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Capitalize on next Generation Netwrok - IMS</term>
+				<listitem>
+					<para>
+						In order to create innovative, cost effective and felxible applications and to reduce time to market and meet customer demands, the transition should happen from legacy SS7 network to IP based Multimedia Subsystem (IMS). Mobicents Media Server can act as IMS - Media Resource Function (MRF) that caters to media needs within IP based home netwroks.		
+					</para>
+					<para>
+					      Mobicents Media Server can also be deployed as PSTN gateway that converst the SIP signalling to SS7 signals (ISUP etc). On one side the Media Server is able to send and receive IMS media over the Real-Time Protocol (RTP). On the other side the Media Server uses one or more PCM (Pulse Code Modulation) time slots to connect to the SS7 network
+					</para>
+							<mediaobject id="ittms-sas-MMSArchitecture-MSDeployment">
+			<imageobject>
+				<imagedata align="center" width="550"
+					fileref="images/sas-MMSArchitecture-MSDeployment.gif" format="PNG"></imagedata>
+			</imageobject>
+		</mediaobject>
+				</listitem>
+			</varlistentry>			
+		</variablelist>		
+		
 	</section>
+	
+
 </chapter>

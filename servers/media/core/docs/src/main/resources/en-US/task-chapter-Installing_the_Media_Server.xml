@@ -132,6 +132,12 @@
 				the system. Follow the instructions below for the
 				operating system on which the server will reside.
 			</para>
+			<note>
+			<title>Version Numbers</title>
+			<para>
+				For clarity, the command line instructions presented in this chapter use specific version numbers and directory names. Ensure this information is substituted with the binary distribution's version numbers and file names. 
+			</para>
+		      </note>
 			<procedure>
 				<title>
 					Installing the JBoss embedded Media Server Binary
@@ -762,6 +768,12 @@
 				system. Follow the instructions below for the operating
 				system on which the server will reside.
 			</para>
+			<note>
+			<title>Version Numbers</title>
+			<para>
+				For clarity, the command line instructions presented in this chapter use specific version numbers and directory names. Ensure this information is substituted with the binary distribution's version numbers and file names. 
+			</para>
+		      </note>			
 			<procedure>
 				<title>
 					Installing the Standalone Media Server Binary
@@ -930,7 +942,7 @@
 				Standalone Media Server has started successfully if the
 				last line of output is similar to the following
 			</para>
-			<programlisting><![CDATA[2100 [main] INFO  org.mobicents.media.server.bootstrap.MainDeployer  - [[[[[[[[[ Mobicents Media Server: release.version=2.0.0.BETA2-SNAPSHOT Started ]]]]]]]]]]]></programlisting>
+			<programlisting><![CDATA[2100 [main] INFO  org.mobicents.media.server.bootstrap.MainDeployer  - [[[[[[[[[ Mobicents Media Server: release.version=]]>&VERSION; <![CDATA[Started ]]]]]]]]]]]></programlisting>
 			<procedure>
 				<title>
 					Running the Standalone Media Server on Linux

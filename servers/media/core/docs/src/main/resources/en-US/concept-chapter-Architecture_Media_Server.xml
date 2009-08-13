@@ -57,7 +57,7 @@
 			The Media Server architecture assumes that call control
 			intelligence lies outside of the Media Server, and is
 			handled by an external entity. The Media Server also assumes
-			that call controllers will use control procedures such as
+			that call controllers will use control procedure described by protocols such as
 			<acronym>MGCP</acronym>
 			,
 			<acronym>MEGACO</acronym>
@@ -299,9 +299,9 @@
 				protocol within a distributed system that appears to
 				outside as a single VoIP gateway. The MGCP is composed
 				of a Call Agent, and set of gateways including at least
-				one "media gateway" that perform the conversion of media
+				one "media gateway" which performs the conversion of media
 				signal between circuit and packets, and atleast one
-				"signalling gateway" when connecting to an SS7
+				"signalling gateway" when connected to SS7
 				controlled network. The Call Agent can be distributed
 				over several computer platforms.
 			</para>
@@ -315,13 +315,13 @@
 		<para>
 			The Mobicents Media Server is developed on top of existing
 			Java technologies. The Java platform is ideal for network
-			computing. It offers a single, unified-and-unifying
+			computing. It offers single, unified-and-unifying
 			programming model that can connect all elements of a
 			business infrastructure. The modularization effort is
-			supported by the use of the JBoss Microcontainer which
+			supported by use of the JBoss Microcontainer which
 			allows to deploy services written as Plain Java Objects into
 			a Standard Java SE runtime environment in controlled manner
-			and achieve a great level of customization. Dependencies are
+			and achieve great level of customization. Dependencies are
 			fully managed to ensure that new services cannot be deployed
 			until services they depend on have first been deployed.
 			Where it makes sense to do so you can even re-deploy
@@ -358,7 +358,7 @@
 		<formalpara>
 		<title>Endpoint Composition</title>
 		<para>
-			Each of the Endpoint's declared in Mobicents Media Server
+			Each of the Endpoints declared in Mobicents Media Server
 			are composition of these Media Source/Sink and also depends
 			on how each of these media components are ordered. For
 			example which media component is first in line to
@@ -372,7 +372,7 @@
 		<title>Channel</title>		
 		<para>
 			Channel is not a media component but it is able to join with
-			Media Source and Media Sink or joined with other channel.
+			Media Source and Media Sink or join with other channel.
 			The role of channel is to construct media flow path by
 			joining components using pipes.
 		</para>
