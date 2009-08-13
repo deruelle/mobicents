@@ -174,10 +174,20 @@
 		</property>
 	</bean>
 
+	<bean name="SoundCardPlayerFactory"
+		class="org.mobicents.media.server.impl.resource.audio.soundcard.PlayerFactory">
+		<property name="name">soundcard.player</property>
+	</bean>
+	
 	<bean name="AudioPlayerFactory"
 		class="org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory">
 		<property name="name">audio.player</property>
 	</bean>
+	
+	<bean name="AudioPlayerFactory"
+		class="org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory">
+		<property name="name">audio.player</property>
+	</bean>	
 
 	<bean name="RecorderFactory"
 		class="org.mobicents.media.server.impl.resource.audio.RecorderFactory">
