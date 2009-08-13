@@ -105,7 +105,7 @@
 			</map>
 		</property>
 		<property name="bindAddress">${jboss.bind.address}</property>
-		<property name="portRange">1024-65535</property>
+		<property name="localPort">9200</property>
 		<property name="jitter">60</property>
 		<property name="timer">
 			<inject bean="Timer" />
@@ -126,6 +126,8 @@
 				</entry>
 			</map>
 		</property>
+		<property name="bindAddress">${jboss.bind.address}</property>
+		<property name="localPort">9204</property>
 		<property name="jitter">60</property>
 		<property name="timer">
 			<inject bean="Timer" />
