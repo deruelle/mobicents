@@ -32,23 +32,23 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class AdvancedAudioPlayerFactory implements ComponentFactory {
-    private String name;
+	private String name;
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
-        
-    public AudioPlayerImpl newInstance(Endpoint endpoint) throws ResourceUnavailableException {
-        AudioPlayerImpl p = new AudioPlayerImpl(name, endpoint.getTimer());
-        p.setEndpoint(endpoint);
-        return p;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public AdvancedAudioPlayerImpl newInstance(Endpoint endpoint) throws ResourceUnavailableException {
+		AdvancedAudioPlayerImpl p = new AdvancedAudioPlayerImpl(name, endpoint.getTimer());
+		p.setEndpoint(endpoint);
+		return p;
+	}
 }
