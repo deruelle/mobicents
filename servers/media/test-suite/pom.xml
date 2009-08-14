@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents</artifactId>
-		<version>11</version>
+		<version>12</version>
 	</parent>
 
 	<groupId>org.mobicents.testsuite</groupId>
 	<artifactId>mms-testsuite</artifactId>
 	<version>2.0.0.BETA2-SNAPSHOT</version>
-	<name>Mobicents TestSuite Impl</name>
+	<name>Mobicents Media Server Test Suite</name>
 	<url>http://www.mobicents.org/products_media_server.html</url>
 	<packaging>pom</packaging>
 	<modules>
@@ -23,8 +23,8 @@
 	</modules>
 
 	<properties>
-		<mgcp-stack.version>2.0.0.RC3</mgcp-stack.version>
-		<mms.version>2.0.0.BETA1</mms.version>
+		<mgcp-stack.version>2.0.0.RC4</mgcp-stack.version>
+		<mms.version>2.0.0.BETA2</mms.version>
 		<jfree-chart.version>1.0.0</jfree-chart.version>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
