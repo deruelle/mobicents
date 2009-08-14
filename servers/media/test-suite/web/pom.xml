@@ -10,7 +10,7 @@
 	<artifactId>mms-testsuite-web</artifactId>
 
 	<packaging>war</packaging>
-	<name>Mobicents Media Server Test Suite Audio:: ${pom.artifactId}</name>
+	<name>Mobicents Media Server Test Suite Web</name>
 
 	<build>
 		<finalName>mms-load-test-audio</finalName>
