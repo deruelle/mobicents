@@ -77,9 +77,6 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
-									<isset property="jboss.home" />
-								</condition>
 								<copy todir="${jboss.home}/server/${node}/deploy/mobicents-media-server">
 									<fileset dir="target/${build.finalName}.dir">
 										<include name="${build.finalName}/**" />
@@ -104,7 +101,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete dir="${env.JBOSS_HOME}/server/${node}/deploy/mobicents-media-server" />
+								<delete dir="${jboss.home}/server/${node}/deploy/mobicents-media-server" />
 							</tasks>
 						</configuration>
 					</execution>
