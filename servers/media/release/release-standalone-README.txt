@@ -1,10 +1,11 @@
 =========================================================================
 ! Welcome to Mobicents Media server (MMS) - The Open Source Media server !
 =========================================================================
-This mms-standalone-2.0.0.BETA1 binary is standalone Mobicents Media Server     
+This mms-standalone-2.0.0.BETA2 binary is standalone Mobicents Media Server     
 This MMS binary is having
     * Standalone Mobicents Media Server
     * Test framework built on top of MGCP to test the Media Server Performance.
+    * Admin and Configuration guide
                                                                                      
 
 Mobicents Media Server is open source media server aimed to:
@@ -17,8 +18,8 @@ Mobicents Media Server is open source media server aimed to:
 -React quickly to dynamic market requirements. 
 
 Mobicents Media Server Home Page: http://www.mobicents.org/products_media_server.html
-Mobicents documentation page: http://hudson.jboss.org/hudson/job/MobicentsBooks/lastSuccessfulBuild/artifact/media/index.html
-Version information: mms-standalone-2.0.0.BETA1
+Mobicents documentation page: http://www.mobicents.org/mms/mms-docs.html
+Version information: mms-standalone-2.0.0.BETA2
 
 
 To install media server
@@ -29,9 +30,16 @@ To execute Test
 ----------------------------------------------------------------------
 1. Call ant from /test directory
 
-Highlights of 2.0.0.BETA1
+Highlights of 2.0.0.BETA2
 ----------------------------------------------------------------------
-1) From version 2 the Mobicents Media Server has new Architecture based on JBoss Microcontainer which has greatly simplified the internal structure of resources and how they are linked to each-other. For further understanding please read the documentation included with this distribution.
+There are many new functionality addition in this release. 
+1. Added a TTS component
+2. Added proper logger messages to know if there are issues or can also be used to understand the media flow in MMS
+3. Added a hardware player which directly plays the audio file in detected audio hardware
+4. Disable hot-deployment if scanner perido set to 0 in MMS standalone.
+5. NIO Socket architecture modified to use only one port for many media stream.
+
+To know about all of the above and more fixes please look at http://code.google.com/p/mobicents/issues/list?q=label%3AComponent-Media-Server%20label%3AMilestone-Release-2.0.0.Beta2&updated=763&ts=1250269553&can=1
 
 
 Download the nightly SNAPSHOT from http://hudson.qa.jboss.com/hudson/view/Mobicents/job/MobicentsMediaServerRelease/

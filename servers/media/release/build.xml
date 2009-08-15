@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="media.server.release" default="release" basedir=".">
 
-	<property name="release.version" value="2.0.0.BETA1" />
+	<property name="release.version" value="2.0.0.BETA3-SNAPSHOT" />
 
 	<property name="release.dir" location="${ant.file.media.server.release}/../target/release" />
 	<property name="release.dir.standalone" location="${ant.file.media.server.release}/../standalone" />
 	<property name="release.dir.all" location="${ant.file.media.server.release}/../all" />
 
-	<property name="docs.stage.dir" location="${ant.file.mobicents.release}/../documentation" />
-
 	<property name="jboss.version" value="5.1.0.GA" />
 	<property name="jboss.config" value="default" />
 	<property name="jboss.name" value="jboss-${jboss.version}" />
 	<property name="jboss.home.relative.path" value="jboss-${jboss.version}/" />
-	<property name="jboss.home" value="${release.dir.all}/${jboss.home.relative.path}/" />
+	<property name="jboss.home" value="${release.dir.all}/${jboss.home.relative.path}" />
 	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip" />
 	<property name="jboss.download.url" value="http://downloads.sourceforge.net/jboss/jboss-${jboss.version}.zip" />
 
@@ -22,6 +20,8 @@
 	<property name="mobicents.jainslee.download.url" value="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-${mobicents.jainslee.version}-jboss-${jboss.version}.zip" />
 
 	<property name="core.location" location="${ant.file.media.server.release}/../../core" />
+	<!-- property name="docs.stage.dir" location="${ant.file.mobicents.release}/../documentation" / -->
+	<property name="docs.stage.dir" location="${core.location}/docs" />
 	<property name="test.suite.location" location="${ant.file.media.server.release}/../../test-suite" />
 
 	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
@@ -65,11 +65,13 @@
 
 	<condition property="media.docs.checked.out">
 		<and>
-			<available file="${docs.stage.dir}/common/.svn/entries" />
-			<available file="${docs.stage.dir}/media/.svn/entries" />
+			<!-- available file="${docs.stage.dir}/common/.svn/entries" />
+			<available file="${docs.stage.dir}/media/.svn/entries" / -->
+			<available file="${docs.stage.dir}/.svn/entries" />
 		</and>
 	</condition>
-	<target name="get-documentation" depends="checkout-documentation,update-documentation" />
+	<!-- target name="get-documentation" depends="checkout-documentation,update-documentation" / -->
+	<target name="get-documentation" />
 
 	<target name="checkout-documentation" unless="media.docs.checked.out">
 		<echo>Checking out documentation</echo>
@@ -85,14 +87,15 @@
 		</exec>
 	</target>
 
-	<target name="build-documentation" depends="get-documentation">
+	<!-- target name="build-documentation" depends="get-documentation" -->
+	<target name="build-documentation">
 		<echo>Building documentation</echo>
 
-		<exec executable="${mvn.executable}" dir="${docs.stage.dir}/media/">
+		<exec executable="${mvn.executable}" dir="${docs.stage.dir}/">
 			<arg line="clean compile" />
 		</exec>
 		<copy overwrite="true" todir="${documentation.target.dir}">
-			<fileset dir="${docs.stage.dir}/media/target/docbook/publish/en-US/" />
+			<fileset dir="${docs.stage.dir}/target/docbook/publish/en-US/" />
 		</copy>
 
 	</target>
@@ -205,7 +208,7 @@
 		<antcall target="unzip-jboss" />
 
 		<exec executable="${mvn.executable}" dir="${core.location}">
-			<arg line="clean install -P set-svn-revision,jboss -DJBOSS_HOME=${jboss.home} -Dnode=${jboss.config}" />
+			<arg line="clean install -P set-svn-revision,jboss-5 -Dmaven.test.skip=true -Djboss.home=${jboss.home} -Dnode=${jboss.config}" />
 		</exec>
 
 		<exec executable="${mvn.executable}" dir="${test.suite.location}">
@@ -302,6 +305,7 @@
 
 			<param name="release.dir.core" location="${ant.file.media.server.release}/../target/servers/media/release/core" />
 			<param name="release.dir.all" location="${ant.file.media.server.release}/../target/servers/media/release/all" />
+			<param name="docs.stage.dir" location="${ant.file.media.server.release}/../target/servers/media/core/docs" />			
 		</antcall>
 
 		<antcall target="release-all">
@@ -312,6 +316,7 @@
 			<param name="release.dir.standalone" location="${ant.file.media.server.release}/../target/servers/media/release/standalone" />
 			<param name="release.dir.all" location="${ant.file.media.server.release}/../target/servers/media/release/all" />
 			<param name="jboss.home" location="${ant.file.media.server.release}/../target/servers/media/release/all/${jboss.home.relative.path}/" />
+			<param name="docs.stage.dir" location="${ant.file.media.server.release}/../target/servers/media/core/docs" />			
 		</antcall>
 
 		<antcall target="release-src">
@@ -331,7 +336,7 @@
 		<delete dir="${release.dir}" />
 		<delete dir="${release.dir.standalone}" />
 		<delete dir="${release.dir.all}" />
-		<delete dir="${docs.stage.dir}" />
+		<!-- delete dir="${docs.stage.dir}" / -->
 	</target>
 
 </project>
