@@ -260,11 +260,13 @@ public class RtpFactory {
 
         // discovery stun server
         NetworkConfigurationDiscoveryProcess addressDiscovery = new NetworkConfigurationDiscoveryProcess(local, stun);
-        addressDiscovery.start();
-
-        // determine public addrees
-        StunDiscoveryReport report = addressDiscovery.determineAddress();
-        return report.getPublicAddress().getSocketAddress();
+        try {
+            addressDiscovery.start();
+            StunDiscoveryReport report = addressDiscovery.determineAddress();
+            return report.getPublicAddress().getSocketAddress();
+        } finally {
+            addressDiscovery.shutDown();
+        }
     }
     
 }
