@@ -86,7 +86,7 @@ public class VideoPlayer {
     }    
     
     public static void main(String[] args) throws Exception {        VideoPlayer vp = new VideoPlayer();
-        vp.setFile("c:\\video\\016.3gp");
+        vp.setFile("/home/abhayani/Desktop/tones/016.3gp");
         vp.open();
         vp.process();
     }

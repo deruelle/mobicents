@@ -31,29 +31,31 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class SampleTableBox extends Box {
 
-    private SampleEntry stsd;
-    
-    public SampleTableBox(long size, String type) {
-        super(size, type);
-    }
-    
-    @Override
-    protected int load(DataInputStream fin) throws IOException {
-        int count = 8;
-        while (count < getSize()) {
-            int len = readLen(fin);
-            String type = readType(fin);            
-            if (type.equals("stsd")) {
-                stsd = new SampleEntry(len, type);
-                count += stsd.load(fin);
-            } else throw new IOException("Unknown box=" + type);
-        }
-        return (int) getSize();
-    }
+	private SampleDescription stsd;
+
+	public SampleTableBox(long size, String type) {
+		super(size, type);
+	}
+
+	@Override
+	protected int load(DataInputStream fin) throws IOException {
+		int count = 8;
+		while (count < getSize()) {
+			int len = readLen(fin);
+			String type = readType(fin);
+			if (type.equals("stsd")) {			
+
+				stsd = new SampleDescription(len, type);
+				count += stsd.load(fin);
+			} else
+				throw new IOException("Unknown box=" + type);
+		}
+		return (int) getSize();
+	}
 
 }

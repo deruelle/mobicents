@@ -44,13 +44,7 @@ public class FileTypeBox extends Box {
         super(size, type);
     }
 
-    private byte[] read(DataInputStream in) throws IOException {
-        byte[] buff = new byte[4];
-        for (int i = 0; i < buff.length; i++) {
-            buff[i] = in.readByte();
-        }
-        return buff;
-    }
+
     
     public String getMajorBrand() {
         return this.majorBrand;

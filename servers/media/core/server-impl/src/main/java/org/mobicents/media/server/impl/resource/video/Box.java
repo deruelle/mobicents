@@ -32,53 +32,83 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public abstract class Box {
-    private long size;
-    private String type;
-    
-    public Box(long size, String type) {
-        this.size = size;
-        this.type = type;
-    }
-    
-    public long getSize() {
-        return size;
-    }
-    
-    public String getType() {
-        return type;
-    }
-    
-    protected String readType(DataInputStream in) throws IOException {
-        byte[] buff = new byte[4];
-        for (int i = 0; i < buff.length; i++) {
-            buff[i] = in.readByte();
-        }
-        return new String(buff);
-    }
-    
-    protected int readLen(DataInputStream in) throws IOException {
-        return in.readInt();
-    }
-    
-    protected String readText(DataInputStream in) throws IOException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        byte b = 0;
-        while ((b = in.readByte()) != 0) {
-            bout.write(b);
-        }
-        return new String(bout.toByteArray(),"UTF-8");
-    }
-    
-    /**
-     * Loads Box from stream.
-     * 
-     * @param fin the stream to load box from
-     * @return the number of bytes readed from stream;     * 
-     * @throws java.io.IOException if some I/O error occured.
-     */
-    protected abstract int load(DataInputStream fin) throws IOException;
+	private long size;
+	private String type;
+
+	public Box(long size, String type) {
+		this.size = size;
+		this.type = type;
+	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	protected String readType(DataInputStream in) throws IOException {
+		byte[] buff = new byte[4];
+		for (int i = 0; i < buff.length; i++) {
+			buff[i] = in.readByte();
+		}
+		return new String(buff);
+	}
+
+	protected int readLen(DataInputStream in) throws IOException {
+		return in.readInt();
+	}
+
+	protected String readText(DataInputStream in) throws IOException {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		byte b = 0;
+		while ((b = in.readByte()) != 0) {
+			bout.write(b);
+		}
+		return new String(bout.toByteArray(), "UTF-8");
+	}
+
+	protected byte[] read(DataInputStream in) throws IOException {
+		byte[] buff = new byte[4];
+		for (int i = 0; i < buff.length; i++) {
+			buff[i] = in.readByte();
+		}
+		return buff;
+	}
+
+	protected int read32(DataInputStream in) throws IOException {
+		int output = in.readInt();
+		return output;
+
+	}
+
+	protected int read24(DataInputStream fin) throws IOException {
+		int output = 0;
+		output = (fin.readByte() << 16) | (fin.readByte() << 8) | fin.readByte();
+		return output;
+
+	}
+
+	protected int read16(DataInputStream fin) throws IOException {
+		int output = 0;
+		output = (fin.readByte() << 8) | fin.readByte();
+		return output;
+
+	}
+
+	/**
+	 * Loads Box from stream.
+	 * 
+	 * @param fin
+	 *            the stream to load box from
+	 * @return the number of bytes readed from stream; *
+	 * @throws java.io.IOException
+	 *             if some I/O error occured.
+	 */
+	protected abstract int load(DataInputStream fin) throws IOException;
 }

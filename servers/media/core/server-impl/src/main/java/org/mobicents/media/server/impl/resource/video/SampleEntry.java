@@ -9,23 +9,23 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 /**
- *
+ * 
  * @author kulikov
  */
-public class SampleEntry extends FullBox {
+public class SampleEntry extends Box {
 
-    private byte[] reserved = new byte[6];
-    private short dataReferenceIndex;
-    
-    public SampleEntry(long size, String type) {
-        super(size, type);
-    }
-    
-    @Override
-    protected int load(DataInputStream fin) throws IOException {
-        fin.skip(6);
-        dataReferenceIndex = fin.readShort();
-        return (int) getSize();
-    }
+	protected byte[] reserved = new byte[6];
+	protected short dataReferenceIndex;
+
+	public SampleEntry(long size, String type) {
+		super(size, type);
+	}
+
+	@Override
+	protected int load(DataInputStream fin) throws IOException {
+		fin.skip(6);
+		dataReferenceIndex = fin.readShort();
+		return (int) getSize();
+	}
 
 }
