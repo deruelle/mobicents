@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class AudioSampleEntry extends SampleEntry {
 
@@ -35,16 +35,19 @@ public class AudioSampleEntry extends SampleEntry {
 
 		int a = fin.readInt();
 		sampleRate = (a >> 16) + (a & 0xffff) / 10;
-		
-		int len = readLen(fin);
-		String type = readType(fin);
-		if (type.equals("damr")) {			
-			AmrSpecificBox amrBox = new AmrSpecificBox(len, type);
-			amrBox.load(fin);
-			
+
+		int count = 28 + 8;
+
+		while (count < getSize()) {
+			int len = readLen(fin);
+			String type = readType(fin);
+			if (type.equals("damr")) {
+				AmrSpecificBox amrBox = new AmrSpecificBox(len, type);
+				count += amrBox.load(fin);
+			}
 		}
 
-		return 0;
+		return count;
 	}
 
 	public int getChannelCount() {

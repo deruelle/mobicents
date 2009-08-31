@@ -31,46 +31,47 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class FileTypeBox extends Box {
-    
-    private String majorBrand;
-    private int minorVersion;
-    private String[] compatibleBrands;
-    
-    public FileTypeBox(long size, String type) {
-        super(size, type);
-    }
 
+	//File Type = ftyp
+	static byte[] TYPE = new byte[] { 102, 116, 121, 112 };
 
-    
-    public String getMajorBrand() {
-        return this.majorBrand;
-    }
-    
-    public int getMinorVersion() {
-        return this.minorVersion; 
-    }
-    
-    public String[] getCompatibleBrands() {
-        return this.compatibleBrands;
-    }
-    
-    @Override
-    protected int load(DataInputStream fin) throws IOException {
-        this.majorBrand = new String(read(fin));
-        this.minorVersion = fin.readInt();
-    
-        long remainder = getSize() - 16;
-        int count = (int)(remainder / 4);
-        
-        compatibleBrands = new String[count];
-        for (int i = 0; i < count; i++) {
-            compatibleBrands[i] = new String(read(fin));
-        }
-        return (int)getSize();
-    }
-    
+	private String majorBrand;
+	private int minorVersion;
+	private String[] compatibleBrands;
+
+	public FileTypeBox(long size, String type) {
+		super(size, type);
+	}
+
+	public String getMajorBrand() {
+		return this.majorBrand;
+	}
+
+	public int getMinorVersion() {
+		return this.minorVersion;
+	}
+
+	public String[] getCompatibleBrands() {
+		return this.compatibleBrands;
+	}
+
+	@Override
+	protected int load(DataInputStream fin) throws IOException {
+		this.majorBrand = new String(read(fin));
+		this.minorVersion = fin.readInt();
+
+		long remainder = getSize() - 16;
+		int count = (int) (remainder / 4);
+
+		compatibleBrands = new String[count];
+		for (int i = 0; i < count; i++) {
+			compatibleBrands[i] = new String(read(fin));
+		}
+		return (int) getSize();
+	}
+
 }

@@ -31,53 +31,53 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 /**
- * The metadata for a presentation is stored in the single Movie Box which 
- * occurs at the top-level of a file.
+ * The metadata for a presentation is stored in the single Movie Box which occurs at the top-level of a file.
  * 
- * Normally this box is close to the beginning or end of the file, though this 
- * is not required.
+ * Normally this box is close to the beginning or end of the file, though this is not required.
  * 
- * Box Type: moov
- * Container: File
- * Mandatory: Yes
- * Quantity: Exactly one
+ * Box Type: moov Container: File Mandatory: Yes Quantity: Exactly one
  * 
  * @author kulikov
  */
 public class MovieBox extends Box {
 
-    private MovieHeaderBox mvhd;
-    private TrackBox track;
-    
-    public MovieBox(long size, String type) {
-        super(size, type);
-    }
-    
-    @Override
-    protected int load(DataInputStream in) throws IOException {
-        //loading movie header
-        int len = readLen(in);
-        String type = readType(in);
-        
-        if (!type.equals("mvhd")) {
-            throw new IOException("Movie Header Box expected");
-        }
-        
-        mvhd = new MovieHeaderBox(len, type);
-        mvhd.load(in);
-        
-        //loading track
-        len = readLen(in);
-        type = readType(in);
-        
-        if (!type.equals("trak")) {
-            throw new IOException("Track box expected");
-        }
-        
-        track = new TrackBox(len, type);
-        track.load(in);
-        
-        return (int) this.getSize();
-    }
+	// File Type = moov
+	static byte[] TYPE = new byte[] { AsciiTable.ALPHA_m, AsciiTable.ALPHA_o, AsciiTable.ALPHA_o, AsciiTable.ALPHA_v };
+
+	private MovieHeaderBox mvhd;
+	private TrackBox track;
+
+	public MovieBox(long size, String type) {
+		super(size, type);
+	}
+
+	@Override
+	protected int load(DataInputStream in) throws IOException {
+		// loading movie header
+		int len = readLen(in);
+		byte[] type = read(in);
+
+		// String type = readType(in);
+
+		if (!comparebytes(type, MovieHeaderBox.TYPE)) {
+			throw new IOException("Movie Header Box expected");
+		}
+
+		mvhd = new MovieHeaderBox(len);
+		mvhd.load(in);
+
+		// loading track
+		len = readLen(in);
+		String type1 = readType(in);
+
+		if (!type1.equals("trak")) {
+			throw new IOException("Track box expected");
+		}
+
+		track = new TrackBox(len, type1);
+		track.load(in);
+
+		return (int) this.getSize();
+	}
 
 }

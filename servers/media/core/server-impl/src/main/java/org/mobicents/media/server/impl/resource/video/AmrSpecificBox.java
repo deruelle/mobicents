@@ -33,14 +33,37 @@ public class AmrSpecificBox extends Box {
 
 	@Override
 	protected int load(DataInputStream fin) throws IOException {
-
+		//Here size should 8+9 = 17
+		
+		int count = 8;
+		
 		vendor = new String(read(fin));
 		decoderVersion = fin.readByte();
 		modeSet = super.read16(fin);
 		modeChangePeriod = fin.readByte();
 		framesPerSample = fin.readByte();
 
-		return 9;
+		return count + 9;
+	}
+
+	public String getVendor() {
+		return vendor;
+	}
+
+	public int getDecoderVersion() {
+		return decoderVersion;
+	}
+
+	public int getModeSet() {
+		return modeSet;
+	}
+
+	public int getModeChangePeriod() {
+		return modeChangePeriod;
+	}
+
+	public int getFramesPerSample() {
+		return framesPerSample;
 	}
 
 }

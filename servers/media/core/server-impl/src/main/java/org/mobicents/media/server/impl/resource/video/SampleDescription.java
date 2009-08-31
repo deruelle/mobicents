@@ -9,15 +9,22 @@ import java.io.IOException;
  *
  */
 public class SampleDescription extends FullBox {
+	
+	// File Type = stsd
+	static byte[] TYPE = new byte[] { AsciiTable.ALPHA_s, AsciiTable.ALPHA_t, AsciiTable.ALPHA_s, AsciiTable.ALPHA_d };
+	static String TYPE_S = "stsd";
+	static {
+		bytetoTypeMap.put(TYPE, TYPE_S);
+	}
 
-	public SampleDescription(long size, String type) {
-		super(size, type);
+	public SampleDescription(long size) {
+		super(size, TYPE_S);
 	}
 
 	@Override
 	protected int load(DataInputStream fin) throws IOException {
 		super.load(fin);
-		int len = readLen(fin);
+		int entryCount = readLen(fin);
 		
 		
 		int len1 = readLen(fin);
@@ -28,7 +35,7 @@ public class SampleDescription extends FullBox {
 			
 		}
 		
-		return len;
+		return (int)getSize();
 	}
 
 }

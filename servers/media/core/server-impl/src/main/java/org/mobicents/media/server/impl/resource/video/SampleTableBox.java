@@ -37,6 +37,9 @@ import java.io.IOException;
 public class SampleTableBox extends Box {
 
 	private SampleDescription stsd;
+	private TimeToSampleBox stts;
+	private SampleToChunkBox stsc;
+	private SampleSizeBox stsz;
 
 	public SampleTableBox(long size, String type) {
 		super(size, type);
@@ -47,13 +50,22 @@ public class SampleTableBox extends Box {
 		int count = 8;
 		while (count < getSize()) {
 			int len = readLen(fin);
-			String type = readType(fin);
-			if (type.equals("stsd")) {			
-
-				stsd = new SampleDescription(len, type);
+			byte[] type = read(fin);
+			if (comparebytes(type, SampleDescription.TYPE)) {
+				stsd = new SampleDescription(len);
 				count += stsd.load(fin);
-			} else
+			} else if (comparebytes(type, TimeToSampleBox.TYPE)) {
+				stts = new TimeToSampleBox(len);
+				count += stts.load(fin);
+			} else if (comparebytes(type, SampleToChunkBox.TYPE)) {
+				stsc = new SampleToChunkBox(len);
+				count += stsc.load(fin);
+			} else if (comparebytes(type, SampleSizeBox.TYPE)) {
+				stsz = new SampleSizeBox(len);
+				count += stsz.load(fin);
+			} else {
 				throw new IOException("Unknown box=" + type);
+			}
 		}
 		return (int) getSize();
 	}

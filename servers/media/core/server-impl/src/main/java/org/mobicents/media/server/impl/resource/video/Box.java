@@ -30,12 +30,16 @@ package org.mobicents.media.server.impl.resource.video;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * 
  * @author kulikov
  */
 public abstract class Box {
+
+	public static HashMap<byte[], String> bytetoTypeMap = new HashMap<byte[], String>();
+
 	private long size;
 	private String type;
 
@@ -99,6 +103,18 @@ public abstract class Box {
 		output = (fin.readByte() << 8) | fin.readByte();
 		return output;
 
+	}
+
+	protected boolean comparebytes(byte[] arg1, byte[] arg2) {
+		if (arg1.length != arg2.length) {
+			return false;
+		}
+		for (int i = 0; i < arg1.length; i++) {
+			if (arg1[i] != arg2[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
