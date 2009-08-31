@@ -87,7 +87,7 @@
       <step>
         <title>Append Labels</title>
         <para>Labels are critical in a ticket, because they enable the ticket to be searched using consistent tags.</para>
-        <para>You will notice that two lables are automatically added; <literal>Type-Enhancement</literal>, <literal>Priority-Medium </literal>and <literal>Component-Docs</literal>.   These categories are acceptable by default.</para>
+        <para>You will notice that two labels are automatically added; <literal>Type-Enhancement</literal>, <literal>Priority-Medium </literal>and <literal>Component-Docs</literal>.   These categories are acceptable by default.</para>
         <para>Append the following extra categories at a minimum to the <guilabel>Labels</guilabel> field:<itemizedlist>
             <listitem>
               <para><literal>Component-&amp;lt;server_name&amp;gt;</literal> - specifies the server to which the ticket relates.</para>
@@ -108,8 +108,8 @@
       <title>Developer Ticket Approval</title>
       <step>
         <title>Review Raised Tickets</title>
-        <para>Developers must regularly check the GCode ticket queue for new issues.  To do this, search for the server prefix (for example <userinput>[MSS Guide]</userinput> for the SIP Servlets Server User Guide) in the Sumary field.</para>
-        <para>For  tickets that been incorrectly created, the previous search will not return the correct results.  Search for the Component-&amp;lt;server name&amp;gt; Label, and ensure the server prefix is added to the ticket.</para>
+        <para>Developers must regularly check the GCode ticket queue for new issues.  To do this, search for the server prefix (for example <userinput>[MSS Guide]</userinput> for the SIP Servlets Server User Guide) in the Summary field.</para>
+        <para>For  tickets that been incorrectly created, the previous search will not return the correct results.  Search for the Component-<replaceable>[server name]</replaceable> Label, and ensure the server prefix is added to the ticket.</para>
       </step>
       <step>
         <title>Review Ticket Fields</title>
@@ -145,7 +145,7 @@
           <note>
             <para>If you have a working copy of the directory checked-out in another working folder (for example, a server code repository working copy), execute  SVN Update on the documentation folder in this directory before changing any XML content.</para>
           </note>
-          <para>The working copy will usually be the <filename>/trunk</filename> version.  If the ticket requires the change to be made in <filename>/trunk</filename> as well as a<filename> /branch</filename>, then make the changes in <filename>/trunk</filename> first and backport into each affected <filename>/branch</filename>. </para>
+          <para>The working copy will usually be the <filename>/trunk</filename> version.  If the ticket requires the change to be made in <filename>/trunk</filename> as well as a<filename> /branch</filename>, then make the changes in <filename>/trunk</filename> first and back-port into each affected <filename>/branch</filename>. </para>
         </step>
         <step>
           <title>Open the Working Directory</title>
@@ -176,7 +176,7 @@
           <para>To allow other content authors to see what sections of the guide can be edited, XML comments are used.</para>
           <para>Before making a change, you must ensure that the affected area is not being worked on (or &apos;claimed&apos;) by another author.</para>
           <para>Each content author is responsible for updating and maintaining the XML Comment Block at each stage of the authoring process.</para>
-          <para>XML comments must be placed at the parent XML level.  For example, if a change is required to content contained in a <markup>&lt;para&gt;</markup> tag within a <markup>&lt;section&gt;</markup>, the XML comment must be inserted at the <markup>&lt;section&gt;</markup> level.  The XML comment uses the following structure:</para>
+          <para>XML comments must be placed at the parent XML level.  For example, if a change is required to content contained in a &lt;para&gt; tag within a &lt;section&gt;, the XML comment must be inserted at the &lt;section&gt; level.  The XML comment uses the following structure:</para>
           <programlisting role="XML">
 &lt;!--GCODE TICKET: [Ticket Number] AUTHOR: [Author Name] DATE CHANGED: yyyymmdd STATUS:  Authoring|Review|Editing|Fixed  SUMMARY: [Brief summary of change] --&gt;
 </programlisting>
@@ -238,7 +238,7 @@
           <para>Publish your changes to HTML-Single using  Publican and Maven JDocBook.  </para>
           <para>Review your  changes to check if the display and presentation meets the existing standards of the Mobicents UDS.  </para>
           <note>
-            <para>If you are not using the Publican Toolchain in your daily XML editing tasks, you can still test publish using your XML Authoring tool&apos;s <function>Publish</function> feature to get an idea of what the publish might look like.  </para>
+            <para>If you are not using the Publican Tool chain in your daily XML editing tasks, you can still test publish using your XML Authoring tool&apos;s <function>Publish</function> feature to get an idea of what the publish might look like.  </para>
             <para>The operation will vary between editors, but the main thing is that the book will not publish if it is not structurally valid.  </para>
           </note>
         </step>
@@ -297,8 +297,8 @@
           <para>Save and close all open XML files.</para>
         </step>
       </procedure>
-      <para><xref linkend="procedure-Create_Review_Document"/> requires the XML changes to be published to HTML-Single format using the mkbk script, the Publican Toolchain, and Maven JDocBook.  For this procedure, you must have Publican and Maven JDocBook configured according to the information in <xref linkend="pam-Publican_and_Maven"/>.</para>
-      <para><xref linkend="procedure-Create_Review_Document"/> assumes that you are using Fedora or RHEL, which are the currently supported Linux distributions for Publican.</para>
+      <para><xref linkend="procedure-Create_Review_Document"/> requires the XML changes to be published to HTML-Single format using the mkbk script, the Publican Tool chain, and Maven JDocBook.  For this procedure, you must have Publican and Maven JDocBook configured according to the information in <xref linkend="pam-Publican_and_Maven"/>.</para>
+      <para><xref linkend="procedure-Create_Review_Document"/> assumes that you are using Fedora or Red Hat Enterprise Linux, which are the currently supported Linux distributions for Publican.</para>
       <procedure id="procedure-Create_Review_Document">
         <title>Create Review Document</title>
         <step>
@@ -343,7 +343,7 @@
         <step>
           <title>Add the Request to the Ticket</title>
           <para>In the Comment field, request that the ticket is ready for review.</para>
-          <para>Ensure the reviewer&apos;s name, or email address, is specified in the <guilabel>Cc:</guilabel> field of the ticket.</para>
+          <para>Ensure the reviewer name, or email address, is specified in the <guilabel>Cc:</guilabel> field of the ticket.</para>
         </step>
         <step>
           <title>Provide Direct Links to All Published Changes</title>
@@ -354,7 +354,7 @@
               <para>Navigate to the section you changed as part of the enhancement.</para>
             </listitem>
             <listitem>
-              <para>Copy the absoulte link to the section from the URL field of the Web browser.</para>
+              <para>Copy the absolute link to the section from the URL field of the Web browser.</para>
               <para>You will know it is an absolute link because it will have a #[chapter/section name] as the last part of the URL.</para>
             </listitem>
             <listitem>
@@ -374,7 +374,7 @@
     </section>
     <section>
       <title>Review Ticket</title>
-      <para>After the review request has been sent, the peer reviewer  is notified that a review is waiting through an email notification from GCode.  Thorough ticket review is key contributor to fantastic user documentation because other team members can use the opportunity to read the changes from a customer perspective.  The content can be evaluated for techincal accuracy and readability before being sent to the editing phase.</para>
+      <para>After the review request has been sent, the peer reviewer  is notified that a review is waiting through an email notification from GCode.  Thorough ticket review is key contributor to fantastic user documentation because other team members can use the opportunity to read the changes from a customer perspective.  The content can be evaluated for technical accuracy and readability before being sent to the editing phase.</para>
       <para>The goal of Peer Review is to  discuss why your suggestions should be considered by the content author.      The better your reasons for suggesting an improvement, the better the chances of having the content incorporated, or reaching a compromise.</para>
       <para><xref linkend="procedure-Peer_Reviewing_Documentation_Changes"/> describes the process to follow when a review request is received from the GCode Ticket System.</para>
       <procedure id="procedure-Peer_Reviewing_Documentation_Changes">
@@ -433,7 +433,7 @@
           <programlisting role="XML">&lt;!--Issue #[GCode Issue Number] PR Comment - [describe what needs to be changed or clarified by the content author.]</programlisting>
           <para>In the comment, be as detailed as possible so the content author can effectively evaluate your suggestions.  </para>
           <note>
-            <para>Feedback can sometimes be percieved as criticism.  For this reason, it is important to provide only constructive feedback to the contributing content author.  </para>
+            <para>Feedback can sometimes be perceived as criticism.  For this reason, it is important to provide only constructive feedback to the contributing content author.  </para>
           </note>
         </step>
         <step>
@@ -445,7 +445,7 @@
           <title>Commit Comments to GCode SVN</title>
           <para>Once you have finished providing feedback, commit your changes to GCode SVN. </para>
           <para>Include a meaningful commit message to indicate what was done.  For example:</para>
-          <para><userinput>Issue #666 - PR - Commited comments made as part of Peer Review for this ticket.</userinput></para>
+          <para><userinput>Issue #666 - PR - Committed comments made as part of Peer Review for this ticket.</userinput></para>
           <para>Make note of the commit number.</para>
         </step>
         <step>
@@ -453,7 +453,7 @@
           <para>Once the XML files are committed, you must update the GCode ticket with the following information:</para>
           <itemizedlist>
             <listitem>
-              <para>Gcode SVN commit number.</para>
+              <para>GCode SVN commit number.</para>
             </listitem>
             <listitem>
               <para>Brief summary of suggestions for the content author.</para>
@@ -558,20 +558,20 @@
           <varlistentry>
             <term>Is the &quot;tone&quot; correct?</term>
             <listitem>
-              <para>Is the content suitable for techical publications? Or does it fall into other genres, such as marketing, or whitepaper styles?  Suggest ways of correcting the tone.</para>
+              <para>Is the content suitable for technical publications? Or does it fall into other genres, such as marketing, or white paper styles?  Suggest ways of correcting the tone.</para>
             </listitem>
           </varlistentry>
         </variablelist>
       </step>
       <step>
         <title>Review the XML Structure</title>
-        <para>For issues relating to the organisation of the content, including display and general layout, ask the following questions:</para>
+        <para>For issues relating to the organization of the content, including display and general layout, ask the following questions:</para>
         <variablelist>
           <title>Structural Questions</title>
           <varlistentry>
             <term>Is the XML Structure The Best Choice?</term>
             <listitem>
-              <para>Are instructions and workflow steps  contained in a &lt;procedure&gt; element, with &lt;step&gt; titles?</para>
+              <para>Are instructions and work flow steps  contained in a &lt;procedure&gt; element, with &lt;step&gt; titles?</para>
               <para>Are screenshots contained in a &lt;figure&gt; tag, with an appropriate caption?</para>
               <para>Are  &lt;sections&gt; nested too deeply?  If so, provide recommendations on how the problem can be fixed.</para>
               <para>Are paragraphs too long?  Are there too many concepts per paragraph?</para>
@@ -598,7 +598,7 @@
         <programlisting role="XML">&lt;!--Issue #[GCode Issue Number] Editor Comment - [describe what needs to be changed or clarified by the content author.]</programlisting>
         <para>In the comment, be as detailed as possible so the content author can effectively evaluate your suggestions.  </para>
         <note>
-          <para>Feedback can sometimes be percieved as criticism.  For this reason, it is important to provide only constructive feedback to the contributing content author.  </para>
+          <para>Feedback can sometimes be perceived as criticism.  For this reason, it is important to provide only constructive feedback to the contributing content author.  </para>
         </note>
       </step>
       <step>
@@ -610,7 +610,7 @@
         <title>Commit Comments to GCode SVN</title>
         <para>Once you have finished providing feedback, commit your XML comments and changes to GCode SVN. </para>
         <para>Include a meaningful commit message to indicate what was done.  For example:</para>
-        <para><userinput>Issue #666 - Editing - Commited comments made as part of Editing for this ticket.</userinput></para>
+        <para><userinput>Issue #666 - Editing - Committed comments made as part of Editing for this ticket.</userinput></para>
         <para>Make note of the commit number.</para>
       </step>
       <step>
@@ -618,7 +618,7 @@
         <para>Once the XML files are committed, you must update the GCode ticket with the following information:</para>
         <itemizedlist>
           <listitem>
-            <para>Gcode SVN commit number.</para>
+            <para>GCode SVN commit number.</para>
           </listitem>
           <listitem>
             <para>Brief summary of suggestions for the content author.</para>
@@ -698,7 +698,7 @@
     </procedure>
     <procedure id="procedure-Ticket_Closure_Procedures">
       <title>Ticket Closure Procedures</title>
-      <para>This procedure details how to close off the ticket after all phases are satisfactorally completed.</para>
+      <para>This procedure details how to close off the ticket after all phases are satisfactorily completed.</para>
       <step>
         <title>Create Combined XML File</title>
         <para>Run the <literal>mkbk</literal> script and create the <filename>all-[server name].xml</filename> file.</para>

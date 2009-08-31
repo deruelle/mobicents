@@ -235,10 +235,10 @@ public class ExClient
 	<chapter id="Introduction" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Introduction</title>
 	<para>
-		The Mobicents User Documentation Suite (UDS) is the formalized source of product user documentaton for the Mobicents Community Project. Within the UDS, a user can learn how to install the platform, or individual servers. Server-specific features are located within each server guide and include examples that can help new users become accustomed to the functionality offered by the product suite.
+		The Mobicents User Documentation Suite (UDS) is the formalized source of product user documentation for the Mobicents Community Project. Within the UDS, a user can learn how to install the platform, or individual servers. Server-specific features are located within each server guide and include examples that can help new users become accustomed to the functionality offered by the product suite.
 	</para>
 	<para>
-		The UDS is written in eXtensible Markup Language (XML) and uses the DocBook DTD to control guide structure. The documentation is published to HTML-Single format using the Publican Toolchain and Maven JDocBook, and subsequenty hosted on the Hudson Build Server for public viewing and comment.
+		The UDS is written in eXtensible Markup Language (XML) and uses the DocBook DTD to control guide structure. The documentation is published to HTML-Single format using the Publican Tool chain and Maven JDocBook, and hosted on the Hudson Build Server for public viewing and comment.
 	</para>
 	<formalpara>
 		<title>UDS History</title>
@@ -247,13 +247,13 @@ public class ExClient
 		</para>
 	</formalpara>
 	<para>
-		The separate information sources were merged into a single wiki source, hosted on the mobicents-public Google group. Once the information was merged into mobicent-public, the developers had a single place to communicate with the end users of the platform.
+		The separate information sources were merged into a single Wiki source, hosted on the mobicents-public Google group. Once the information was merged into mobicents-public, the developers had a single place to communicate with the end users of the platform.
 	</para>
 	<para>
-		As the Mobicents product matured, the requirement for formalised single-source documentation became apparent. When Red Hat acquired the project, the process of merging the content into a single XML repository began.
+		As the Mobicents product matured, the requirement for formalized single-source documentation became apparent. When Red Hat acquired the project, the process of merging the content into a single XML repository began.
 	</para>
 	<para>
-		During the conversion process from Wiki to XML, the UDS was managed by Red Hat Technical Writers. Red Hat writers took the developer content and converted it into XML user documentation, adding to the existing content where the need existed. Those areas under development in the UDS were linked back to the mobicents-public forum, so readers weren't presented wtih an information dead-end.
+		During the conversion process from Wiki to XML, the UDS was managed by Red Hat Technical Writers. Red Hat writers took the developer content and converted it into XML user documentation, adding to the existing content where the need existed. Those areas under development in the UDS were linked back to the mobicents-public forum, so readers did not encounter an information dead-end.
 	</para>
 	<para>
 		The documentation suite evolved to a point where the Mobicents Community Project team expressed interest in self-managing the community documentation, and hosting it on the GCode SVN repository. This decision simplified the way the team controlled the versioning of user guide content, and allowed the documentation to be branched when the development cycle dictated. It also assisted the Red Hat Technical Writers in developing the product documentation for the JBoss Communication Platform.
@@ -325,7 +325,7 @@ public class ExClient
 		The structure of each user guide in the Mobicents User Documentation Suite (UDS) is controlled by the DocBook XML Document Type Definition (DTD). Before updating any user guide in the GCode SVN, it is very important to understand the way each user guide is constructed.
 	</para>
 	<para>
-		As previously discussed, the Publican Toolchain requires a set of XML files to be present in the directory in order to publish a book to an output format. <xref linkend="table-Book-Structure"/>describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide.
+		As previously discussed, the Publican Tool chain requires a set of XML files to be present in the directory in order to publish a book to an output format. <xref linkend="table-Book-Structure"/>describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide.
 	</para>
 	<table frame="all" id="table-Book-Structure" pgwide="1">
 		<title>Book Components</title>
@@ -349,10 +349,10 @@ public class ExClient
 			<tbody>
 				<row>
 					<entry>
-						<filename><replaceable>&lt;Book_Name&gt;</replaceable>.xml</filename>
+						<filename><replaceable>[Book_Name]</replaceable>.xml</filename>
 					</entry>
 					<entry>
-						Contains the structure of the user guide, represented by xi:include references to each chapter-<replaceable>&lt;Chapter_Name&gt;</replaceable>.xml component, and other mandatory components in this table.
+						Contains the structure of the user guide, represented by xi:include references to each chapter-<replaceable>[Chapter_Name]</replaceable>.xml component, and other mandatory components in this table.
 					</entry>
 					<entry>
 						Top Level (or Parent) component of any user guide.
@@ -363,7 +363,7 @@ public class ExClient
 						<filename>Book_Info.xml</filename>
 					</entry>
 					<entry>
-						Contains information about the book title, book verson number, abstract and copyright information.
+						Contains information about the book title, book version number, abstract and copyright information.
 					</entry>
 					<entry>
 						1st Child. This is the opening information a reader will see in the user guide.
@@ -393,24 +393,24 @@ public class ExClient
 				</row>
 				<row>
 					<entry>
-						<filename>chapter-<replaceable>&lt;Chapter_Name&gt;</replaceable>.xml</filename>
+						<filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename>
 					</entry>
 					<entry>
 						Contains XML markup and content included at a Chapter level in the document. The XML file is named only for human-readability.
 					</entry>
 					<entry>
-						4th. This is the top level element for each chapter in the user guide. The order of these files in the <filename><replaceable>&lt;Book_Name&gt;</replaceable>.xml</filename> file determines the structure of the guide.
+						4th. This is the top level element for each chapter in the user guide. The order of these files in the <filename><replaceable>[Book_Name]</replaceable>.xml</filename> file determines the structure of the guide.
 					</entry>
 				</row>
 				<row>
 					<entry>
-						<filename>section-<replaceable>&lt;Section_Name&gt;</replaceable>.xml</filename>
+						<filename>section-<replaceable>[Section_Name]</replaceable>.xml</filename>
 					</entry>
 					<entry>
 						Contains XML markup and content included at a Section level in the document. The XML file is named only for human-readability.
 					</entry>
 					<entry>
-						5th. This component is included in <filename>chapter-<replaceable>&lt;Chapter_Name&gt;</replaceable>.xml</filename> files by xi:include reference.
+						5th. This component is included in <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename> files by xi:include reference.
 					</entry>
 				</row>
 				<row>
@@ -428,7 +428,7 @@ public class ExClient
 		</tgroup>
 	</table>
 	<para>
-		To ensure Maven JDocBook can publish the content generated by the Publican Toolchain, additonal XML content is required. Maven JDocBook does not have access to the Publican Toolchain common_content directory, therefore, the required XML files must be included as xi:fallback references in the <filename>preface.xml</filename> and <filename>book_info.xml</filename> files.
+		To ensure Maven JDocBook can publish the content generated by the Publican Tool chain, additional XML content is required. Maven JDocBook does not have access to the Publican Tool chain common_content directory, therefore, the required XML files must be included as xi:fallback references in the <filename>preface.xml</filename> and <filename>book_info.xml</filename> files.
 	</para>
 	<table frame="all" id="table-Maven_JDocBook_Content" pgwide="1">
 		<title>Maven JDocBook Content</title>
@@ -492,7 +492,7 @@ public class ExClient
 	<note>
 		<title>Fallback Content Accuracy Check</title>
 		<para>
-			The front-matter information located in the fallback_content directory of each user guide repository, is not maintained by the Publican Toolchain Team, or upgraded when Publican updates are installed. Therefore, manually verify that the information contained in these files are kept curent with the standards present in the latest Publican Toolchain version.
+			The front-matter information located in the fallback_content directory of each user guide repository, is not maintained by the Publican Tool chain Team, or upgraded when Publican updates are installed. Therefore, manually verify that the information contained in these files are kept current with the standards present in the latest Publican Tool chain version.
 		</para>
 	</note>
 	<para>
@@ -669,7 +669,7 @@ public class ExClient
 					Labels are critical in a ticket, because they enable the ticket to be searched using consistent tags.
 				</para>
 				<para>
-					You will notice that two lables are automatically added; <literal>Type-Enhancement</literal>, <literal>Priority-Medium </literal>and <literal>Component-Docs</literal>. These categories are acceptable by default.
+					You will notice that two labels are automatically added; <literal>Type-Enhancement</literal>, <literal>Priority-Medium </literal>and <literal>Component-Docs</literal>. These categories are acceptable by default.
 				</para>
 				<para>
 					Append the following extra categories at a minimum to the <guilabel>Labels</guilabel> field:
@@ -706,10 +706,10 @@ public class ExClient
 			<step>
 				<title>Review Raised Tickets</title>
 				<para>
-					Developers must regularly check the GCode ticket queue for new issues. To do this, search for the server prefix (for example <userinput>[MSS Guide]</userinput> for the SIP Servlets Server User Guide) in the Sumary field.
+					Developers must regularly check the GCode ticket queue for new issues. To do this, search for the server prefix (for example <userinput>[MSS Guide]</userinput> for the SIP Servlets Server User Guide) in the Summary field.
 				</para>
 				<para>
-					For tickets that been incorrectly created, the previous search will not return the correct results. Search for the Component-&lt;server name&gt; Label, and ensure the server prefix is added to the ticket.
+					For tickets that been incorrectly created, the previous search will not return the correct results. Search for the Component-<replaceable>[server name]</replaceable> Label, and ensure the server prefix is added to the ticket.
 				</para>
 			</step>
 			<step>
@@ -775,7 +775,7 @@ public class ExClient
 						</para>
 					</note>
 					<para>
-						The working copy will usually be the <filename>/trunk</filename> version. If the ticket requires the change to be made in <filename>/trunk</filename> as well as a<filename> /branch</filename>, then make the changes in <filename>/trunk</filename> first and backport into each affected <filename>/branch</filename>.
+						The working copy will usually be the <filename>/trunk</filename> version. If the ticket requires the change to be made in <filename>/trunk</filename> as well as a<filename> /branch</filename>, then make the changes in <filename>/trunk</filename> first and back-port into each affected <filename>/branch</filename>.
 					</para>
 				</step>
 				<step>
@@ -828,7 +828,7 @@ public class ExClient
 						Each content author is responsible for updating and maintaining the XML Comment Block at each stage of the authoring process.
 					</para>
 					<para>
-						XML comments must be placed at the parent XML level. For example, if a change is required to content contained in a <markup>&lt;para&gt;</markup> tag within a <markup>&lt;section&gt;</markup>, the XML comment must be inserted at the <markup>&lt;section&gt;</markup> level. The XML comment uses the following structure:
+						XML comments must be placed at the parent XML level. For example, if a change is required to content contained in a &lt;para&gt; tag within a &lt;section&gt;, the XML comment must be inserted at the &lt;section&gt; level. The XML comment uses the following structure:
 					</para>
 					
 <programlisting role="XML">
@@ -920,7 +920,7 @@ public class ExClient
 					</para>
 					<note>
 						<para>
-							If you are not using the Publican Toolchain in your daily XML editing tasks, you can still test publish using your XML Authoring tool's <function>Publish</function> feature to get an idea of what the publish might look like.
+							If you are not using the Publican Tool chain in your daily XML editing tasks, you can still test publish using your XML Authoring tool's <function>Publish</function> feature to get an idea of what the publish might look like.
 						</para>
 						<para>
 							The operation will vary between editors, but the main thing is that the book will not publish if it is not structurally valid.
@@ -1026,10 +1026,10 @@ public class ExClient
 			</procedure>
 			
 			<para>
-				<xref linkend="procedure-Create_Review_Document"/> requires the XML changes to be published to HTML-Single format using the mkbk script, the Publican Toolchain, and Maven JDocBook. For this procedure, you must have Publican and Maven JDocBook configured according to the information in <xref linkend="pam-Publican_and_Maven"/>.
+				<xref linkend="procedure-Create_Review_Document"/> requires the XML changes to be published to HTML-Single format using the mkbk script, the Publican Tool chain, and Maven JDocBook. For this procedure, you must have Publican and Maven JDocBook configured according to the information in <xref linkend="pam-Publican_and_Maven"/>.
 			</para>
 			<para>
-				<xref linkend="procedure-Create_Review_Document"/> assumes that you are using Fedora or RHEL, which are the currently supported Linux distributions for Publican.
+				<xref linkend="procedure-Create_Review_Document"/> assumes that you are using Fedora or Red Hat Enterprise Linux, which are the currently supported Linux distributions for Publican.
 			</para>
 			<procedure id="procedure-Create_Review_Document">
 				<title>Create Review Document</title>
@@ -1104,7 +1104,7 @@ public class ExClient
 						In the Comment field, request that the ticket is ready for review.
 					</para>
 					<para>
-						Ensure the reviewer's name, or email address, is specified in the <guilabel>Cc:</guilabel> field of the ticket.
+						Ensure the reviewer name, or email address, is specified in the <guilabel>Cc:</guilabel> field of the ticket.
 					</para>
 				</step>
 				<step>
@@ -1121,7 +1121,7 @@ public class ExClient
 						</listitem>
 						<listitem>
 							<para>
-								Copy the absoulte link to the section from the URL field of the Web browser.
+								Copy the absolute link to the section from the URL field of the Web browser.
 							</para>
 							<para>
 								You will know it is an absolute link because it will have a #[chapter/section name] as the last part of the URL.
@@ -1155,7 +1155,7 @@ public class ExClient
 		<section>
 			<title>Review Ticket</title>
 			<para>
-				After the review request has been sent, the peer reviewer is notified that a review is waiting through an email notification from GCode. Thorough ticket review is key contributor to fantastic user documentation because other team members can use the opportunity to read the changes from a customer perspective. The content can be evaluated for techincal accuracy and readability before being sent to the editing phase.
+				After the review request has been sent, the peer reviewer is notified that a review is waiting through an email notification from GCode. Thorough ticket review is key contributor to fantastic user documentation because other team members can use the opportunity to read the changes from a customer perspective. The content can be evaluated for technical accuracy and readability before being sent to the editing phase.
 			</para>
 			<para>
 				The goal of Peer Review is to discuss why your suggestions should be considered by the content author. The better your reasons for suggesting an improvement, the better the chances of having the content incorporated, or reaching a compromise.
@@ -1248,7 +1248,7 @@ public class ExClient
 					</para>
 					<note>
 						<para>
-							Feedback can sometimes be percieved as criticism. For this reason, it is important to provide only constructive feedback to the contributing content author.
+							Feedback can sometimes be perceived as criticism. For this reason, it is important to provide only constructive feedback to the contributing content author.
 						</para>
 					</note>
 				</step>
@@ -1270,7 +1270,7 @@ public class ExClient
 						Include a meaningful commit message to indicate what was done. For example:
 					</para>
 					<para>
-						<userinput>Issue #666 - PR - Commited comments made as part of Peer Review for this ticket.</userinput>
+						<userinput>Issue #666 - PR - Committed comments made as part of Peer Review for this ticket.</userinput>
 					</para>
 					<para>
 						Make note of the commit number.
@@ -1284,7 +1284,7 @@ public class ExClient
 					<itemizedlist>
 						<listitem>
 							<para>
-								Gcode SVN commit number.
+								GCode SVN commit number.
 							</para>
 						</listitem>
 						<listitem>
@@ -1461,7 +1461,7 @@ public class ExClient
 						<term>Is the "tone" correct?</term>
 						<listitem>
 							<para>
-								Is the content suitable for techical publications? Or does it fall into other genres, such as marketing, or whitepaper styles? Suggest ways of correcting the tone.
+								Is the content suitable for technical publications? Or does it fall into other genres, such as marketing, or white paper styles? Suggest ways of correcting the tone.
 							</para>
 						</listitem>
 					</varlistentry>
@@ -1470,7 +1470,7 @@ public class ExClient
 			<step>
 				<title>Review the XML Structure</title>
 				<para>
-					For issues relating to the organisation of the content, including display and general layout, ask the following questions:
+					For issues relating to the organization of the content, including display and general layout, ask the following questions:
 				</para>
 				<variablelist>
 					<title>Structural Questions</title>
@@ -1478,7 +1478,7 @@ public class ExClient
 						<term>Is the XML Structure The Best Choice?</term>
 						<listitem>
 							<para>
-								Are instructions and workflow steps contained in a &lt;procedure&gt; element, with &lt;step&gt; titles?
+								Are instructions and work flow steps contained in a &lt;procedure&gt; element, with &lt;step&gt; titles?
 							</para>
 							<para>
 								Are screenshots contained in a &lt;figure&gt; tag, with an appropriate caption?
@@ -1525,7 +1525,7 @@ public class ExClient
 				</para>
 				<note>
 					<para>
-						Feedback can sometimes be percieved as criticism. For this reason, it is important to provide only constructive feedback to the contributing content author.
+						Feedback can sometimes be perceived as criticism. For this reason, it is important to provide only constructive feedback to the contributing content author.
 					</para>
 				</note>
 			</step>
@@ -1547,7 +1547,7 @@ public class ExClient
 					Include a meaningful commit message to indicate what was done. For example:
 				</para>
 				<para>
-					<userinput>Issue #666 - Editing - Commited comments made as part of Editing for this ticket.</userinput>
+					<userinput>Issue #666 - Editing - Committed comments made as part of Editing for this ticket.</userinput>
 				</para>
 				<para>
 					Make note of the commit number.
@@ -1561,7 +1561,7 @@ public class ExClient
 				<itemizedlist>
 					<listitem>
 						<para>
-							Gcode SVN commit number.
+							GCode SVN commit number.
 						</para>
 					</listitem>
 					<listitem>
@@ -1697,7 +1697,7 @@ public class ExClient
 		<procedure id="procedure-Ticket_Closure_Procedures">
 			<title>Ticket Closure Procedures</title>
 			<para>
-				This procedure details how to close off the ticket after all phases are satisfactorally completed.
+				This procedure details how to close off the ticket after all phases are satisfactorily completed.
 			</para>
 			<step>
 				<title>Create Combined XML File</title>
@@ -1734,7 +1734,7 @@ public class ExClient
 	<chapter id="pam-Publican_and_Maven" lang="en-US">
 	<title>Publican and Maven</title>
 	<para>
-		This is a test paragraph
+		There are a number of factors that make publishing from a single XML source possible. The following
 	</para>
 </chapter>
 	<chapter id="bs-XML_Authoring_Resources" lang="en-US">
@@ -1745,15 +1745,52 @@ public class ExClient
 	<para>
 		This chapter discusses a number of helpful tips that will get a new content author up to speed quickly.
 	</para>
+	<section id="at-Authoring_Tools">
+		<title>Authoring Tools</title>
+		<para>
+			While you can write XML using a basic text editor, the easiest way to author XML is by using an XML Authoring Tool. A good XML Authoring Tool can auto-complete structure for you, and most importantly, validate the XML content you have written to ensure it is well-formed and valid to the standard.
+		</para>
+		<para>
+			The number of XML authoring tools available can seem daunting to a first-time content author. The following applications will help you to get started with XML authoring, and ease your transition into the world of structured authoring.
+		</para>
+		<formalpara>
+			<title>Syntext Serna Free XML Editor</title>
+			<para>
+				Syntext offer a What You See Is What You Get (WYSIWYG) XML editor called <ulink url="http://www.syntext.com/products/serna-free/">Serna Free</ulink> .
+			</para>
+		</formalpara>
+		<para>
+			This editor hides much of the complexity of XML authoring, and lets you focus on authoring the content. You still must have good knowledge of XML structure, because the application still requires you to select the right parent tag before it can auto-complete subsequent selections. It is not aware of the specific tag requirements that Publican demands.
+		</para>
+		<para>
+			Serna is a cross-platform editor. By far, the best feature of this editor is the fact that you can open up the root XML file (for example, at the &lt;book&gt; level), and all xi:include links, cross-references, and graphics are opened up in the editor as one seamless file. This really helps with validation, and makes linking between chapters and sections easy.
+		</para>
+		<para>
+			Serna Free can introduce invalid XML structure into a user guide, even though the document is valid according to the Serna XML validator. This often happens when dragging and dropping large sections of XML structure, or when commenting sections back into the XML structure. If other authors are using programs other than Serna Free, the way they have commented out XML sections may not be supported by Serna.
+		</para>
+		<formalpara>
+			<title>XML Copy Editor</title>
+			<para>
+				XML Copy Editor is a text-based editor, that has no WYSIWYG functionality. You must know your XML rules very well to use this editor.
+			</para>
+		</formalpara>
+		<para>
+			XML Copy Editor contains a DocBook XML Parser, which will validate your XML. What it can't do is open all the xi:includes and resolve internal &lt;xref&gt; declarations that are not in the same file. This will result in a lot of validation errors, that may mask the real issue.
+		</para>
+		<para>
+			The advantage that XML Copy Editor offers is the ability to edit the XML structure in a basic text interface. This can be very useful when you are trying to debug your XML documentation. You can use a program such as xmllint to output a full XML file, and then revalidate it using XML Copy Editor. For more information about this technique, refer to
+		</para>
+	</section>
+	
 	<section>
-		<title>XML Structure Tips</title>
+		<title id="xst-XML_Structure_Tips">XML Structure Tips</title>
 		<para>
 			In DocBook, the content that is being documented often benefits from advanced XML tagging. There are certain additions to structure that can be useful to help the reader in quickly grasping information. The following sections are grouped into common areas that you will use regularly in XML authoring.
 		</para>
 		<section>
 			<title>Lists - Bulleted and Numbered</title>
 			<para>
-				The two most common list types in DocBook are not named according to such programs as Microsoft Word, or Open Office. You would think that for a bulleted list, you would start the list using something like &lt;bullets&gt; or &lt;bulletedlist&gt;. Likewise, for a numbered list, you might consider looking for &lt;numlist&gt; or &lt;numberedlist&gt;.
+				The two most common list types in DocBook are not named according to such programs as Microsoft Word, or Open Office. You would think that for a bulleted list, you would start the list using &lt;bullets&gt; or &lt;bulletedlist&gt;. Likewise, for a numbered list, you might consider using &lt;numlist&gt; or &lt;numberedlist&gt;.
 			</para>
 			<para>
 				In DocBook, these types of lists are referred to according to the following nomenclature:
@@ -1891,9 +1928,9 @@ public class ExClient
 		</section>
 		
 		<section>
-			<title>Procedural Steps - </title>
+			<title>Procedural Steps</title>
 			<para>
-				When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitation about what level of detail each &lt;listitem&gt; tag can contain.
+				When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitations regarding what level of detail each &lt;listitem&gt; tag can contain.
 			</para>
 			<para>
 				The best option for large workflows, or detailed steps, is the &lt;procedure&gt; element.
@@ -1945,7 +1982,7 @@ public class ExClient
 			</procedure>
 			
 			<para>
-				You can further enhance the &lt;procedure&gt; by adding in any number of supported child elements into each &lt;step&gt;. Each &lt;step&gt; can contain any number of &lt;para&gt; tags, and also permits &lt;itemizedlist&gt; and &lt;orderedlist&gt; tags. Be sure that the tags inserterd are compatible with the Publican Toolchain.
+				You can further enhance the &lt;procedure&gt; by adding in any number of supported child elements into each &lt;step&gt;. Each &lt;step&gt; can contain any number of &lt;para&gt; tags, and also permits &lt;itemizedlist&gt; and &lt;orderedlist&gt; tags. Be sure that the tags inserted are compatible with the Publican Toolchain.
 			</para>
 			<example>
 				<title>&lt;procedure&gt; Extra Elements</title>
@@ -2006,7 +2043,75 @@ public class ExClient
 			</procedure>
 
 		</section>
+		
+		<section>
+			<title>Graphics and Screenshots</title>
+			<para>
+				There are a number of graphical tags that are supported in DocBook. For consistency, the best tag to use is the &lt;figure&gt; tag.
+			</para>
+			<para>
+				The &lt;figure&gt; tag has the advantage of containing a well-formatted title for the figure. It is suitable for both diagrams, and screenshots.
+			</para>
+			<example>
+				<title>&lt;figure&gt; tag structure</title>
+				
+<programlisting>&lt;figure&gt;
+  &lt;title&gt;Mobicents Icon&lt;/title&gt;
+  &lt;mediaobject&gt;
+    &lt;imageobject&gt;
+      &lt;imagedata fileref="images/mcd-mobicents_icon_64x64.png"/&gt;
+    &lt;/imageobject&gt;
+  &lt;/mediaobject&gt;
+&lt;/figure&gt;
+</programlisting>
+			</example>
+			<para>
+				The XML structure looks like this when published:
+			</para>
+			<figure>
+				<title>Mobicents Icon</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/mcd-mobicents_icon_64x64.png" format="PNG"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+			<note>
+				<title>Is a Screen shot Really Required?</title>
+				<para>
+					Screenshots increase the maintenance of a user guide. What happens if the interface changes? What happens if the product logo is updated? These situations require the screenshot to be recaptured again.
+				</para>
+				<para>
+					Think carefully before inserting a screenshot. Often, you can explain what fields a user must complete in the user interface without a screenshot. If you can, you will save a lot of maintenance in the future.
+				</para>
+			</note>
+			<para>
+				The &lt;imagedata&gt; tag defines the image path, and sets the way the image is displayed in the published output. Use the following recommendations when inserting &lt;figure&gt; tags:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						To scale large diagrams or screenshots to fit within page boundaries, set <userinput>width="450"</userinput> to scale the screenshot within the boundaries of an A4 page.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						If you need to include a screenshot of a user interface, consider including only the area that relates to what you are discussing. You can get a much better result if you capture a small section of a user interface, because the user can easily see the detail of the area referred to in the procedure or concept.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</section>
 
+	</section>
+	
+	<section>
+		<title>Fixing Validation Errors</title>
+		<para>
+			Sometimes XML structure errors can still creep into the document you're working on. It may not be your fault, but you may be required to correct the errors before your user guide can be published.
+		</para>
+		<para>
+			Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you're using. By doing this, structure errors that occur between chapter or sections are easily identified.
+		</para>
 	</section>
 
 </chapter>
@@ -2018,9 +2123,9 @@ public class ExClient
 				<revnumber>1.0</revnumber>
 				<date/>
 				<author>
-					<firstname/>
-					<surname/>
-					<email/>
+					<firstname>Jared</firstname>
+					<surname>Morgan</surname>
+					<email>jmorgan@redhat.com</email>
 				</author>
 				<revdescription>
 					<simplelist>

@@ -6,12 +6,30 @@
   <para>The Mobicents User Documentation Suite is authored entirely  in XML.  For someone starting out with XML, there are many things to consider.  What is the best authoring tool to use?  What elements, and structure is definitely valid in Publican? How do I create screenshots that scale correctly?</para>
   <para>This chapter discusses a number of helpful tips that will get a new content author up to speed quickly.</para>
   <para/>
+  <section id="at-Authoring_Tools">
+    <title>Authoring Tools</title>
+    <para>While you can write XML using a basic text editor, the easiest way to author XML is by using an XML Authoring Tool.  A good XML Authoring Tool can auto-complete structure for you, and most importantly, validate the XML content you have written to ensure it is well-formed and valid to the standard.</para>
+    <para>The number of XML authoring tools available can seem daunting to a first-time content author.  The following applications will help you to get started with XML authoring, and ease your transition into the  world of structured authoring.</para>
+    <formalpara>
+      <title>Syntext Serna Free XML Editor</title>
+      <para>Syntext offer a  What You See Is What You Get (WYSIWYG) XML editor called  <ulink url="http://www.syntext.com/products/serna-free/">Serna Free</ulink>  .  </para>
+    </formalpara>
+    <para>This editor hides much of the complexity of XML authoring, and lets you focus on authoring the content.  You still must have good knowledge of XML structure, because the application still requires you to select the right parent tag before it can auto-complete subsequent selections.  It  is not aware of the specific tag requirements that Publican demands. </para>
+    <para>Serna is a cross-platform editor.  By far, the best feature of this editor is the fact that you can open up the root XML file (for example, at the &lt;book&gt; level), and all  xi:include links, cross-references, and graphics are opened up in the editor as one seamless file.    This really helps with validation, and makes linking between chapters and sections easy.</para>
+    <para>Serna Free can introduce invalid XML structure into a user guide, even though the document is valid according to the Serna XML validator.  This often happens when dragging and dropping large sections of XML structure, or when commenting sections back into the XML structure.  If other authors are using programs other than Serna Free, the way they have commented out XML sections may not be supported by Serna.</para>
+    <formalpara>
+      <title>XML Copy Editor</title>
+      <para>XML Copy Editor is a text-based editor, that has no WYSIWYG functionality.  You must know your XML rules very well to use this editor.  </para>
+    </formalpara>
+    <para>XML Copy Editor contains a DocBook XML Parser, which will validate your XML.  What it can&apos;t do is open all the xi:includes and resolve internal &lt;xref&gt; declarations that are not in the same file.  This will result in a lot of validation errors, that may mask the real issue.</para>
+    <para>The advantage that XML Copy Editor offers is the ability to edit the XML structure in a basic text interface.  This can be very useful when you are trying to debug your XML documentation.  You can use a program such as xmllint to output a full XML file, and then revalidate it using XML Copy Editor.  For more information about this technique, refer to </para>
+  </section>
   <section>
-    <title>XML Structure Tips</title>
+    <title id="xst-XML_Structure_Tips">XML Structure Tips</title>
     <para>In DocBook, the content that is being documented often benefits from advanced XML tagging.  There are certain additions to structure that can be useful to help the reader in quickly grasping information.  The following sections are grouped into common areas that you will use regularly in XML authoring.</para>
     <section>
       <title>Lists - Bulleted and Numbered</title>
-      <para>The two most common list types in DocBook are not named according to such programs as Microsoft Word, or Open Office.  You would think that for a bulleted list, you would start the list using something like &lt;bullets&gt; or &lt;bulletedlist&gt;.  Likewise, for a numbered list, you might consider looking for &lt;numlist&gt; or &lt;numberedlist&gt;.</para>
+      <para>The two most common list types in DocBook are not named according to such programs as Microsoft Word, or Open Office.  You would think that for a bulleted list, you would start the list using  &lt;bullets&gt; or &lt;bulletedlist&gt;.  Likewise, for a numbered list, you might consider using &lt;numlist&gt; or &lt;numberedlist&gt;.</para>
       <para>In DocBook, these types of lists are referred to according to the following nomenclature:</para>
       <itemizedlist>
         <listitem>
@@ -103,8 +121,8 @@
       </important>
     </section>
     <section>
-      <title>Procedural Steps - </title>
-      <para>When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitation about what level of detail each &lt;listitem&gt; tag can contain.</para>
+      <title>Procedural Steps</title>
+      <para>When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitations regarding what level of detail each &lt;listitem&gt; tag can contain.</para>
       <para>The best option for large workflows, or detailed steps, is the &lt;procedure&gt; element.</para>
       <para>You may not be aware, but this element is used extensively throughout this user guide to capture the steps involved in the Authoring Process.</para>
       <para>The biggest advantage to using a &lt;procedure&gt; element is that it uses the &lt;step&gt; element.  &lt;step&gt; elements are classed as &apos;top-level&apos; elements, and can contain a much wider variety of child elements than the &lt;listitem&gt; element used in &lt;itemizedlist&gt; and &lt;orderedlist&gt;.</para>
@@ -135,7 +153,7 @@
           <para>Step two info.</para>
         </step>
       </procedure>
-      <para>You can further enhance the &lt;procedure&gt; by adding in any number of supported child elements into each &lt;step&gt;.  Each &lt;step&gt; can contain any number of &lt;para&gt; tags, and also permits &lt;itemizedlist&gt; and &lt;orderedlist&gt; tags.  Be sure that the tags inserterd are compatible with the Publican Toolchain.  </para>
+      <para>You can further enhance the &lt;procedure&gt; by adding in any number of supported child elements into each &lt;step&gt;.  Each &lt;step&gt; can contain any number of &lt;para&gt; tags, and also permits &lt;itemizedlist&gt; and &lt;orderedlist&gt; tags.  Be sure that the tags inserted are compatible with the Publican Toolchain.  </para>
       <example>
         <title>&lt;procedure&gt; Extra Elements</title>
         <programlisting>&lt;procedure&gt;
@@ -182,5 +200,49 @@
         </step>
       </procedure>
     </section>
+    <section>
+      <title>Graphics and Screenshots</title>
+      <para>There are a number of graphical tags that are supported in DocBook.  For consistency, the best tag to use is the &lt;figure&gt; tag.  </para>
+      <para>The &lt;figure&gt; tag has the advantage of containing a well-formatted title for the figure. It is suitable for both diagrams, and screenshots.</para>
+      <example>
+        <title>&lt;figure&gt; tag structure</title>
+        <programlisting>&lt;figure&gt;
+  &lt;title&gt;Mobicents Icon&lt;/title&gt;
+  &lt;mediaobject&gt;
+    &lt;imageobject&gt;
+      &lt;imagedata fileref=&quot;images/mcd-mobicents_icon_64x64.png&quot;/&gt;
+    &lt;/imageobject&gt;
+  &lt;/mediaobject&gt;
+&lt;/figure&gt;</programlisting>
+      </example>
+      <para> The XML structure looks like this when published:</para>
+      <figure>
+        <title>Mobicents Icon</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/mcd-mobicents_icon_64x64.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <note>
+        <title>Is a Screen shot Really Required?</title>
+        <para>Screenshots increase the maintenance of a user guide.  What happens if the interface changes?  What happens if the product logo is updated? These situations require the screenshot to be recaptured again.  </para>
+        <para>Think carefully before inserting a screenshot.  Often, you can explain what fields a user must complete in the user interface without a screenshot.  If you can, you will save a lot of maintenance in the future.  </para>
+      </note>
+      <para>The &lt;imagedata&gt; tag defines the image path, and sets the way the image is displayed in the published output.  Use the following recommendations when inserting &lt;figure&gt; tags:</para>
+      <itemizedlist>
+        <listitem>
+          <para>To scale large diagrams or screenshots to fit within  page boundaries, set <userinput>width=&quot;450&quot;</userinput> to scale the screenshot within the boundaries of an A4 page.</para>
+        </listitem>
+        <listitem>
+          <para>If you need to include a screenshot of a user interface, consider including only the area that relates to what you are discussing.  You can get a much better result if you capture a small section of a user interface, because the user can easily see the detail of the area referred to in the procedure or concept.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+  <section>
+    <title>Fixing Validation Errors</title>
+    <para>Sometimes XML structure errors can still creep into the document you&apos;re working on.  It may not be your fault, but you may be required to correct the errors before your user guide can be published. </para>
+    <para>Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you&apos;re using. By doing this, structure errors that occur between chapter or sections are easily identified.</para>
   </section>
 </chapter>
