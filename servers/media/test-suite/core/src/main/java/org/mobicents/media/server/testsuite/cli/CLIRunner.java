@@ -51,7 +51,7 @@ public class CLIRunner implements CallDisplayInterface {
 	private String localAddress = "127.0.0.1", remoteAddress = "127.0.0.1";
 	private int localPort = 2428, remotePort = 2427;
 	private int cps = 1;
-	private int callDuration = 2500;
+	private long callDuration = 2500;
 	private long maxCalls = AbstractTestCase._TURN_OFF_BOUNDRY;
 	private int maxConcurrentCalls = AbstractTestCase._TURN_OFF_BOUNDRY;
 	private int maxFailCalls = AbstractTestCase._TURN_OFF_BOUNDRY;
@@ -63,7 +63,7 @@ public class CLIRunner implements CallDisplayInterface {
 	private boolean performCollectiveFile;
 
 	private boolean performTestRun;
-	private static final LongOpt[] _LONG_OPTS = new LongOpt[14];
+	private static final LongOpt[] _LONG_OPTS = new LongOpt[15];
 	private static final String _GETOPT_PARAMS_STRING = "h:q:w:e:r:t:y:u:i:o:p:a:f:g";
 	private static final Logger log = Logger.getLogger(CLIRunner.class.getName());
 
@@ -96,7 +96,8 @@ public class CLIRunner implements CallDisplayInterface {
 		_LONG_OPTS[10] = new LongOpt("testtype", LongOpt.OPTIONAL_ARGUMENT, null, 'p');
 		_LONG_OPTS[11] = new LongOpt("cps", LongOpt.OPTIONAL_ARGUMENT, null, 'a');
 		_LONG_OPTS[12] = new LongOpt("maxfail", LongOpt.OPTIONAL_ARGUMENT, null, 'f');
-		_LONG_OPTS[13] = new LongOpt("collectivegraph", LongOpt.NO_ARGUMENT, null, 'g');
+		_LONG_OPTS[13] = new LongOpt("callduration", LongOpt.OPTIONAL_ARGUMENT, null, 'l');
+		_LONG_OPTS[14] = new LongOpt("collectivegraph", LongOpt.NO_ARGUMENT, null, 'g');
 
 		configLog4j();
 	}
@@ -128,9 +129,10 @@ public class CLIRunner implements CallDisplayInterface {
 		sb.append("--audiocodec      : audio codec to be used if requried, default is \'0 pcmu/8000\', value should be specifiedd in \'\'\n");
 		sb.append("--testtype        : test type, currently there is only one available: AnnTest\n");
 		sb.append("--maxfail         : specifies how many calls may fail until testtool will stop sending requests to server, default is -1, which means unbound\n");
+		sb.append("--callduration    : specifies how long test runs(in milliseconds), default is 2500 \n");
+		sb.append("--cps             : specifies calls per second, default is 1 \n");
 		sb.append("--usage           : print this message\n");
 		sb.append("--collectivegraph : no arg option which creates collective file with data that can be presented as graph, can be set for test, and will be executed as end action, file is created in datadump directory.\n");
-
 		sb.append("example options part: --localaddress=127.0.0.1 --localport=2499 --concurentcalls=12 --audiocodec=\'8 pcma/8000\' --testtype=AnnTest\n");
 		log.severe("Usage: \n" + sb);
 
@@ -171,7 +173,7 @@ public class CLIRunner implements CallDisplayInterface {
 	 * @seeorg.mobicents.media.server.testsuite.general.CallDisplayInterface#
 	 * getCallDuration()
 	 */
-	public int getCallDuration() {
+	public long getCallDuration() {
 		return this.callDuration;
 	}
 
@@ -408,7 +410,7 @@ public class CLIRunner implements CallDisplayInterface {
 			log.info("Starting test case, prest 'q' to exit test");
 		} catch (UnknownHostException ex) {
 			log.log(Level.SEVERE, null, ex);
-			return ;
+			return ; 
 		} catch (Exception e) {
 			log.log(Level.SEVERE, null, e);
 			return;
@@ -639,6 +641,20 @@ public class CLIRunner implements CallDisplayInterface {
 				} else {
 					try {
 						this.maxFailCalls = Integer.valueOf(v);
+					} catch (Exception ex) {
+						log.log(Level.SEVERE, null, ex);
+					}
+				}
+				this.performTestRun = true;
+				break;
+			case 'l':
+
+				v = getOpt.getOptarg();
+				if (v == null) {
+					log.severe("Call Duration must have value");
+				} else {
+					try {
+						this.callDuration = Long.valueOf(v);
 					} catch (Exception ex) {
 						log.log(Level.SEVERE, null, ex);
 					}

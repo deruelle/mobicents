@@ -960,9 +960,9 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         return Integer.valueOf(this.fieldServerPort.getText());
     }
 
-    public int getCallDuration() {
+    public long getCallDuration() {
         try{
-            return Integer.valueOf(this.fieldCallDurrationTextField.getText());
+            return Long.valueOf(this.fieldCallDurrationTextField.getText());
         }catch(NumberFormatException nfe)
         {
             nfe.printStackTrace();
