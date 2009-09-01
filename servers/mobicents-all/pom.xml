@@ -27,7 +27,7 @@
         <diameter.core.jdiameter.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/jdiameter/jdiameter-1.5.2.2-build212</diameter.core.jdiameter.connectionURL>
 		<diameter.core.mux.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/mux/mobicents-diameter-mux-1.0.1.GA</diameter.core.mux.connectionURL>
 		<diameter.examples.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/base/base-1.0.1.GA</diameter.examples.base.connectionURL>
-		<diameter.examples.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/sh-client/sh-client-1.0.1.GA</diameter.examples.sh-client.connectionURL>
+		<!-- diameter.examples.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/sh-client/sh-client-1.0.1.GA</diameter.examples.sh-client.connectionURL-->
 		<diameter.examples.openims.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/openims/openims-1.0.1.GA</diameter.examples.openims.connectionURL>
 		<diameter.resources.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/base/base-1.0.1.GA</diameter.resources.base.connectionURL>
 		<diameter.resources.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/sh-client/sh-client-1.0.1.GA</diameter.resources.sh-client.connectionURL> 
@@ -251,7 +251,7 @@
                             <password>${checkout.password}</password>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!-- execution>
                         <id>diameter-examples-sh-client-checkout</id>
                         <goals>
                             <goal>checkout</goal>
@@ -270,7 +270,7 @@
                             <username>${checkout.username}</username>
                             <password>${checkout.password}</password>
                         </configuration>
-                    </execution>
+                    </execution-->
                     <execution>
                         <id>diameter-examples-openims-checkout</id>
                         <goals>
@@ -678,7 +678,7 @@
                             <password>${checkout.password}</password>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!-- execution>
                         <id>diameter-examples-sh-client-update</id>
                         <goals>
                             <goal>update</goal>
@@ -697,7 +697,7 @@
                             <username>${checkout.username}</username>
                             <password>${checkout.password}</password>
                         </configuration>
-                    </execution>
+                    </execution-->
                     <execution>
                         <id>diameter-examples-openims-update</id>
                         <goals>

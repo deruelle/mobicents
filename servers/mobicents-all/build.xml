@@ -13,7 +13,7 @@
     <property name="release.slee.ra.dirs" value="xmpp,smpp,http-servlet,asterisk,sip,sip11,http-client,jcc,rules,tts"/>
     <property name="release.slee.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
     <property name="release.diameter.ra.dirs" value="base,sh-client,sh-common,sh-server,cca,rf,ro"/>
-    <property name="release.diameter.example.dirs" value="base,sh-client,openims"/>
+    <property name="release.diameter.example.dirs" value="base,openims"/>
 
     <property name="release.readme.file.location" location="${ant.file.mobicents.all.release}/../readme-all.txt"/>
 
