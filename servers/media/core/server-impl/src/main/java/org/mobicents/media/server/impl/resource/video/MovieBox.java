@@ -29,6 +29,8 @@ package org.mobicents.media.server.impl.resource.video;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The metadata for a presentation is stored in the single Movie Box which occurs at the top-level of a file.
@@ -45,6 +47,7 @@ public class MovieBox extends Box {
 	static byte[] TYPE = new byte[] { AsciiTable.ALPHA_m, AsciiTable.ALPHA_o, AsciiTable.ALPHA_o, AsciiTable.ALPHA_v };
 
 	private MovieHeaderBox mvhd;
+	private List<TrackBox> trackBoxs = new ArrayList<TrackBox>();
 	private TrackBox track;
 
 	public MovieBox(long size, String type) {
@@ -53,6 +56,9 @@ public class MovieBox extends Box {
 
 	@Override
 	protected int load(DataInputStream in) throws IOException {
+
+		int count = 8;
+
 		// loading movie header
 		int len = readLen(in);
 		byte[] type = read(in);
@@ -64,18 +70,21 @@ public class MovieBox extends Box {
 		}
 
 		mvhd = new MovieHeaderBox(len);
-		mvhd.load(in);
+		count += mvhd.load(in);
 
-		// loading track
-		len = readLen(in);
-		String type1 = readType(in);
+		while (count < getSize()) {
+			// loading track
+			len = readLen(in);
+			String type1 = readType(in);
 
-		if (!type1.equals("trak")) {
-			throw new IOException("Track box expected");
+			if (!type1.equals("trak")) {
+				throw new IOException("Track box expected");
+			}
+
+			track = new TrackBox(len, type1);
+			count += track.load(in);
+			trackBoxs.add(track);
 		}
-
-		track = new TrackBox(len, type1);
-		track.load(in);
 
 		return (int) this.getSize();
 	}

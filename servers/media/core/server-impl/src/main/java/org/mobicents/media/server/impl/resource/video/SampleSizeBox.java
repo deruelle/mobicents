@@ -3,6 +3,11 @@ package org.mobicents.media.server.impl.resource.video;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class SampleSizeBox extends FullBox {
 
 	// File Type = stsz

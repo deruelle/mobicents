@@ -211,7 +211,7 @@ public class MovieHeaderBox extends FullBox {
 		}
 
 		this.nextTrackID = fin.readInt();
-		return 100;
+		return (int)this.getSize();
 	}
 
 }

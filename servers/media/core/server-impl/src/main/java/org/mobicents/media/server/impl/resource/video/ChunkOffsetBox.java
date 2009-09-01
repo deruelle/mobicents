@@ -8,19 +8,18 @@ import java.io.IOException;
  * @author amit bhayani
  *
  */
-public class TimeToSampleBox extends FullBox {
+public class ChunkOffsetBox extends FullBox {
 
 	// File Type = stsd
-	static byte[] TYPE = new byte[] { AsciiTable.ALPHA_s, AsciiTable.ALPHA_t, AsciiTable.ALPHA_t, AsciiTable.ALPHA_s };
-	static String TYPE_S = "stts";
+	static byte[] TYPE = new byte[] { AsciiTable.ALPHA_s, AsciiTable.ALPHA_t, AsciiTable.ALPHA_c, AsciiTable.ALPHA_o };
+	static String TYPE_S = "stco";
 	static {
 		bytetoTypeMap.put(TYPE, TYPE_S);
 	}
 
-	private int[] sampleCount;
-	private int[] sampleDelta;
+	private int[] chunkOffset;
 
-	public TimeToSampleBox(long size) {
+	public ChunkOffsetBox(long size) {
 		super(size, TYPE_S);
 	}
 
@@ -29,15 +28,17 @@ public class TimeToSampleBox extends FullBox {
 		super.load(fin);
 
 		int entryCount = fin.readInt();
-
-		sampleCount = new int[entryCount];
-		sampleDelta = new int[entryCount];
+		chunkOffset = new int[entryCount];
 		for (int i = 0; i < entryCount; i++) {
-			sampleCount[i] = fin.readInt();
-			sampleDelta[i] = fin.readInt();
+			chunkOffset[i] = fin.readInt();
 		}
 
 		return (int) this.getSize();
+
+	}
+
+	public int[] getChunkOffset() {
+		return chunkOffset;
 	}
 
 }

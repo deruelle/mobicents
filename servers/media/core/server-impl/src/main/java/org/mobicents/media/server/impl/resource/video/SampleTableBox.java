@@ -40,6 +40,7 @@ public class SampleTableBox extends Box {
 	private TimeToSampleBox stts;
 	private SampleToChunkBox stsc;
 	private SampleSizeBox stsz;
+	private ChunkOffsetBox stco;
 
 	public SampleTableBox(long size, String type) {
 		super(size, type);
@@ -63,6 +64,9 @@ public class SampleTableBox extends Box {
 			} else if (comparebytes(type, SampleSizeBox.TYPE)) {
 				stsz = new SampleSizeBox(len);
 				count += stsz.load(fin);
+			} else if (comparebytes(type, ChunkOffsetBox.TYPE)) {
+				stco = new ChunkOffsetBox(len);
+				count += stco.load(fin);
 			} else {
 				throw new IOException("Unknown box=" + type);
 			}

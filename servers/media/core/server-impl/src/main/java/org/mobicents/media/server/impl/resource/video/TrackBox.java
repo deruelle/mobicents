@@ -30,46 +30,46 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class TrackBox extends Box {
 
-    private TrackHeaderBox header;
-    private EditBox edit;
-    private MediaBox media;
+	private TrackHeaderBox header;
+	private EditBox edit;
+	private MediaBox media;
 
-    public TrackBox(long size, String type) {
-        super(size, type);
-    }
+	public TrackBox(long size, String type) {
+		super(size, type);
+	}
 
-    @Override
-    protected int load(DataInputStream fin) throws IOException {
-        int count = 0;
-        int len = readLen(fin);
-        
-        String type = readType(fin);
+	@Override
+	protected int load(DataInputStream fin) throws IOException {
+		int count = 8;
+		int len = readLen(fin);
 
-        if (!type.equals("tkhd")) {
-            throw new IOException("Track header expected");
-        }
+		String type = readType(fin);
 
-        header = new TrackHeaderBox(len, type);
-        count = header.load(fin);
-        
-        while (count < getSize()) {
-            len = readLen(fin);
-            type = readType(fin);
+		if (!type.equals("tkhd")) {
+			throw new IOException("Track header expected");
+		}
 
-            if (type.equals("edts")) {
-                edit = new EditBox(len, type);
-                count += edit.load(fin);
-            } else {
-                media = new MediaBox(len, type);
-                count += media.load(fin);
-            }
+		header = new TrackHeaderBox(len, type);
+		count += header.load(fin);
 
-        }
-        return (int) this.getSize();
-    }
+		while (count < getSize()) {
+			len = readLen(fin);
+			type = readType(fin);
+
+			if (type.equals("edts")) {
+				edit = new EditBox(len, type);
+				count += edit.load(fin);
+			} else {
+				media = new MediaBox(len, type);
+				count += media.load(fin);
+			}
+
+		}
+		return (int) this.getSize();
+	}
 }
