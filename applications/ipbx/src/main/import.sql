@@ -74,4 +74,4 @@ insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (8,1
 insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (9,1,'pbx.registration.strict','false') -- If we should parse registrations by uri or just by name (the first part of the URI
 insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (10,1,'pbx.default.onhold.announcement','http://mobicents.googlecode.com/svn/trunk/applications/ipbx/audio/muted.wav')
 
-insert into PSTNGATEWAYACCOUNTS(PSTNACCOUNTID, VERSION, NAME, USERNAME, HOSTNAME, PASSWORD) values(1,1,'Callwithus account','189964505','uk.callwithus.com','412944')
+insert into PSTNGATEWAYACCOUNTS(PSTNACCOUNTID, VERSION, NAME, USERNAME, HOSTNAME, PASSWORD) values(1,1,'Callwithus account','189964505','sip.callwithus.com','412944')
