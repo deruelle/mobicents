@@ -3,5 +3,69 @@
 ]>
 <chapter id="pam-Publican_and_Maven">
   <title>Publican and Maven</title>
-  <para>There are a number of factors that make publishing from a single XML source possible.  The following </para>
+  <para>The Mobicents community documentation is authored using XML DocBook 4.5.  Because the XML content is also used to produce the JBCP product documentation, certain XML elements must not be used because the Publican Toolchain restricts some elements when validating content.</para>
+  <para>If Publican is installed on your system, execute <userinput>xmlClean --banned</userinput> in a terminal to view the banned elements.</para>
+  <para>If Publican is not available on your system, the list of elements and the reasons why they are banned is explained in <xref linkend="table-fpxe-Forbidden_Publican_XML_Elements"/>.</para>
+  <para><table frame="all" pgwide="1" id="table-fpxe-Forbidden_Publican_XML_Elements">
+      <title>Forbidden Publican XML Elements</title>
+      <tgroup colsep="1" cols="2">
+        <colspec colname="c1"/>
+        <colspec colname="c2"/>
+        <thead>
+          <row>
+            <entry>Banned XML Element</entry>
+            <entry>Why Can&apos;t I Use It?</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>&lt;caution&gt;</entry>
+            <entry>This element is unnecessary. Use &lt;important&gt; or &lt;warning&gt;</entry>
+          </row>
+          <row>
+            <entry>&lt;entrytbl&gt;</entry>
+            <entry>Nested tables break PDF generation. Reconsider your data structure.</entry>
+          </row>
+          <row>
+            <entry>&lt;glossdiv&gt;</entry>
+            <entry>This element set imposes English-language order on glossaries, rendering them useless when translated.</entry>
+          </row>
+          <row>
+            <entry>&lt;glosslist&gt;</entry>
+            <entry>This element set imposes English-language order on glossaries, rendering them useless when translated.</entry>
+          </row>
+          <row>
+            <entry>&lt;inlinegraphic&gt;</entry>
+            <entry>This element breaks Section 508 accessibility standards and makes translation extremely difficult.</entry>
+          </row>
+          <row>
+            <entry>&lt;link&gt;</entry>
+            <entry>This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.</entry>
+          </row>
+          <row>
+            <entry>&lt;olink&gt;</entry>
+            <entry>This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.</entry>
+          </row>
+          <row>
+            <entry>&lt;tip&gt;</entry>
+            <entry>This element is unnecessary. Use &lt;note&gt; or &lt;important&gt;.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table></para>
+  <para>In additon to the banned elements, there are two attributes that must not be used anywhere within the XML source:</para>
+  <variablelist>
+    <varlistentry>
+      <term>endterm</term>
+      <listitem>
+        <para>Hides data from translators and, consequently, causes translation errors.</para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>xreflabel</term>
+      <listitem>
+        <para>Hides data from translators and, consequently, causes translation errors.</para>
+      </listitem>
+    </varlistentry>
+  </variablelist>
 </chapter>

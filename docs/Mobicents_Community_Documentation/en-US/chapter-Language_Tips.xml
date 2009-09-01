@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. --><!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<chapter id="Language_Tips">
+  <title>Language Tips</title>
+  <para>To maintain language consistency within the source documentation, it is important for each content author to write in a similar tone.   Maintaining consistent  tone  throughout the user guides will give the reader  the illusion  that both the Mobicents and JBCP User Documentation Suite (UDS) is maintained  by one person.   </para>
+  <para>The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will really appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).  </para>
+  <para>There are a few ways the team can achieve a consistent writing style.  Some of the examples mentioned in the following sections are actual examlpes found in the user guides.  Hopefully, instances of these language errors will begin to decrease as community content authors become more accustomed to writing to language standards.</para>
+</chapter>

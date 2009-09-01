@@ -271,7 +271,7 @@ public class ExClient
 		The Mobicents User Documentation Suite (UDS) is stored in the <ulink url="http://code.google.com/p/mobicents/source/browse/">Mobicents Google Code Subversion repository(GCode SVN)</ulink> .
 	</para>
 	<para>
-		Because the GCode SVN contains the source code for the Mobicents Platform, the repository is available to the public in read-only format. For contributors to make changes to the repository in any way, the Mobicents project must grant specific read-write permissions to the contributor's nominated Google account.
+		Because the GCode SVN contains the source code for the Mobicents, and JBCP Platform, the repository is available to the public in read-only format. For contributors to make changes to the repository in any way, the Mobicents project must grant specific read-write permissions to the contributor's nominated Google account.
 	</para>
 	<note>
 		<para>
@@ -512,6 +512,18 @@ public class ExClient
     &lt;/xi:fallback&gt;
 &lt;/xi:include&gt;
 </programlisting>
+</chapter>
+	<chapter id="Language_Tips" lang="en-US">
+	<!--  This document was created with Syntext Serna Free.  --><title>Language Tips</title>
+	<para>
+		To maintain language consistency within the source documentation, it is important for each content author to write in a similar tone. Maintaining consistent tone throughout the user guides will give the reader the illusion that both the Mobicents and JBCP User Documentation Suite (UDS) is maintained by one person.
+	</para>
+	<para>
+		The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will really appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).
+	</para>
+	<para>
+		There are a few ways the team can achieve a consistent writing style. Some of the examples mentioned in the following sections are actual examlpes found in the user guides. Hopefully, instances of these language errors will begin to decrease as community content authors become more accustomed to writing to language standards.
+	</para>
 </chapter>
 	<chapter id="ap-Authoring_Procedures" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Authoring Procedures</title>
@@ -1734,8 +1746,120 @@ public class ExClient
 	<chapter id="pam-Publican_and_Maven" lang="en-US">
 	<title>Publican and Maven</title>
 	<para>
-		There are a number of factors that make publishing from a single XML source possible. The following
+		The Mobicents community documentation is authored using XML DocBook 4.5. Because the XML content is also used to produce the JBCP product documentation, certain XML elements must not be used because the Publican Toolchain restricts some elements when validating content.
 	</para>
+	<para>
+		If Publican is installed on your system, execute <userinput>xmlClean --banned</userinput> in a terminal to view the banned elements.
+	</para>
+	<para>
+		If Publican is not available on your system, the list of elements and the reasons why they are banned is explained in <xref linkend="table-fpxe-Forbidden_Publican_XML_Elements"/>.
+	</para>
+	<para>
+		<table frame="all" id="table-fpxe-Forbidden_Publican_XML_Elements" pgwide="1">
+			<title>Forbidden Publican XML Elements</title>
+			<tgroup cols="2" colsep="1">
+				<colspec colname="c1"/>
+				<colspec colname="c2"/>
+				<thead>
+					<row>
+						<entry>
+							Banned XML Element
+						</entry>
+						<entry>
+							Why Can't I Use It?
+						</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+							&lt;caution&gt;
+						</entry>
+						<entry>
+							This element is unnecessary. Use &lt;important&gt; or &lt;warning&gt;
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;entrytbl&gt;
+						</entry>
+						<entry>
+							Nested tables break PDF generation. Reconsider your data structure.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;glossdiv&gt;
+						</entry>
+						<entry>
+							This element set imposes English-language order on glossaries, rendering them useless when translated.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;glosslist&gt;
+						</entry>
+						<entry>
+							This element set imposes English-language order on glossaries, rendering them useless when translated.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;inlinegraphic&gt;
+						</entry>
+						<entry>
+							This element breaks Section 508 accessibility standards and makes translation extremely difficult.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;link&gt;
+						</entry>
+						<entry>
+							This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;olink&gt;
+						</entry>
+						<entry>
+							This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;tip&gt;
+						</entry>
+						<entry>
+							This element is unnecessary. Use &lt;note&gt; or &lt;important&gt;.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</para>
+	<para>
+		In additon to the banned elements, there are two attributes that must not be used anywhere within the XML source:
+	</para>
+	<variablelist>
+		<varlistentry>
+			<term>endterm</term>
+			<listitem>
+				<para>
+					Hides data from translators and, consequently, causes translation errors.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>xreflabel</term>
+			<listitem>
+				<para>
+					Hides data from translators and, consequently, causes translation errors.
+				</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
 </chapter>
 	<chapter id="bs-XML_Authoring_Resources" lang="en-US">
 	<title>XML Authoring Resources</title>
