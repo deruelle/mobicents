@@ -7,13 +7,13 @@
 
 	<property name="release.dir" location="${ant.file.mobicents.all.release}/../target/release"/>
 	<property name="release.name" value="mobicents-all"/>
-    <property name="release.version" value="1.2.0.GA"/>
+    <property name="release.version" value="1.2.1.GA"/>
 	<property name="release.configurations" value="default,all"/>
 	
     <property name="release.slee.ra.dirs" value="xmpp,smpp,http-servlet,asterisk,sip,sip11,http-client,jcc,rules,tts"/>
     <property name="release.slee.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
-    <property name="release.diameter.ra.dirs" value="base,sh-client"/>
-    <property name="release.diameter.example.dirs" value="base"/>
+    <property name="release.diameter.ra.dirs" value="base,sh-client,sh-common,sh-server,cca,rf,ro"/>
+    <property name="release.diameter.example.dirs" value="base,sh-client,openims"/>
 
     <property name="release.readme.file.location" location="${ant.file.mobicents.all.release}/../readme-all.txt"/>
 
@@ -25,7 +25,7 @@
 	
     <property name="jbcp.release.dir" location="${ant.file.mobicents.all.release}/../target/release-jbcp"/>
     <property name="jbcp.release.name" value="JBCP"/>
-    <property name="jbcp.release.version" value="1.2.0.GA"/>
+    <property name="jbcp.release.version" value="1.2.1.GA"/>
     <property name="jbcp.configurations" value="default,all,production"/>
 
     <property name="jbcp.slee.ra.dirs" value="xmpp,http-servlet,sip,sip11,http-client,tts"/>
@@ -50,16 +50,31 @@
 			<pathelement location="${ant.file.mobicents.release}/../ant-contrib-1.0b3.jar" />
 		</classpath>
 	</taskdef>
-
+	
 	<target name="release" depends="get-jboss,unzip-jboss,get-servers">
+		<!-- release first part of nodes (slee,media) --> 
 		<for delimiter="," param="jboss.node" list="${release.configurations}">
 			<sequential>
 				<echo>[Populating '@{jboss.node}' jboss.node]</echo>
-				<antcall target="release-in-node">
+				<antcall target="release-in-node-slee-media">
 					<param name="jboss.node" value="@{jboss.node}"/>
 				</antcall>
 			</sequential>
 		</for>
+		<!-- release second part of nodes (sip servlets)--> 
+		<antcall target="release-sip-servlets"/>
+
+		
+		<!-- release third part of nodes (diameter)--> 
+		<for delimiter="," param="jboss.node" list="${release.configurations}">
+			<sequential>
+				<echo>[Populating '@{jboss.node}' jboss.node]</echo>
+				<antcall target="release-in-node-diameter">
+					<param name="jboss.node" value="@{jboss.node}"/>
+				</antcall>
+			</sequential>
+		</for>
+		
 		
 		<antcall target="release-jain-slee-common" />
 		<antcall target="release-sip-presence-common" />
@@ -69,7 +84,6 @@
 		
 		<copy file="${release.readme.file.location}" todir="${release.dir}" overwrite="true"/>
 		<antcall target="copy-frontpage"/>
-		
 		<antcall target="build-src-zip" />
 		<antcall target="zip-release"/>
 		<antcall target="clean"/>
@@ -210,11 +224,12 @@
 
 	<target name="release-sip-servlets">
 		<property name="jboss.home.converted" location="${jboss.home}"/>
-		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/sip-servlets-bootstrap/release/build.xml" target="release-jboss-node">
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/sip-servlets-bootstrap/release/build.xml" target="release-jboss">
 			<property name="jboss.home" value="${jboss.home.converted}"/>
-			<property name="jboss.config" value="${jboss.node}" />
+			<property name="mss.release.configurations" value="${release.configurations}" />
 		</ant>
 	</target>
+	
 	
 	<target name="release-diameter-common">
 		<property name="diameter.target.release.dir" location="${ant.file.mobicents.all.release}/../target/servers/diameter/release/target"/>

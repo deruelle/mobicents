@@ -14,26 +14,31 @@
 		<checkout.username>ze carlos</checkout.username>
 		<checkout.password></checkout.password>
 		
-		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/jain-slee/mobicents-jainslee-server-1.2.3.GA</jainslee.connectionURL>
+		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/jain-slee/mobicents-jainslee-server-1.2.6.GA</jainslee.connectionURL>
 		
-		<media.core.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/core/mobicents-media-server-core-1.0.0.CR5</media.core.connectionURL>
-		<media.controllers.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/controllers/mobicents-media-server-controllers-1.0.0.CR5</media.controllers.connectionURL>
-		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/examples/mobicents-media-server-examples-1.0.0.CR5</media.examples.connectionURL>
+		<media.core.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/core/mobicents-media-server-core-1.0.3.GA</media.core.connectionURL>
+		<media.controllers.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/controllers/mobicents-media-server-controllers-1.0.3.GA</media.controllers.connectionURL>
+		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/examples/mobicents-media-server-examples-1.0.3.GA</media.examples.connectionURL>
 		<media.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/branches/servers/media/1.x.y/release</media.release.connectionURL>
         
-		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-presence/mobicents-sip-presence-service-1.0.0.BETA4</sippresence.connectionURL>
-		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-servlets/release-0.7.2</sipservlets.connectionURL>
+		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-presence/mobicents-sip-presence-service-1.0.0.BETA5</sippresence.connectionURL>
+		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-servlets/release-1.0.0.GA</sipservlets.connectionURL>
         
-        <diameter.core.jdiameter.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/jdiameter/jdiameter-1.5.0.1-build184</diameter.core.jdiameter.connectionURL>
-		<diameter.core.mux.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/mux/mobicents-diameter-mux-1.0.0.BETA2</diameter.core.mux.connectionURL>
-		<diameter.examples.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/base/base-1.0.0.BETA1</diameter.examples.base.connectionURL>
-		<diameter.examples.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/sh-client/sh-client-1.0.0.BETA1</diameter.examples.sh-client.connectionURL>
-		<diameter.resources.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/base/base-1.0.0.BETA3</diameter.resources.base.connectionURL>
-		<diameter.resources.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/sh-client/sh-client-1.0.0.BETA2</diameter.resources.sh-client.connectionURL> 
-		<diameter.resources.cca.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/cca/cca-1.0.0.BETA1</diameter.resources.cca.connectionURL>
+        <diameter.core.jdiameter.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/jdiameter/jdiameter-1.5.2.2-build212</diameter.core.jdiameter.connectionURL>
+		<diameter.core.mux.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/mux/mobicents-diameter-mux-1.0.1.GA</diameter.core.mux.connectionURL>
+		<diameter.examples.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/base/base-1.0.1.GA</diameter.examples.base.connectionURL>
+		<diameter.examples.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/sh-client/sh-client-1.0.1.GA</diameter.examples.sh-client.connectionURL>
+		<diameter.examples.openims.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/openims/openims-1.0.1.GA</diameter.examples.openims.connectionURL>
+		<diameter.resources.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/base/base-1.0.1.GA</diameter.resources.base.connectionURL>
+		<diameter.resources.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/sh-client/sh-client-1.0.1.GA</diameter.resources.sh-client.connectionURL> 
+		<diameter.resources.sh-common.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/sh-common/sh-common-1.0.1.GA</diameter.resources.sh-common.connectionURL> 
+		<diameter.resources.sh-server.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/sh-server/sh-server-1.0.1.GA</diameter.resources.sh-server.connectionURL> 
+		<diameter.resources.cca.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/cca/cca-1.0.1.GA</diameter.resources.cca.connectionURL>
+		<diameter.resources.rf.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/rf/rf-1.0.1.GA</diameter.resources.rf.connectionURL>
+		<diameter.resources.ro.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/ro/ro-1.0.1.GA</diameter.resources.ro.connectionURL>
         <diameter.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/diameter/release</diameter.release.connectionURL>
         
-        <sip.loadbalancer.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/tools/sip-balancer/mobicents-tools-sip-balancer-1.0.BETA2</sip.loadbalancer.connectionURL>
+        <sip.loadbalancer.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/tools/sip-balancer/mobicents-tools-sip-balancer-1.0.BETA7</sip.loadbalancer.connectionURL>
 	</properties>
 	
 	<profiles>
@@ -267,6 +272,26 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>diameter-examples-openims-checkout</id>
+                        <goals>
+                            <goal>checkout</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/examples/openims
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.examples.openims.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>diameter-resources-base-checkout</id>
                         <goals>
                             <goal>checkout</goal>
@@ -287,6 +312,66 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>diameter-resources-cca-checkout</id>
+                        <goals>
+                            <goal>checkout</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/cca
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.cca.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>diameter-resources-rf-checkout</id>
+                        <goals>
+                            <goal>checkout</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/rf
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.rf.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>diameter-resources-ro-checkout</id>
+                        <goals>
+                            <goal>checkout</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/ro
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.ro.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>diameter-resources-sh-client-checkout</id>
                         <goals>
                             <goal>checkout</goal>
@@ -301,6 +386,46 @@
                             </checkoutDirectory>
                             <connectionUrl>
                                 ${diameter.resources.sh-client.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>diameter-resources-sh-common-checkout</id>
+                        <goals>
+                            <goal>checkout</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/sh-common
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.sh-common.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>diameter-resources-sh-server-checkout</id>
+                        <goals>
+                            <goal>checkout</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/sh-server
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.sh-server.connectionURL}
                             </connectionUrl>
                             <username>${checkout.username}</username>
                             <password>${checkout.password}</password>
@@ -574,6 +699,26 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>diameter-examples-openims-update</id>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/examples/openims
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.examples.openims.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>diameter-resources-base-update</id>
                         <goals>
                             <goal>update</goal>
@@ -594,6 +739,66 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>diameter-resources-cca-update</id>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/cca
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.cca.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>diameter-resources-rf-update</id>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/rf
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.rf.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>diameter-resources-ro-update</id>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/ro
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.ro.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>diameter-resources-sh-client-update</id>
                         <goals>
                             <goal>update</goal>
@@ -608,6 +813,46 @@
                             </checkoutDirectory>
                             <connectionUrl>
                                 ${diameter.resources.sh-client.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>diameter-resources-sh-common-update</id>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/sh-common
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.sh-common.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>diameter-resources-sh-server-update</id>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/diameter/resources/sh-server
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${diameter.resources.sh-server.connectionURL}
                             </connectionUrl>
                             <username>${checkout.username}</username>
                             <password>${checkout.password}</password>
