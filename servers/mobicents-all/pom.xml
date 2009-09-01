@@ -22,7 +22,7 @@
 		<media.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/branches/servers/media/1.x.y/release</media.release.connectionURL>
         
 		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-presence/mobicents-sip-presence-service-1.0.0.BETA5</sippresence.connectionURL>
-		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-servlets/release-1.0.0.GA</sipservlets.connectionURL>
+		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-servlets/release-1.0</sipservlets.connectionURL>
         
         <diameter.core.jdiameter.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/jdiameter/jdiameter-1.5.2.2-build212</diameter.core.jdiameter.connectionURL>
 		<diameter.core.mux.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/mux/mobicents-diameter-mux-1.0.1.GA</diameter.core.mux.connectionURL>
