@@ -51,6 +51,9 @@
 		</classpath>
 	</taskdef>
 	
+	<target name="release-in-node-slee-media" depends="release-jain-slee-in-node,release-media" />
+	<target name="release-in-node-diameter" depends="release-diameter-in-node" />
+	
 	<target name="release" depends="get-jboss,unzip-jboss,get-servers">
 		<!-- release first part of nodes (slee,media) --> 
 		<for delimiter="," param="jboss.node" list="${release.configurations}">
