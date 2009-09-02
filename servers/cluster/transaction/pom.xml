@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.cluster</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0BETA1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>transaction</artifactId>
+
+	<name>Mobicents :: Cluster :: ${pom.artifactId}</name>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.jboss.jbossas</groupId>
+			<artifactId>jboss-as-server</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xerces</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>jboss.jbossts</groupId>
+			<artifactId>jbossjta</artifactId>
+		</dependency>
+
+		<!-- tests -->
+
+		<dependency>
+			<groupId>org.jboss.microcontainer</groupId>
+			<artifactId>jboss-kernel</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jboss.jbossts</groupId>
+			<artifactId>jbossts-common</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jboss.jbossts</groupId>
+			<artifactId>jbossjts</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>mobicents-cluster-transaction</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+  				${mobicents.tools.mavenplugin.eclipse.version}
+  			</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<excludePoms />
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+  				</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						${build.finalName}
+  				</eclipseProjectName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
