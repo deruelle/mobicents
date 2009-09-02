@@ -35,9 +35,25 @@ community authors in getting accustomed to XML authoring.</para></abstract>
 				<year>2009</year>
 				<holder>Red Hat Inc.</holder>
 			</copyright>
-			<legalnotice lang="en-US" xml:base="Common_Content/Legal_Notice.xml">
+			<legalnotice lang="en-US" xml:base="fallback_content/Legal_Notice.xml">
 	<para>
-		Copyright <trademark class="copyright"/> 2009 Red Hat Inc. This material may only be distributed subject to the terms and conditions set forth in the GNU Free Documentation License (GFDL), V1.2 or later (the latest version is presently available at <ulink url="http://www.gnu.org/licenses/fdl.txt">http://www.gnu.org/licenses/fdl.txt</ulink>).
+		Copyright <trademark class="copyright"/> 2009 Red Hat Inc.. This material may only be distributed subject to the terms and conditions set forth in the Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License (which is presently available at <ulink url="http://creativecommons.org/licenses/by-nc-sa/3.0/">http://creativecommons.org/licenses/by-nc-sa/3.0/</ulink>).
+	</para>
+	<para>
+		Red Hat, the "Shadow Man" logo and JBoss are registered trademarks of Red Hat, Inc. in the United States and other countries.
+	</para>
+	<para>
+		All other trademarks referenced herein are the property of their respective owners.
+	</para>
+	<para>
+		<address>
+			<street>1801 Varsity Drive</street>
+			<city>Raleigh</city>, <state>NC</state> <postcode>27606-2072</postcode><country>USA</country>
+			<phone>Phone: +1 919 754 3700</phone>
+			<phone>Phone: 888 733 4281</phone>
+			<fax>Fax: +1 919 754 3701</fax>
+			<pob>PO Box 13588</pob><city>Research Triangle Park</city>, <state>NC</state> <postcode>27709</postcode><country>USA</country>
+		</address>
 	</para>
 </legalnotice>
 			<authorgroup lang="en-US">
@@ -54,7 +70,7 @@ community authors in getting accustomed to XML authoring.</para></abstract>
 		</bookinfo>
 	<preface id="Mobicents_Community_Documentation-Preface" lang="en-US">
 	<title>Preface</title>
-	<section lang="en-US" xml:base="Common_Content/Conventions.xml">
+	<section lang="en-US" xml:base="fallback_content/Conventions.xml">
 	<title>Document Conventions</title>
 	<para>
 		This manual uses several conventions to highlight certain words and phrases and draw attention to specific pieces of information.
@@ -199,38 +215,39 @@ public class ExClient
 		<para>
 			Finally, we use three visual styles to draw attention to information that might otherwise be overlooked.
 		</para>
-		<note>
-			<title>Note</title>
-			<para>
-				A note is a tip or shortcut or alternative approach to the task at hand. Ignoring a note should have no negative consequences, but you might miss out on a trick that makes your life easier.
-			</para>
-		</note>
-		<important>
-			<title>Important</title>
-			<para>
-				Important boxes detail things that are easily missed: configuration changes that only apply to the current session, or services that need restarting before an update will apply. Ignoring Important boxes won't cause data loss but may cause irritation and frustration.
-			</para>
-		</important>
 		<warning>
 			<title>Warning</title>
 			<para>
 				A Warning should not be ignored. Ignoring warnings will most likely cause data loss.
 			</para>
 		</warning>
+		<important>
+			<title>Important</title>
+			<para>
+				Important boxes detail things that are easily missed: configuration changes that only apply to the current session, or services that need restarting before an update will apply. Ignoring Important boxes won't cause data loss but may cause irritation and frustration.
+			</para>
+		</important>
+		<note>
+			<title>Note</title>
+			<para>
+				A note is a tip or shortcut or alternative approach to the task at hand. Ignoring a note should have no negative consequences, but you might miss out on a trick that makes your life easier.
+			</para>
+		</note>
 	</section>
 
 </section>
-	<section lang="en-US" xml:base="Common_Content/Feedback.xml">
+	<section lang="en-US" xml:base="fallback_content/Feedback.xml">
 	<title>We Need Feedback!</title>
-	<indexterm>
-		<primary>feedback</primary>
-		<secondary>contact information for this manual</secondary>
-	</indexterm>
 	<para>
-		You should over ride this by creating your own local Feedback.xml file.
+		If you find a typographical error in this manual, or if you have thought of a way to make this manual better, we would love to hear from you! Please submit a documentation issue using the Mobicents GCode Issue Tracker: <ulink url="http://code.google.com/p/mobicents/issues/list">http://code.google.com/p/mobicents/issues/list</ulink> against the product <application>Mobicents.</application>
+	</para>
+	<para>
+		When submitting a bug report, be sure to mention the manual's identifier: <citetitle>Mobicents_Community_Documentation</citetitle>
+	</para>
+	<para>
+		If you have a suggestion for improving the documentation, try to be as specific as possible when describing it. If you have found an error, please include the section number and some of the surrounding text so we can find it easily.
 	</para>
 </section>
-	
 </preface>
 	<chapter id="Introduction" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Introduction</title>
@@ -253,7 +270,7 @@ public class ExClient
 		As the Mobicents product matured, the requirement for formalized single-source documentation became apparent. When Red Hat acquired the project, the process of merging the content into a single XML repository began.
 	</para>
 	<para>
-		During the conversion process from Wiki to XML, the UDS was managed by Red Hat Technical Writers. Red Hat writers took the developer content and converted it into XML user documentation, adding to the existing content where the need existed. Those areas under development in the UDS were linked back to the mobicents-public forum, so readers did not encounter an information dead-end.
+		During the conversion process from Wiki to XML, the UDS was managed exclusively by Red Hat Technical Writers. Red Hat writers took the developer content and converted it into XML user documentation, adding to the existing content where the need existed. Those areas under development in the UDS were linked back to the mobicents-public forum, so readers did not encounter an information dead-end.
 	</para>
 	<para>
 		The documentation suite evolved to a point where the Mobicents Community Project team expressed interest in self-managing the community documentation, and hosting it on the GCode SVN repository. This decision simplified the way the team controlled the versioning of user guide content, and allowed the documentation to be branched when the development cycle dictated. It also assisted the Red Hat Technical Writers in developing the product documentation for the JBoss Communication Platform.
@@ -522,8 +539,69 @@ public class ExClient
 		The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will really appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).
 	</para>
 	<para>
-		There are a few ways the team can achieve a consistent writing style. Some of the examples mentioned in the following sections are actual examlpes found in the user guides. Hopefully, instances of these language errors will begin to decrease as community content authors become more accustomed to writing to language standards.
+		There are a few ways the team can achieve a consistent writing style. Some of the examples mentioned in the following sections are actual examples found in the user guides. Hopefully, instances of these language errors will begin to decrease as community content authors become more accustomed to writing to language standards.
 	</para>
+	<section>
+		<title>Conversational Language</title>
+		<para>
+			It is often tempting to write like you are talking to someone face to face. It is an easy way of writing, and allows you to write using a stream of conciousness method.
+		</para>
+		<para>
+			The problem with this type of writing style, is that it is very hard for the reader to quickly grasp a concept. They must read through the content and try to extract the information that is relevant to them from the concept you are writing about. The writing style often leads to verbosity (or wordiness) and this can quickly frustrate readers.
+		</para>
+		<para>
+			The following examples will show you how pruning your writing can cut down the word count, and allow readers to easily understand the information they are reading.
+		</para>
+		<example>
+			<title>Reordering and Restructuring for Readability</title>
+			<para>
+				This example shows how how you can increase the readability of the information by cutting out unnecessary words and restructuring content.
+			</para>
+			<formalpara>
+				<title>Original Wording</title>
+				<para>
+					As the SIP Servlets Server employs JBoss Application Server as its servlet container and takes advantage of its capabilities, including clustering and failover, familiarity with the basics of JBoss Clustering is helpful. Refer to this chapter in the Clustering Guide for background or if you wish to dig further: JBoss Application Server Clustering Guide.
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>Suggested Wording</title>
+				<para>
+					To further understand the complete clustering and failover capabilities of the JBoss Application Server, refer to the JBoss Application Server Clustering Guide.
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>Result</title>
+				<para>
+					After the edit, notice how concise the 2nd paragraph is. Also notice how the colloquialism in the reference has been removed. Depending on the readers' language skills, the usage of "dig further" might not be understood. When this is translated to other languages, the meaning of this sentence might also be lost in translation.
+				</para>
+			</formalpara>
+		</example>
+		<example>
+			<title>Writing Like You Are Speaking</title>
+			<para>
+				This example demonstrates how writing like you are speaking results in unordered concepts, and reduces the effectiveness of the information you are writing about.
+			</para>
+		</example>
+		<formalpara>
+			<title>Original Wording</title>
+			<para>
+				An important note here with regard to that second scenario that according to the SIP Servlets 1.1 specification, Sections 15.1.2 The Role of Applications and 15.1.4 Application Independence, the Call Blocking application cannot just do nothing with the request and expect the container to route the request in its place (either to a next application in chain if another one is present or to the outside world if none is present). The Application has to do something with request (either proxy it or act as a UAS)
+			</para>
+		</formalpara>
+		<formalpara>
+			<title>Suggested Wording</title>
+			<para>
+				For the second scenario, the Call Blocking application must be responsible for routing the request to the next chained application (internally) or to the outside world (externally). The application must either proxy, or act as a User Agent Server (UAS), for the request. This requirement is stated in greater detail within the SIP Servlets 1.1 specification's "The Role of Applications" and "Application Independence" sections.
+			</para>
+		</formalpara>
+		<formalpara>
+			<title>Result</title>
+			<para>
+				In the original wording, the main point (that the application must handle the routing, and how it must do this) was right at the end of the paragraph. In the suggested wording, the application requirement has been moved up to the front of the paragraph. This allows the reader to quickly decide whether the information relates to them. The references, which were interrupting the sentence flow, are now at the end of the paragraph.
+			</para>
+		</formalpara>
+	</section>
+
 </chapter>
 	<chapter id="ap-Authoring_Procedures" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Authoring Procedures</title>
@@ -2224,6 +2302,95 @@ public class ExClient
 					</para>
 				</listitem>
 			</itemizedlist>
+		</section>
+		
+		<section>
+			<title>Important, Caution, and Note</title>
+			<para>
+				To alert readers to information that might otherwise be overlooked, DocBook supports a number of elements you can use to highlight concepts for readers. The supported options are limited to:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Warning
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Important
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Note
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+				The options are listed in order of priority, and alert the reader to the following conditions:
+			</para>
+			<variablelist>
+				<varlistentry>
+					<term>Warning</term>
+					<listitem>
+						<para>
+							Warnings contain information that must not be ignored. Ignoring recommendations in Warnings may result in data loss, or other catastrophic issues.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Important</term>
+					<listitem>
+						<para>
+							Includes information that might be easily overlooked and may cause unnecessary frustration when using the software. For example, configuration changes that only apply to the current session, or services that need restarting before an update will apply
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Note</term>
+					<listitem>
+						<para>
+							Contains information that may be useful to the reader. Ignoring a note should have no negative consequences for the reader, but may result in the reader missing out on usability tips, or a shortcut that may help them complete a task.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<para>
+				The way these elements are formatted depends on what publishing system you use to produce a user guide. The JBCP user guide style (produced using Publican) formats this information in a conspicuous way; lots of colour, bold graphics, and a slightly different typeface to the normal content. In the Mobicents documentation, JDocBook formats the information slighly less agressively by using softer colours, but it is still quite conspicuous to the reader.
+			</para>
+			<para>
+				When writing information for any of these elements, you can maximize the effectiveness of the information by keeping the structure of the information consistent. Consider the following examples to see how effective this is.
+			</para>
+			<example>
+				<title>Warnings and Importants</title>
+				<para>
+					Use the following XML structure when creating a Warning or Important annotation. See the sample Warning and Inportant in this example as a reference.
+				</para>
+				
+<programlisting role="XML">&lt;warning&gt;
+  &lt;title&gt;Warning Summary&lt;/title&gt;
+  &lt;para&gt;Imperetive instruction to the user.  Reason why the user should obey the instruction.&lt;/para&gt;
+&lt;/warning&gt;
+</programlisting>
+				
+<programlisting role="XML">&lt;important&gt;
+  &lt;title&gt;Important Summary&lt;/title&gt;
+  &lt;para&gt;Information that will save the reader unnecessary frustration.&lt;/para&gt;
+&lt;/important&gt;
+</programlisting>
+			</example>
+			<warning>
+				<title>Open Office Package Dependencies</title>
+				<para>
+					Do not uninstall Open Office from Gnome Desktop systems. Open Office package dependencies may result in critical system files, including X Windows System files, being unintentionally removed.
+				</para>
+			</warning>
+			<important>
+				<title>Install MSS for JBoss 0.7 or Later</title>
+				<para>
+					Only MSS for JBoss v0.7 bundles the Diameter JBoss Service (the Diameter SAR, or Servlet Archive), which is required to run the Diameter Event-Charging Service.
+				</para>
+			</important>
 		</section>
 
 	</section>

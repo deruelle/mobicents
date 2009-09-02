@@ -5,5 +5,46 @@
   <title>Language Tips</title>
   <para>To maintain language consistency within the source documentation, it is important for each content author to write in a similar tone.   Maintaining consistent  tone  throughout the user guides will give the reader  the illusion  that both the Mobicents and JBCP User Documentation Suite (UDS) is maintained  by one person.   </para>
   <para>The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will really appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).  </para>
-  <para>There are a few ways the team can achieve a consistent writing style.  Some of the examples mentioned in the following sections are actual examlpes found in the user guides.  Hopefully, instances of these language errors will begin to decrease as community content authors become more accustomed to writing to language standards.</para>
+  <para>There are a few ways the team can achieve a consistent writing style.  Some of the examples mentioned in the following sections are actual examples found in the user guides.  Hopefully, instances of these language errors will begin to decrease as community content authors become more accustomed to writing to language standards.</para>
+  <section>
+    <title>Conversational Language</title>
+    <para>It is often tempting  to write like you are talking to someone face to face.  It is an easy way of writing, and allows you to write using a stream of conciousness method.   </para>
+    <para>The problem with this type of writing style, is that it is very hard for the reader to quickly grasp a concept.  They must read through the content and try to extract the information that is relevant to them from the concept you are writing about.  The writing style often leads to verbosity (or wordiness) and this can quickly frustrate readers.</para>
+    <para>The following examples will show you how pruning your writing can cut down the word count, and allow readers to easily understand the information they are reading.</para>
+    <para/>
+    <example>
+      <title>Reordering and Restructuring for Readability</title>
+      <para>This example shows how how you can increase the readability of the information by cutting out unnecessary words and restructuring content.</para>
+      <formalpara>
+        <title>Original Wording</title>
+        <para>
+As the SIP Servlets Server employs JBoss Application Server as its servlet container and takes advantage of its capabilities, including clustering and failover, familiarity with the basics of JBoss Clustering is helpful. Refer to this chapter in the Clustering Guide for background or if you wish to dig further: JBoss Application Server Clustering Guide. </para>
+      </formalpara>
+      <formalpara>
+        <title>Suggested Wording</title>
+        <para>To further understand the complete clustering and failover capabilities of the JBoss Application Server, refer to the JBoss Application Server Clustering Guide.
+</para>
+      </formalpara>
+      <formalpara>
+        <title>Result</title>
+        <para>After the edit, notice how concise the 2nd paragraph is.  Also notice how the colloquialism in the reference has been removed.  Depending on the readers&apos; language skills, the usage of &quot;dig further&quot; might not be understood.  When this is translated to other languages, the meaning of this sentence might also be lost in translation.</para>
+      </formalpara>
+    </example>
+    <example>
+      <title>Writing Like You Are Speaking</title>
+      <para>This example demonstrates how writing like you are speaking results in unordered concepts, and reduces the effectiveness of the information you are writing about.</para>
+    </example>
+    <formalpara>
+      <title>Original Wording</title>
+      <para>An important note here with regard to that second scenario that according to the SIP Servlets 1.1 specification, Sections 15.1.2 The Role of Applications and 15.1.4 Application Independence, the Call Blocking application cannot just do nothing with the request and expect the container to route the request in its place (either to a next application in chain if another one is present or to the outside world if none is present). The Application has to do something with request (either proxy it or act as a UAS)</para>
+    </formalpara>
+    <formalpara>
+      <title>Suggested Wording</title>
+      <para>For the second scenario, the Call Blocking application must be responsible for routing the request to the next chained application (internally) or to the outside world (externally).  The application must either proxy, or act as a User Agent Server (UAS), for the request.  This requirement is stated in greater detail within the SIP Servlets 1.1 specification&apos;s &quot;The Role of Applications&quot; and &quot;Application Independence&quot; sections.</para>
+    </formalpara>
+    <formalpara>
+      <title>Result</title>
+      <para>In the original wording, the main point (that the application must handle the routing, and how it must do this) was right at the end of the paragraph.  In the suggested wording, the application requirement has been moved up to the front of the paragraph.  This allows the reader to quickly decide whether the information relates to them.  The references, which were interrupting the sentence flow, are now at the end of the paragraph.  </para>
+    </formalpara>
+  </section>
 </chapter>

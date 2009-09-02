@@ -239,6 +239,64 @@
         </listitem>
       </itemizedlist>
     </section>
+    <section>
+      <title>Important, Caution, and Note</title>
+      <para>To alert readers to information that might otherwise be overlooked, DocBook supports a number of elements you can use to highlight concepts for readers.   The supported options are limited to:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Warning</para>
+        </listitem>
+        <listitem>
+          <para>Important</para>
+        </listitem>
+        <listitem>
+          <para>Note</para>
+        </listitem>
+      </itemizedlist>
+      <para>The options are listed in order of priority, and alert the reader to the following conditions:</para>
+      <variablelist>
+        <varlistentry>
+          <term>Warning</term>
+          <listitem>
+            <para>Warnings contain information that must not be ignored.  Ignoring recommendations in Warnings may result in data loss, or other catastrophic issues.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Important</term>
+          <listitem>
+            <para>Includes information that might be easily overlooked and may cause unnecessary frustration when using the software.   For example, configuration changes that only apply to the current session, or services that need restarting before an update will apply</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>Note</term>
+          <listitem>
+            <para>Contains information that may be useful to the reader.  Ignoring a note should have no negative consequences for the reader, but may result in the reader missing out on usability tips, or a shortcut that may help them complete a task.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      <para>The way these elements are formatted depends on what publishing system you use to produce a user guide.  The JBCP user guide  style (produced using Publican) formats this information in a conspicuous way; lots of colour, bold graphics, and a slightly different typeface to the normal content.  In the Mobicents documentation, JDocBook formats the information slighly less agressively by using softer colours, but it is still quite conspicuous to the reader.</para>
+      <para>When writing information for any of these elements, you can maximize the effectiveness of the information by keeping the structure of the information consistent.  Consider the following examples to see how effective this is.</para>
+      <example>
+        <title>Warnings and Importants</title>
+        <para>Use the following XML structure when creating a Warning or Important annotation.  See the sample Warning and Inportant in this example as a reference.</para>
+        <programlisting role="XML">&lt;warning&gt;
+  &lt;title&gt;Warning Summary&lt;/title&gt;
+  &lt;para&gt;Imperetive instruction to the user.  Reason why the user should obey the instruction.&lt;/para&gt;
+&lt;/warning&gt;</programlisting>
+        <programlisting role="XML">&lt;important&gt;
+  &lt;title&gt;Important Summary&lt;/title&gt;
+  &lt;para&gt;Information that will save the reader unnecessary frustration.&lt;/para&gt;
+&lt;/important&gt;</programlisting>
+      </example>
+      <warning>
+        <title>Open Office Package Dependencies</title>
+        <para>Do not uninstall  Open Office  from Gnome Desktop systems.       Open Office package dependencies may result in critical system files, including X Windows System files, being unintentionally  removed.</para>
+      </warning>
+      <important>
+        <title>Install MSS for JBoss 0.7 or Later</title>
+        <para>Only MSS for JBoss v0.7 bundles the Diameter JBoss Service (the Diameter SAR, or Servlet Archive), which is required to run the Diameter Event-Charging Service.  </para>
+      </important>
+    </section>
   </section>
   <section>
     <title>Fixing Validation Errors</title>
