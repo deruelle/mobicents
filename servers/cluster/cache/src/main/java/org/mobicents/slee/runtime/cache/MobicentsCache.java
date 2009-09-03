@@ -23,34 +23,37 @@ public class MobicentsCache {
 
 	private static Logger logger = Logger.getLogger(MobicentsCache.class);
 
-	private final Cache<?,?> jBossCache;
+	private final Cache<?, ?> jBossCache;
 	private TimerTasksCacheData timerTasksCacheData;
 	private CacheManager haCacheManager;
 	private String cacheName;
 	private TransactionManager txManager;
+
 	public MobicentsCache(CacheFactory cacheFactory, Configuration cacheConfiguration, TransactionManager txManager) {
-		//we must ensure that
+		// we must ensure that
 		cacheConfiguration.setInactiveOnStartup(true);
-		if(logger.isInfoEnabled())
+		if (logger.isInfoEnabled())
 			logger.info("SLEE Cache creation.");
 		this.jBossCache = cacheFactory.createCache();
 		this.txManager = txManager;
-	
-		//this.timerTasksCacheData = new TimerTasksCacheData(jBossCache,txManager);
-		if(logger.isInfoEnabled())
-			logger.info("SLEE Cache created. Mode:"+jBossCache.getConfiguration().getCacheMode());
+
+		// this.timerTasksCacheData = new
+		// TimerTasksCacheData(jBossCache,txManager);
+		if (logger.isInfoEnabled())
+			logger.info("SLEE Cache created. Mode:" + jBossCache.getConfiguration().getCacheMode());
 
 	}
 
-	public MobicentsCache(CacheManager haCacheManager,String cacheName, TransactionManager txManager) throws Exception {
-		
+	public MobicentsCache(CacheManager haCacheManager, String cacheName, TransactionManager txManager) throws Exception {
+
 		this.haCacheManager = haCacheManager;
 		this.cacheName = cacheName;
 		this.jBossCache = this.haCacheManager.getCache(cacheName, true);
 		this.txManager = txManager;
-		//this.timerTasksCacheData = new TimerTasksCacheData(jBossCache,txManager);
-		
-		if(logger.isInfoEnabled())
+		// this.timerTasksCacheData = new
+		// TimerTasksCacheData(jBossCache,txManager);
+
+		if (logger.isInfoEnabled())
 			logger.info("SLEE Cache created.");
 	}
 
@@ -58,7 +61,6 @@ public class MobicentsCache {
 		return jBossCache;
 	}
 
-	
 	/**
 	 * Retrieves an instance of an {@link ActivityContextCacheData} for the
 	 * Activity Context with the specified id.
@@ -66,8 +68,7 @@ public class MobicentsCache {
 	 * @param activityContextHandle
 	 * @return
 	 */
-	public ActivityContextCacheData getActivityContextCacheData(
-			Object activityContextHandle) {
+	public ActivityContextCacheData getActivityContextCacheData(Object activityContextHandle) {
 		return new ActivityContextCacheData(activityContextHandle, jBossCache);
 	}
 
@@ -104,8 +105,8 @@ public class MobicentsCache {
 	}
 
 	/**
-	 * Retrieves an instance of an {@link ServiceCacheData}, the cache proxy
-	 * for the service with the specified id.
+	 * Retrieves an instance of an {@link ServiceCacheData}, the cache proxy for
+	 * the service with the specified id.
 	 * 
 	 * @param serviceID
 	 * @return
@@ -115,53 +116,55 @@ public class MobicentsCache {
 	}
 
 	/**
-	 * Retrieves an instance of an {@link TimerTasksCacheData}, the cache
-	 * proxy for the Timer Facility
+	 * Retrieves an instance of an {@link TimerTasksCacheData}, the cache proxy
+	 * for the Timer Facility
 	 * 
 	 * @return
 	 */
 	public TimerTasksCacheData getTimerFacilityCacheData() {
-		if(this.timerTasksCacheData == null)
-		{
-			this.timerTasksCacheData = new TimerTasksCacheData(jBossCache,txManager);
+		if (this.timerTasksCacheData == null) {
+			this.timerTasksCacheData = new TimerTasksCacheData(jBossCache, txManager);
 		}
 		return this.timerTasksCacheData;
 	}
 	/**
 	 * @param classLoader
 	 */
-	
-	
-	
-	
-	public void startRootRegion(ClassLoader classLoader) {
-		Region rootRegion=this.jBossCache.getRegion(Fqn.ROOT, true);
-		//tmp?
-		
-		rootRegion.registerContextClassLoader(classLoader);
-		
-		//jBossCache.create();
-		if(jBossCache.getCacheStatus()!= CacheStatus.STARTED)
-			jBossCache.start();
-		rootRegion.activate();
-		if(logger.isInfoEnabled())
-			logger.info("SLEE Cache started, status: "+this.jBossCache.getCacheStatus()+", Mode: "+this.jBossCache.getConfiguration().getCacheModeString());
-		
-		
+
+	public void startRootRegion() {
+		this.startRootRegion(null);
 	}
-	
-	
-	public void stop()
-	{
-		if(this.haCacheManager!=null)
-		{
+	/**
+	 * @param classLoader
+	 */
+
+	public void startRootRegion(ClassLoader classLoader) {
+		if (classLoader == null) {
+			if (jBossCache.getCacheStatus() != CacheStatus.STARTED)
+				jBossCache.start();
+
+		} else {
+			Region rootRegion = this.jBossCache.getRegion(Fqn.ROOT, true);
+			rootRegion.registerContextClassLoader(classLoader);
+
+			// jBossCache.create();
+			if (jBossCache.getCacheStatus() != CacheStatus.STARTED)
+				jBossCache.start();
+			rootRegion.activate();
+			if (logger.isInfoEnabled())
+				logger.info("SLEE Cache started, status: " + this.jBossCache.getCacheStatus() + ", Mode: " + this.jBossCache.getConfiguration().getCacheModeString());
+
+		}
+	}
+
+	public void stop() {
+		if (this.haCacheManager != null) {
 			this.haCacheManager.releaseCache(this.cacheName);
-			//manager will take care of stoping, if not requireed anymore.
-		}else
-		{
+			// manager will take care of stoping, if not requireed anymore.
+		} else {
 			this.jBossCache.stop();
 			this.jBossCache.destroy();
 		}
 	}
-	
+
 }

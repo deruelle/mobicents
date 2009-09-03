@@ -30,8 +30,6 @@ import org.apache.log4j.Logger;
  * + Before Commit Action, an action to execute before the transaction is
  * committed
  * 
- * + After Commit Priority Action, an action to execute first after the
- * transaction is committed
  * 
  * + After Commit Action, an action to execute after the transaction is
  * committed and the priority actions execution
@@ -39,12 +37,12 @@ import org.apache.log4j.Logger;
  * + After Rollback Action, an action to execute after the transaction rollbacks
  * 
  * @author ?
- * @author martins <- yeah he did the work, we use it :)
+ * @author martins 
  * 
  */
 public class TransactionContext {
 
-	private static Logger logger = Logger.getLogger(TransactionContext.class);
+	private static Logger log = Logger.getLogger(TransactionContext.class);
 
 	// this code was hack to trap setRollbackOnly() due to jboss cache, don't
 	// remove it may be needed again
@@ -127,8 +125,8 @@ public class TransactionContext {
 	protected void executeAfterCommitActions() {
 
 		if (afterCommitActions != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Executing after commit actions");
+			if (log.isDebugEnabled()) {
+				log.debug("Executing after commit actions");
 			}
 			executeActions(afterCommitActions);
 		}
@@ -140,8 +138,8 @@ public class TransactionContext {
 	protected void executeAfterRollbackActions() {
 
 		if (afterRollbackActions != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Executing rollback actions");
+			if (log.isDebugEnabled()) {
+				log.debug("Executing rollback actions");
 			}
 			executeActions(afterRollbackActions);
 		}
@@ -153,8 +151,8 @@ public class TransactionContext {
 	protected void executeBeforeCommitActions() {
 
 		if (beforeCommitActions != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Executing before commit actions");
+			if (log.isDebugEnabled()) {
+				log.debug("Executing before commit actions");
 			}
 			executeActions(beforeCommitActions);
 		}
@@ -163,8 +161,8 @@ public class TransactionContext {
 	protected void executeActions(List<TransactionalAction> actions) {
 
 		for (TransactionalAction action : actions) {
-			if (logger.isDebugEnabled())
-				logger.debug("Executing action:" + action);
+			if (log.isDebugEnabled())
+				log.debug("Executing action:" + action);
 			try {
 				action.execute();
 			} catch (Throwable t) {

@@ -26,9 +26,7 @@
 		<module>ftf</module>
 		<module>cache</module>
 		<module>timers</module>
-		<!-- 
 		<module>beans</module>
-		 -->
 	</modules>
 
 	<properties>

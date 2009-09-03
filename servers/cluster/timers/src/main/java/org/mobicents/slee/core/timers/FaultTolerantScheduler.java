@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import javax.slee.SLEEException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.slee.runtime.cache.TimerTaskDataUser;
@@ -135,7 +134,7 @@ public class FaultTolerantScheduler implements FaultTolerantSchedulerMBean, Time
 			} catch (Throwable e) {
 				e.printStackTrace();
 				remove(taskID,true);
-				throw new SLEEException(e.getMessage(),e);
+				throw new RuntimeException(e.getMessage(),e);
 			}
 		}
 		else {
@@ -172,7 +171,7 @@ public class FaultTolerantScheduler implements FaultTolerantSchedulerMBean, Time
 					try {
 						txManager.addAfterCommitAction(cancelAction);
 					} catch (Throwable e) {
-						throw new SLEEException(e.getMessage(),e);
+						throw new RuntimeException(e.getMessage(),e);
 					}
 				}
 				else {
