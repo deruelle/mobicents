@@ -1,20 +1,133 @@
-<?xml version='1.0' encoding='UTF-8'?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="Introduction">
   <title>Introduction</title>
   <para>The Mobicents User Documentation Suite (UDS) is the formalized source of product user documentation for the Mobicents Community Project.  Within the UDS, a user can learn how to install the platform, or individual servers.  Server-specific features are located within each server guide and include examples that can help new users become accustomed to the functionality offered by the product suite.</para>
   <para>The UDS is written in eXtensible Markup Language (XML) and uses the DocBook DTD to control guide structure.   The documentation is published to HTML-Single format using the Publican Tool chain and Maven JDocBook, and  hosted on the Hudson Build Server for public viewing and comment.  </para>
-  <formalpara>
+  <section>
     <title>UDS History</title>
     <para>Originally, the UDS was delivered to the user through multiple sources such as Wiki pages and static documents. The  information was hosted in different locations.  </para>
-  </formalpara>
-  <para>The separate information sources were merged into a single Wiki source, hosted on the mobicents-public Google group.   Once the information was merged into mobicents-public, the developers had a single place to communicate with the end users of the platform.  </para>
-  <para>As the Mobicents product matured, the requirement for formalized single-source documentation became apparent.  When Red Hat acquired the project, the process of merging the content into a single XML repository began.  </para>
-  <para>During the conversion process from Wiki to XML, the UDS was managed exclusively by Red Hat Technical Writers.  Red Hat writers took the developer content and converted it into XML user documentation, adding  to the existing content where the need existed.  Those areas under development in the UDS were linked back to the mobicents-public forum, so readers did not encounter an information dead-end.</para>
-  <para>The documentation suite evolved to a point where the Mobicents Community Project team expressed interest in self-managing the community documentation, and hosting it on the  GCode SVN repository.  This decision simplified the way the team controlled the versioning of user guide content, and allowed the documentation to be branched when the development cycle dictated.  It also assisted the Red Hat Technical Writers in developing the product documentation for the JBoss Communication Platform.</para>
-  <formalpara>
-    <title>Current UDS Status</title>
-    <para>Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to internal Red Hat customers.  The  Mobicents UDS forms the backbone of the JBCP Product Documentation.  The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.</para>
-  </formalpara>
+    <para>The separate information sources were merged into a single Wiki source, hosted on the mobicents-public Google group.   Once the information was merged into mobicents-public, the developers had a single place to communicate with the end users of the platform.  </para>
+    <para>As the Mobicents product matured, the requirement for formalized single-source documentation became apparent.  When Red Hat acquired the project, the process of merging the content into a single XML repository began.  </para>
+    <para>During the conversion process from Wiki to XML, the UDS was managed exclusively by Red Hat Technical Writers.  Red Hat writers took the developer content and converted it into XML user documentation, adding  to the existing content where the need existed.  Those areas under development in the UDS were linked back to the mobicents-public forum, so readers did not encounter an information dead-end.</para>
+    <para>The documentation suite evolved to a point where the Mobicents Community Project team expressed interest in self-managing the community documentation, and hosting it on the  GCode SVN repository.  This decision simplified the way the team controlled the versioning of user guide content, and allowed the documentation to be branched when the development cycle dictated.  It also assisted the Red Hat Technical Writers in developing the product documentation for the JBoss Communication Platform.</para>
+    <formalpara>
+      <title>Current UDS Status</title>
+      <para>Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to internal Red Hat customers.  The  Mobicents UDS forms the backbone of the JBCP Product Documentation.  The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.</para>
+    </formalpara>
+  </section>
+  <section>
+    <title>The Mobicents Team</title>
+    <para>The Mobicents team is comprised of a   geographically dispersed group of contributors.  </para>
+    <para>In some cases, team members are responsible for a number of projects within the Mobicents ecosystem.  </para>
+    <table frame="all" id="A0A795D5" pgwide="1">
+      <title>Mobicents Team Members Role</title>
+      <tgroup colsep="1" cols="4">
+        <colspec colname="c1"/>
+        <colspec colname="c2"/>
+        <colspec colname="c3"/>
+        <colspec colname="c4"/>
+        <thead>
+          <row>
+            <entry>Name</entry>
+            <entry>Location</entry>
+            <entry>Team</entry>
+            <entry>Email</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>Ivelin Ivanov</entry>
+            <entry>Austin, Texas</entry>
+            <entry>Project Manager and Founder</entry>
+            <entry>
+              <email>iivanov@redhat.com</email>
+              <email>ivelin.atanasoff.ivanov@gmail.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Vladimir Ralev</entry>
+            <entry>Secret!</entry>
+            <entry>SIP Servlets Server Developer</entry>
+            <entry>
+              <email>vralev@redhat.com</email>
+              <email>vladimir.ralev@gmail.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Eduardo Martins</entry>
+            <entry>Sesimbra, Portugal</entry>
+            <entry>JAIN SLEE Server &amp; SIP Presence Service Lead</entry>
+            <entry>
+              <email>emartins@redhat.com</email>
+              <email>emmartins@gmail.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Jean Deurelle</entry>
+            <entry>France</entry>
+            <entry>SIP Servlets Server Lead</entry>
+            <entry>
+              <email>jderuell@redhat.com</email>
+              <email>jean.deruelle@gmail.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Oleg Kulikov</entry>
+            <entry>Volgograd, Russian Federation</entry>
+            <entry/>
+            <entry>
+              <email>okulikov@redhat.com</email>
+              <email>oleg.kulikoff@gmail.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Amit Bhayani</entry>
+            <entry>Pune, India</entry>
+            <entry>Media Server Lead</entry>
+            <entry>
+              <email>abhayani@redhat.com</email>
+              <email>amit.bhayani@gmail.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Luis Barreiro</entry>
+            <entry>Portugal</entry>
+            <entry>QE Lead and Hudson Build Server Maintainer</entry>
+            <entry>
+              <email>lbarreiro@redhat.com</email>
+              <email>lbbbarreiro@gmail.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Alexandre Mendonça</entry>
+            <entry>Lisbon, Portugal</entry>
+            <entry>Diameter Lead</entry>
+            <entry>
+              <email>amendonc@redhat.com</email>
+              <email>brainslog@gmail.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Bartosz Baranowski</entry>
+            <entry>Warsaw, Poland</entry>
+            <entry>Media Server Developer</entry>
+            <entry>
+              <email>baranowb@gmail.com</email>
+              <email>bbaranow@redhat.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry>Pavel Šlégr</entry>
+            <entry>Brno, Czech Republic</entry>
+            <entry>Productization Lead</entry>
+            <entry>
+              <email>pslegr@redhat.com</email>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
 </chapter>

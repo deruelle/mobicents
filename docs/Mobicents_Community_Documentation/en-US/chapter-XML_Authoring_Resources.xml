@@ -4,7 +4,7 @@
 <chapter id="bs-XML_Authoring_Resources">
   <title>XML Authoring Resources</title>
   <para>The Mobicents User Documentation Suite is authored entirely  in XML.  For someone starting out with XML, there are many things to consider.  What is the best authoring tool to use?  What elements, and structure is definitely valid in Publican? How do I create screenshots that scale correctly?</para>
-  <para>This chapter discusses a number of helpful tips that will get a new content author up to speed quickly.</para>
+  <para>This chapter discusses a number of helpful tips that will help new content authors produce valid, professional-looking XML documentation.</para>
   <para/>
   <section id="at-Authoring_Tools">
     <title>Authoring Tools</title>
@@ -39,6 +39,10 @@
           <para>Numbered List - &lt;orderedlist&gt;</para>
         </listitem>
       </itemizedlist>
+      <important>
+        <title>&lt;orderedlist&gt; is no substitute for &lt;procedure&gt;</title>
+        <para>If you are documenting a complex set of steps, you must use a &lt;procedure&gt; to contain the steps.   Procedures can contain multiple steps, and offer greater content flexibility.  For more information about &lt;procedure&gt;, refer to <xref linkend="ps-Procedural_Steps"/></para>
+      </important>
       <formalpara>
         <title>&lt;itemizedlist&gt;</title>
         <para>An itemized list is used to replace a semi-colon separated list in a sentence.</para>
@@ -58,6 +62,10 @@
   &lt;/listitem&gt;
 &lt;/itemizedlist&gt;</programlisting>
       </example>
+      <important>
+        <title>Lead-in Sentence is Mandatory</title>
+        <para>A list must have an introductory sentence;  it must not be a sentence fragment.  Sentence fragments are very hard to translate.  </para>
+      </important>
       <para>The XML Structure looks like this when published:</para>
       <itemizedlist>
         <listitem>
@@ -102,7 +110,12 @@
   &lt;/listitem&gt;
 &lt;/orderedlist&gt;</programlisting>
       </example>
-      <para>You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element.   A title might assist the reader with understanding what a large list contains.  The XML structure looks like this when published:</para>
+      <para>You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element.   A title might assist the reader with understanding what a large list contains.  </para>
+      <important>
+        <title>Lead-in Sentence is Mandatory</title>
+        <para>A list must have an introductory sentence;  it must not be a sentence fragment.  Sentence fragments are very hard to translate.  </para>
+      </important>
+      <para>The XML structure looks like this when published:</para>
       <orderedlist>
         <title>&lt;orderedlist&gt; Title</title>
         <listitem>
@@ -115,13 +128,9 @@
           <para>Item Three.</para>
         </listitem>
       </orderedlist>
-      <important>
-        <title>&lt;orderedlist&gt; is no substitute for &lt;procedure&gt;</title>
-        <para>If you are documenting a complex set of steps, it is better to use a &lt;procedure&gt; to contain the steps.   Procedures can contain multiple steps, and offer greater content flexibility.  For more information about &lt;procedure&gt;, refer to </para>
-      </important>
     </section>
     <section>
-      <title>Procedural Steps</title>
+      <title id="ps-Procedural_Steps">Procedural Steps</title>
       <para>When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitations regarding what level of detail each &lt;listitem&gt; tag can contain.</para>
       <para>The best option for large workflows, or detailed steps, is the &lt;procedure&gt; element.</para>
       <para>You may not be aware, but this element is used extensively throughout this user guide to capture the steps involved in the Authoring Process.</para>
@@ -188,8 +197,8 @@
         <step>
           <title>Step 2 Title</title>
           <para>If you find you need substeps, use an &lt;orderedlist&gt; to capture these:</para>
+          <para>The ordered list should have a lead-in sentence introducing the list:</para>
           <orderedlist>
-            <title>&lt;orderedlist&gt; instead of &lt;substeps&gt;</title>
             <listitem>
               <para>Substep one.</para>
             </listitem>
@@ -240,7 +249,7 @@
       </itemizedlist>
     </section>
     <section>
-      <title>Important, Caution, and Note</title>
+      <title>Warning, Important, and Note</title>
       <para>To alert readers to information that might otherwise be overlooked, DocBook supports a number of elements you can use to highlight concepts for readers.   The supported options are limited to:</para>
       <itemizedlist>
         <listitem>
@@ -296,6 +305,140 @@
         <title>Install MSS for JBoss 0.7 or Later</title>
         <para>Only MSS for JBoss v0.7 bundles the Diameter JBoss Service (the Diameter SAR, or Servlet Archive), which is required to run the Diameter Event-Charging Service.  </para>
       </important>
+    </section>
+    <section>
+      <title>Symbols in XML (Special Characters)</title>
+      <para>When writing XML documentation, certain symbols can prevent XML validating correctly.  When parsing an XML document, the validator interprets symbols as XML processing instructions.  As a rule, a good WYSIWYG XML Editor (for example, Syntext Serna) will correctly substitute special characters with their literal value entities automatically.  </para>
+      <para>If you are editing XML using a basic text editing program, this automation may not exist.  You must manually insert symbol entities when you need to insert a keyboard symbol (commonly) or non-keyboard symbols (copyright, etc).</para>
+      <para>The most common symbol entities that will break XML publishing are listed for reference. The entities have a deliberate space after the &amp;, so that they are not resolved when this guide is published.  Remove the space between the &amp; and symbol entity declaration when  using them.</para>
+      <para><variablelist>
+          <varlistentry>
+            <term>&amp; lt;</term>
+            <listitem>
+              <para>Inserts a left angle bracket &quot;&lt;&quot; symbol.  The left angle bracket is used to begin all XML elements, therefore the parser will assume that the text directly proceeding the symbol is a DocBook XML element.  This will cause the publish to fail.  Use this symbol entity when writing menu paths, referring to XML elements within &lt;para&gt; or other CDATA tags, or within XML code samples.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>&amp; gt;</term>
+            <listitem>
+              <para>Inserts a right angle bracket &quot;&gt;&quot; symbol.   Use this symbol to close off XML tags when describing XML tags in CDATA elements such as &lt;para&gt; tags.</para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>&amp; amp;</term>
+            <listitem>
+              <para>Inserts an ampersand &quot;&amp;&quot; symbol.  Ampersand is used to start an entity reference, so this will break the XML publish if you directly insert it into your document.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
+    </section>
+    <section>
+      <title>Program Menus, Buttons, and Labels</title>
+      <para>In DocBook, there are a number of tags that can be used to mark-up items that the user has access to in a program Graphical User Interface (GUI).  A user appreciates consistency in the way user commands are represented because it allows them to quickly identify the sequence of menu transitions required to execute a product feature.</para>
+      <para>The following examples describe situations that you will encounter when writing procedures, and show you a consistent way to mark-up the information.</para>
+      <para><example>
+          <title>GUI Menu Transitions</title>
+          <formalpara>
+            <title>I need to:</title>
+            <para>Highlight a GUI menu path that a user must follow to access a feature.</para>
+          </formalpara>
+          <formalpara>
+            <title>Suitable XML elements include:</title>
+            <para>&lt;guimenu&gt;</para>
+          </formalpara>
+          <formalpara>
+            <title>I use these elements following these guidelines:</title>
+            <para>There is no need to use &lt;guimenuitem&gt; or &lt;guisubmenu&gt;; the elements are formatted no different to &lt;guimenuitem&gt;.  </para>
+          </formalpara>
+          <para>A GUI menu path must be separated by the greater than angle bracket for each menu item a user selects.  </para>
+          <para>Do not include the ellipsis from sub-menus (three periods  &quot;...&quot; indicating the user must select further options when the screen is displayed). </para>
+          <formalpara>
+            <title>An example in XML code:</title>
+            <para><programlisting>&lt;guimenu&gt;Document &amp;gt; WebDAV &amp;gt; WebDAV Properties&lt;/guimenu&gt;</programlisting></para>
+          </formalpara>
+          <formalpara>
+            <title>How it looks when published:</title>
+            <para><guimenu> Document &gt; WebDAV &gt; WebDAV Properties</guimenu> </para>
+          </formalpara>
+        </example><example>
+          <title>GUI Buttons</title>
+          <formalpara>
+            <title>I need to:</title>
+            <para>Highlight a GUI button a user must click within a GUI.</para>
+          </formalpara>
+          <formalpara>
+            <title>Suitable XML elements include:</title>
+            <para>&lt;guibutton&gt;</para>
+          </formalpara>
+          <formalpara>
+            <title>I use these elements following these guidelines:</title>
+            <para>Ordinarily you would not need to include the text ‘button’ in a procedure or description. For example, ‘Click <guibutton>OK</guibutton> to continue’, is perfectly acceptable. It may be necessary to distinguish between buttons and links, for example, ‘Click the <guibutton>Unload</guibutton> button’.  </para>
+          </formalpara>
+          <formalpara>
+            <title>An example in XML code:</title>
+            <para><programlisting>&lt;para&gt;To save and close the document, click &lt;guibutton&gt;Save&lt;/guibutton&gt;, then click &lt;guibutton&gt;Close&lt;/guibutton&gt;.</programlisting></para>
+          </formalpara>
+          <formalpara>
+            <title>How it looks when published:</title>
+            <para> To save and close the document, click <guibutton>Save</guibutton>, then click <guibutton>Close</guibutton>. </para>
+          </formalpara>
+        </example></para>
+    </section>
+    <section>
+      <title>Code Examples</title>
+      <para>The Mobicents and JBCP documentation has a strong focus on code examples. The correct XML element to use for XML and Java code examples is the &lt;programlisting&gt; tag.</para>
+      <para>&lt;programlisting&gt; has been used extensively throughout this user guide to highlight the XML structure you need to use in specific situations.  There are two ways you will need to use this element within Mobicents and JBCP user documentation.</para>
+      <para>An advantage of using &lt;programlisting&gt; is that you can specify the way Maven and Publican displays the information to the user.  This is achieved using the <literal>role</literal> attribute.  When <literal>role</literal> is defined, Maven will format the code example with highlighting that will assist the reader in understanding the code structure.</para>
+      <formalpara>
+        <title>XML Samples</title>
+        <para>For XML samples, you must specify XML (in uppercase) as the role value.</para>
+      </formalpara>
+      <para>The code for an XML program listing will look similar to the following example.</para>
+      <programlisting role="XML">&lt;programlisting role=&quot;XML&quot;&gt;
+  &lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+  &lt;/important&gt;
+&lt;/programlisting&gt;</programlisting>
+      <para>When output, the XML tags are highlighted to assist the reader.</para>
+      <programlisting role="XML">&lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+&lt;/important&gt;</programlisting>
+      <para>If XML is not specified, the output looks far less attractive.</para>
+      <programlisting>&lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+&lt;/important&gt;</programlisting>
+      <formalpara>
+        <title>Java Samples</title>
+        <para>For Java code samples, the same rules apply.  Instead of &quot;XML&quot;, &quot;JAVA&quot; is specified as the <literal>role</literal> attribute value.</para>
+      </formalpara>
+      <programlisting role="JAVA">
+package org.jboss.book.jca.ex1;
+
+import javax.naming.InitialContext;
+
+public class ExClient
+{
+   public static void main(String args[]) 
+       throws Exception
+   {
+      InitialContext iniCtx = new InitialContext();
+      Object         ref    = iniCtx.lookup(&quot;EchoBean&quot;);
+      EchoHome       home   = (EchoHome) ref;
+      Echo           echo   = home.create();
+
+      System.out.println(&quot;Created Echo&quot;);
+
+      System.out.println(&quot;Echo.echo(&apos;Hello&apos;) = &quot; + echo.echo(&quot;Hello&quot;));
+   }
+   
+}
+</programlisting>
     </section>
   </section>
   <section>

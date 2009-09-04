@@ -165,7 +165,7 @@ books_tests  Desktop1  downloads      images  notes  scripts  svgs
 			Source-code listings are also set in <computeroutput>Mono-spaced Roman</computeroutput> but are presented and highlighted as follows:
 		</para>
 		
-<programlisting language="java">
+<programlisting role="JAVA">
 package org.jboss.book.jca.ex1;
 
 import javax.naming.InitialContext;
@@ -236,30 +236,216 @@ public class ExClient
 	<para>
 		The UDS is written in eXtensible Markup Language (XML) and uses the DocBook DTD to control guide structure. The documentation is published to HTML-Single format using the Publican Tool chain and Maven JDocBook, and hosted on the Hudson Build Server for public viewing and comment.
 	</para>
-	<formalpara>
+	<section>
 		<title>UDS History</title>
 		<para>
 			Originally, the UDS was delivered to the user through multiple sources such as Wiki pages and static documents. The information was hosted in different locations.
 		</para>
-	</formalpara>
-	<para>
-		The separate information sources were merged into a single Wiki source, hosted on the mobicents-public Google group. Once the information was merged into mobicents-public, the developers had a single place to communicate with the end users of the platform.
-	</para>
-	<para>
-		As the Mobicents product matured, the requirement for formalized single-source documentation became apparent. When Red Hat acquired the project, the process of merging the content into a single XML repository began.
-	</para>
-	<para>
-		During the conversion process from Wiki to XML, the UDS was managed exclusively by Red Hat Technical Writers. Red Hat writers took the developer content and converted it into XML user documentation, adding to the existing content where the need existed. Those areas under development in the UDS were linked back to the mobicents-public forum, so readers did not encounter an information dead-end.
-	</para>
-	<para>
-		The documentation suite evolved to a point where the Mobicents Community Project team expressed interest in self-managing the community documentation, and hosting it on the GCode SVN repository. This decision simplified the way the team controlled the versioning of user guide content, and allowed the documentation to be branched when the development cycle dictated. It also assisted the Red Hat Technical Writers in developing the product documentation for the JBoss Communication Platform.
-	</para>
-	<formalpara>
-		<title>Current UDS Status</title>
 		<para>
-			Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to internal Red Hat customers. The Mobicents UDS forms the backbone of the JBCP Product Documentation. The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.
+			The separate information sources were merged into a single Wiki source, hosted on the mobicents-public Google group. Once the information was merged into mobicents-public, the developers had a single place to communicate with the end users of the platform.
 		</para>
-	</formalpara>
+		<para>
+			As the Mobicents product matured, the requirement for formalized single-source documentation became apparent. When Red Hat acquired the project, the process of merging the content into a single XML repository began.
+		</para>
+		<para>
+			During the conversion process from Wiki to XML, the UDS was managed exclusively by Red Hat Technical Writers. Red Hat writers took the developer content and converted it into XML user documentation, adding to the existing content where the need existed. Those areas under development in the UDS were linked back to the mobicents-public forum, so readers did not encounter an information dead-end.
+		</para>
+		<para>
+			The documentation suite evolved to a point where the Mobicents Community Project team expressed interest in self-managing the community documentation, and hosting it on the GCode SVN repository. This decision simplified the way the team controlled the versioning of user guide content, and allowed the documentation to be branched when the development cycle dictated. It also assisted the Red Hat Technical Writers in developing the product documentation for the JBoss Communication Platform.
+		</para>
+		<formalpara>
+			<title>Current UDS Status</title>
+			<para>
+				Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to internal Red Hat customers. The Mobicents UDS forms the backbone of the JBCP Product Documentation. The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.
+			</para>
+		</formalpara>
+	</section>
+	
+	<section>
+		<title>The Mobicents Team</title>
+		<para>
+			The Mobicents team is comprised of a geographically dispersed group of contributors.
+		</para>
+		<para>
+			In some cases, team members are responsible for a number of projects within the Mobicents ecosystem.
+		</para>
+		<table frame="all" id="A0A795D5" pgwide="1">
+			<title>Mobicents Team Members Role</title>
+			<tgroup cols="4" colsep="1">
+				<colspec colname="c1"/>
+				<colspec colname="c2"/>
+				<colspec colname="c3"/>
+				<colspec colname="c4"/>
+				<thead>
+					<row>
+						<entry>
+							Name
+						</entry>
+						<entry>
+							Location
+						</entry>
+						<entry>
+							Team
+						</entry>
+						<entry>
+							Email
+						</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+							Ivelin Ivanov
+						</entry>
+						<entry>
+							Austin, Texas
+						</entry>
+						<entry>
+							Project Manager and Founder
+						</entry>
+						<entry>
+							<email>iivanov@redhat.com</email>
+							<email>ivelin.atanasoff.ivanov@gmail.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Vladimir Ralev
+						</entry>
+						<entry>
+							Secret!
+						</entry>
+						<entry>
+							SIP Servlets Server Developer
+						</entry>
+						<entry>
+							<email>vralev@redhat.com</email>
+							<email>vladimir.ralev@gmail.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Eduardo Martins
+						</entry>
+						<entry>
+							Sesimbra, Portugal
+						</entry>
+						<entry>
+							JAIN SLEE Server &amp; SIP Presence Service Lead
+						</entry>
+						<entry>
+							<email>emartins@redhat.com</email>
+							<email>emmartins@gmail.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Jean Deurelle
+						</entry>
+						<entry>
+							France
+						</entry>
+						<entry>
+							SIP Servlets Server Lead
+						</entry>
+						<entry>
+							<email>jderuell@redhat.com</email>
+							<email>jean.deruelle@gmail.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Oleg Kulikov
+						</entry>
+						<entry>
+							Volgograd, Russian Federation
+						</entry>
+						<entry>
+						</entry>
+						<entry>
+							<email>okulikov@redhat.com</email>
+							<email>oleg.kulikoff@gmail.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Amit Bhayani
+						</entry>
+						<entry>
+							Pune, India
+						</entry>
+						<entry>
+							Media Server Lead
+						</entry>
+						<entry>
+							<email>abhayani@redhat.com</email>
+							<email>amit.bhayani@gmail.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Luis Barreiro
+						</entry>
+						<entry>
+							Portugal
+						</entry>
+						<entry>
+							QE Lead and Hudson Build Server Maintainer
+						</entry>
+						<entry>
+							<email>lbarreiro@redhat.com</email>
+							<email>lbbbarreiro@gmail.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Alexandre Mendonça
+						</entry>
+						<entry>
+							Lisbon, Portugal
+						</entry>
+						<entry>
+							Diameter Lead
+						</entry>
+						<entry>
+							<email>amendonc@redhat.com</email>
+							<email>brainslog@gmail.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Bartosz Baranowski
+						</entry>
+						<entry>
+							Warsaw, Poland
+						</entry>
+						<entry>
+							Media Server Developer
+						</entry>
+						<entry>
+							<email>baranowb@gmail.com</email>
+							<email>bbaranow@redhat.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Pavel Šlégr
+						</entry>
+						<entry>
+							Brno, Czech Republic
+						</entry>
+						<entry>
+							Productization Lead
+						</entry>
+						<entry>
+							<email>pslegr@redhat.com</email>
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
 </chapter>
 	<chapter id="rs-Repository_Structure" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Documentation Repository</title>
@@ -509,24 +695,117 @@ public class ExClient
 &lt;/xi:include&gt;
 </programlisting>
 </chapter>
-	<chapter id="Language_Tips" lang="en-US">
-	<!--  This document was created with Syntext Serna Free.  --><title>Language Tips</title>
+	<chapter id="chapter-Language_Guidelines" lang="en-US">
+	<!--  This document was created with Syntext Serna Free.  --><title>Language Guidelines</title>
 	<para>
-		To maintain language consistency within the source documentation, it is important for each content author to write in a similar tone. Maintaining consistent tone throughout the user guides will give the reader the illusion that both the Mobicents and JBCP User Documentation Suite (UDS) is maintained by one person.
+		To maintain language consistency within the source documentation, it is important for each content author to write in a similar tone. Maintaining consistent tone throughout the user guides will make the Mobicents and JBCP User Documentation Suite (UDS) appear to be a unified suite of documents, rather than a separated group of user guides.
 	</para>
 	<para>
 		The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will really appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).
 	</para>
 	<para>
-		There are a few ways the team can achieve a consistent writing style. Some of the examples mentioned in the following sections are actual examples found in the user guides. Hopefully, instances of these language errors will begin to decrease as community content authors become more accustomed to writing to language standards.
+		There are a few ways the team can achieve a consistent writing style. Some of the examples mentioned in the following sections were actual examples found in the user guides.
 	</para>
+	<section>
+		<title>Active Voice</title>
+		<para>
+			Use the active voice ("Start Linuxconf by typing...") rather than passive ("Linuxconf can be started by typing...") whenever possible. Active voice makes for more lively, interesting reading.
+		</para>
+		<para>
+			Avoid future tense (or using the term "will") whenever possible For example, future tense ("The screen will display...") does not read as well as an active voice ("The screen displays").
+		</para>
+		<para>
+			Remember, the users you are writing for most often refer to the documentation while they are using the system, not after or in advance of using the system.
+		</para>
+	</section>
+	
+	<section>
+		<title>Gender References</title>
+		<para>
+			Do not use gender-specific pronouns in documentation. It is far less awkward to read a sentence that uses "they" and "their" rather than "he/she" and "his/hers".
+		</para>
+		<para>
+			It is fine to use "you" when giving instructions and "the user," "new users," etc. in more general explanations. Never use "one" in place of "you" when writing technical documentation. Using "one" is far too formal.
+		</para>
+	</section>
+	
+	<section>
+		<title>Sentence Structure</title>
+		<para>
+			A sentence is one, complete thought. A sentence expresses something about a subject (a person, place, or thing) and a verb (what the subject is or does). There are two common problems that occur in sentence construction: Sentence fragments and run-on sentences.
+		</para>
+		<formalpara>
+			<title>Sentence Fragments</title>
+			<para>
+				A sentence fragment is a sentence which cannot stand by itself; that is, it's out of context with the surrounding sentences.
+			</para>
+		</formalpara>
+		<example>
+			<title>Full, and Fragment Sentences</title>
+			<formalpara>
+				<title>Full Sentence</title>
+				<para>
+					"We will release no upgrade before its time."
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>Fragment Sentence</title>
+				<para>
+					"We will release no upgrade. At least, before its time."
+				</para>
+			</formalpara>
+			<para>
+				Notice that the second sentence can not stand on its own if it is isolated from the first sentence.
+			</para>
+		</example>
+		<para>
+			Read each sentence you write aloud, as if each sentence were the "only" sentence on a piece of paper. If you hear a sentence that would not make sense all by itself, chances are you have got a sentence fragment. Change the fragment sentence to make it a complete thought.
+		</para>
+		<formalpara>
+			<title>Run-on Sentence</title>
+			<para>
+				Two or more complete ideas that are joined without punctuation create a run-on sentence (also called a fused sentence). The sentence does not have to be long to be a run-on (although the longer your sentence, the more difficult it is to read).
+			</para>
+		</formalpara>
+		<example>
+			<title>Run-on Sentences</title>
+			<formalpara>
+				<title>Simple Run-on</title>
+				<para>
+					The CDs both of which belonged to the developers were in the test lab.
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>Correct</title>
+				<para>
+					The CDs, both of which belonged to the developers, were in the test lab.
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>Complex Run-on</title>
+				<para>
+					The CDs, both of which belonged to the developers, were in the test lab, and because they were the only available CDs for the new release, the developers were anxious about keeping them clean.
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>Correct</title>
+				<para>
+					The CDs, both of which belonged to the developers, were in the test lab. Because they were the only available CDs for the new release, the developers were anxious about keeping them clean
+				</para>
+			</formalpara>
+			<para>
+				In the complex run-on, the previous run-on sentence was technically correct because of the punctuation; however, it could have been broken to help readability.
+			</para>
+		</example>
+	</section>
+	
 	<section>
 		<title>Conversational Language</title>
 		<para>
 			It is often tempting to write like you are talking to someone face to face. It is an easy way of writing, and allows you to write using a stream of conciousness method.
 		</para>
 		<para>
-			The problem with this type of writing style, is that it is very hard for the reader to quickly grasp a concept. They must read through the content and try to extract the information that is relevant to them from the concept you are writing about. The writing style often leads to verbosity (or wordiness) and this can quickly frustrate readers.
+			The problem with this type of writing style, is that it is very hard for the reader to quickly grasp a concept. They must read through the content and try to extract the information that is relevant to them from the information you have provided them. The writing style often leads to verbosity (or wordiness) and this can quickly frustrate readers.
 		</para>
 		<para>
 			The following examples will show you how pruning your writing can cut down the word count, and allow readers to easily understand the information they are reading.
@@ -551,34 +830,34 @@ public class ExClient
 			<formalpara>
 				<title>Result</title>
 				<para>
-					After the edit, notice how concise the 2nd paragraph is. Also notice how the colloquialism in the reference has been removed. Depending on the readers' language skills, the usage of "dig further" might not be understood. When this is translated to other languages, the meaning of this sentence might also be lost in translation.
+					After the edit, notice how concise the paragraph is. Also notice how the colloquialism in the reference has been removed. Depending on the readers' language skills, the usage of "dig further" might not be understood. When this is translated to other languages, the meaning of this sentence might also be lost in translation.
 				</para>
 			</formalpara>
 		</example>
 		<example>
 			<title>Writing Like You Are Speaking</title>
 			<para>
-				This example demonstrates how writing like you are speaking results in unordered concepts, and reduces the effectiveness of the information you are writing about.
+				This example demonstrates how writing like you are speaking can result in unordered concepts, and reduces the effectiveness of the information you are writing about.
 			</para>
+			<formalpara>
+				<title>Original Wording</title>
+				<para>
+					An important note here with regard to that second scenario that according to the SIP Servlets 1.1 specification, Sections 15.1.2 The Role of Applications and 15.1.4 Application Independence, the Call Blocking application cannot just do nothing with the request and expect the container to route the request in its place (either to a next application in chain if another one is present or to the outside world if none is present). The Application has to do something with request (either proxy it or act as a UAS)
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>Suggested Wording</title>
+				<para>
+					For the second scenario, the Call Blocking application must be responsible for routing the request to the next chained application (internally) or to the outside world (externally). The application must either proxy, or act as a User Agent Server (UAS), for the request. This requirement is stated in greater detail within the SIP Servlets 1.1 specification's "The Role of Applications" and "Application Independence" sections.
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>Result</title>
+				<para>
+					In the original wording, the main point (that the application must handle the routing, and how it must do this) was right at the end of the paragraph. In the suggested wording, the application requirement has been moved up to the front of the paragraph. This allows the reader to quickly decide whether the information relates to them. The references, which were interrupting the sentence flow, are now at the end of the paragraph.
+				</para>
+			</formalpara>
 		</example>
-		<formalpara>
-			<title>Original Wording</title>
-			<para>
-				An important note here with regard to that second scenario that according to the SIP Servlets 1.1 specification, Sections 15.1.2 The Role of Applications and 15.1.4 Application Independence, the Call Blocking application cannot just do nothing with the request and expect the container to route the request in its place (either to a next application in chain if another one is present or to the outside world if none is present). The Application has to do something with request (either proxy it or act as a UAS)
-			</para>
-		</formalpara>
-		<formalpara>
-			<title>Suggested Wording</title>
-			<para>
-				For the second scenario, the Call Blocking application must be responsible for routing the request to the next chained application (internally) or to the outside world (externally). The application must either proxy, or act as a User Agent Server (UAS), for the request. This requirement is stated in greater detail within the SIP Servlets 1.1 specification's "The Role of Applications" and "Application Independence" sections.
-			</para>
-		</formalpara>
-		<formalpara>
-			<title>Result</title>
-			<para>
-				In the original wording, the main point (that the application must handle the routing, and how it must do this) was right at the end of the paragraph. In the suggested wording, the application requirement has been moved up to the front of the paragraph. This allows the reader to quickly decide whether the information relates to them. The references, which were interrupting the sentence flow, are now at the end of the paragraph.
-			</para>
-		</formalpara>
 	</section>
 
 </chapter>
@@ -1924,7 +2203,7 @@ public class ExClient
 		The Mobicents User Documentation Suite is authored entirely in XML. For someone starting out with XML, there are many things to consider. What is the best authoring tool to use? What elements, and structure is definitely valid in Publican? How do I create screenshots that scale correctly?
 	</para>
 	<para>
-		This chapter discusses a number of helpful tips that will get a new content author up to speed quickly.
+		This chapter discusses a number of helpful tips that will help new content authors produce valid, professional-looking XML documentation.
 	</para>
 	<section id="at-Authoring_Tools">
 		<title>Authoring Tools</title>
@@ -1988,6 +2267,12 @@ public class ExClient
 					</para>
 				</listitem>
 			</itemizedlist>
+			<important>
+				<title>&lt;orderedlist&gt; is no substitute for &lt;procedure&gt;</title>
+				<para>
+					If you are documenting a complex set of steps, you must use a &lt;procedure&gt; to contain the steps. Procedures can contain multiple steps, and offer greater content flexibility. For more information about &lt;procedure&gt;, refer to <xref linkend="ps-Procedural_Steps"/>
+				</para>
+			</important>
 			<formalpara>
 				<title>&lt;itemizedlist&gt;</title>
 				<para>
@@ -2013,6 +2298,12 @@ public class ExClient
 &lt;/itemizedlist&gt;
 </programlisting>
 			</example>
+			<important>
+				<title>Lead-in Sentence is Mandatory</title>
+				<para>
+					A list must have an introductory sentence; it must not be a sentence fragment. Sentence fragments are very hard to translate.
+				</para>
+			</important>
 			<para>
 				The XML Structure looks like this when published:
 			</para>
@@ -2080,7 +2371,16 @@ public class ExClient
 </programlisting>
 			</example>
 			<para>
-				You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element. A title might assist the reader with understanding what a large list contains. The XML structure looks like this when published:
+				You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element. A title might assist the reader with understanding what a large list contains.
+			</para>
+			<important>
+				<title>Lead-in Sentence is Mandatory</title>
+				<para>
+					A list must have an introductory sentence; it must not be a sentence fragment. Sentence fragments are very hard to translate.
+				</para>
+			</important>
+			<para>
+				The XML structure looks like this when published:
 			</para>
 			<orderedlist>
 				<title>&lt;orderedlist&gt; Title</title>
@@ -2100,16 +2400,10 @@ public class ExClient
 					</para>
 				</listitem>
 			</orderedlist>
-			<important>
-				<title>&lt;orderedlist&gt; is no substitute for &lt;procedure&gt;</title>
-				<para>
-					If you are documenting a complex set of steps, it is better to use a &lt;procedure&gt; to contain the steps. Procedures can contain multiple steps, and offer greater content flexibility. For more information about &lt;procedure&gt;, refer to
-				</para>
-			</important>
 		</section>
 		
 		<section>
-			<title>Procedural Steps</title>
+			<title id="ps-Procedural_Steps">Procedural Steps</title>
 			<para>
 				When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitations regarding what level of detail each &lt;listitem&gt; tag can contain.
 			</para>
@@ -2207,8 +2501,10 @@ public class ExClient
 					<para>
 						If you find you need substeps, use an &lt;orderedlist&gt; to capture these:
 					</para>
+					<para>
+						The ordered list should have a lead-in sentence introducing the list:
+					</para>
 					<orderedlist>
-						<title>&lt;orderedlist&gt; instead of &lt;substeps&gt;</title>
 						<listitem>
 							<para>
 								Substep one.
@@ -2284,7 +2580,7 @@ public class ExClient
 		</section>
 		
 		<section>
-			<title>Important, Caution, and Note</title>
+			<title>Warning, Important, and Note</title>
 			<para>
 				To alert readers to information that might otherwise be overlooked, DocBook supports a number of elements you can use to highlight concepts for readers. The supported options are limited to:
 			</para>
@@ -2370,6 +2666,215 @@ public class ExClient
 					Only MSS for JBoss v0.7 bundles the Diameter JBoss Service (the Diameter SAR, or Servlet Archive), which is required to run the Diameter Event-Charging Service.
 				</para>
 			</important>
+		</section>
+		
+		<section>
+			<title>Symbols in XML (Special Characters)</title>
+			<para>
+				When writing XML documentation, certain symbols can prevent XML validating correctly. When parsing an XML document, the validator interprets symbols as XML processing instructions. As a rule, a good WYSIWYG XML Editor (for example, Syntext Serna) will correctly substitute special characters with their literal value entities automatically.
+			</para>
+			<para>
+				If you are editing XML using a basic text editing program, this automation may not exist. You must manually insert symbol entities when you need to insert a keyboard symbol (commonly) or non-keyboard symbols (copyright, etc).
+			</para>
+			<para>
+				The most common symbol entities that will break XML publishing are listed for reference. The entities have a deliberate space after the &amp;, so that they are not resolved when this guide is published. Remove the space between the &amp; and symbol entity declaration when using them.
+			</para>
+			<para>
+				<variablelist>
+					<varlistentry>
+						<term>&amp; lt;</term>
+						<listitem>
+							<para>
+								Inserts a left angle bracket "&lt;" symbol. The left angle bracket is used to begin all XML elements, therefore the parser will assume that the text directly proceeding the symbol is a DocBook XML element. This will cause the publish to fail. Use this symbol entity when writing menu paths, referring to XML elements within &lt;para&gt; or other CDATA tags, or within XML code samples.
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&amp; gt;</term>
+						<listitem>
+							<para>
+								Inserts a right angle bracket "&gt;" symbol. Use this symbol to close off XML tags when describing XML tags in CDATA elements such as &lt;para&gt; tags.
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&amp; amp;</term>
+						<listitem>
+							<para>
+								Inserts an ampersand "&amp;" symbol. Ampersand is used to start an entity reference, so this will break the XML publish if you directly insert it into your document.
+							</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</para>
+		</section>
+		
+		<section>
+			<title>Program Menus, Buttons, and Labels</title>
+			<para>
+				In DocBook, there are a number of tags that can be used to mark-up items that the user has access to in a program Graphical User Interface (GUI). A user appreciates consistency in the way user commands are represented because it allows them to quickly identify the sequence of menu transitions required to execute a product feature.
+			</para>
+			<para>
+				The following examples describe situations that you will encounter when writing procedures, and show you a consistent way to mark-up the information.
+			</para>
+			<para>
+				<example>
+					<title>GUI Menu Transitions</title>
+					<formalpara>
+						<title>I need to:</title>
+						<para>
+							Highlight a GUI menu path that a user must follow to access a feature.
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>Suitable XML elements include:</title>
+						<para>
+							&lt;guimenu&gt;
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>I use these elements following these guidelines:</title>
+						<para>
+							There is no need to use &lt;guimenuitem&gt; or &lt;guisubmenu&gt;; the elements are formatted no different to &lt;guimenuitem&gt;.
+						</para>
+					</formalpara>
+					<para>
+						A GUI menu path must be separated by the greater than angle bracket for each menu item a user selects.
+					</para>
+					<para>
+						Do not include the ellipsis from sub-menus (three periods "..." indicating the user must select further options when the screen is displayed).
+					</para>
+					<formalpara>
+						<title>An example in XML code:</title>
+						<para>
+							
+<programlisting>&lt;guimenu&gt;Document &gt; WebDAV &gt; WebDAV Properties&lt;/guimenu&gt;
+</programlisting>
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>How it looks when published:</title>
+						<para>
+							<guimenu> Document &gt; WebDAV &gt; WebDAV Properties</guimenu>
+						</para>
+					</formalpara>
+				</example>
+				<example>
+					<title>GUI Buttons</title>
+					<formalpara>
+						<title>I need to:</title>
+						<para>
+							Highlight a GUI button a user must click within a GUI.
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>Suitable XML elements include:</title>
+						<para>
+							&lt;guibutton&gt;
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>I use these elements following these guidelines:</title>
+						<para>
+							Ordinarily you would not need to include the text ‘button’ in a procedure or description. For example, ‘Click <guibutton>OK</guibutton> to continue’, is perfectly acceptable. It may be necessary to distinguish between buttons and links, for example, ‘Click the <guibutton>Unload</guibutton> button’.
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>An example in XML code:</title>
+						<para>
+							
+<programlisting>&lt;para&gt;To save and close the document, click &lt;guibutton&gt;Save&lt;/guibutton&gt;, then click &lt;guibutton&gt;Close&lt;/guibutton&gt;.
+</programlisting>
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>How it looks when published:</title>
+						<para>
+							To save and close the document, click <guibutton>Save</guibutton>, then click <guibutton>Close</guibutton>.
+						</para>
+					</formalpara>
+				</example>
+			</para>
+		</section>
+		
+		<section>
+			<title>Code Examples</title>
+			<para>
+				The Mobicents and JBCP documentation has a strong focus on code examples. The correct XML element to use for XML and Java code examples is the &lt;programlisting&gt; tag.
+			</para>
+			<para>
+				&lt;programlisting&gt; has been used extensively throughout this user guide to highlight the XML structure you need to use in specific situations. There are two ways you will need to use this element within Mobicents and JBCP user documentation.
+			</para>
+			<para>
+				An advantage of using &lt;programlisting&gt; is that you can specify the way Maven and Publican displays the information to the user. This is achieved using the <literal>role</literal> attribute. When <literal>role</literal> is defined, Maven will format the code example with highlighting that will assist the reader in understanding the code structure.
+			</para>
+			<formalpara>
+				<title>XML Samples</title>
+				<para>
+					For XML samples, you must specify XML (in uppercase) as the role value.
+				</para>
+			</formalpara>
+			<para>
+				The code for an XML program listing will look similar to the following example.
+			</para>
+			
+<programlisting role="XML">&lt;programlisting role="XML"&gt;
+  &lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+  &lt;/important&gt;
+&lt;/programlisting&gt;
+</programlisting>
+			<para>
+				When output, the XML tags are highlighted to assist the reader.
+			</para>
+			
+<programlisting role="XML">&lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+&lt;/important&gt;
+</programlisting>
+			<para>
+				If XML is not specified, the output looks far less attractive.
+			</para>
+			
+<programlisting>&lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+&lt;/important&gt;
+</programlisting>
+			<formalpara>
+				<title>Java Samples</title>
+				<para>
+					For Java code samples, the same rules apply. Instead of "XML", "JAVA" is specified as the <literal>role</literal> attribute value.
+				</para>
+			</formalpara>
+			
+<programlisting role="JAVA">
+package org.jboss.book.jca.ex1;
+
+import javax.naming.InitialContext;
+
+public class ExClient
+{
+   public static void main(String args[]) 
+       throws Exception
+   {
+      InitialContext iniCtx = new InitialContext();
+      Object         ref    = iniCtx.lookup("EchoBean");
+      EchoHome       home   = (EchoHome) ref;
+      Echo           echo   = home.create();
+
+      System.out.println("Created Echo");
+
+      System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
+   }
+   
+}
+</programlisting>
 		</section>
 
 	</section>
