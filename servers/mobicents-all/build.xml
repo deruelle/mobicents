@@ -92,13 +92,13 @@
 		<antcall target="release-sip-presence-common" />
 		<antcall target="release-diameter-common" />
 		<antcall target="release-sip-load-balancer" />
-        <!--antcall target="release-documentation" /-->
+        <antcall target="release-documentation" />
 		
 		<copy file="${release.readme.file.location}" todir="${release.dir}" overwrite="true"/>
 		<antcall target="copy-frontpage"/>
 		<antcall target="build-src-zip" />
 		<antcall target="zip-release"/>
-		<!--antcall target="clean"/-->
+		<antcall target="clean"/>
 	</target>
 	
 	<target name="release-in-node" depends="release-jain-slee-in-node,release-media,release-sip-servlets,release-diameter-in-node" />
