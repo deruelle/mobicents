@@ -26,7 +26,7 @@ public class Utils {
 		
 			
 		
-			out+="b["+Integer.toHexString(b[index])+"]";
+			out+="b["+index+"]["+Integer.toHexString(b[index])+"]\n";
 			
 			
 			//out+="\n";

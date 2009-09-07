@@ -6,8 +6,9 @@
  */
 package org.mobicents.ss7.isup.message;
 
+
 import org.mobicents.ss7.isup.message.parameter.*;
-import org.mobicents.ss7.isup.message.parameter.accessTransport.AccessTransport;
+import org.mobicents.ss7.isup.message.parameter.accessTransport.*;
 
 /**
  * Start time:10:06:29 2009-07-23<br>
