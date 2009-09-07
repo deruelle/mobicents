@@ -40,26 +40,28 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	 * @throws ParameterRangeInvalidException
 	 */
 	ReleaseCompleteMessageImpl(Object source, byte[] b) throws ParameterRangeInvalidException {
-		super(source);
-		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.o_Parameters = new TreeMap<Integer, ISUPParameter>();
+		this(source);
 
-		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		decodeElement(b);
-		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 
-		super.optionalCodes.add(CauseIndicators._PARAMETER_CODE);
-		super.optionalCodeToIndex.put(CauseIndicators._PARAMETER_CODE, _INDEX_O_CauseIndicators);
 	}
 
 	/**
 	 * @throws ParameterRangeInvalidException
 	 * 
 	 */
-	ReleaseCompleteMessageImpl(Object source){
-		// TODO Auto-generated constructor stub
+	ReleaseCompleteMessageImpl(Object source) {
+
 		super(source);
+		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
+		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();
+		super.o_Parameters = new TreeMap<Integer, ISUPParameter>();
+
+		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
+		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
+
+		super.optionalCodes.add(CauseIndicators._PARAMETER_CODE);
+		super.optionalCodeToIndex.put(CauseIndicators._PARAMETER_CODE, _INDEX_O_CauseIndicators);
 	}
 
 	/*

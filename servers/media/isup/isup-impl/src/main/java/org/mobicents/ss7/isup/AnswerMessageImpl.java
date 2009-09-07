@@ -17,13 +17,10 @@ import org.mobicents.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.ss7.isup.message.parameter.BackwardCallIndicatorsImpl;
 import org.mobicents.ss7.isup.message.parameter.BackwardGVNS;
 import org.mobicents.ss7.isup.message.parameter.BackwardGVNSImpl;
-import org.mobicents.ss7.isup.message.parameter.CCNRPossibleIndicator;
-import org.mobicents.ss7.isup.message.parameter.CallDiversionInformation;
 import org.mobicents.ss7.isup.message.parameter.CallHistoryInformation;
 import org.mobicents.ss7.isup.message.parameter.CallHistoryInformationImpl;
 import org.mobicents.ss7.isup.message.parameter.CallReference;
 import org.mobicents.ss7.isup.message.parameter.CallReferenceImpl;
-import org.mobicents.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
 import org.mobicents.ss7.isup.message.parameter.ConferenceTreatmentIndicatorsImpl;
 import org.mobicents.ss7.isup.message.parameter.ConnectedNumber;
@@ -36,7 +33,6 @@ import org.mobicents.ss7.isup.message.parameter.GenericNotificationIndicator;
 import org.mobicents.ss7.isup.message.parameter.GenericNotificationIndicatorImpl;
 import org.mobicents.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.ss7.isup.message.parameter.GenericNumberImpl;
-import org.mobicents.ss7.isup.message.parameter.HTRInformation;
 import org.mobicents.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.ss7.isup.message.parameter.MessageType;
 import org.mobicents.ss7.isup.message.parameter.MessageTypeImpl;
@@ -60,7 +56,6 @@ import org.mobicents.ss7.isup.message.parameter.ServiceActivation;
 import org.mobicents.ss7.isup.message.parameter.ServiceActivationImpl;
 import org.mobicents.ss7.isup.message.parameter.TransmissionMediumUsed;
 import org.mobicents.ss7.isup.message.parameter.TransmissionMediumUsedImpl;
-import org.mobicents.ss7.isup.message.parameter.UIDActionIndicators;
 import org.mobicents.ss7.isup.message.parameter.UserToUserIndicators;
 import org.mobicents.ss7.isup.message.parameter.UserToUserIndicatorsImpl;
 import org.mobicents.ss7.isup.message.parameter.UserToUserInformation;
@@ -107,12 +102,19 @@ public class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage 
 	protected static final int _INDEX_O_RedirectStatus = 24;
 	protected static final int _INDEX_O_EndOfOptionalParameters = 25;
 
+	
+	 AnswerMessageImpl(Object source, byte[] b) throws ParameterRangeInvalidException {
+		this(source);
+		decodeElement(b);
+		
+
+	}
 	/**
 	 * 
 	 * @param source
 	 * @throws ParameterRangeInvalidException
 	 */
-	public AnswerMessageImpl(Object source) {
+	 AnswerMessageImpl(Object source) {
 		super(source);
 		// FIXME: this is bad, we always fill this, we shouyld move that
 		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
@@ -177,12 +179,6 @@ public class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage 
 
 	}
 
-	/**
-	 * 	
-	 */
-	public AnswerMessageImpl() {
-		// TODO Auto-generated constructor stub
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -219,103 +215,103 @@ public class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage 
 	@Override
 	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
 		switch ((int) parameterCode) {
-		case _INDEX_O_BackwardCallIndicators:
+		case BackwardCallIndicators._PARAMETER_CODE:
 			BackwardCallIndicators BCMI = new BackwardCallIndicatorsImpl(parameterBody);
 			super.addParameter(BCMI);
 			break;
-		case _INDEX_O_OptionalBackwardCallIndicators:
+		case OptionalBackwardCallIndicators._PARAMETER_CODE:
 			OptionalBackwardCallIndicators OBCI = new OptionalBackwardCallIndicatorsImpl(parameterBody);
 			super.addParameter(OBCI);
 			break;
-		case _INDEX_O_CallReference:
+		case CallReference._PARAMETER_CODE:
 			CallReference CR = new CallReferenceImpl(parameterBody);
 			super.addParameter(CR);
 			break;
-		case _INDEX_O_UserToUserIndicators:
+		case UserToUserIndicators._PARAMETER_CODE:
 			UserToUserIndicators U2UI = new UserToUserIndicatorsImpl(parameterBody);
 			super.addParameter(U2UI);
 			break;
-		case _INDEX_O_UserToUserInformation:
+		case UserToUserInformation._PARAMETER_CODE:
 			UserToUserInformation U2UII = new UserToUserInformationImpl(parameterBody);
 			super.addParameter(U2UII);
 			break;
-		case _INDEX_O_ConnectedNumber:
+		case ConnectedNumber._PARAMETER_CODE:
 			ConnectedNumber CN = new ConnectedNumberImpl(parameterBody);
 			super.addParameter(CN);
 			break;
-		case _INDEX_O_AccessTransport:
+		case AccessTransport._PARAMETER_CODE:
 			AccessTransport AT = new AccessTransportImpl(parameterBody);
 			super.addParameter(AT);
 			break;
-		case _INDEX_O_AccessDeliveryInformation:
+		case AccessDeliveryInformation._PARAMETER_CODE:
 			AccessDeliveryInformation ADI = new AccessDeliveryInformationImpl(parameterBody);
 			super.addParameter(ADI);
 			break;
-		case _INDEX_O_GenericNotificationIndicator:
+		case GenericNotificationIndicator._PARAMETER_CODE:
 			GenericNotificationIndicator GNI = new GenericNotificationIndicatorImpl(parameterBody);
 			super.addParameter(GNI);
 			break;
-		case _INDEX_O_ParameterCompatibilityInformation:
+		case ParameterCompatibilityInformation._PARAMETER_CODE:
 			ParameterCompatibilityInformation PCI = new ParameterCompatibilityInformationImpl(parameterBody);
 			super.addParameter(PCI);
 			break;
-		case _INDEX_O_BackwardGVNS:
+		case BackwardGVNS._PARAMETER_CODE:
 			BackwardGVNS BGVNS = new BackwardGVNSImpl(parameterBody);
 			super.addParameter(BGVNS);
 			break;
-		case _INDEX_O_CallHistoryInformation:
+		case CallHistoryInformation._PARAMETER_CODE:
 			CallHistoryInformation CHI = new CallHistoryInformationImpl(parameterBody);
 			super.addParameter(CHI);
 			break;
-		case _INDEX_O_GenericNumber:
+		case GenericNumber._PARAMETER_CODE:
 			GenericNumber GN = new GenericNumberImpl(parameterBody);
 			super.addParameter(GN);
 			break;
-		case _INDEX_O_TransmissionMediumUsed:
+		case TransmissionMediumUsed._PARAMETER_CODE:
 			TransmissionMediumUsed TMU = new TransmissionMediumUsedImpl(parameterBody);
 			super.addParameter(TMU);
 			break;
-		case _INDEX_O_NetworkSpecificFacility:
+		case NetworkSpecificFacility._PARAMETER_CODE:
 			NetworkSpecificFacility NSF = new NetworkSpecificFacilityImpl(parameterBody);
 			super.addParameter(NSF);
 			break;
-		case _INDEX_O_RemoteOperations:
+		case RemoteOperations._PARAMETER_CODE:
 			RemoteOperations RO = new RemoteOperationsImpl(parameterBody);
 			super.addParameter(RO);
 			break;
-		case _INDEX_O_RedirectionNumber:
+		case RedirectionNumber._PARAMETER_CODE:
 			RedirectionNumber RN = new RedirectionNumberImpl(parameterBody);
 			super.addParameter(RN);
 			break;
-		case _INDEX_O_ServiceActivation:
+		case ServiceActivation._PARAMETER_CODE:
 			ServiceActivation SA = new ServiceActivationImpl(parameterBody);
 			super.addParameter(SA);
 			break;
-		case _INDEX_O_EchoControlInformation:
+		case EchoControlInformation._PARAMETER_CODE:
 			EchoControlInformation ECI = new EchoControlInformationImpl(parameterBody);
 			super.addParameter(ECI);
 			break;
-		case _INDEX_O_RedirectionNumberRestriction:
+		case RedirectionNumberRestriction._PARAMETER_CODE:
 			RedirectionNumberRestriction RNR = new RedirectionNumberRestrictionImpl(parameterBody);
 			super.addParameter(RNR);
 			break;
-		case _INDEX_O_DisplayInformation:
+		case DisplayInformation._PARAMETER_CODE:
 			DisplayInformation DI = new DisplayInformationImpl(parameterBody);
 			super.addParameter(DI);
 			break;
-		case _INDEX_O_ConferenceTreatmentIndicators:
+		case ConferenceTreatmentIndicators._PARAMETER_CODE:
 			ConferenceTreatmentIndicators CTI = new ConferenceTreatmentIndicatorsImpl(parameterBody);
 			super.addParameter(CTI);
 			break;
-		case _INDEX_O_ApplicationTransportParameter:
+		case ApplicationTransportParameter._PARAMETER_CODE:
 			ApplicationTransportParameter ATP = new ApplicationTransportParameterImpl(parameterBody);
 			super.addParameter(ATP);
 			break;
-		case _INDEX_O_PivotRoutingBackwardInformation:
+		case PivotRoutingBackwardInformation._PARAMETER_CODE:
 			PivotRoutingBackwardInformation PRBI = new PivotRoutingBackwardInformationImpl(parameterBody);
 			super.addParameter(PRBI);
 			break;
-		case _INDEX_O_RedirectStatus:
+		case RedirectStatus._PARAMETER_CODE:
 			RedirectStatus RS = new RedirectStatusImpl(parameterBody);
 			super.addParameter(RS);
 			break;

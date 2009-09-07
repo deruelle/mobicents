@@ -85,50 +85,9 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	 * @throws IllegalArgumentException
 	 */
 	ReleaseMessageImpl(Object source, byte[] b) throws ParameterRangeInvalidException {
-		super(source);
+		this(source);
 
-		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.o_Parameters = new TreeMap<Integer, ISUPParameter>();
-
-		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		decodeElement(b);
-		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
-
-		super.mandatoryVariableCodes.add(CauseIndicators._PARAMETER_CODE);
-		super.mandatoryVariableCodeToIndex.put(CauseIndicators._PARAMETER_CODE, _INDEX_V_CauseIndicators);
-
-		super.optionalCodes.add(RedirectionInformation._PARAMETER_CODE);
-		super.optionalCodes.add(RedirectionNumber._PARAMETER_CODE);
-		super.optionalCodes.add(AccessTransport._PARAMETER_CODE);
-		super.optionalCodes.add(SignalingPointCode._PARAMETER_CODE);
-		super.optionalCodes.add(UserToUserInformation._PARAMETER_CODE);
-		super.optionalCodes.add(AutomaticCongestionLevel._PARAMETER_CODE);
-		super.optionalCodes.add(NetworkSpecificFacility._PARAMETER_CODE);
-		super.optionalCodes.add(AccessDeliveryInformation._PARAMETER_CODE);
-		super.optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
-		super.optionalCodes.add(UserToUserIndicators._PARAMETER_CODE);
-		super.optionalCodes.add(DisplayInformation._PARAMETER_CODE);
-		super.optionalCodes.add(RemoteOperations._PARAMETER_CODE);
-		super.optionalCodes.add(HTRInformation._PARAMETER_CODE);
-		super.optionalCodes.add(RedirectCounter._PARAMETER_CODE);
-		super.optionalCodes.add(RedirectBackwardInformation._PARAMETER_CODE);
-
-		super.optionalCodeToIndex.put(RedirectionInformation._PARAMETER_CODE, _INDEX_O_RedirectionInformation);
-		super.optionalCodeToIndex.put(RedirectionNumber._PARAMETER_CODE, _INDEX_O_RedirectionNumber);
-		super.optionalCodeToIndex.put(AccessTransport._PARAMETER_CODE, _INDEX_O_AccessTransport);
-		super.optionalCodeToIndex.put(SignalingPointCode._PARAMETER_CODE, _INDEX_O_SignalingPointCode);
-		super.optionalCodeToIndex.put(UserToUserInformation._PARAMETER_CODE, _INDEX_O_U2UInformation);
-		super.optionalCodeToIndex.put(AutomaticCongestionLevel._PARAMETER_CODE, _INDEX_O_AutomaticCongestionLevel);
-		super.optionalCodeToIndex.put(NetworkSpecificFacility._PARAMETER_CODE, _INDEX_O_NetworkSpecificFacility);
-		super.optionalCodeToIndex.put(AccessDeliveryInformation._PARAMETER_CODE, _INDEX_O_AccessDeliveryInformation);
-		super.optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, _INDEX_O_ParameterCompatibilityInformation);
-		super.optionalCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE, _INDEX_O_U2UIndicators);
-		super.optionalCodeToIndex.put(DisplayInformation._PARAMETER_CODE, _INDEX_O_DisplayInformation);
-		super.optionalCodeToIndex.put(RemoteOperations._PARAMETER_CODE, _INDEX_O_RemoteOperations);
-		super.optionalCodeToIndex.put(HTRInformation._PARAMETER_CODE, _INDEX_O_HTRInformation);
-		super.optionalCodeToIndex.put(RedirectCounter._PARAMETER_CODE, _INDEX_O_RedirectCounter);
-		super.optionalCodeToIndex.put(RedirectBackwardInformation._PARAMETER_CODE, _INDEX_O_RedirectBackwardInformation);
 
 	}
 
@@ -136,7 +95,7 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	 * @throws ParameterRangeInvalidException
 	 * 
 	 */
-	ReleaseMessageImpl(Object source){
+	ReleaseMessageImpl(Object source) {
 		super(source);
 		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
 		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();

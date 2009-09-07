@@ -61,6 +61,8 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 
 	protected Object source;
 
+	private ISUPTransaction tx;
+
 	public ISUPMessageImpl(Object source)  {
 		super();
 		this.source = source;
@@ -130,10 +132,13 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	// ///////////////
 
 	public ISUPTransaction getTransaction() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.tx;
 	}
-
+	public void setTransaction(ISUPTransaction tx) {
+		this.tx = tx;
+	}
+	//FIXME: this must be done by each msg, to be implemented.
 	public TransactionKey generateTransactionKey() {
 		return null;
 	}

@@ -150,6 +150,42 @@ package org.mobicents.ss7.isup.message;
  * 
  * </TR>
  * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Backward GVNS</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Transmission Medium Used</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Display Information</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Conference Treatment Indicators</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Application Transport Parameter</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Pivot Routing Backward Information
+ * </TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Redirect Status</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">End of Optional Parameters</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>1</TD>
