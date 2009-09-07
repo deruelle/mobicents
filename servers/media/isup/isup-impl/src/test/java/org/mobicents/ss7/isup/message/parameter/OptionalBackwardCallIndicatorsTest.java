@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.mobicents.ss7.isup.ISUPComponent;
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.ss7.isup.message.parameter.NetworkRoutingNumberImpl;
-import org.mobicents.ss7.isup.message.parameter.OptionalBakwardCallIndicatorsImpl;
+import org.mobicents.ss7.isup.message.parameter.OptionalBackwardCallIndicatorsImpl;
 
 /**
  * Start time:16:20:47 2009-04-26<br>
@@ -35,17 +35,17 @@ public class OptionalBackwardCallIndicatorsTest extends ParameterHarness {
 	}
 
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
-		OptionalBakwardCallIndicatorsImpl bci = new OptionalBakwardCallIndicatorsImpl(getBody(OptionalBakwardCallIndicatorsImpl._IBII_AVAILABLE, OptionalBakwardCallIndicatorsImpl._CDI_NO_INDICATION,
-				OptionalBakwardCallIndicatorsImpl._SSIR_NO_ADDITIONAL_INFO, OptionalBakwardCallIndicatorsImpl._MLLPUI_USER));
+		OptionalBackwardCallIndicatorsImpl bci = new OptionalBackwardCallIndicatorsImpl(getBody(OptionalBackwardCallIndicatorsImpl._IBII_AVAILABLE, OptionalBackwardCallIndicatorsImpl._CDI_NO_INDICATION,
+				OptionalBackwardCallIndicatorsImpl._SSIR_NO_ADDITIONAL_INFO, OptionalBackwardCallIndicatorsImpl._MLLPUI_USER));
 
 		String[] methodNames = {    "isInbandInformationIndicator", 
 				                    "isCallDiversionMayOccurIndicator", 
 				                    "isSimpleSegmentationIndicator", 
 				                    "isMllpUserIndicator" };
-		Object[] expectedValues = { OptionalBakwardCallIndicatorsImpl._IBII_AVAILABLE, 
-									OptionalBakwardCallIndicatorsImpl._CDI_NO_INDICATION, 
-									OptionalBakwardCallIndicatorsImpl._SSIR_NO_ADDITIONAL_INFO,
-									OptionalBakwardCallIndicatorsImpl._MLLPUI_USER };
+		Object[] expectedValues = { OptionalBackwardCallIndicatorsImpl._IBII_AVAILABLE, 
+									OptionalBackwardCallIndicatorsImpl._CDI_NO_INDICATION, 
+									OptionalBackwardCallIndicatorsImpl._SSIR_NO_ADDITIONAL_INFO,
+									OptionalBackwardCallIndicatorsImpl._MLLPUI_USER };
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
@@ -66,7 +66,7 @@ public class OptionalBackwardCallIndicatorsTest extends ParameterHarness {
 	 */
 	@Override
 	public ISUPComponent getTestedComponent() throws ParameterRangeInvalidException {
-		return new OptionalBakwardCallIndicatorsImpl(new byte[1]);
+		return new OptionalBackwardCallIndicatorsImpl(new byte[1]);
 	}
 
 }

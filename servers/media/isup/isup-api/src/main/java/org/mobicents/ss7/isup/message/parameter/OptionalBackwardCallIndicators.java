@@ -12,7 +12,7 @@ package org.mobicents.ss7.isup.message.parameter;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface OptionalBakwardCallIndicators extends ISUPParameter {
+public interface OptionalBackwardCallIndicators extends ISUPParameter {
 	public static final int _PARAMETER_CODE = 0x29;
 
 	/**

@@ -18,7 +18,7 @@ import org.mobicents.ss7.isup.ParameterRangeInvalidException;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class OptionalBakwardCallIndicatorsImpl extends AbstractParameter implements OptionalBakwardCallIndicators {
+public class OptionalBackwardCallIndicatorsImpl extends AbstractParameter implements OptionalBackwardCallIndicators {
 
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
@@ -28,17 +28,17 @@ public class OptionalBakwardCallIndicatorsImpl extends AbstractParameter impleme
 	private boolean simpleSegmentationIndicator;
 	private boolean mllpUserIndicator;
 
-	public OptionalBakwardCallIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
+	public OptionalBackwardCallIndicatorsImpl(byte[] b) throws ParameterRangeInvalidException {
 		super();
 		decodeElement(b);
 	}
 
-	public OptionalBakwardCallIndicatorsImpl() {
+	public OptionalBackwardCallIndicatorsImpl() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public OptionalBakwardCallIndicatorsImpl(boolean inbandInformationIndicator, boolean callDiversionMayOccurIndicator, boolean simpleSegmentationIndicator, boolean mllpUserIndicator) {
+	public OptionalBackwardCallIndicatorsImpl(boolean inbandInformationIndicator, boolean callDiversionMayOccurIndicator, boolean simpleSegmentationIndicator, boolean mllpUserIndicator) {
 		super();
 		this.inbandInformationIndicator = inbandInformationIndicator;
 		this.callDiversionMayOccurIndicator = callDiversionMayOccurIndicator;

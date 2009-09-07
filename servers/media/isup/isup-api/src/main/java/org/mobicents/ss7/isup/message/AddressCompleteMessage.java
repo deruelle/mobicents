@@ -12,7 +12,7 @@ import org.mobicents.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.ss7.isup.message.parameter.GenericNotificationIndicator;
 import org.mobicents.ss7.isup.message.parameter.HTRInformation;
 import org.mobicents.ss7.isup.message.parameter.NetworkSpecificFacility;
-import org.mobicents.ss7.isup.message.parameter.OptionalBakwardCallIndicators;
+import org.mobicents.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
 import org.mobicents.ss7.isup.message.parameter.ParameterCompatibilityInformation;
 import org.mobicents.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
 import org.mobicents.ss7.isup.message.parameter.RedirectStatus;
@@ -188,9 +188,9 @@ public interface AddressCompleteMessage extends ISUPMessage {
 
 	public BackwardCallIndicators getBackwardCallIndicators();
 
-	public void setOptionalBakwardCallIndicators(OptionalBakwardCallIndicators value);
+	public void setOptionalBakwardCallIndicators(OptionalBackwardCallIndicators value);
 
-	public OptionalBakwardCallIndicators getOptionalBakwardCallIndicators();
+	public OptionalBackwardCallIndicators getOptionalBakwardCallIndicators();
 
 	public void setCallReference(CallReference value);
 
