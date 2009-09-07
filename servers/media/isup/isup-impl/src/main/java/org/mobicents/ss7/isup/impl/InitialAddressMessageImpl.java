@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.ss7.isup.Utils;
 import org.mobicents.ss7.isup.impl.message.parameter.*;
 import org.mobicents.ss7.isup.impl.message.parameter.accessTransport.*;
 import org.mobicents.ss7.isup.message.parameter.CCSS;
@@ -310,7 +311,6 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	@Override
 	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {
 
-		
 		// TODO Auto-generated method stub
 		switch ((int) parameterCode) {
 		case TransitNetworkSelectionImpl._PARAMETER_CODE:
@@ -783,4 +783,22 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 		return (AccessTransport) super.o_Parameters.get(_INDEX_O_AccessTransport);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#mandatoryVariablePartPossible()
+	 */
+	@Override
+	protected boolean mandatoryVariablePartPossible() {
+		
+		return this.getNumberOfMandatoryVariableLengthParameters() != 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
+	 */
+	@Override
+	protected boolean optionalPartIsPossible() {
+		
+		return true;
+	}
 }

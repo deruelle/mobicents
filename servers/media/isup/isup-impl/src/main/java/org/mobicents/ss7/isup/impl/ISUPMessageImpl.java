@@ -202,22 +202,37 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	 */
 	protected void encodeMandatoryVariableParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos, boolean isOptionalPartPresent) throws IOException {
 		// bos.write(new byte[4]);
-		byte[] pointers = new byte[parameters.size() + 1];
-		if (parameters != null && parameters.size() == 0) {
-
-			// This happens if there is no variable mandatory part :)
-			if (isOptionalPartPresent) {
-
-				pointers = new byte[] { 0x01 };
-			} else {
-
-				pointers = new byte[] { 0x00 };
+		//byte[] pointers = new byte[parameters.size() + 1];
+		byte[] pointers = null;
+		//complicated
+		if(!mandatoryVariablePartPossible())
+		{
+			//we ommit pointer to this part, go straight for optional pointer.
+			if(optionalPartIsPossible())
+			{
+				if(isOptionalPartPresent)
+				{
+					pointers=new byte[]{0x01};
+				}else
+				{
+					//zeros
+					pointers=new byte[]{0x00};
+				}
+			}else
+			{
+				//do nothing?
 			}
-			// Nothing else goes there.
 			bos.write(pointers);
-
-		} else {
-
+		}else
+		{
+			if(optionalPartIsPossible())
+			{
+				pointers = new byte[parameters.size() + 1];
+			}
+			else
+			{
+				pointers = new byte[parameters.size()];
+			}
 			ByteArrayOutputStream parametersBodyBOS = new ByteArrayOutputStream();
 			byte lastParameterLength = 0;
 			byte currentParameterLength = 0;
@@ -243,17 +258,32 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 				parametersBodyBOS.write(currentParameterLength);
 				parametersBodyBOS.write(body);
 			}
-
-			if (!isOptionalPartPresent) {
-				// pointers = new byte[] { 0x00 };
-			} else {
-				pointers[pointers.length - 1] = (byte) (pointers[pointers.length - 2] + lastParameterLength);
+			
+			
+			//we ommit pointer to this part, go straight for optional pointer.
+			if(optionalPartIsPossible())
+			{
+				if(isOptionalPartPresent)
+				{
+					pointers[pointers.length - 1] = (byte) (pointers[pointers.length - 2] + lastParameterLength);
+				}else
+				{
+					//zeros
+					//pointers=new byte[]{0x00};
+				}
+			}else
+			{
+				//do nothing?
 			}
-			// System.err.println("V POINTER: "+Utils.toHex(pointers));
+			
 			bos.write(pointers);
 			bos.write(parametersBodyBOS.toByteArray());
-
 		}
+		
+		
+		
+	
+		
 
 	}
 
@@ -267,7 +297,7 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	 */
 	protected void encodeOptionalParameters(Map<Integer, ISUPParameter> parameters, ByteArrayOutputStream bos) throws IOException {
 
-		// NOTE: parameters MUST have as last endOfOptionalParametersParameter
+		// NOTE: parameters MUST have as last endOfOptionalParametersParameter+1 param
 		for (ISUPParameter p : parameters.values()) {
 
 			if (p == null)
@@ -293,22 +323,22 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
 		int index = 0;
 		index += this.decodeMandatoryParameters(b, index);
-		
+	
 		index += this.decodeMandatoryVariableParameters(b, index);
 		
-		//here if command can have optional part it will have ptr to first one if present, else zeros
-		//if there is no optional part, it wont be present.
 		
-		if(b.length==index || b[index] == 0x0)
+		if(!this.optionalPartIsPossible() ||b.length==index || b[index] == 0x0)
 		{
 			return index;
 		}
+	
+		//moving pointer to possible location 
+		//index++;
 		
+		//+1 for pointer location :)
+		index+=b[index];
 		
-		index+=b[index];	
 		index += this.decodeOptionalParameters(b, index);
-		
-
 		return index;
 	}
 
@@ -417,6 +447,12 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	protected abstract void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException;
 
 	protected abstract int getNumberOfMandatoryVariableLengthParameters();
+	
+	protected abstract boolean optionalPartIsPossible();
+	protected boolean mandatoryVariablePartPossible() {
+		
+		return getNumberOfMandatoryVariableLengthParameters()!=0;
+	}
 
 	// ////////////////////////
 	// PARAM HANDLE SECTION //
@@ -431,16 +467,20 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 		if (this.mandatoryCodes.contains(paramCode)) {
 			int index = this.mandatoryCodeToIndex.get(paramCode);
 			this.f_Parameters.put(index, param);
+			return;
 		}
 
 		if (this.mandatoryVariableCodes.contains(paramCode)) {
 			int index = this.mandatoryVariableCodeToIndex.get(paramCode);
 			this.v_Parameters.put(index, param);
+			return;
 		}
 		if (this.optionalCodes.contains(paramCode)) {
 			int index = this.optionalCodeToIndex.get(paramCode);
 			this.o_Parameters.put(index, param);
+			return;
 		}
+		
 		throw new ParameterRangeInvalidException("Parameter with code: " + paramCode + " is not defined in any type: mandatory, mandatory variable or optional");
 	}
 
@@ -479,4 +519,6 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 		}
 		throw new ParameterRangeInvalidException("Parameter with code: " + parameterCode + " is not defined in any type: mandatory, mandatory variable or optional");
 	}
+	
+	
 }

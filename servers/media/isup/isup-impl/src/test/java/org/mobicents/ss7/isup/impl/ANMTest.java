@@ -28,7 +28,7 @@ public class ANMTest extends MessageHarness {
 		
 	}
 	
-	public void _testOne() throws Exception
+	public void testOne() throws Exception
 	{
 		//FIXME: for now we strip MTP part
 		byte[] message={
@@ -43,11 +43,17 @@ public class ANMTest extends MessageHarness {
 //				,0x08 
 //				,0x00, 
 				AnswerMessage._MESSAGE_CODE_ANM
-				,0x0
 				,0x01 // ptr to variable part
 				
 				
-				
+				//Call reference
+				,0x01
+				,0x05
+				,0x01
+				,0x01
+				,0x01
+				,(byte)0xDE
+				,0x01
 				//ServiceActivation
 				,0x33
 				,0x07
@@ -59,14 +65,7 @@ public class ANMTest extends MessageHarness {
 				,0x06
 				,0x07
 				
-				//Call reference
-				,0x01
-				,0x07
-				,0x01
-				,0x01
-				,0x01
-				,(byte)0xDE
-				,0x01
+				
 				
 				
 				//End of optional part

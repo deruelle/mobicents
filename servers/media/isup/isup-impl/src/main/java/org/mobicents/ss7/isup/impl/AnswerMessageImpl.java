@@ -127,31 +127,32 @@ public class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage 
 
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 
-		super.optionalCodes.add(_INDEX_O_BackwardCallIndicators);
-		super.optionalCodes.add(_INDEX_O_OptionalBackwardCallIndicators);
-		super.optionalCodes.add(_INDEX_O_CallReference);
-		super.optionalCodes.add(_INDEX_O_UserToUserIndicators);
-		super.optionalCodes.add(_INDEX_O_UserToUserInformation);
-		super.optionalCodes.add(_INDEX_O_ConnectedNumber);
-		super.optionalCodes.add(_INDEX_O_AccessTransport);
-		super.optionalCodes.add(_INDEX_O_AccessDeliveryInformation);
-		super.optionalCodes.add(_INDEX_O_GenericNotificationIndicator);
-		super.optionalCodes.add(_INDEX_O_ParameterCompatibilityInformation);
-		super.optionalCodes.add(_INDEX_O_BackwardGVNS);
-		super.optionalCodes.add(_INDEX_O_CallHistoryInformation);
-		super.optionalCodes.add(_INDEX_O_GenericNumber);
-		super.optionalCodes.add(_INDEX_O_TransmissionMediumUsed);
-		super.optionalCodes.add(_INDEX_O_NetworkSpecificFacility);
-		super.optionalCodes.add(_INDEX_O_RemoteOperations);
-		super.optionalCodes.add(_INDEX_O_RedirectionNumber);
-		super.optionalCodes.add(_INDEX_O_ServiceActivation);
-		super.optionalCodes.add(_INDEX_O_EchoControlInformation);
-		super.optionalCodes.add(_INDEX_O_RedirectionNumberRestriction);
-		super.optionalCodes.add(_INDEX_O_DisplayInformation);
-		super.optionalCodes.add(_INDEX_O_ConferenceTreatmentIndicators);
-		super.optionalCodes.add(_INDEX_O_ApplicationTransportParameter);
-		super.optionalCodes.add(_INDEX_O_PivotRoutingBackwardInformation);
-		super.optionalCodes.add(_INDEX_O_RedirectStatus);
+		super.optionalCodes.add(BackwardCallIndicators._PARAMETER_CODE);
+		super.optionalCodes.add(OptionalBackwardCallIndicators._PARAMETER_CODE);
+		super.optionalCodes.add(CallReference._PARAMETER_CODE);
+		super.optionalCodes.add(UserToUserIndicators._PARAMETER_CODE);
+		super.optionalCodes.add(UserToUserInformation._PARAMETER_CODE);
+		super.optionalCodes.add(ConnectedNumber._PARAMETER_CODE);
+		super.optionalCodes.add(AccessTransport._PARAMETER_CODE);
+		super.optionalCodes.add(AccessDeliveryInformation._PARAMETER_CODE);
+		super.optionalCodes.add(GenericNotificationIndicator._PARAMETER_CODE);
+		super.optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+		super.optionalCodes.add(BackwardGVNS._PARAMETER_CODE);
+		super.optionalCodes.add(CallHistoryInformation._PARAMETER_CODE);
+		super.optionalCodes.add(GenericNumber._PARAMETER_CODE);
+		super.optionalCodes.add(TransmissionMediumUsed._PARAMETER_CODE);
+		super.optionalCodes.add(NetworkSpecificFacility._PARAMETER_CODE);
+		super.optionalCodes.add(RemoteOperations._PARAMETER_CODE);
+		super.optionalCodes.add(RedirectionNumber._PARAMETER_CODE);
+		super.optionalCodes.add(ServiceActivation._PARAMETER_CODE);
+		super.optionalCodes.add(EchoControlInformation._PARAMETER_CODE);
+		super.optionalCodes.add(RedirectionNumberRestriction._PARAMETER_CODE);
+		super.optionalCodes.add(DisplayInformation._PARAMETER_CODE);
+		super.optionalCodes.add(ConferenceTreatmentIndicators._PARAMETER_CODE);
+		super.optionalCodes.add(ApplicationTransportParameter._PARAMETER_CODE);
+		super.optionalCodes.add(PivotRoutingBackwardInformation._PARAMETER_CODE);
+		super.optionalCodes.add(RedirectStatus._PARAMETER_CODE);
+
 
 		super.optionalCodeToIndex.put(BackwardCallIndicators._PARAMETER_CODE, _INDEX_O_BackwardCallIndicators);
 		super.optionalCodeToIndex.put(OptionalBackwardCallIndicators._PARAMETER_CODE, _INDEX_O_OptionalBackwardCallIndicators);
@@ -210,15 +211,9 @@ public class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage 
 	@Override
 	protected int decodeMandatoryVariableParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 		
-		//we consume one octet, which should be zero
-	
-		if(b[index]!=0)
-		{
-			throw new ParameterRangeInvalidException("Mandatory variable pointer should be 0, it is: "+b[index]+", index: "+(index)+" -> "+Utils.toHex(b));
-		}
-	
-		
-		return 1;
+
+
+		return 0;
 	}
 	/*
 	 * (non-Javadoc)
@@ -381,5 +376,14 @@ public class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage 
 
 		return true;
 	}
+	
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
+	 */
+	@Override
+	protected boolean optionalPartIsPossible() {
+		
+		return true;
+	}
 }

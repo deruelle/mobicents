@@ -167,5 +167,9 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 
 		return true;
 	}
-
+	@Override
+	protected boolean optionalPartIsPossible() {
+		
+		return true;
+	}
 }

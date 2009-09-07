@@ -531,6 +531,24 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#mandatoryVariablePartPossible()
+	 */
+//	@Override
+//	protected boolean mandatoryVariablePartPossible() {
+//		
+//		return false;
+//	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
+	 */
+	@Override
+	protected boolean optionalPartIsPossible() {
+		
+		return true;
+	}
+
 
 
 }

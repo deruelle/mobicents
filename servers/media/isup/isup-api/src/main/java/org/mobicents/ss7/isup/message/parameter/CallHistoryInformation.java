@@ -14,7 +14,7 @@ package org.mobicents.ss7.isup.message.parameter;
  */
 public interface CallHistoryInformation extends ISUPParameter {
 	// FIXME: add code?
-	public static final int _PARAMETER_CODE = 0;
+	public static final int _PARAMETER_CODE = 0x2D;
 
 	public int getCallHistory();
 

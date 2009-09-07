@@ -385,8 +385,13 @@ public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProg
 	 */
 	@Override
 	public boolean hasAllMandatoryParameters() {
-		// TODO Auto-generated method stub
-		return false;
+		
+		return this.f_Parameters.get(this._INDEX_F_EventInformation) != null ;
 	}
 
+	@Override
+	protected boolean optionalPartIsPossible() {
+		
+		return true;
+	}
 }

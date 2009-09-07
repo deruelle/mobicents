@@ -86,8 +86,12 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
 	 */
 	@Override
 	public boolean hasAllMandatoryParameters() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
+	}
+	@Override
+	protected boolean optionalPartIsPossible() {
+		
+		throw new UnsupportedOperationException();
 	}
 
 }
