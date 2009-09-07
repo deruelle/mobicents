@@ -57,7 +57,7 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	 * @throws ParameterRangeInvalidException
 	 * 
 	 */
-	ReleaseCompleteMessageImpl(Object source) throws ParameterRangeInvalidException {
+	ReleaseCompleteMessageImpl(Object source){
 		// TODO Auto-generated constructor stub
 		super(source);
 	}

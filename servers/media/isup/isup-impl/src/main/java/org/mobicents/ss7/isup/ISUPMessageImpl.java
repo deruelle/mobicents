@@ -61,7 +61,7 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 
 	protected Object source;
 
-	public ISUPMessageImpl(Object source) throws ParameterRangeInvalidException {
+	public ISUPMessageImpl(Object source)  {
 		super();
 		this.source = source;
 

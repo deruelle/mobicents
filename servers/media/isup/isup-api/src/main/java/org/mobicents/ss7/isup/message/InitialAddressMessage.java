@@ -40,6 +40,243 @@ import org.mobicents.ss7.isup.message.parameter.accessTransport.AccessTransport;
 /**
  * Start time:09:54:07 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
+ * <TABLE id="Table15" style="FONT-SIZE: 9pt; WIDTH: 584px; HEIGHT: 72px; TEXT-ALIGN: center" cellSpacing="1" cellPadding="1" width="584" align="center" border="1">
+ * <TR>
+ * <TD style="FONT-WEIGHT: bold; WIDTH: 328px; COLOR: teal; HEIGHT: 28px" align="center" colSpan="3">
+ * <TABLE id="Table37" style="WIDTH: 575px; HEIGHT: 49px" cellSpacing="1" cellPadding="1" width="575" border="0">
+ * <TR>
+ * 
+ * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
+ * IAM (Initial Address Message)</TD>
+ * </TR>
+ * <TR>
+ * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">
+ * <P>
+ * An Initial Address Message (IAM) is sent in the "forward" direction by each
+ * switch needed to complete the circuit between the calling party and called
+ * party until the circuit connects to the destination switch. An IAM contains
+ * the called party number in the mandatory variable part and may contain the
+ * calling party name and number in the optional part.
+ * </P>
+ * </TD>
+ * </TR>
+ * </TABLE>
+ * 
+ * </TD>
+ * </TR>
+ * <TR>
+ * <TD style="FONT-WEIGHT: bold; WIDTH: 283px; HEIGHT: 30px; TEXT-ALIGN: center">
+ * Parameter</TD>
+ * <TD style="FONT-WEIGHT: bold; WIDTH: 145px; HEIGHT: 30px">Type</TD>
+ * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
+ * </TR>
+ * 
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
+ * <TD style="WIDTH: 145px">F</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Nature of Connection Indicators</TD>
+ * 
+ * <TD style="WIDTH: 145px">F</TD>
+ * <TD>1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Forward&nbsp;Call Indicators</TD>
+ * <TD style="WIDTH: 145px">F</TD>
+ * 
+ * <TD>2</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Calling Party's Category</TD>
+ * <TD style="WIDTH: 145px">F</TD>
+ * <TD>1</TD>
+ * </TR>
+ * 
+ * <TR>
+ * <TD style="WIDTH: 283px; HEIGHT: 12px; TEXT-ALIGN: left">Transmission Medium
+ * Requirement</TD>
+ * <TD style="WIDTH: 145px; HEIGHT: 12px">F</TD>
+ * <TD style="HEIGHT: 12px">1</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Called Party Number</TD>
+ * 
+ * <TD style="WIDTH: 145px">V</TD>
+ * <TD>4-11</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; HEIGHT: 18px; TEXT-ALIGN: left">Transit Network
+ * Selection</TD>
+ * <TD style="WIDTH: 145px; HEIGHT: 18px">O</TD>
+ * <TD style="HEIGHT: 18px">4-?</TD>
+ * 
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Call Reference</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>7</TD>
+ * </TR>
+ * <TR>
+ * 
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Calling Party Number</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4-12</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Optional Forward Call Indicators</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * 
+ * <TD>3</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Redirecting Number</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4-12</TD>
+ * </TR>
+ * 
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Redirection Information</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>3-4</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Closed User Group Interlock Code</TD>
+ * 
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>6</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Connection Request</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>7-9</TD>
+ * 
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Origional Called Number</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4-12</TD>
+ * </TR>
+ * <TR>
+ * 
+ * <TD style="WIDTH: 283px; HEIGHT: 17px; TEXT-ALIGN: left">User to User
+ * Information</TD>
+ * <TD style="WIDTH: 145px; HEIGHT: 17px">O</TD>
+ * <TD style="HEIGHT: 17px">3-131</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Access Transport</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * 
+ * <TD>3-?</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User Service Information</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4-13</TD>
+ * </TR>
+ * 
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User to User Indicators</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>3</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Generic Number</TD>
+ * 
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>5-13</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Propagation Delay Counter</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4</TD>
+ * 
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User Service Information Prime</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4-13</TD>
+ * </TR>
+ * <TR>
+ * 
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Network Specific Facility</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4-?</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Generic Digit</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * 
+ * <TD>?</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Originating ISC Point Code</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4</TD>
+ * </TR>
+ * 
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User Service Information Prime</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>7</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Remote Operations</TD>
+ * 
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>?</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility
+ * Information</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>4-?</TD>
+ * 
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Generic Notification</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>3</TD>
+ * </TR>
+ * <TR>
+ * 
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Service Activation</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>3-?</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Generic Reference</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * 
+ * <TD>5-?</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">MLPP Precedence</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>8</TD>
+ * </TR>
+ * 
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Transmission Medium Requirement
+ * Prime</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>3</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Location Number</TD>
+ * 
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>5-12</TD>
+ * </TR>
+ * <TR>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">End of Optional Parameters</TD>
+ * <TD style="WIDTH: 145px">O</TD>
+ * <TD>1</TD>
+ * 
+ * </TR>
+ * </TABLE>
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */

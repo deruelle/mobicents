@@ -132,7 +132,7 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 
 	}
 
-	AddressCompleteMessageImpl(Object source) throws ParameterRangeInvalidException {
+	AddressCompleteMessageImpl(Object source)  {
 		super(source);
 
 		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();

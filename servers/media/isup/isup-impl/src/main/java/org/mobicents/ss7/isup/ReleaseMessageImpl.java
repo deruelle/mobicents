@@ -136,7 +136,7 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	 * @throws ParameterRangeInvalidException
 	 * 
 	 */
-	ReleaseMessageImpl(Object source) throws ParameterRangeInvalidException {
+	ReleaseMessageImpl(Object source){
 		super(source);
 		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
 		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();

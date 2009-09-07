@@ -21,7 +21,7 @@ public class ISUPStackImpl implements ISUPStack {
 
 	private SS7Provider transportProvider;
 	private ISUPProviderImpl isupProvider;
-	private ISUPMessageFactoryImpl isupMessageFactory;
+	
 
 	private boolean started = false;
 	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
@@ -34,8 +34,8 @@ public class ISUPStackImpl implements ISUPStack {
 	public ISUPStackImpl(SS7Provider transportProvider) {
 		super();
 		this.transportProvider = transportProvider;
-		this.isupMessageFactory = new ISUPMessageFactoryImpl();
-		this.isupProvider = new ISUPProviderImpl(this.transportProvider, this,this.isupMessageFactory);
+		
+		this.isupProvider = new ISUPProviderImpl(this.transportProvider, this);
 
 	}
 
