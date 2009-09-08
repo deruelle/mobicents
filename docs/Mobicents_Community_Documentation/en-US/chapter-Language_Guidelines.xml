@@ -1,0 +1,107 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. --><!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<chapter id="chapter-Language_Guidelines">
+  <title>Language Guidelines</title>
+  <para>To maintain language consistency within the source documentation, it is important for each content author to write in a similar tone.   Maintaining consistent  tone  throughout the user guides will make the  Mobicents and JBCP User Documentation Suite (UDS) appear to be a unified suite of documents, rather than a separated group of user guides.   </para>
+  <para>The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will really appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).  </para>
+  <para>There are a few ways the team can achieve a consistent writing style.  Some of the examples mentioned in the following sections were actual examples found in the user guides.  </para>
+  <section>
+    <title>Active Voice</title>
+    <para>Use the active voice (&quot;Start Linuxconf by typing...&quot;) rather than passive (&quot;Linuxconf can be started by typing...&quot;) whenever possible. Active voice makes for more lively, interesting reading.</para>
+    <para>Avoid future tense (or using the term &quot;will&quot;) whenever possible For example, future tense (&quot;The screen will display...&quot;) does not read as well as an active voice (&quot;The screen displays&quot;).</para>
+    <para>Remember, the users you are writing for most often refer to the documentation while they are using the system, not after or in advance of using the system. </para>
+  </section>
+  <section>
+    <title>Gender References</title>
+    <para>Do not use gender-specific pronouns in documentation. It is far less awkward to read a sentence that uses &quot;they&quot; and &quot;their&quot; rather than &quot;he/she&quot; and &quot;his/hers&quot;. </para>
+    <para>It is fine to use &quot;you&quot; when giving instructions and &quot;the user,&quot; &quot;new users,&quot; etc. in more general explanations. Never use &quot;one&quot; in place of &quot;you&quot; when writing technical documentation. Using &quot;one&quot; is far too formal.</para>
+  </section>
+  <section>
+    <title>Sentence Structure</title>
+    <para>A sentence is one, complete thought. A sentence expresses something about a subject (a person, place, or thing) and a verb (what the subject is or does).
+
+There are two common problems that occur in sentence construction: Sentence fragments and run-on sentences. </para>
+    <formalpara>
+      <title>Sentence Fragments</title>
+      <para>A sentence fragment is a sentence which cannot stand by itself;  that is, it&apos;s out of context with the surrounding sentences. </para>
+    </formalpara>
+    <example>
+      <title>Full, and Fragment Sentences</title>
+      <formalpara>
+        <title>Full Sentence</title>
+        <para>&quot;We will release no upgrade before its time.&quot;</para>
+      </formalpara>
+      <formalpara>
+        <title>Fragment Sentence</title>
+        <para>&quot;We will release no upgrade. At least, before its time.&quot;</para>
+      </formalpara>
+      <para>Notice that the second sentence can not stand on its own if it is isolated from the first sentence.  </para>
+    </example>
+    <para>Read each sentence you write aloud, as if each sentence were the &quot;only&quot; sentence on a piece of paper.  If you hear a sentence that would not make sense all by itself, chances are you have got a sentence fragment.  Change the fragment sentence to make it a complete thought.</para>
+    <formalpara>
+      <title>Run-on Sentence</title>
+      <para>Two or more complete ideas that are joined without punctuation create a run-on sentence (also called a fused sentence). The sentence does not  have to be long to be a run-on (although the longer your sentence, the more difficult it is to read).</para>
+    </formalpara>
+    <example>
+      <title>Run-on Sentences</title>
+      <formalpara>
+        <title>Simple Run-on</title>
+        <para>The CDs both of which belonged to the developers were in the test lab.</para>
+      </formalpara>
+      <formalpara>
+        <title>Correct</title>
+        <para>The CDs, both of which belonged to the developers, were in the test lab.</para>
+      </formalpara>
+      <formalpara>
+        <title>Complex Run-on</title>
+        <para>The CDs, both of which belonged to the developers, were in the test lab, and because they were the only available CDs for the new release, the developers were anxious about keeping them clean.</para>
+      </formalpara>
+      <formalpara>
+        <title>Correct</title>
+        <para>The CDs, both of which belonged to the developers, were in the test lab. Because they were the only available CDs for the new release, the developers were anxious about keeping them clean</para>
+      </formalpara>
+      <para>In the complex run-on, the previous run-on sentence was technically correct because of the punctuation; however, it could have been broken to help readability.</para>
+    </example>
+  </section>
+  <section>
+    <title>Conversational Language</title>
+    <para>It is often tempting  to write like you are talking to someone face to face.  It is an easy way of writing, and allows you to write using a stream of conciousness method.   </para>
+    <para>The problem with this type of writing style, is that it is very hard for the reader to quickly grasp a concept.  They must read through the content and try to extract the information that is relevant to them from the information you have provided them.  The writing style often leads to verbosity (or wordiness) and this can quickly frustrate readers.</para>
+    <para>The following examples will show you how pruning your writing can cut down the word count, and allow readers to easily understand the information they are reading.</para>
+    <example>
+      <title>Reordering and Restructuring for Readability</title>
+      <para>This example shows how how you can increase the readability of the information by cutting out unnecessary words and restructuring content.</para>
+      <formalpara>
+        <title>Original Wording</title>
+        <para>
+As the SIP Servlets Server employs JBoss Application Server as its servlet container and takes advantage of its capabilities, including clustering and failover, familiarity with the basics of JBoss Clustering is helpful. Refer to this chapter in the Clustering Guide for background or if you wish to dig further: JBoss Application Server Clustering Guide. </para>
+      </formalpara>
+      <formalpara>
+        <title>Suggested Wording</title>
+        <para>To further understand the complete clustering and failover capabilities of the JBoss Application Server, refer to the JBoss Application Server Clustering Guide.
+</para>
+      </formalpara>
+      <formalpara>
+        <title>Result</title>
+        <para>After the edit, notice how concise the paragraph is.  Also notice how the colloquialism in the reference has been removed.  Depending on the readers&apos; language skills, the usage of &quot;dig further&quot; might not be understood.  When this is translated to other languages, the meaning of this sentence might also be lost in translation.</para>
+      </formalpara>
+    </example>
+    <example>
+      <title>Writing Like You Are Speaking</title>
+      <para>This example demonstrates how writing like you are speaking can result in unordered concepts, and reduces the effectiveness of the information you are writing about.</para>
+      <formalpara>
+        <title>Original Wording</title>
+        <para>An important note here with regard to that second scenario that according to the SIP Servlets 1.1 specification, Sections 15.1.2 The Role of Applications and 15.1.4 Application Independence, the Call Blocking application cannot just do nothing with the request and expect the container to route the request in its place (either to a next application in chain if another one is present or to the outside world if none is present). The Application has to do something with request (either proxy it or act as a UAS)</para>
+      </formalpara>
+      <formalpara>
+        <title>Suggested Wording</title>
+        <para>For the second scenario, the Call Blocking application must be responsible for routing the request to the next chained application (internally) or to the outside world (externally).  The application must either proxy, or act as a User Agent Server (UAS), for the request.  This requirement is stated in greater detail within the SIP Servlets 1.1 specification&apos;s &quot;The Role of Applications&quot; and &quot;Application Independence&quot; sections.</para>
+      </formalpara>
+      <formalpara>
+        <title>Result</title>
+        <para>In the original wording, the main point (that the application must handle the routing, and how it must do this) was right at the end of the paragraph.  In the suggested wording, the application requirement has been moved up to the front of the paragraph.  This allows the reader to quickly decide whether the information relates to them.  The references, which were interrupting the sentence flow, are now at the end of the paragraph.  </para>
+      </formalpara>
+    </example>
+  </section>
+</chapter>

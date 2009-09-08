@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="pam-Publican_and_Maven">
@@ -8,7 +8,7 @@
   <para>If Publican is not available on your system, the list of elements and the reasons why they are banned is explained in <xref linkend="table-fpxe-Forbidden_Publican_XML_Elements"/>.</para>
   <para><table frame="all" pgwide="1" id="table-fpxe-Forbidden_Publican_XML_Elements">
       <title>Forbidden Publican XML Elements</title>
-      <tgroup colsep="1" cols="2">
+      <tgroup cols="2" colsep="1">
         <colspec colname="c1"/>
         <colspec colname="c2"/>
         <thead>
