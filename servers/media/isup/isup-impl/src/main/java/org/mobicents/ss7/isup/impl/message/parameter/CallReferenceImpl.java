@@ -51,16 +51,17 @@ public class CallReferenceImpl extends AbstractParameter implements CallReferenc
 	 */
 	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
 		if (b == null || b.length != 5) {
-			throw new ParameterRangeInvalidException("byte[] must not be null or have different size than 1");
+			throw new ParameterRangeInvalidException("byte[] must not be null or have length of 5");
 		}
-		for (int i = 0; i < 3; i++) {
-			this.callIdentity |= (b[i] << (i * 8));
-		}
-
-		this.signalingPointCode |= b[3];
-		this.signalingPointCode |= (b[4] << 8);
+//		for (int i = 0; i < 3; i++) {
+//			this.callIdentity |= (b[i] << (i * 8));
+//		}
+		this.callIdentity = ( (b[0] & 0xFF)  << 16 )  | ((b[1]& 0xFF) << 8) | (b[2] & 0xFF) ;
+//		this.signalingPointCode |= b[3];
+//		this.signalingPointCode |= (b[4] << 8);
+		this.signalingPointCode = ((b[3]& 0xFF) | ((b[4] & 0x3F) << 8));
 		// This kills first two bits.
-		this.signalingPointCode &= 0x3FFF;
+		//this.signalingPointCode &= 0x3FFF;
 		return 5;
 	}
 
@@ -72,14 +73,17 @@ public class CallReferenceImpl extends AbstractParameter implements CallReferenc
 	public byte[] encodeElement() throws IOException {
 		byte[] b = new byte[5];
 
-		for (int i = 0; i < 3; i++) {
-			b[i] = (byte) (this.callIdentity >> (i * 8));
-
-		}
-		// This kills first two bits.
-		this.signalingPointCode &= 0x3FFF;
+//		for (int i = 0; i < 3; i++) {
+//			b[i] = (byte) (this.callIdentity >> (i * 8));
+//
+//		}
+		
+		b[0]=(byte) (this.callIdentity>>16);
+		b[1]=(byte) (this.callIdentity>>8);
+		b[2]=(byte) this.callIdentity;
+		
 		b[3] = (byte) this.signalingPointCode;
-		b[4] = (byte) (this.signalingPointCode >> 8);
+		b[4] = (byte) ((this.signalingPointCode >> 8) & 0x3F);
 
 		return b;
 
@@ -103,7 +107,7 @@ public class CallReferenceImpl extends AbstractParameter implements CallReferenc
 	}
 
 	public void setCallIdentity(int callIdentity) {
-		this.callIdentity = callIdentity;
+		this.callIdentity = callIdentity & 0xFFFFFF;
 	}
 
 	public int getSignalingPointCode() {
