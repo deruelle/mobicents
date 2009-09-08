@@ -26,6 +26,7 @@
  */
 package org.mobicents.media.server.impl.resource.zap;
 
+import org.mobicents.media.server.impl.resource.ss7.HdlcState;
 import org.apache.log4j.Logger;
 
 
@@ -81,8 +82,8 @@ public class Mtp2 {
   int zap_buf_full;
 
   /* HDLC encoding and decoding state. */
-  private HdlcFrame h_rx;
-  private HdlcFrame h_tx;
+  private HdlcState h_rx;
+  private HdlcState h_tx;
 
   /* Last few raw bytes received, for debugging link errors. */
   private byte[] backbuf = new byte[36];

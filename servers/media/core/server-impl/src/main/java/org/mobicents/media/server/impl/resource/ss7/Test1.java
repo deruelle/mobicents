@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mobicents.media.server.impl.resource.zap;
+package org.mobicents.media.server.impl.resource.ss7;
 
+import org.mobicents.media.server.impl.resource.ss7.HdlcState;
+import org.mobicents.media.server.impl.resource.ss7.FastHDLC;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -62,7 +64,7 @@ public class Test1 {
 //        String[] data = "bf 7d f7 d8 00 0e 46 77 ef be fb 00 01 c8 ce fd f7 df 60 00 39 19 df be fb ec 00 07 23 3b f7 df 7d 80 00 e4 67 7e fb ef b0 00 1c 8c ef 7d f6".split(" ");
 
         FastHDLC hdlc = new FastHDLC();
-        HdlcFrame h = new HdlcFrame();
+        HdlcState h = new HdlcState();
         hdlc.fasthdlc_precalc();
         hdlc.fasthdlc_init(h);
         int b = -1;
@@ -103,7 +105,7 @@ public class Test1 {
                     System.out.println("To long");
                     frameLen = 0;
                 } else {
-                   // System.out.println("-- " + alignNumber(Integer.toHexString(res), 2) + " " + alignNumber(Integer.toBinaryString(res), 8));
+                   System.out.println("-- " + alignNumber(Integer.toHexString(res), 2) + " " + alignNumber(Integer.toBinaryString(res), 8));
                     frame[frameLen++] = res;
                     crc = PPP_FCS(crc, res & 0xff);
                 }

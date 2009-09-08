@@ -24,7 +24,7 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.resource.zap;
+package org.mobicents.media.server.impl.resource.ss7;
 
 /**
  *
@@ -155,7 +155,7 @@ public class FastHDLC {
         int bits = 0;
         int consumed = 0;
         while (bits < 8) {
-            data >>= 1;
+            data >>>= 1;
             consumed++;
             if (ones == 5) {
                 /* We've seen five ones */
@@ -256,7 +256,7 @@ public class FastHDLC {
         }
     }
 
-    public void fasthdlc_init(HdlcFrame h) {
+    public void fasthdlc_init(HdlcState h) {
         /* Initializes all states appropriately */
         h.state = 0;
         h.bits = 0;
@@ -265,16 +265,16 @@ public class FastHDLC {
 
     }
 
-    public int fasthdlc_tx_load_nocheck(HdlcFrame h, int c) {
+    public int fasthdlc_tx_load_nocheck(HdlcState h, int c) {
         int res;
         res = hdlc_encode[h.ones][c];
-        h.ones = (res & 0xf00) >> 8;
-        h.data |= (res & 0xffc00000) >> h.bits;
+        h.ones = ((res & 0xf00) >> 8);
+        h.data |= ((res & 0xffc00000) >>> h.bits);
         h.bits += (res & 0xf);
         return 0;
     }
 
-    public int fasthdlc_tx_load(HdlcFrame h, int c) {
+    public int fasthdlc_tx_load(HdlcState h, int c) {
         /* Gotta have at least 10 bits left */
         if (h.bits > 22) {
             return -1;
@@ -282,21 +282,21 @@ public class FastHDLC {
         return fasthdlc_tx_load_nocheck(h, c);
     }
 
-    public int fasthdlc_tx_frame_nocheck(HdlcFrame h) {
+    public int fasthdlc_tx_frame_nocheck(HdlcState h) {
         h.ones = 0;
         h.data |= (0x7e000000 >> h.bits);
         h.bits += 8;
         return 0;
     }
 
-    public int fasthdlc_tx_frame(HdlcFrame h) {
+    public int fasthdlc_tx_frame(HdlcState h) {
         if (h.bits > 24) {
             return -1;
         }
         return fasthdlc_tx_frame_nocheck(h);
     }
 
-    public int fasthdlc_tx_run_nocheck(HdlcFrame h) {
+    public int fasthdlc_tx_run_nocheck(HdlcState h) {
         int b;
         b = h.data >> 24;
         h.bits -= 8;
@@ -304,21 +304,21 @@ public class FastHDLC {
         return b;
     }
 
-    public int fasthdlc_tx_run(HdlcFrame h) {
+    public int fasthdlc_tx_run(HdlcState h) {
         if (h.bits < 8) {
             return -1;
         }
         return fasthdlc_tx_run_nocheck(h);
     }
 
-    public int fasthdlc_rx_load_nocheck(HdlcFrame h, int b) {
+    public int fasthdlc_rx_load_nocheck(HdlcState h, int b) {
         /* Put the new byte in the data stream */
         h.data |= b << (24 - h.bits);
         h.bits += 8;
         return 0;
     }
 
-    public int fasthdlc_rx_load(HdlcFrame h, int b) {
+    public int fasthdlc_rx_load(HdlcState h, int b) {
         /* Make sure we have enough space */
         if (h.bits > 24) {
             return -1;
@@ -332,7 +332,7 @@ public class FastHDLC {
     and RETURN_EMPTY_FLAG, signifying a complete frame, a
     discarded frame, or there is nothing to return.
      */
-    public int fasthdlc_rx_run(HdlcFrame h) {
+    public int fasthdlc_rx_run(HdlcState h) {
         int next;
         int retval = RETURN_EMPTY_FLAG;
         while ((h.bits >= minbits[h.state]) && (retval == RETURN_EMPTY_FLAG)) {
@@ -350,7 +350,7 @@ public class FastHDLC {
                     break;
                 case PROCESS_FRAME:
                     /* Process as much as the next ten bits */
-                    next = hdlc_frame[h.ones][(h.data >> 22)& 0x3ff]; // Must be 10 bits here, not 8, that's all
+                    next = hdlc_frame[h.ones][(h.data >>> 22)& 0x3ff]; // Must be 10 bits here, not 8, that's all
                     //next = hdlc_frame_precalc(h.ones, (h.data >> 22)& 0x3ff);
                     h.bits -= (((next & 0x0f00) >> 8)& 0xff);
                     h.data <<= (((next & 0x0f00) >> 8)& 0xff);

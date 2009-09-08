@@ -25,16 +25,27 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.impl.resource.zap;
+package org.mobicents.media.server.impl.resource.ss7;
+
+import java.util.ArrayList;
 
 /**
- * Represnts HDLC frame.
- * 
+ *
  * @author kulikov
  */
-public class HdlcFrame {
-	int state;	/* What state we are in */
-	int data;	/* Our current data queue */
-	int bits;	/* Number of bits in our data queue */
-	int ones;	/* Number of ones */
+public class TxQueue {
+    private ArrayList<byte[]> queue = new ArrayList();
+    
+    public boolean isEmpty() {
+        return queue.isEmpty();
+    }
+    
+    public void offer(byte[] frame) {
+        queue.add(frame);
+    }
+    
+    public byte[] peak() {
+        return queue.isEmpty() ? null : queue.remove(0);
+    }
+    
 }

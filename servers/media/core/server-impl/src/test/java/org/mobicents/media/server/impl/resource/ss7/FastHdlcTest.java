@@ -1,7 +1,5 @@
-package org.mobicents.media.server.impl.resource.zap;
+package org.mobicents.media.server.impl.resource.ss7;
 
-import org.mobicents.media.server.impl.resource.zap.HdlcFrame;
-import org.mobicents.media.server.impl.resource.zap.FastHDLC;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,6 +12,9 @@ import static org.junit.Assert.*;
  *
  */
 public class FastHdlcTest {
+    
+    private final static byte[] data = new byte[]{(byte)0x89, (byte)0x84, (byte)0x00, (byte)0x92, (byte)0xbd};
+    
     public FastHdlcTest() {
     }
 
@@ -32,7 +33,7 @@ public class FastHdlcTest {
         String[] results = "ff ff 01 00 27 e6".split(" "); // This is the sample frame repeated in the above sequence with different alignments
         
         FastHDLC hdlc = new FastHDLC();
-        HdlcFrame h = new HdlcFrame();
+        HdlcState h = new HdlcState();
         hdlc.fasthdlc_precalc();
         hdlc.fasthdlc_init(h);
         int b = -1;
@@ -81,6 +82,13 @@ public class FastHdlcTest {
         assertEquals(completed, 5);
     }
 
+    private void checkTxRx() {
+        FastHDLC hdlc = new FastHDLC();
+        HdlcState h = new HdlcState();
+        hdlc.fasthdlc_precalc();
+        hdlc.fasthdlc_init(h);
+    }
+    
     // We just add some zeros so it's easy to see binary and hex numbers from the console
     private static String alignNumber(String str, int num) {
     	while(str.length()<num) str = "0" + str;
