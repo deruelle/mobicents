@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.ss7.isup.ISUPComponent;
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.ss7.isup.Utils;
 import org.mobicents.ss7.isup.impl.message.parameter.CalledDirectoryNumberImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.CalledINNumberImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.ConnectedNumberImpl;
@@ -81,7 +82,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterRangeInvalidException {
 		ConnectedNumberImpl bci = new ConnectedNumberImpl(getBody2());
-
+		
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { ConnectedNumberImpl._NPI_TELEX, ConnectedNumberImpl._APRI_ALLOWED, ConnectedNumber._NAI_SUBSCCRIBER_NUMBER, ConnectedNumberImpl._SI_NETWORK_PROVIDED, true, super.getFiveDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);

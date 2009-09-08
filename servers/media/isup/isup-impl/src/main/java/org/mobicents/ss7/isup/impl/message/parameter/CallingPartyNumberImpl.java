@@ -121,11 +121,13 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 			// the subfields in items a - odd/evem, b -nai , c - ni and d -npi,
 			// are
 			// coded with
+			//FIXME: add this filler
 			// 0's, and the subfield f - filler, is coded with 11.
 			this.oddFlag = 0;
 			this.natureOfAddresIndicator = 0;
 			this.numberIncompleteIndicator = 0;
 			this.numberingPlanIndicator = 0;
+			this.setAddress("");
 		}
 	}
 

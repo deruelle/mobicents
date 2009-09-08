@@ -22,11 +22,26 @@ public class MessageHarness extends TestCase{
 	//FIXME: add code to check values :)
 	
 	
+	protected boolean makeCompare(byte[] b1,byte[] b2)
+	{
+		if(b1.length != b2.length)
+			return false;
+		
+	
+		
+		for(int index = 0;index<b1.length;index++)
+		{
+			if(b1[index] != b2[index])
+				return false;
+		}
+		
+		return true;
+		
+	}
 	
 	
 	
-	
-	protected String makeCompare(byte[] b1,byte[] b2)
+	protected String makeStringCompare(byte[] b1,byte[] b2)
 	{
 		int totalLength = 0;
 		if(b1.length>=b2.length)

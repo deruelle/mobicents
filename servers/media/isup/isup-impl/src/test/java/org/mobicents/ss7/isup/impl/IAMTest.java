@@ -66,7 +66,7 @@ public class IAMTest extends MessageHarness{
 		InitialAddressMessageImpl iam=new InitialAddressMessageImpl(this,message);
 		byte[] encodedBody = iam.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeCompare(message, encodedBody),equal);
+		assertTrue(super.makeStringCompare(message, encodedBody),equal);
 	}
 	
 	public void testTwo_Parameters() throws Exception

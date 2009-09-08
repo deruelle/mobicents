@@ -71,22 +71,21 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
 
 		
 		//FIXME: Oleg?
-		if(true)
-			return;
-		if (this.addressRepresentationREstrictedIndicator == _APRI_RESTRICTED)
-			return;
-
-		// NOTE 1 – If the parameter is included and the address presentation
-		// restricted indicator indicates
-		// address not available, octets 3 to n( this are digits.) are omitted,
-		// the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
-		// coded with
-		// 0's, and the subfield f - filler, is coded with 11.
-		this.oddFlag = 0;
-		this.natureOfAddresIndicator = 0;
-		this.numberingPlanIndicator = 0;
-		// 11
-		this.screeningIndicator = 3;
+//		
+//		if (this.addressRepresentationREstrictedIndicator == _)
+//			return;
+//
+//		// NOTE 1 – If the parameter is included and the address presentation
+//		// restricted indicator indicates
+//		// address not available, octets 3 to n( this are digits.) are omitted,
+//		// the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
+//		// coded with
+//		// 0's, and the subfield f - filler, is coded with 11.
+//		this.oddFlag = 0;
+//		this.natureOfAddresIndicator = 0;
+//		this.numberingPlanIndicator = 0;
+//		// 11
+//		this.screeningIndicator = 3;
 	}
 	/* (non-Javadoc)
 	 * @see org.mobicents.ss7.isup.message.parameter.AbstractNumber#decodeBody(java.io.ByteArrayInputStream)

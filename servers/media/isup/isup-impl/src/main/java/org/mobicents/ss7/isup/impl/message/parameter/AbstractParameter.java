@@ -41,6 +41,7 @@ public abstract class AbstractParameter implements ISUPParameter,ISUPComponent {
 	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
 		//FIXME: this has to be removed, we should not create separate arrays?
 		byte[] b = this.encodeElement();
+		bos.write(b);
 		return b.length;
 	}
 

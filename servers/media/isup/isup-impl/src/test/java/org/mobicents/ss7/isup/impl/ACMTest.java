@@ -56,7 +56,7 @@ public class ACMTest extends MessageHarness {
 		AddressCompleteMessageImpl acm=new AddressCompleteMessageImpl(this,message);
 		byte[] encodedBody = acm.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeCompare(message, encodedBody),equal);
+		assertTrue(super.makeStringCompare(message, encodedBody),equal);
 	}
 	
 	public void _testTwo_Params() throws Exception

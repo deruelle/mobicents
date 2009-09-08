@@ -197,14 +197,14 @@ public class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage 
 
 			// Message Type
 			if (b[index] != this._MESSAGE_CODE_ANM) {
-				throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_ACM);
+				throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_ANM);
 			}
 			index++;
 			
-			// return 3;
+
 			return index - localIndex;
 		} else {
-			throw new IllegalArgumentException("byte[] must have atleast two octets");
+			throw new IllegalArgumentException("byte[] must have atleast one octet");
 		}
 	}
 

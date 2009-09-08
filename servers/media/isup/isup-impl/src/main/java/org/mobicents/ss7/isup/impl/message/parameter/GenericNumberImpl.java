@@ -94,6 +94,7 @@ public class GenericNumberImpl extends AbstractNAINumber implements GenericNumbe
 		this.numberIncomplete = _NI_COMPLETE;
 		// 11
 		this.screeningIndicator = 3;
+		this.setAddress("");
 	}
 
 	/*

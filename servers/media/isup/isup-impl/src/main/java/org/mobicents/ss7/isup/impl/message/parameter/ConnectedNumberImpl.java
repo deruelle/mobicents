@@ -90,7 +90,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 
 		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
 			return;
-
+		
 		// NOTE 1 – If the parameter is included and the address presentation
 		// restricted indicator indicates
 		// address not available, octets 3 to n( this are digits.) are omitted,
@@ -102,6 +102,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 		this.numberingPlanIndicator = 0;
 		// 11
 		this.screeningIndicator = 3;
+		this.setAddress("");
 	}
 
 	/*

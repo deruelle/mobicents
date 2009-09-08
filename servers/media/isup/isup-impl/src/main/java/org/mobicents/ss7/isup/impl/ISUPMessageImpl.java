@@ -250,7 +250,7 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 					lastParameterLength = currentParameterLength;
 
 					// FIXME: add check here?
-					pointers[index] = (byte) (parameters.size() + 1);
+					pointers[index] = (byte) (parameters.size()+(optionalPartIsPossible()?1:0));
 				} else {
 					pointers[index] = (byte) (pointers[index - 1] + lastParameterLength);
 				}
@@ -324,7 +324,8 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 		int index = 0;
 		index += this.decodeMandatoryParameters(b, index);
 	
-		index += this.decodeMandatoryVariableParameters(b, index);
+		if(mandatoryVariablePartPossible())
+			index += this.decodeMandatoryVariableParameters(b, index);
 		
 		
 		if(!this.optionalPartIsPossible() ||b.length==index || b[index] == 0x0)
@@ -357,7 +358,7 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 		// some bad output, which wont give a clue about reason...
 		int readCount = 0;
 		//int optionalOffset = 0;
-
+		
 		if (b.length - index > 0) {
 
 			byte extPIndex = -1;

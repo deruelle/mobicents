@@ -46,7 +46,7 @@ public class RELTest extends MessageHarness{
 		ReleaseMessageImpl iam=new ReleaseMessageImpl(this,message);
 		byte[] encodedBody = iam.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeCompare(message, encodedBody),equal);
+		assertTrue(super.makeStringCompare(message, encodedBody),equal);
 	}
 	
 }

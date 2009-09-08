@@ -8,6 +8,7 @@
  */
 package org.mobicents.ss7.isup.impl.message.parameter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
@@ -64,6 +65,13 @@ public class CircuitGroupSuperVisionMessageTypeImpl extends AbstractParameter im
 		byte[] b = new byte[] { (byte) (this.circuitGroupSuperVisionMessageTypeIndicator & 0x03) };
 
 		return b;
+	}
+
+	@Override
+	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+		byte[] b = this.encodeElement();
+		bos.write(b);
+		return b.length;
 	}
 
 	public int getCircuitGroupSuperVisionMessageTypeIndicator() {

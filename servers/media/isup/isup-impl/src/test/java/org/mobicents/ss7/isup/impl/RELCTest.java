@@ -42,7 +42,7 @@ public class RELCTest extends MessageHarness{
 		ReleaseCompleteMessageImpl iam=new ReleaseCompleteMessageImpl(this,message);
 		byte[] encodedBody = iam.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeCompare(message, encodedBody),equal);
+		assertTrue(super.makeStringCompare(message, encodedBody),equal);
 	}
 	
 }

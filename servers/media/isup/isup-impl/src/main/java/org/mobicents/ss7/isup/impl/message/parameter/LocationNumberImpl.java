@@ -98,6 +98,7 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 
 		// 11
 		this.screeningIndicator = 3;
+		this.setAddress("");
 	}
 
 	/*
