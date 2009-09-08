@@ -240,7 +240,6 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 				ISUPParameter p = parameters.get(index);
 
 				byte[] body = p.encodeElement();
-				// System.err.println("ENCODE V: "+p.getCode()+"---> "+Utils.toHex(body));
 				currentParameterLength = (byte) body.length;
 				if (body.length > 255) {
 					// FIXME: is this check valid?
@@ -249,10 +248,12 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 				if (index == 0) {
 					lastParameterLength = currentParameterLength;
 
-					// FIXME: add check here?
+					//This creates pointer to first mandatory variable param, check on optional is requried, since if its not defined
+					//by message, pointer is ommited.
 					pointers[index] = (byte) (parameters.size()+(optionalPartIsPossible()?1:0));
 				} else {
-					pointers[index] = (byte) (pointers[index - 1] + lastParameterLength);
+					//FIXME: CHECK IF THIS IS OK!!!!!!!!!!!!!!!!!!!!!!!!!
+					pointers[index] = (byte) (pointers[index - 1] + lastParameterLength+(optionalPartIsPossible()?1:0));
 				}
 
 				parametersBodyBOS.write(currentParameterLength);
@@ -365,7 +366,8 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 			try {
 				int count = getNumberOfMandatoryVariableLengthParameters();
 				for (int parameterIndex = 0; parameterIndex < count; parameterIndex++) {
-					int parameterLengthIndex = b[index + readCount] + index;
+					int lengthPointerIndex = index + readCount;
+					int parameterLengthIndex = b[lengthPointerIndex] + index+readCount;
 
 					int parameterLength = b[parameterLengthIndex];
 					byte[] parameterBody = new byte[parameterLength];
@@ -520,6 +522,9 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 		}
 		throw new ParameterRangeInvalidException("Parameter with code: " + parameterCode + " is not defined in any type: mandatory, mandatory variable or optional");
 	}
-	
+	public String toString()
+	{
+		return super.toString()+"["+getMessageType().getCode()+"]: F"+this.f_Parameters+", V"+this.v_Parameters+", O"+this.o_Parameters;
+	}
 	
 }

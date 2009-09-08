@@ -41,7 +41,7 @@ public class CalledDirectoryNumberTest extends ParameterHarness {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		// we will use odd number of digits, so we leave zero as MSB
 
-		bos.write(CalledDirectoryNumber._NAI_SUBSCCRIBER_NUMBER);
+		bos.write(CalledDirectoryNumber._NAI_SUBSCRIBER_NUMBER);
 		int v = CalledDirectoryNumberImpl._INNI_RESERVED << 7;
 		v |= CalledDirectoryNumberImpl._NPI_ISDN_NP << 4;
 		bos.write(v);
@@ -52,7 +52,7 @@ public class CalledDirectoryNumberTest extends ParameterHarness {
 	private byte[] getBody2() throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-		bos.write(CalledDirectoryNumber._NAI_SUBSCCRIBER_NUMBER | (0x01 << 7));
+		bos.write(CalledDirectoryNumber._NAI_SUBSCRIBER_NUMBER | (0x01 << 7));
 		int v = CalledDirectoryNumberImpl._INNI_RESERVED << 7;
 		v |= CalledDirectoryNumberImpl._NPI_ISDN_NP << 4;
 		bos.write(v);
@@ -64,7 +64,7 @@ public class CalledDirectoryNumberTest extends ParameterHarness {
 		CalledDirectoryNumberImpl bci = new CalledDirectoryNumberImpl(getBody1());
 		bci.getNumberingPlanIndicator();
 		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
-		Object[] expectedValues = { CalledDirectoryNumberImpl._NPI_ISDN_NP, CalledDirectoryNumberImpl._INNI_RESERVED, CalledDirectoryNumber._NAI_SUBSCCRIBER_NUMBER, false, super.getSixDigitsString() };
+		Object[] expectedValues = { CalledDirectoryNumberImpl._NPI_ISDN_NP, CalledDirectoryNumberImpl._INNI_RESERVED, CalledDirectoryNumber._NAI_SUBSCRIBER_NUMBER, false, super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
@@ -72,7 +72,7 @@ public class CalledDirectoryNumberTest extends ParameterHarness {
 		CalledDirectoryNumberImpl bci = new CalledDirectoryNumberImpl(getBody2());
 
 		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
-		Object[] expectedValues = { CalledDirectoryNumberImpl._NPI_ISDN_NP, CalledDirectoryNumberImpl._INNI_RESERVED, CalledDirectoryNumber._NAI_SUBSCCRIBER_NUMBER, true, super.getFiveDigitsString() };
+		Object[] expectedValues = { CalledDirectoryNumberImpl._NPI_ISDN_NP, CalledDirectoryNumberImpl._INNI_RESERVED, CalledDirectoryNumber._NAI_SUBSCRIBER_NUMBER, true, super.getFiveDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
 

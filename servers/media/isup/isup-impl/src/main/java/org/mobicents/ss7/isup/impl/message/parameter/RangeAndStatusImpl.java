@@ -52,6 +52,8 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 	public int decodeElement(byte[] b) throws ParameterRangeInvalidException {
 
 		this.range = b[0];
+		if (b.length == 1)
+			return 1;
 		this.status = new byte[b.length - 1];
 		System.arraycopy(b, 1, this.status, 0, this.status.length);
 
@@ -66,7 +68,8 @@ public class RangeAndStatusImpl extends AbstractParameter implements RangeAndSta
 	public byte[] encodeElement() throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		bos.write(this.range);
-		bos.write(this.status);
+		if (this.status != null)
+			bos.write(this.status);
 		return bos.toByteArray();
 	}
 

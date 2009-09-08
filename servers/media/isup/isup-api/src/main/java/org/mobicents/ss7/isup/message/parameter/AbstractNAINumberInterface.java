@@ -17,7 +17,7 @@ public interface AbstractNAINumberInterface extends ISUPParameter, AbstractNumbe
 	/**
 	 * 0 0 0 0 0 0 1 subscriber number (national use)
 	 */
-	public static final int _NAI_SUBSCCRIBER_NUMBER = 1;
+	public static final int _NAI_SUBSCRIBER_NUMBER = 1;
 	/**
 	 * 0 0 0 0 0 1 0 unknown (national use)
 	 */

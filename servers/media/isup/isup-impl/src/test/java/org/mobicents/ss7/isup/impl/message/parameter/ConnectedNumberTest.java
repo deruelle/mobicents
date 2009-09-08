@@ -44,7 +44,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 	private byte[] getBody1() throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		// we will use odd number of digits, so we leave zero as MSB
-		int v = ConnectedNumber._NAI_SUBSCCRIBER_NUMBER;
+		int v = ConnectedNumber._NAI_SUBSCRIBER_NUMBER;
 		bos.write(v);
 		v = 0;
 		v = ConnectedNumberImpl._NPI_TELEX << 4;
@@ -60,7 +60,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		// We have odd number
-		int v = ConnectedNumber._NAI_SUBSCCRIBER_NUMBER | (0x01 << 7);
+		int v = ConnectedNumber._NAI_SUBSCRIBER_NUMBER | (0x01 << 7);
 		bos.write(v);
 		v = 0;
 		v = ConnectedNumberImpl._NPI_TELEX << 4;
@@ -75,7 +75,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 		ConnectedNumberImpl bci = new ConnectedNumberImpl(getBody1());
 
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
-		Object[] expectedValues = { ConnectedNumberImpl._NPI_TELEX, ConnectedNumberImpl._APRI_NOT_AVAILABLE, ConnectedNumber._NAI_SUBSCCRIBER_NUMBER, ConnectedNumberImpl._SI_NETWORK_PROVIDED, false,
+		Object[] expectedValues = { ConnectedNumberImpl._NPI_TELEX, ConnectedNumberImpl._APRI_NOT_AVAILABLE, ConnectedNumber._NAI_SUBSCRIBER_NUMBER, ConnectedNumberImpl._SI_NETWORK_PROVIDED, false,
 				super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
@@ -84,7 +84,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 		ConnectedNumberImpl bci = new ConnectedNumberImpl(getBody2());
 		
 		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
-		Object[] expectedValues = { ConnectedNumberImpl._NPI_TELEX, ConnectedNumberImpl._APRI_ALLOWED, ConnectedNumber._NAI_SUBSCCRIBER_NUMBER, ConnectedNumberImpl._SI_NETWORK_PROVIDED, true, super.getFiveDigitsString() };
+		Object[] expectedValues = { ConnectedNumberImpl._NPI_TELEX, ConnectedNumberImpl._APRI_ALLOWED, ConnectedNumber._NAI_SUBSCRIBER_NUMBER, ConnectedNumberImpl._SI_NETWORK_PROVIDED, true, super.getFiveDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
 
