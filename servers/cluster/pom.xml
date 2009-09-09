@@ -22,7 +22,6 @@
 	</scm>
 
 	<modules>
-		<module>transaction</module>
 		<module>ftf</module>
 		<module>cache</module>
 		<module>timers</module>

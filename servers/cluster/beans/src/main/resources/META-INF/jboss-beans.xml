@@ -55,12 +55,6 @@
 
       </bean>
 
-	<bean name="Mobicents.TransactionManager"
-		class="org.mobicents.transaction.ExtendedTransactionManagerImpl" autowire-candidate="false">
-		<constructor>
-          <parameter><inject bean="RealTransactionManager"/></parameter>
-     	</constructor>							
-	</bean>	
 	<bean name="Mobicents.JBossCacheFactory" class="org.jboss.cache.DefaultCacheFactory">      
       <constructor factoryClass="org.jboss.cache.DefaultCacheFactory" factoryMethod="getInstance" />
    </bean>
@@ -74,7 +68,7 @@
            
           <parameter class="org.jboss.cache.CacheFactory"><inject bean="Mobicents.JBossCacheFactory"/></parameter>
           <parameter class="org.jboss.cache.config.Configuration"><inject bean="Mobicents.CacheConfig"/></parameter>
-          <parameter class="javax.transaction.TransactionManager"><inject bean="Mobicents.TransactionManager"/></parameter>
+          <parameter class="javax.transaction.TransactionManager"><inject bean="RealTransactionManager"/></parameter>
       
      	</constructor>			
      	<start method="startRootRegion">
@@ -87,17 +81,18 @@
      	 -->
      	<demand>Mobicents.JBossCacheFactory</demand>
      	<demand>Mobicents.CacheConfig</demand>
-     	<demand>Mobicents.TransactionManager</demand>
 	</bean>
+	
 	<bean name="Mobicents.TimerFacilityCacheData" class="org.mobicents.slee.runtime.cache.TimerTasksCacheData">
       <constructor factoryMethod="getTimerFacilityCacheData" >
       	<factory bean="Mobicents.Cache"/>
       </constructor>
       <demand>Mobicents.Cache</demand>
    </bean>
+   
 	<bean name="Mobicents.FTFDefaultElector" class="org.mobicents.ftf.election.SimpleSingletonElector">
-		
 	</bean>
+	
 	<bean name="Mobicents.FTFRegistration" class="org.mobicents.ftf.FTFRegistration">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="javax.slee:name=Mobicents.FTFRegistration",exposedInterface=org.mobicents.ftf.FTFRegistrationMBean.class,registerDirectly=true)</annotation>
 

@@ -3,19 +3,18 @@ package org.mobicents.slee.core.timers;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.mobicents.transaction.TransactionalAction;
 
 
 /**
- * {@link TransactionalAction} to set a timer task after the tx commits.
+ * Runnable to set a timer task after the tx commits.
  * 
  * @author martins
  *
  */
-public class SetTimerTransactionalAction implements TransactionalAction {
+public class SetTimerAfterTxCommitRunnable implements Runnable {
 
 	private static final Logger logger = Logger
-			.getLogger(SetTimerTransactionalAction.class);
+			.getLogger(SetTimerAfterTxCommitRunnable.class);
 
 	private final TimerTask task;
 
@@ -23,13 +22,17 @@ public class SetTimerTransactionalAction implements TransactionalAction {
 
 	private boolean canceled = false;
 
-	SetTimerTransactionalAction(TimerTask task,
+	SetTimerAfterTxCommitRunnable(TimerTask task,
 			FaultTolerantScheduler scheduler) {
 		this.task = task;
 		this.scheduler = scheduler;
 	}
 
-	public void execute() {
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+	public void run() {
 		
 		task.setSetTimerTransactionalAction(null);
 		

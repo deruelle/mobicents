@@ -4,12 +4,13 @@ import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
 
 import org.apache.log4j.Logger;
 import org.mobicents.slee.runtime.cache.TimerTaskDataUser;
 import org.mobicents.slee.runtime.cache.TimerTasksCacheData;
-import org.mobicents.transaction.ExtendedTransactionManager;
-import org.mobicents.transaction.TransactionalAction;
 
 
 /**
@@ -27,14 +28,14 @@ public class FaultTolerantScheduler implements FaultTolerantSchedulerMBean, Time
 	private  ScheduledThreadPoolExecutor executor;
 	
 	/**
-	 * 
+	 * jta tx manager
 	 */
 	private  TimerTasksCacheData cacheData;
 	
 	/**
 	 * 
 	 */
-	private  ExtendedTransactionManager txManager;
+	private TransactionManager txManager;
 	
 	/**
 	 * Contains local running tasks. NOTE: never ever check for values, class instances may differ due cache replication, ALWAYS use keys.
@@ -55,17 +56,14 @@ public class FaultTolerantScheduler implements FaultTolerantSchedulerMBean, Time
 	 * @param cacheData
 	 * @param txManager
 	 */
-	public FaultTolerantScheduler(int corePoolSize, TimerTasksCacheData cacheData, ExtendedTransactionManager txManager, TimerTaskFactory timerTaskFactory) {
-		
-		
+	public FaultTolerantScheduler(int corePoolSize, TimerTasksCacheData cacheData, TimerTaskFactory timerTaskFactory) {
 		this.cacheData = cacheData;
 		if (!cacheData.exists()) {
 			cacheData._create();
 		}
-		this.txManager = txManager;
 		this.timerTaskFactory = timerTaskFactory;
-		
 	}
+	
 	public FaultTolerantScheduler() {
 		
 		
@@ -120,25 +118,30 @@ public class FaultTolerantScheduler implements FaultTolerantSchedulerMBean, Time
 		
 		
 		// schedule task
-		SetTimerTransactionalAction setTimerAction = new SetTimerTransactionalAction(task, this);
+		SetTimerAfterTxCommitRunnable setTimerAction = new SetTimerAfterTxCommitRunnable(task, this);
 		if (txManager != null) {
-			TransactionalAction rollbackAction = new TransactionalAction() {				
-				public void execute() {
-					localRunningTasks.remove(taskID);					
-				}
-			};
 			try {
-				txManager.addAfterRollbackAction(rollbackAction);
-				txManager.addAfterCommitAction(setTimerAction);
-				task.setSetTimerTransactionalAction(setTimerAction);
-			} catch (Throwable e) {
-				e.printStackTrace();
+				Transaction tx = txManager.getTransaction();
+				if (tx != null) {
+					Runnable rollbackAction = new Runnable() {				
+						public void run() {
+							localRunningTasks.remove(taskID);					
+						}
+					};
+					tx.registerSynchronization(new TransactionSynchronization(setTimerAction,rollbackAction));
+					task.setSetTimerTransactionalAction(setTimerAction);
+				}
+				else {
+					setTimerAction.run();
+				}
+			}
+			catch (Throwable e) {
 				remove(taskID,true);
-				throw new RuntimeException(e.getMessage(),e);
+				throw new RuntimeException("Unable to register tx synchronization object",e);
 			}
 		}
 		else {
-			setTimerAction.execute();
+			setTimerAction.run();
 		}		
 	}
 
@@ -159,23 +162,30 @@ public class FaultTolerantScheduler implements FaultTolerantSchedulerMBean, Time
 			// remove task data
 			cacheData.removeTaskData(taskID);
 
-			final SetTimerTransactionalAction setAction = task.getSetTimerTransactionalAction();
+			final SetTimerAfterTxCommitRunnable setAction = task.getSetTimerTransactionalAction();
 			if (setAction != null) {
 				// we have a tx action scheduled to run when tx commits, to set the timer, lets simply cancel it
 				setAction.cancel();
 			}
 			else {
 				// do cancellation
-				TransactionalAction cancelAction = new CancelTimerTransactionalAction(task,this);
+				Runnable cancelAction = new CancelTimerAfterTxCommitRunnable(task,this);
 				if (txManager != null) {
 					try {
-						txManager.addAfterCommitAction(cancelAction);
-					} catch (Throwable e) {
-						throw new RuntimeException(e.getMessage(),e);
+						Transaction tx = txManager.getTransaction();
+						if (tx != null) {
+							tx.registerSynchronization(new TransactionSynchronization(cancelAction,null));
+						}
+						else {
+							cancelAction.run();
+						}
+					}
+					catch (Throwable e) {
+						throw new RuntimeException("unable to register tx synchronization object",e);
 					}
 				}
 				else {
-					cancelAction.execute();
+					cancelAction.run();
 				}			
 			}		
 		}
@@ -221,11 +231,11 @@ public class FaultTolerantScheduler implements FaultTolerantSchedulerMBean, Time
 		return "FaultTolerantScheduler [ local tasks = "+localRunningTasks.size()+" , all tasks "+cacheData.getTaskDatas().size()+" ]";
 	}
 
-	public ExtendedTransactionManager getTxManager() {
+	public TransactionManager getTxManager() {
 		return txManager;
 	}
 
-	public void setTxManager(ExtendedTransactionManager txManager) {
+	public void setTxManager(TransactionManager txManager) {
 		this.txManager = txManager;
 	}
 

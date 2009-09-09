@@ -13,8 +13,6 @@
 	<name>Mobicents :: Cluster :: ${pom.artifactId}</name>
 
 	<dependencies>
-
-		
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
            	<artifactId>cache</artifactId>
@@ -23,11 +21,6 @@
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
            	<artifactId>ftf</artifactId>
-           	<version>${pom.version}</version>           	
-		</dependency>
-		<dependency>
-			<groupId>${pom.groupId}</groupId>
-           	<artifactId>transaction</artifactId>
            	<version>${pom.version}</version>           	
 		</dependency>
 	</dependencies>

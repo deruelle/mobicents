@@ -3,31 +3,30 @@ package org.mobicents.slee.core.timers;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
-import org.mobicents.transaction.TransactionalAction;
 
 
 /**
- * {@link TransactionalAction} to cancel a timer task after the tx commits.
+ * Runnable to cancel a timer task after the tx commits.
  * @author martins
  *
  */
-public class CancelTimerTransactionalAction implements TransactionalAction {
+public class CancelTimerAfterTxCommitRunnable implements Runnable {
 
-	private static final Logger logger = Logger.getLogger(CancelTimerTransactionalAction.class);
+	private static final Logger logger = Logger.getLogger(CancelTimerAfterTxCommitRunnable.class);
 	
 	private final FaultTolerantScheduler executor;	
 	private TimerTask task;
 
-	CancelTimerTransactionalAction(TimerTask task,FaultTolerantScheduler executor) {
+	CancelTimerAfterTxCommitRunnable(TimerTask task,FaultTolerantScheduler executor) {
 		this.task = task;
 		this.executor = executor;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.mobicents.slee.runtime.transaction.TransactionalAction#execute()
+	 * @see java.lang.Runnable#run()
 	 */
-	public void execute() {
+	public void run() {
 		
 		final TimerTaskData taskData = task.getData();
 		final Serializable taskID = taskData.getTaskID();

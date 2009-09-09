@@ -23,7 +23,7 @@ public abstract class TimerTask implements Runnable {
 	/**
 	 * the tx action to set the timer when the tx commits, not used in a non tx environment 
 	 */
-	private SetTimerTransactionalAction action;
+	private SetTimerAfterTxCommitRunnable action;
 	
 	/**
 	 * 
@@ -45,7 +45,7 @@ public abstract class TimerTask implements Runnable {
 	 * Retrieves the tx action to set the timer when the tx commits, not used in a non tx environment.
 	 * @return
 	 */
-	SetTimerTransactionalAction getSetTimerTransactionalAction() {
+	SetTimerAfterTxCommitRunnable getSetTimerTransactionalAction() {
 		return action;
 	}
 
@@ -54,7 +54,7 @@ public abstract class TimerTask implements Runnable {
 	 * @param action
 	 */
 	void setSetTimerTransactionalAction(
-			SetTimerTransactionalAction action) {
+			SetTimerAfterTxCommitRunnable action) {
 		this.action = action;
 	}
 

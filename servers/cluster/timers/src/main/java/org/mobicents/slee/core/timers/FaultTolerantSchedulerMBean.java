@@ -10,8 +10,9 @@ import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import javax.transaction.TransactionManager;
+
 import org.mobicents.slee.runtime.cache.TimerTasksCacheData;
-import org.mobicents.transaction.ExtendedTransactionManager;
 
 /**
  * Start time:08:36:37 2009-08-17<br>
@@ -53,9 +54,9 @@ public interface FaultTolerantSchedulerMBean {
 
 	public void shutdownNow();
 
-	public ExtendedTransactionManager getTxManager() ;
+	public TransactionManager getTxManager() ;
 
-	public void setTxManager(ExtendedTransactionManager txManager) ;
+	public void setTxManager(TransactionManager txManager) ;
 
 	public TimerTaskFactory getTimerTaskFactory() ;
 

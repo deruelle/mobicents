@@ -10,8 +10,6 @@
 
 	<artifactId>sar</artifactId>
 
-	<name>Mobicents :: JAIN SLEE Server :: Core :: ${pom.artifactId}</name>
-
 	<dependencies>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
@@ -28,13 +26,6 @@
 			<artifactId>ftf</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>${pom.groupId}</groupId>
-			<artifactId>transaction</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-
-
 		<!-- OTHER -->
 		<!-- jslee -->
 		<dependency>
