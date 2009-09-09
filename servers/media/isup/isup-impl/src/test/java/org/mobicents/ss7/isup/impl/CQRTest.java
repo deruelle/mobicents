@@ -50,7 +50,9 @@ public class CQRTest extends MessageHarness {
 				
 		};
 
-		CircuitGroupQueryResponseMessage grs=new CircuitGroupQueryResponseMessageImpl(this,message);
+		//CircuitGroupQueryResponseMessage grs=new CircuitGroupQueryResponseMessageImpl(this,message);
+		CircuitGroupQueryResponseMessage grs=super.messageFactory.createCQR();
+		grs.decodeElement(message);
 		byte[] encodedBody = grs.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -78,7 +80,9 @@ public class CQRTest extends MessageHarness {
 				
 		};
 
-		CircuitGroupQueryResponseMessage grs=new CircuitGroupQueryResponseMessageImpl(this,message);
+		//CircuitGroupQueryResponseMessage grs=new CircuitGroupQueryResponseMessageImpl(this,message);
+		CircuitGroupQueryResponseMessage grs=super.messageFactory.createCQR();
+		grs.decodeElement(message);
 
 		
 		try{

@@ -41,7 +41,9 @@ public class CQMTest extends MessageHarness {
 				
 		};
 
-		CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
+		//CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
+		CircuitGroupQueryMessage grs=super.messageFactory.createCQM();
+		grs.decodeElement(message);
 		byte[] encodedBody = grs.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -61,7 +63,9 @@ public class CQMTest extends MessageHarness {
 				
 		};
 
-		CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
+		//CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
+		CircuitGroupQueryMessage grs=super.messageFactory.createCQM();
+		grs.decodeElement(message);
 
 		
 		try{

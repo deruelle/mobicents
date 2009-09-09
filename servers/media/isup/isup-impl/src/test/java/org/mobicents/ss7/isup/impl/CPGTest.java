@@ -62,7 +62,9 @@ public class CPGTest extends MessageHarness{
 
 		};
 
-		CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
+		//CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
+		CallProgressMessage cpg=super.messageFactory.createCPG();
+		cpg.decodeElement(message);
 		byte[] encodedBody = cpg.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -105,7 +107,9 @@ public class CPGTest extends MessageHarness{
 
 		};
 
-		CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
+		//CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
+		CallProgressMessage cpg=super.messageFactory.createCPG();
+		cpg.decodeElement(message);
 		assertNotNull(cpg.getParameter(EventInformation._PARAMETER_CODE));
 		assertNotNull(cpg.getParameter(BackwardCallIndicators._PARAMETER_CODE));
 		assertNotNull(cpg.getParameter(TransmissionMediumUsed._PARAMETER_CODE));

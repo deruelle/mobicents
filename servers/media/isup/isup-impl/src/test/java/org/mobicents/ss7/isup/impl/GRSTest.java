@@ -40,7 +40,9 @@ public class GRSTest extends MessageHarness {
 				
 		};
 
-		CircuitGroupResetMessage grs=new CircuitGroupResetMessageImpl(this,message);
+		//CircuitGroupResetMessage grs=new CircuitGroupResetMessageImpl(this,message);
+		CircuitGroupResetMessage grs=super.messageFactory.createGRS();
+		grs.decodeElement(message);
 		byte[] encodedBody = grs.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -60,8 +62,9 @@ public class GRSTest extends MessageHarness {
 				
 		};
 
-		CircuitGroupResetMessage grs=new CircuitGroupResetMessageImpl(this,message);
-
+		//CircuitGroupResetMessage grs=new CircuitGroupResetMessageImpl(this,message);
+		CircuitGroupResetMessage grs=super.messageFactory.createGRS();
+		grs.decodeElement(message);
 		
 		try{
 			RangeAndStatus RS = (RangeAndStatus) grs.getParameter(RangeAndStatus._PARAMETER_CODE);

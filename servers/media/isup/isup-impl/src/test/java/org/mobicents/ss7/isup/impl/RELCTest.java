@@ -10,6 +10,7 @@ package org.mobicents.ss7.isup.impl;
 import java.util.Arrays;
 
 import org.mobicents.ss7.isup.impl.ReleaseCompleteMessageImpl;
+import org.mobicents.ss7.isup.message.ReleaseCompleteMessage;
 
 /**
  * Start time:15:07:07 2009-07-17<br>
@@ -39,7 +40,9 @@ public class RELCTest extends MessageHarness{
 
 		};
 
-		ReleaseCompleteMessageImpl iam=new ReleaseCompleteMessageImpl(this,message);
+		//ReleaseCompleteMessageImpl iam=new ReleaseCompleteMessageImpl(this,message);
+		ReleaseCompleteMessage iam=super.messageFactory.createRLC();
+		iam.decodeElement(message);
 		byte[] encodedBody = iam.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);

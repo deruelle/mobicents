@@ -10,6 +10,7 @@ package org.mobicents.ss7.isup.impl;
 import java.util.Arrays;
 
 import org.mobicents.ss7.isup.impl.InitialAddressMessageImpl;
+import org.mobicents.ss7.isup.message.InitialAddressMessage;
 
 /**
  * Start time:15:07:07 2009-07-17<br>
@@ -63,7 +64,9 @@ public class IAMTest extends MessageHarness{
 
 		};
 
-		InitialAddressMessageImpl iam=new InitialAddressMessageImpl(this,message);
+		//InitialAddressMessageImpl iam=new InitialAddressMessageImpl(this,message);
+		InitialAddressMessage iam=super.messageFactory.createIAM();
+		iam.decodeElement(message);
 		byte[] encodedBody = iam.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -113,7 +116,9 @@ public class IAMTest extends MessageHarness{
 
 		};
 
-		InitialAddressMessageImpl iam=new InitialAddressMessageImpl(this,message);
+		//InitialAddressMessageImpl iam=new InitialAddressMessageImpl(this,message);
+		InitialAddressMessage iam=super.messageFactory.createIAM();
+		iam.decodeElement(message);
 		assertNotNull(iam.getNatureOfConnectionIndicators());
 		assertNotNull(iam.getForwardCallIndicators());
 		assertNotNull(iam.getCallingPartCategory());

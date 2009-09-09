@@ -11,6 +11,7 @@ package org.mobicents.ss7.isup.impl;
 import java.util.Arrays;
 
 import org.mobicents.ss7.isup.impl.AddressCompleteMessageImpl;
+import org.mobicents.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.ss7.isup.message.parameter.BackwardCallIndicators;
 
 /**
@@ -53,7 +54,9 @@ public class ACMTest extends MessageHarness {
 
 		};
 
-		AddressCompleteMessageImpl acm=new AddressCompleteMessageImpl(this,message);
+		//AddressCompleteMessageImpl acm=new AddressCompleteMessageImpl(this,message);
+		AddressCompleteMessage acm=super.messageFactory.createACM();
+		acm.decodeElement(message);
 		byte[] encodedBody = acm.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -88,7 +91,9 @@ public class ACMTest extends MessageHarness {
 
 		};
 
-		AddressCompleteMessageImpl acm=new AddressCompleteMessageImpl(this,message);
+		//AddressCompleteMessageImpl acm=new AddressCompleteMessageImpl(this,message);
+		AddressCompleteMessage acm=super.messageFactory.createACM();
+		acm.decodeElement(message);
 	
 		assertNotNull("BackwardCallIndicator is null", acm.getBackwardCallIndicators());
 		assertNotNull("OptionalBackwardCallIndicator is null", acm.getOptionalBakwardCallIndicators());

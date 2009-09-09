@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.mobicents.ss7.isup.ISUPTransaction;
@@ -67,17 +68,28 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 
 	private ISUPTransaction tx;
 
-	public ISUPMessageImpl(Object source)  {
+	public ISUPMessageImpl(Object source,Set<Integer> mandatoryCodes,Set<Integer> mandatoryVariableCodes,Set<Integer> optionalCodes,Map<Integer, Integer> mandatoryCode2Index,Map<Integer, Integer> mandatoryVariableCode2Index,Map<Integer, Integer> optionalCode2Index)  {
 		super();
 		this.source = source;
-
-		mandatoryCodes = new HashSet<Integer>();
-		mandatoryVariableCodes = new HashSet<Integer>();
-		optionalCodes = new HashSet<Integer>();
-		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
-		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
-		optionalCodeToIndex = new HashMap<Integer, Integer>();
-
+		
+		this.f_Parameters = new TreeMap<Integer, ISUPParameter>();
+		this.v_Parameters = new TreeMap<Integer, ISUPParameter>();
+		this.o_Parameters = new TreeMap<Integer, ISUPParameter>();
+		
+		
+		this.mandatoryCodes = mandatoryCodes;
+		this.mandatoryVariableCodes = mandatoryVariableCodes;
+		this.optionalCodes = optionalCodes;
+		
+		this.mandatoryCodeToIndex = mandatoryCode2Index;
+		this.mandatoryVariableCodeToIndex = mandatoryVariableCode2Index;
+		this.optionalCodeToIndex = optionalCode2Index;
+		
+		
+		
+		
+		
+		
 	}
 
 	/**
@@ -96,7 +108,8 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	 * @param congestionPriority
 	 *            - priority of the ISUP message
 	 */
-	protected ISUPMessageImpl() {
+	public ISUPMessageImpl() {
+		//TODO, THIS WILL BE REMOVED!!
 		mandatoryCodes = new HashSet<Integer>();
 		mandatoryVariableCodes = new HashSet<Integer>();
 		optionalCodes = new HashSet<Integer>();
@@ -104,9 +117,22 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
 		optionalCodeToIndex = new HashMap<Integer, Integer>();
 
-		prepareMessage();
 	}
 
+	/**
+	 * 	
+	 * @param source2
+	 */
+	public ISUPMessageImpl(Object source) {
+		//TODO, THIS WILL BE REMOVED!!
+		mandatoryCodes = new HashSet<Integer>();
+		mandatoryVariableCodes = new HashSet<Integer>();
+		optionalCodes = new HashSet<Integer>();
+		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+		optionalCodeToIndex = new HashMap<Integer, Integer>();
+	}
+	
 	/**
 	 * @return <ul>
 	 *         <li><b>true</b> - if all requried parameters are set</li>
@@ -123,13 +149,7 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	 */
 	public abstract MessageType getMessageType();
 
-	// FIXME: above will be changed
-
-	protected void prepareMessage() {
-		if (this.o_Parameters.size() > 0)
-			this.o_Parameters.put(this.o_Parameters.size(), new EndOfOptionalParametersImpl());
-
-	}
+	
 
 	// ///////////////
 	// TX MESSAGE //

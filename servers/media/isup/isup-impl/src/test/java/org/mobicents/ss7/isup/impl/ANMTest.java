@@ -66,7 +66,9 @@ public class ANMTest extends MessageHarness {
 
 		};
 
-		AnswerMessageImpl ANM=new AnswerMessageImpl(this,message);
+		//AnswerMessageImpl ANM=new AnswerMessageImpl(this,message);
+		AnswerMessage ANM=super.messageFactory.createANM();
+		ANM.decodeElement(message);
 		byte[] encodedBody = ANM.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -118,7 +120,9 @@ public class ANMTest extends MessageHarness {
 
 		};
 
-		AnswerMessageImpl ANM=new AnswerMessageImpl(this,message);
+		//AnswerMessageImpl ANM=new AnswerMessageImpl(this,message);
+		AnswerMessage ANM=super.messageFactory.createANM();
+		ANM.decodeElement(message);
 		try{
 			CallReference cr = (CallReference) ANM.getParameter(CallReference._PARAMETER_CODE);
 			assertNotNull("Call Reference return is null, it should not be",cr);

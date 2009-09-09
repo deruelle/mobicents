@@ -45,7 +45,9 @@ public class CGUATest extends MessageHarness {
 				,0x05
 		};
 
-		CircuitGroupUnblockingAckMessage cgb=new CircuitGroupUnblockingAckMessageImpl(this,message);
+		//CircuitGroupUnblockingAckMessage cgb=new CircuitGroupUnblockingAckMessageImpl(this,message);
+		CircuitGroupUnblockingAckMessage cgb=super.messageFactory.createCGUA();
+		cgb.decodeElement(message);
 		byte[] encodedBody = cgb.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -70,7 +72,9 @@ public class CGUATest extends MessageHarness {
 
 		};
 
-		CircuitGroupUnblockingAckMessage cgb=new CircuitGroupUnblockingAckMessageImpl(this,message);
+		//CircuitGroupUnblockingAckMessage cgb=new CircuitGroupUnblockingAckMessageImpl(this,message);
+		CircuitGroupUnblockingAckMessage cgb=super.messageFactory.createCGUA();
+		cgb.decodeElement(message);
 
 		
 		try{

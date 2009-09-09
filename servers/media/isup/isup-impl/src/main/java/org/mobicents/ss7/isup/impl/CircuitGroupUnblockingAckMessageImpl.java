@@ -6,6 +6,8 @@
  */
 package org.mobicents.ss7.isup.impl;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
@@ -29,41 +31,23 @@ public class CircuitGroupUnblockingAckMessageImpl extends ISUPMessageImpl implem
 	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_CGUA);
 	private static final int _MANDATORY_VAR_COUNT = 1;
 
-	protected static final int _INDEX_F_MessageType = 0;
-	protected static final int _INDEX_F_CircuitGroupSupervisionMessageType = 1;
+	static final int _INDEX_F_MessageType = 0;
+	static final int _INDEX_F_CircuitGroupSupervisionMessageType = 1;
 
-	protected static final int _INDEX_V_RangeAndStatus = 0;
+	static final int _INDEX_V_RangeAndStatus = 0;
 
-	/**
-	 * 
-	 * @param source
-	 * @throws ParameterRangeInvalidException
-	 */
-	CircuitGroupUnblockingAckMessageImpl(Object source, byte[] b) throws ParameterRangeInvalidException {
-		this(source);
+	CircuitGroupUnblockingAckMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
+		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 		decodeElement(b);
 
 	}
 
-	/**
-	 * 
-	 * @param source
-	 * @throws ParameterRangeInvalidException
-	 */
-	CircuitGroupUnblockingAckMessageImpl(Object source) {
-		super(source);
-		// FIXME: this is bad, we always fill this, we shouyld move that
-		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.o_Parameters = new TreeMap<Integer, ISUPParameter>();
+	CircuitGroupUnblockingAckMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
-
-		super.mandatoryCodes.add(CircuitGroupSuperVisionMessageType._PARAMETER_CODE);
-		super.mandatoryCodeToIndex.put(CircuitGroupSuperVisionMessageType._PARAMETER_CODE, _INDEX_F_CircuitGroupSupervisionMessageType);
-
-		super.mandatoryVariableCodes.add(RangeAndStatus._PARAMETER_CODE);
-		super.mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, _INDEX_V_RangeAndStatus);
 
 	}
 

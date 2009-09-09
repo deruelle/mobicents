@@ -7,6 +7,8 @@
  */
 package org.mobicents.ss7.isup.impl;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
@@ -30,40 +32,26 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	private static final int _MANDATORY_VAR_COUNT = 0;
 
 	// mandatory fixed L
-	protected static final int _INDEX_F_MessageType = 0;
+	static final int _INDEX_F_MessageType = 0;
 	// mandatory variable L
 	// optional O
-	protected static final int _INDEX_O_CauseIndicators = 0;
-	protected static final int _INDEX_O_EndOfOptionalParameters = 1;
+	static final int _INDEX_O_CauseIndicators = 0;
+	static final int _INDEX_O_EndOfOptionalParameters = 1;
 
-	/**
-	 * 
-	 * @param source
-	 * @throws ParameterRangeInvalidException
-	 */
-	ReleaseCompleteMessageImpl(Object source, byte[] b) throws ParameterRangeInvalidException {
-		this(source);
-
+	ReleaseCompleteMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
+		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 		decodeElement(b);
 
 	}
 
-	/**
-	 * @throws ParameterRangeInvalidException
-	 * 
-	 */
-	ReleaseCompleteMessageImpl(Object source) {
-
-		super(source);
-		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.o_Parameters = new TreeMap<Integer, ISUPParameter>();
+	ReleaseCompleteMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 
-		super.optionalCodes.add(CauseIndicators._PARAMETER_CODE);
-		super.optionalCodeToIndex.put(CauseIndicators._PARAMETER_CODE, _INDEX_O_CauseIndicators);
 	}
 
 	/*

@@ -10,6 +10,8 @@ package org.mobicents.ss7.isup.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
@@ -67,46 +69,46 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_IAM);
 	private static final int _MANDATORY_VAR_COUNT = 1;
 	// mandatory fixed L
-	protected static final int _INDEX_F_MessageType = 0;
-	protected static final int _INDEX_F_NatureOfConnectionIndicators = 1;
-	protected static final int _INDEX_F_ForwardCallIndicators = 2;
-	protected static final int _INDEX_F_CallingPartyCategory = 3;
-	protected static final int _INDEX_F_TransmissionMediumRequirement = 4;
+	 static final int _INDEX_F_MessageType = 0;
+	 static final int _INDEX_F_NatureOfConnectionIndicators = 1;
+	 static final int _INDEX_F_ForwardCallIndicators = 2;
+	 static final int _INDEX_F_CallingPartyCategory = 3;
+	 static final int _INDEX_F_TransmissionMediumRequirement = 4;
 	// mandatory variable L
-	protected static final int _INDEX_V_CalledPartyNumber = 0;
+	 static final int _INDEX_V_CalledPartyNumber = 0;
 	// optional
-	protected static final int _INDEX_O_TransitNetworkSelection = 0;
-	protected static final int _INDEX_O_CallReference = 1;
-	protected static final int _INDEX_O_CallingPartyNumber = 2;
-	protected static final int _INDEX_O_OptionalForwardCallIndicators = 3;
-	protected static final int _INDEX_O_RedirectingNumber = 4;
-	protected static final int _INDEX_O_RedirectionInformation = 5;
-	protected static final int _INDEX_O_ClosedUserGroupInterlockCode = 6;
-	protected static final int _INDEX_O_ConnectionRequest = 7;
-	protected static final int _INDEX_O_OriginalCalledNumber = 8;
-	protected static final int _INDEX_O_UserToUserInformation = 9;
-	protected static final int _INDEX_O_AccessTransport = 10;
-	protected static final int _INDEX_O_UserServiceInformation = 11;
-	protected static final int _INDEX_O_User2UIndicators = 12;
-	protected static final int _INDEX_O_GenericNumber = 13;
-	protected static final int _INDEX_O_PropagationDelayCounter = 14;
-	protected static final int _INDEX_O_UserServiceInformationPrime = 15;
-	protected static final int _INDEX_O_NetworkSPecificFacility = 16;
-	protected static final int _INDEX_O_GenericDigits = 17;
-	protected static final int _INDEX_O_OriginatingISCPointCode = 18;
-	protected static final int _INDEX_O_UserTeleserviceInformation = 19;
-	protected static final int _INDEX_O_RemoteOperations = 20;
-	protected static final int _INDEX_O_ParameterCompatibilityInformation = 21;
-	protected static final int _INDEX_O_GenericNotificationIndicator = 22;
-	protected static final int _INDEX_O_ServiceActivation = 23;
-	protected static final int _INDEX_O_GenericReference = 24;
-	protected static final int _INDEX_O_MLPPPrecedence = 25;
-	protected static final int _INDEX_O_TransimissionMediumRequierementPrime = 26;
-	protected static final int _INDEX_O_LocationNumber = 27;
-	protected static final int _INDEX_O_ForwardGVNS = 28;
-	protected static final int _INDEX_O_CCSS = 29;
-	protected static final int _INDEX_O_NetworkManagementControls = 30;
-	protected static final int _INDEX_O_EndOfOptionalParameters = 31;
+	 static final int _INDEX_O_TransitNetworkSelection = 0;
+	 static final int _INDEX_O_CallReference = 1;
+	 static final int _INDEX_O_CallingPartyNumber = 2;
+	 static final int _INDEX_O_OptionalForwardCallIndicators = 3;
+	 static final int _INDEX_O_RedirectingNumber = 4;
+	 static final int _INDEX_O_RedirectionInformation = 5;
+	 static final int _INDEX_O_ClosedUserGroupInterlockCode = 6;
+	 static final int _INDEX_O_ConnectionRequest = 7;
+	 static final int _INDEX_O_OriginalCalledNumber = 8;
+	 static final int _INDEX_O_UserToUserInformation = 9;
+	 static final int _INDEX_O_AccessTransport = 10;
+	 static final int _INDEX_O_UserServiceInformation = 11;
+	 static final int _INDEX_O_User2UIndicators = 12;
+	 static final int _INDEX_O_GenericNumber = 13;
+	 static final int _INDEX_O_PropagationDelayCounter = 14;
+	 static final int _INDEX_O_UserServiceInformationPrime = 15;
+	 static final int _INDEX_O_NetworkSPecificFacility = 16;
+	 static final int _INDEX_O_GenericDigits = 17;
+	 static final int _INDEX_O_OriginatingISCPointCode = 18;
+	 static final int _INDEX_O_UserTeleserviceInformation = 19;
+	 static final int _INDEX_O_RemoteOperations = 20;
+	 static final int _INDEX_O_ParameterCompatibilityInformation = 21;
+	 static final int _INDEX_O_GenericNotificationIndicator = 22;
+	 static final int _INDEX_O_ServiceActivation = 23;
+	 static final int _INDEX_O_GenericReference = 24;
+	 static final int _INDEX_O_MLPPPrecedence = 25;
+	 static final int _INDEX_O_TransimissionMediumRequierementPrime = 26;
+	 static final int _INDEX_O_LocationNumber = 27;
+	 static final int _INDEX_O_ForwardGVNS = 28;
+	 static final int _INDEX_O_CCSS = 29;
+	 static final int _INDEX_O_NetworkManagementControls = 30;
+	 static final int _INDEX_O_EndOfOptionalParameters = 31;
 
 	protected static final List<Integer> mandatoryParam;
 	static {
@@ -121,101 +123,23 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 
 	}
 
-	InitialAddressMessageImpl(Object source, byte[] b) throws ParameterRangeInvalidException {
-		this(source);
 
+	InitialAddressMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
+		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 		decodeElement(b);
 
 	}
 
-	InitialAddressMessageImpl(Object source) {
-		super(source);
-		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.o_Parameters = new TreeMap<Integer, ISUPParameter>();
+	InitialAddressMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
-		
-		super.mandatoryCodes.add(NatureOfConnectionIndicators._PARAMETER_CODE);
-		super.mandatoryCodes.add(ForwardCallIndicators._PARAMETER_CODE);
-		super.mandatoryCodes.add(CallingPartyCategory._PARAMETER_CODE);
-		super.mandatoryCodes.add(TransmissionMediumRequirement._PARAMETER_CODE);
-
-		super.mandatoryCodeToIndex.put(NatureOfConnectionIndicators._PARAMETER_CODE, _INDEX_F_NatureOfConnectionIndicators);
-		super.mandatoryCodeToIndex.put(ForwardCallIndicators._PARAMETER_CODE, _INDEX_F_NatureOfConnectionIndicators);
-		super.mandatoryCodeToIndex.put(CallingPartyCategory._PARAMETER_CODE, _INDEX_F_CallingPartyCategory);
-		super.mandatoryCodeToIndex.put(TransmissionMediumRequirement._PARAMETER_CODE, _INDEX_F_TransmissionMediumRequirement);
-
-		super.mandatoryVariableCodes.add(CalledPartyNumber._PARAMETER_CODE);
-		super.mandatoryVariableCodeToIndex.put(CalledPartyNumber._PARAMETER_CODE, _INDEX_V_CalledPartyNumber);
-
-		super.optionalCodes.add(TransitNetworkSelection._PARAMETER_CODE);
-		super.optionalCodes.add(CallReference._PARAMETER_CODE);
-		super.optionalCodes.add(CallingPartyNumber._PARAMETER_CODE);
-		super.optionalCodes.add(OptionalForwardCallIndicators._PARAMETER_CODE);
-		super.optionalCodes.add(RedirectingNumber._PARAMETER_CODE);
-		super.optionalCodes.add(RedirectionInformation._PARAMETER_CODE);
-		super.optionalCodes.add(ClosedUserGroupInterlockCode._PARAMETER_CODE);
-		super.optionalCodes.add(ConnectionRequest._PARAMETER_CODE);
-		super.optionalCodes.add(OriginalCalledNumberImpl._PARAMETER_CODE);
-		super.optionalCodes.add(UserToUserInformation._PARAMETER_CODE);
-		super.optionalCodes.add(AccessTransport._PARAMETER_CODE);
-		super.optionalCodes.add(UserServiceInformation._PARAMETER_CODE);
-		super.optionalCodes.add(UserToUserIndicators._PARAMETER_CODE);
-		super.optionalCodes.add(GenericNumber._PARAMETER_CODE);
-		super.optionalCodes.add(PropagationDelayCounter._PARAMETER_CODE);
-		super.optionalCodes.add(UserServiceInformationPrime._PARAMETER_CODE);
-		super.optionalCodes.add(NetworkSpecificFacility._PARAMETER_CODE);
-		super.optionalCodes.add(GenericDigits._PARAMETER_CODE);
-		super.optionalCodes.add(OriginatingISCPointCode._PARAMETER_CODE);
-		super.optionalCodes.add(UserTeleserviceInformation._PARAMETER_CODE);
-		super.optionalCodes.add(RemoteOperations._PARAMETER_CODE);
-		super.optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
-		super.optionalCodes.add(GenericNotificationIndicator._PARAMETER_CODE);
-		super.optionalCodes.add(ServiceActivation._PARAMETER_CODE);
-		super.optionalCodes.add(GenericReference._PARAMETER_CODE);
-		super.optionalCodes.add(MLPPPrecedence._PARAMETER_CODE);
-		super.optionalCodes.add(TransimissionMediumRequierementPrime._PARAMETER_CODE);
-		super.optionalCodes.add(LocationNumber._PARAMETER_CODE);
-		super.optionalCodes.add(ForwardGVNS._PARAMETER_CODE);
-		super.optionalCodes.add(CCSS._PARAMETER_CODE);
-		super.optionalCodes.add(NetworkManagementControls._PARAMETER_CODE);
-
-		super.optionalCodeToIndex.put(TransitNetworkSelection._PARAMETER_CODE, _INDEX_O_TransitNetworkSelection);
-		super.optionalCodeToIndex.put(CallReference._PARAMETER_CODE, _INDEX_O_CallReference);
-		super.optionalCodeToIndex.put(CallingPartyNumber._PARAMETER_CODE, _INDEX_O_CallingPartyNumber);
-		super.optionalCodeToIndex.put(OptionalForwardCallIndicators._PARAMETER_CODE, _INDEX_O_OptionalForwardCallIndicators);
-		super.optionalCodeToIndex.put(RedirectingNumber._PARAMETER_CODE, _INDEX_O_RedirectingNumber);
-		super.optionalCodeToIndex.put(RedirectionInformation._PARAMETER_CODE, _INDEX_O_RedirectionInformation);
-		super.optionalCodeToIndex.put(ClosedUserGroupInterlockCode._PARAMETER_CODE, _INDEX_O_ClosedUserGroupInterlockCode);
-		super.optionalCodeToIndex.put(ConnectionRequest._PARAMETER_CODE, _INDEX_O_ConnectionRequest);
-		super.optionalCodeToIndex.put(OriginalCalledNumberImpl._PARAMETER_CODE, _INDEX_O_OriginalCalledNumber);
-		super.optionalCodeToIndex.put(UserToUserInformation._PARAMETER_CODE, _INDEX_O_UserToUserInformation);
-		super.optionalCodeToIndex.put(AccessTransport._PARAMETER_CODE, _INDEX_O_AccessTransport);
-		super.optionalCodeToIndex.put(UserServiceInformation._PARAMETER_CODE, _INDEX_O_UserServiceInformation);
-		super.optionalCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE, _INDEX_O_User2UIndicators);
-		super.optionalCodeToIndex.put(GenericNumber._PARAMETER_CODE, _INDEX_O_GenericNumber);
-		super.optionalCodeToIndex.put(PropagationDelayCounter._PARAMETER_CODE, _INDEX_O_PropagationDelayCounter);
-		super.optionalCodeToIndex.put(UserServiceInformationPrime._PARAMETER_CODE, _INDEX_O_UserServiceInformationPrime);
-		super.optionalCodeToIndex.put(NetworkSpecificFacility._PARAMETER_CODE, _INDEX_O_NetworkSPecificFacility);
-		super.optionalCodeToIndex.put(GenericDigits._PARAMETER_CODE, _INDEX_O_GenericDigits);
-		super.optionalCodeToIndex.put(OriginatingISCPointCode._PARAMETER_CODE, _INDEX_O_OriginatingISCPointCode);
-		super.optionalCodeToIndex.put(UserTeleserviceInformation._PARAMETER_CODE, _INDEX_O_UserTeleserviceInformation);
-		super.optionalCodeToIndex.put(RemoteOperations._PARAMETER_CODE, _INDEX_O_RemoteOperations);
-		super.optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, _INDEX_O_ParameterCompatibilityInformation);
-		super.optionalCodeToIndex.put(GenericNotificationIndicator._PARAMETER_CODE, _INDEX_O_GenericNotificationIndicator);
-		super.optionalCodeToIndex.put(ServiceActivation._PARAMETER_CODE, _INDEX_O_ServiceActivation);
-		super.optionalCodeToIndex.put(GenericReference._PARAMETER_CODE, _INDEX_O_GenericReference);
-		super.optionalCodeToIndex.put(MLPPPrecedence._PARAMETER_CODE, _INDEX_O_MLPPPrecedence);
-		super.optionalCodeToIndex.put(TransimissionMediumRequierementPrime._PARAMETER_CODE, _INDEX_O_TransimissionMediumRequierementPrime);
-		super.optionalCodeToIndex.put(LocationNumber._PARAMETER_CODE, _INDEX_O_LocationNumber);
-		super.optionalCodeToIndex.put(ForwardGVNS._PARAMETER_CODE, _INDEX_O_ForwardGVNS);
-		super.optionalCodeToIndex.put(CCSS._PARAMETER_CODE, _INDEX_O_CCSS);
-		super.optionalCodeToIndex.put(NetworkManagementControls._PARAMETER_CODE, _INDEX_O_NetworkManagementControls);
 
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

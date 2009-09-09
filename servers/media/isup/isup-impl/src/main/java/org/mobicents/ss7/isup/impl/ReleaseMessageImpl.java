@@ -7,6 +7,8 @@
  */
 package org.mobicents.ss7.isup.impl;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
@@ -59,88 +61,44 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 
 	private static final int _MANDATORY_VAR_COUNT = 1;
 	// mandatory fixed L
-	protected static final int _INDEX_F_MessageType = 0;
+	static final int _INDEX_F_MessageType = 0;
 	// mandatory variable L
-	protected static final int _INDEX_V_CauseIndicators = 0;
+	static final int _INDEX_V_CauseIndicators = 0;
 	// optional
-	protected static final int _INDEX_O_RedirectionInformation = 0;
-	protected static final int _INDEX_O_RedirectionNumber = 1;
-	protected static final int _INDEX_O_AccessTransport = 2;
-	protected static final int _INDEX_O_SignalingPointCode = 3;
-	protected static final int _INDEX_O_U2UInformation = 4;
-	protected static final int _INDEX_O_AutomaticCongestionLevel = 5;
-	protected static final int _INDEX_O_NetworkSpecificFacility = 6;
-	protected static final int _INDEX_O_AccessDeliveryInformation = 7;
-	protected static final int _INDEX_O_ParameterCompatibilityInformation = 8;
-	protected static final int _INDEX_O_U2UIndicators = 9;
-	protected static final int _INDEX_O_DisplayInformation = 10;
-	protected static final int _INDEX_O_RemoteOperations = 11;
-	protected static final int _INDEX_O_HTRInformation = 12;
-	protected static final int _INDEX_O_RedirectCounter = 13;
-	protected static final int _INDEX_O_RedirectBackwardInformation = 14;
-	protected static final int _INDEX_O_EndOfOptionalParameters = 15;
+	static final int _INDEX_O_RedirectionInformation = 0;
+	static final int _INDEX_O_RedirectionNumber = 1;
+	static final int _INDEX_O_AccessTransport = 2;
+	static final int _INDEX_O_SignalingPointCode = 3;
+	static final int _INDEX_O_U2UInformation = 4;
+	static final int _INDEX_O_AutomaticCongestionLevel = 5;
+	static final int _INDEX_O_NetworkSpecificFacility = 6;
+	static final int _INDEX_O_AccessDeliveryInformation = 7;
+	static final int _INDEX_O_ParameterCompatibilityInformation = 8;
+	static final int _INDEX_O_U2UIndicators = 9;
+	static final int _INDEX_O_DisplayInformation = 10;
+	static final int _INDEX_O_RemoteOperations = 11;
+	static final int _INDEX_O_HTRInformation = 12;
+	static final int _INDEX_O_RedirectCounter = 13;
+	static final int _INDEX_O_RedirectBackwardInformation = 14;
+	static final int _INDEX_O_EndOfOptionalParameters = 15;
 
-	/**
-	 * 
-	 * @param source
-	 * @throws IllegalArgumentException
-	 */
-	ReleaseMessageImpl(Object source, byte[] b) throws ParameterRangeInvalidException {
-		this(source);
-
+	ReleaseMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
+		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 		decodeElement(b);
 
 	}
 
-	/**
-	 * @throws ParameterRangeInvalidException
-	 * 
-	 */
-	ReleaseMessageImpl(Object source) {
-		super(source);
-		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.o_Parameters = new TreeMap<Integer, ISUPParameter>();
+	ReleaseMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
-		
-		super.mandatoryVariableCodes.add(CauseIndicators._PARAMETER_CODE);
-		super.mandatoryVariableCodeToIndex.put(CauseIndicators._PARAMETER_CODE, _INDEX_V_CauseIndicators);
 
-		super.optionalCodes.add(RedirectionInformation._PARAMETER_CODE);
-		super.optionalCodes.add(RedirectionNumber._PARAMETER_CODE);
-		super.optionalCodes.add(AccessTransport._PARAMETER_CODE);
-		super.optionalCodes.add(SignalingPointCode._PARAMETER_CODE);
-		super.optionalCodes.add(UserToUserInformation._PARAMETER_CODE);
-		super.optionalCodes.add(AutomaticCongestionLevel._PARAMETER_CODE);
-		super.optionalCodes.add(NetworkSpecificFacility._PARAMETER_CODE);
-		super.optionalCodes.add(AccessDeliveryInformation._PARAMETER_CODE);
-		super.optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
-		super.optionalCodes.add(UserToUserIndicators._PARAMETER_CODE);
-		super.optionalCodes.add(DisplayInformation._PARAMETER_CODE);
-		super.optionalCodes.add(RemoteOperations._PARAMETER_CODE);
-		super.optionalCodes.add(HTRInformation._PARAMETER_CODE);
-		super.optionalCodes.add(RedirectCounter._PARAMETER_CODE);
-		super.optionalCodes.add(RedirectBackwardInformation._PARAMETER_CODE);
-
-		super.optionalCodeToIndex.put(RedirectionInformation._PARAMETER_CODE, _INDEX_O_RedirectionInformation);
-		super.optionalCodeToIndex.put(RedirectionNumber._PARAMETER_CODE, _INDEX_O_RedirectionNumber);
-		super.optionalCodeToIndex.put(AccessTransport._PARAMETER_CODE, _INDEX_O_AccessTransport);
-		super.optionalCodeToIndex.put(SignalingPointCode._PARAMETER_CODE, _INDEX_O_SignalingPointCode);
-		super.optionalCodeToIndex.put(UserToUserInformation._PARAMETER_CODE, _INDEX_O_U2UInformation);
-		super.optionalCodeToIndex.put(AutomaticCongestionLevel._PARAMETER_CODE, _INDEX_O_AutomaticCongestionLevel);
-		super.optionalCodeToIndex.put(NetworkSpecificFacility._PARAMETER_CODE, _INDEX_O_NetworkSpecificFacility);
-		super.optionalCodeToIndex.put(AccessDeliveryInformation._PARAMETER_CODE, _INDEX_O_AccessDeliveryInformation);
-		super.optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, _INDEX_O_ParameterCompatibilityInformation);
-		super.optionalCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE, _INDEX_O_U2UIndicators);
-		super.optionalCodeToIndex.put(DisplayInformation._PARAMETER_CODE, _INDEX_O_DisplayInformation);
-		super.optionalCodeToIndex.put(RemoteOperations._PARAMETER_CODE, _INDEX_O_RemoteOperations);
-		super.optionalCodeToIndex.put(HTRInformation._PARAMETER_CODE, _INDEX_O_HTRInformation);
-		super.optionalCodeToIndex.put(RedirectCounter._PARAMETER_CODE, _INDEX_O_RedirectCounter);
-		super.optionalCodeToIndex.put(RedirectBackwardInformation._PARAMETER_CODE, _INDEX_O_RedirectBackwardInformation);
 	}
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 

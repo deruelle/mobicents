@@ -43,7 +43,9 @@ public class CGBTest extends MessageHarness {
 				,0x05
 		};
 
-		CircuitGroupBlockingMessage cgb=new CircuitGroupBlockingMessageImpl(this,message);
+		//CircuitGroupBlockingMessage cgb=new CircuitGroupBlockingMessageImpl(this,message);
+		CircuitGroupBlockingMessage cgb=super.messageFactory.createCGB();
+		cgb.decodeElement(message);
 		byte[] encodedBody = cgb.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -68,7 +70,9 @@ public class CGBTest extends MessageHarness {
 
 		};
 
-		CircuitGroupBlockingMessage cgb=new CircuitGroupBlockingMessageImpl(this,message);
+		//CircuitGroupBlockingMessage cgb=new CircuitGroupBlockingMessageImpl(this,message);
+		CircuitGroupBlockingMessage cgb=super.messageFactory.createCGB();
+		cgb.decodeElement(message);
 
 		
 		try{

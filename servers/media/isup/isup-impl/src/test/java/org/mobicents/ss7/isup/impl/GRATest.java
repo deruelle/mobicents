@@ -45,7 +45,9 @@ public class GRATest extends MessageHarness {
 				
 		};
 
-		CircuitGroupResetAckMessage grs=new CircuitGroupResetAckMessageImpl(this,message);
+		//CircuitGroupResetAckMessage grs=new CircuitGroupResetAckMessageImpl(this,message);
+		CircuitGroupResetAckMessage grs=super.messageFactory.createGRA();
+		grs.decodeElement(message);
 		byte[] encodedBody = grs.encodeElement();
 		boolean equal = Arrays.equals(message, encodedBody);
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
@@ -69,8 +71,9 @@ public class GRATest extends MessageHarness {
 				
 		};
 
-		CircuitGroupResetAckMessage grs=new CircuitGroupResetAckMessageImpl(this,message);
-
+		//CircuitGroupResetAckMessage grs=new CircuitGroupResetAckMessageImpl(this,message);
+		CircuitGroupResetAckMessage grs=super.messageFactory.createGRA();
+		grs.decodeElement(message);
 		
 		try{
 			RangeAndStatus RS = (RangeAndStatus) grs.getParameter(RangeAndStatus._PARAMETER_CODE);

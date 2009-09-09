@@ -8,6 +8,8 @@
  */
 package org.mobicents.ss7.isup.impl;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
@@ -49,118 +51,56 @@ import org.mobicents.ss7.isup.message.AddressCompleteMessage;
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompleteMessage{
+class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompleteMessage {
 
 	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_ACM);
 
 	private static final int _MANDATORY_VAR_COUNT = 0;
-	
-	protected static final int _INDEX_F_MessageType = 0;
-	protected static final int _INDEX_F_BackwardCallIndicators = 1;
+
+	static final int _INDEX_F_MessageType = 0;
+	static final int _INDEX_F_BackwardCallIndicators = 1;
 	// FIXME: those can be sent in any order, but we prefer this way, its faster
 	// to access by index than by hash ?
-	protected static final int _INDEX_O_OptionalBakwardCallIndicators = 0;
-	protected static final int _INDEX_O_CallReference = 1;
-	protected static final int _INDEX_O_CauseIndicators = 2;
-	protected static final int _INDEX_O_UserToUserIndicators = 3;
-	protected static final int _INDEX_O_UserToUserInformation = 4;
-	protected static final int _INDEX_O_AccessTransport = 5;
+	static final int _INDEX_O_OptionalBakwardCallIndicators = 0;
+	static final int _INDEX_O_CallReference = 1;
+	static final int _INDEX_O_CauseIndicators = 2;
+	static final int _INDEX_O_UserToUserIndicators = 3;
+	static final int _INDEX_O_UserToUserInformation = 4;
+	static final int _INDEX_O_AccessTransport = 5;
 	// FIXME: There can be more of those.
-	protected static final int _INDEX_O_GenericNotificationIndicator = 6;
-	protected static final int _INDEX_O_TransmissionMediumUsed = 7;
-	protected static final int _INDEX_O_EchoControlInformation = 8;
-	protected static final int _INDEX_O_AccessDeliveryInformation = 9;
-	protected static final int _INDEX_O_RedirectionNumber = 10;
-	protected static final int _INDEX_O_ParameterCompatibilityInformation = 11;
-	protected static final int _INDEX_O_CallDiversionInformation = 12;
-	protected static final int _INDEX_O_NetworkSpecificFacility = 13;
-	protected static final int _INDEX_O_RemoteOperations = 14;
-	protected static final int _INDEX_O_ServiceActivation = 15;
-	protected static final int _INDEX_O_RedirectionNumberRestriction = 16;
-	protected static final int _INDEX_O_ConferenceTreatmentIndicators = 17;
-	protected static final int _INDEX_O_UIDActionIndicators = 18;
-	protected static final int _INDEX_O_ApplicationTransportParameter = 19;
-	protected static final int _INDEX_O_CCNRPossibleIndicator = 20;
-	protected static final int _INDEX_O_HTRInformation = 21;
-	protected static final int _INDEX_O_PivotRoutingBackwardInformation = 22;
-	protected static final int _INDEX_O_RedirectStatus = 23;
-	protected static final int _INDEX_O_EndOfOptionalParameters = 24;
+	static final int _INDEX_O_GenericNotificationIndicator = 6;
+	static final int _INDEX_O_TransmissionMediumUsed = 7;
+	static final int _INDEX_O_EchoControlInformation = 8;
+	static final int _INDEX_O_AccessDeliveryInformation = 9;
+	static final int _INDEX_O_RedirectionNumber = 10;
+	static final int _INDEX_O_ParameterCompatibilityInformation = 11;
+	static final int _INDEX_O_CallDiversionInformation = 12;
+	static final int _INDEX_O_NetworkSpecificFacility = 13;
+	static final int _INDEX_O_RemoteOperations = 14;
+	static final int _INDEX_O_ServiceActivation = 15;
+	static final int _INDEX_O_RedirectionNumberRestriction = 16;
+	static final int _INDEX_O_ConferenceTreatmentIndicators = 17;
+	static final int _INDEX_O_UIDActionIndicators = 18;
+	static final int _INDEX_O_ApplicationTransportParameter = 19;
+	static final int _INDEX_O_CCNRPossibleIndicator = 20;
+	static final int _INDEX_O_HTRInformation = 21;
+	static final int _INDEX_O_PivotRoutingBackwardInformation = 22;
+	static final int _INDEX_O_RedirectStatus = 23;
+	static final int _INDEX_O_EndOfOptionalParameters = 24;
 
-	AddressCompleteMessageImpl(Object source, byte[] b) throws ParameterRangeInvalidException {
-		this(source);
+	AddressCompleteMessageImpl(Object source, byte[] b, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) throws ParameterRangeInvalidException {
+		this(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 		decodeElement(b);
-		
 
 	}
 
-	AddressCompleteMessageImpl(Object source)  {
-		super(source);
-		
-		//FIXME: this is bad, we always fill this, we shouyld move that 
-		super.f_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.v_Parameters = new TreeMap<Integer, ISUPParameter>();
-		super.o_Parameters = new TreeMap<Integer, ISUPParameter>();
+	AddressCompleteMessageImpl(Object source, Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+		super(source, mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
 
 		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
-		
 		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
-		
-		super.mandatoryCodes.add(BackwardCallIndicators._PARAMETER_CODE);
-		super.mandatoryCodeToIndex.put(BackwardCallIndicators._PARAMETER_CODE,_INDEX_F_BackwardCallIndicators);
-
-		
-		
-		super.mandatoryVariableCodes.add(OptionalBackwardCallIndicators._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(CallReference._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(CauseIndicators._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(UserToUserIndicators._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(UserToUserInformation._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(AccessTransport._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(GenericNotificationIndicator._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(TransmissionMediumUsed._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(EchoControlInformation._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(AccessDeliveryInformation._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(RedirectionNumber._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(CallDiversionInformation._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(NetworkSpecificFacility._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(RemoteOperations._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(ServiceActivation._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(RedirectionNumberRestriction._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(ConferenceTreatmentIndicators._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(UIDActionIndicators._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(ApplicationTransportParameter ._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(CCNRPossibleIndicator._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(HTRInformation._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(PivotRoutingBackwardInformation._PARAMETER_CODE);
-		super.mandatoryVariableCodes.add(RedirectStatus._PARAMETER_CODE);
-		
-		
-		
-		super.mandatoryVariableCodeToIndex.put(OptionalBackwardCallIndicators._PARAMETER_CODE, _INDEX_O_OptionalBakwardCallIndicators);
-		super.mandatoryVariableCodeToIndex.put(CallReference._PARAMETER_CODE, _INDEX_O_CallReference);
-		super.mandatoryVariableCodeToIndex.put(CauseIndicators._PARAMETER_CODE, _INDEX_O_CauseIndicators);
-		super.mandatoryVariableCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE, _INDEX_O_UserToUserIndicators);
-		super.mandatoryVariableCodeToIndex.put(UserToUserInformation._PARAMETER_CODE, _INDEX_O_UserToUserInformation);
-		super.mandatoryVariableCodeToIndex.put(AccessTransport._PARAMETER_CODE, _INDEX_O_AccessTransport);
-		super.mandatoryVariableCodeToIndex.put(GenericNotificationIndicator._PARAMETER_CODE, _INDEX_O_GenericNotificationIndicator);
-		super.mandatoryVariableCodeToIndex.put(TransmissionMediumUsed._PARAMETER_CODE, _INDEX_O_TransmissionMediumUsed);
-		super.mandatoryVariableCodeToIndex.put(EchoControlInformation._PARAMETER_CODE, _INDEX_O_EchoControlInformation);
-		super.mandatoryVariableCodeToIndex.put(AccessDeliveryInformation._PARAMETER_CODE, _INDEX_O_AccessDeliveryInformation);
-		super.mandatoryVariableCodeToIndex.put(RedirectionNumber._PARAMETER_CODE, _INDEX_O_RedirectionNumber);
-		super.mandatoryVariableCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, _INDEX_O_ParameterCompatibilityInformation);
-		super.mandatoryVariableCodeToIndex.put(CallDiversionInformation._PARAMETER_CODE, _INDEX_O_CallDiversionInformation);
-		super.mandatoryVariableCodeToIndex.put(NetworkSpecificFacility._PARAMETER_CODE, _INDEX_O_NetworkSpecificFacility);
-		super.mandatoryVariableCodeToIndex.put(RemoteOperations._PARAMETER_CODE, _INDEX_O_RemoteOperations);
-		super.mandatoryVariableCodeToIndex.put(ServiceActivation._PARAMETER_CODE, _INDEX_O_ServiceActivation);
-		super.mandatoryVariableCodeToIndex.put(RedirectionNumberRestriction._PARAMETER_CODE, _INDEX_O_RedirectionNumberRestriction);
-		super.mandatoryVariableCodeToIndex.put(ConferenceTreatmentIndicators._PARAMETER_CODE, _INDEX_O_ConferenceTreatmentIndicators);
-		super.mandatoryVariableCodeToIndex.put(UIDActionIndicators._PARAMETER_CODE, _INDEX_O_UIDActionIndicators);
-		super.mandatoryVariableCodeToIndex.put(ApplicationTransportParameter._PARAMETER_CODE, _INDEX_O_ApplicationTransportParameter);
-		super.mandatoryVariableCodeToIndex.put(CCNRPossibleIndicator._PARAMETER_CODE, _INDEX_O_CCNRPossibleIndicator);
-		super.mandatoryVariableCodeToIndex.put(HTRInformation._PARAMETER_CODE, _INDEX_O_HTRInformation);
-		super.mandatoryVariableCodeToIndex.put(PivotRoutingBackwardInformation._PARAMETER_CODE, _INDEX_O_PivotRoutingBackwardInformation);
-		super.mandatoryVariableCodeToIndex.put(RedirectStatus._PARAMETER_CODE, _INDEX_O_RedirectStatus);
 	}
 
 	@Override
@@ -533,24 +473,27 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#mandatoryVariablePartPossible()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.ss7.isup.impl.ISUPMessageImpl#mandatoryVariablePartPossible
+	 * ()
 	 */
-//	@Override
-//	protected boolean mandatoryVariablePartPossible() {
-//		
-//		return false;
-//	}
-
-	/* (non-Javadoc)
+	// @Override
+	// protected boolean mandatoryVariablePartPossible() {
+	//		
+	// return false;
+	// }
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.mobicents.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible()
 	 */
 	@Override
 	protected boolean optionalPartIsPossible() {
-		
+
 		return true;
 	}
-
-
 
 }
