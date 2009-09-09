@@ -28,7 +28,8 @@ import org.mobicents.ss7.isup.message.parameter.RangeAndStatus;
 public class CircuitGroupResetAckMessageImpl extends ISUPMessageImpl implements CircuitGroupResetAckMessage {
 
 	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_GRA);
-
+	private static final int _MANDATORY_VAR_COUNT = 1;
+	
 	protected static final int _INDEX_F_MessageType = 0;
 	protected static final int _INDEX_V_RangeAndStatus = 0;
 	
@@ -141,7 +142,7 @@ public class CircuitGroupResetAckMessageImpl extends ISUPMessageImpl implements 
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
-		return 1;
+		return _MANDATORY_VAR_COUNT;
 	}
 
 	/*

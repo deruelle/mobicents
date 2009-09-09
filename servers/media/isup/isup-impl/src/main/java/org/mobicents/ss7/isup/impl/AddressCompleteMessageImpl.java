@@ -53,6 +53,8 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 
 	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_ACM);
 
+	private static final int _MANDATORY_VAR_COUNT = 0;
+	
 	protected static final int _INDEX_F_MessageType = 0;
 	protected static final int _INDEX_F_BackwardCallIndicators = 1;
 	// FIXME: those can be sent in any order, but we prefer this way, its faster
@@ -414,7 +416,7 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
-		return 0;
+		return _MANDATORY_VAR_COUNT;
 	}
 
 	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {

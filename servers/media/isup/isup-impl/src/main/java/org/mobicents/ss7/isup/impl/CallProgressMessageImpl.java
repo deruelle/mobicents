@@ -54,7 +54,8 @@ import org.mobicents.ss7.isup.message.parameter.accessTransport.AccessTransport;
 public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProgressMessage {
 
 	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_CPG);
-
+	private static final int _MANDATORY_VAR_COUNT = 0;
+	
 	protected static final int _INDEX_F_MessageType = 0;
 	protected static final int _INDEX_F_EventInformation = 1;
 
@@ -375,7 +376,7 @@ public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProg
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 		// TODO Auto-generated method stub
-		return 0;
+		return _MANDATORY_VAR_COUNT;
 	}
 
 	/*

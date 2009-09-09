@@ -28,7 +28,7 @@ import org.mobicents.ss7.isup.message.parameter.RangeAndStatus;
 public class CircuitGroupBlockingAckMessageImpl extends ISUPMessageImpl implements CircuitGroupBlockingAckMessage {
 
 	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_CGBA);
-
+	private static final int _MANDATORY_VAR_COUNT = 1;
 	
 	protected static final int _INDEX_F_MessageType = 0;
 	protected static final int _INDEX_F_CircuitGroupSupervisionMessageType = 1;
@@ -146,7 +146,7 @@ public class CircuitGroupBlockingAckMessageImpl extends ISUPMessageImpl implemen
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
-		return 1;
+		return _MANDATORY_VAR_COUNT;
 	}
 
 	/*

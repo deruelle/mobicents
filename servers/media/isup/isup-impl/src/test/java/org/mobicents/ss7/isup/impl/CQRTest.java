@@ -56,21 +56,29 @@ public class CQRTest extends MessageHarness {
 		assertTrue(super.makeStringCompare(message, encodedBody),equal);
 	}
 	
-	public void _testTwo_Params() throws Exception
+	public void testTwo_Params() throws Exception
 	{
 		byte[] message={
 
 				CircuitGroupQueryResponseMessage._MESSAGE_CODE_CQR
 
-				,0x01 // ptr to variable part
+				,0x02 // ptr to variable part
+				,0x03
+				
 				//no optional, so no pointer
 				//RangeAndStatus._PARAMETER_CODE
 				,0x01
 				,0x01
+				//CircuitStateIndicator
+				,0x03
+				,0x01
+				,0x02
+				,0x03
+			
 				
 		};
 
-		CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
+		CircuitGroupQueryResponseMessage grs=new CircuitGroupQueryResponseMessageImpl(this,message);
 
 		
 		try{
@@ -84,6 +92,22 @@ public class CQRTest extends MessageHarness {
 			assertNull("RangeAndStatus.getRange() is not null",b);
 		
 			
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
+		}
+		try{
+			CircuitStateIndicator CSI = (CircuitStateIndicator) grs.getParameter(CircuitStateIndicator._PARAMETER_CODE);
+			assertNotNull("Circuit State Indicator return is null, it should not be",CSI);
+			if(CSI == null)
+				return;
+			assertNotNull("CircuitStateIndicator getCircuitState return is null, it should not be",CSI.getCircuitState());
+			byte[] circuitState = CSI.getCircuitState();
+			assertEquals("CircuitStateIndicator.getCircuitState() length is nto correct,",3, circuitState.length);
+			assertEquals("CircuitStateIndicator.getCircuitState()[0] value is not correct,",1, CSI.getMaintenanceBlockingState(circuitState[0]));
+			assertEquals("CircuitStateIndicator.getCircuitState()[1] value is not correct,",2, CSI.getMaintenanceBlockingState(circuitState[1]));
+			assertEquals("CircuitStateIndicator.getCircuitState()[2] value is not correct,",3, CSI.getMaintenanceBlockingState(circuitState[2]));
 		}catch(Exception e)
 		{
 			e.printStackTrace();

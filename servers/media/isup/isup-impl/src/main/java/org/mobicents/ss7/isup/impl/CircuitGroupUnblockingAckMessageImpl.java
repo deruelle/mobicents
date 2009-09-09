@@ -22,14 +22,13 @@ import org.mobicents.ss7.isup.message.parameter.RangeAndStatus;
  * Start time:00:08:48 2009-09-07<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class CircuitGroupUnblockingAckMessageImpl extends ISUPMessageImpl implements CircuitGroupUnblockingAckMessage {
 
-public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_CGUA);
+	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_CGUA);
+	private static final int _MANDATORY_VAR_COUNT = 1;
 
-	
 	protected static final int _INDEX_F_MessageType = 0;
 	protected static final int _INDEX_F_CircuitGroupSupervisionMessageType = 1;
 
@@ -146,7 +145,7 @@ public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_COD
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
-		return 1;
+		return _MANDATORY_VAR_COUNT;
 	}
 
 	/*
