@@ -10,10 +10,12 @@ import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.ss7.isup.impl.message.parameter.CircuitStateIndicatorImpl;
+import org.mobicents.ss7.isup.impl.message.parameter.FacilityIndicatorImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.RangeAndStatusImpl;
 import org.mobicents.ss7.isup.message.CircuitGroupQueryResponseMessage;
 import org.mobicents.ss7.isup.message.parameter.CircuitStateIndicator;
+import org.mobicents.ss7.isup.message.parameter.FacilityIndicator;
 import org.mobicents.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.ss7.isup.message.parameter.MessageType;
 import org.mobicents.ss7.isup.message.parameter.RangeAndStatus;
@@ -32,6 +34,7 @@ public class CircuitGroupQueryResponseMessageImpl extends ISUPMessageImpl implem
 	protected static final int _INDEX_F_MessageType = 0;
 	protected static final int _INDEX_V_RangeAndStatus = 0;
 	protected static final int _INDEX_V_CircuitStateIndicator = 1;
+
 	
 
 	/**
@@ -63,8 +66,10 @@ public class CircuitGroupQueryResponseMessageImpl extends ISUPMessageImpl implem
 
 		super.mandatoryVariableCodes.add(RangeAndStatus._PARAMETER_CODE);
 		super.mandatoryVariableCodes.add(CircuitStateIndicator._PARAMETER_CODE);
+
 		super.mandatoryVariableCodeToIndex.put(RangeAndStatus._PARAMETER_CODE, _INDEX_V_RangeAndStatus);
 		super.mandatoryVariableCodeToIndex.put(CircuitStateIndicator._PARAMETER_CODE, _INDEX_V_CircuitStateIndicator);
+
 
 	}
 
@@ -151,7 +156,7 @@ public class CircuitGroupQueryResponseMessageImpl extends ISUPMessageImpl implem
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
-		return 2;
+		return 3;
 	}
 
 	/*
@@ -167,7 +172,7 @@ public class CircuitGroupQueryResponseMessageImpl extends ISUPMessageImpl implem
 	@Override
 	protected boolean optionalPartIsPossible() {
 
-		return false;
+		return true;
 	}
 
 }

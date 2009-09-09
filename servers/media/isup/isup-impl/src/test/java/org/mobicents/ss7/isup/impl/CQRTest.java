@@ -36,7 +36,7 @@ public class CQRTest extends MessageHarness {
 
 				,0x02 // ptr to variable part
 				,0x03
-				//,0x07
+				
 				//no optional, so no pointer
 				//RangeAndStatus._PARAMETER_CODE
 				,0x01
@@ -46,9 +46,7 @@ public class CQRTest extends MessageHarness {
 				,0x01
 				,0x02
 				,0x03
-				//facilityIndicator
-				//,0x01
-				//,0x01
+			
 				
 		};
 

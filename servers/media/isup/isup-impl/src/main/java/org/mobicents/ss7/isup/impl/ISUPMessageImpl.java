@@ -252,8 +252,9 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 					//by message, pointer is ommited.
 					pointers[index] = (byte) (parameters.size()+(optionalPartIsPossible()?1:0));
 				} else {
-					//FIXME: CHECK IF THIS IS OK!!!!!!!!!!!!!!!!!!!!!!!!!
-					pointers[index] = (byte) (pointers[index - 1] + lastParameterLength+(optionalPartIsPossible()?1:0));
+			
+					pointers[index] = (byte) (pointers[index - 1] + lastParameterLength);
+					lastParameterLength = currentParameterLength;
 				}
 
 				parametersBodyBOS.write(currentParameterLength);
@@ -365,15 +366,16 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 			byte extPIndex = -1;
 			try {
 				int count = getNumberOfMandatoryVariableLengthParameters();
+				readCount = count;
 				for (int parameterIndex = 0; parameterIndex < count; parameterIndex++) {
-					int lengthPointerIndex = index + readCount;
-					int parameterLengthIndex = b[lengthPointerIndex] + index+readCount;
+					int lengthPointerIndex = index + parameterIndex;
+					int parameterLengthIndex = b[lengthPointerIndex] + lengthPointerIndex;
 
 					int parameterLength = b[parameterLengthIndex];
 					byte[] parameterBody = new byte[parameterLength];
 					System.arraycopy(b, parameterLengthIndex + 1, parameterBody, 0, parameterLength);
 					decodeMandatoryVariableBody(parameterBody, parameterIndex);
-					readCount++;
+					
 				}
 
 				//optionalOffset = b[index + readCount];
