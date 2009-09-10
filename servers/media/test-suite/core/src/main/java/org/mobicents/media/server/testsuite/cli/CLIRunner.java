@@ -13,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.URL;
@@ -286,7 +288,7 @@ public class CLIRunner implements CallDisplayInterface {
 
 		CLIRunner cli = new CLIRunner();
 		cli.parseArgs(args);
-		
+;
 		if(cli.performTestRun)
 			cli.runTest();
 		// This is required, since mgc stack leaves some threads alive....
@@ -311,29 +313,60 @@ public class CLIRunner implements CallDisplayInterface {
 			
 		}
 		ArrayList<BufferedReader> testGraphsInputs = new ArrayList<BufferedReader>();
-		
+		ArrayList<File> tmpFiles = new ArrayList<File>();
 		String[] datadumpFiles = this.dataDumpDir.list();
 		for(String file:datadumpFiles)
 		{
 			File f = new File(this.dataDumpDir.getAbsoluteFile(),file);
-			File graphFile = new File(f,AbstractTestCase._COLLECTIVE_CASE_FILE);
+			File testcaseBinaryFile = new File(f,AbstractTestCase._CASE_FILE);
 			
 			
-			if(f.canRead() && f.isDirectory() && graphFile.canRead() && graphFile.isFile())
+			if(f.canRead() && f.isDirectory() && testcaseBinaryFile.canRead() && testcaseBinaryFile.isFile())
 			{
+				ObjectInputStream ois=null;
 				try {
+					//first we must get it.
+					 ois = new ObjectInputStream(new FileInputStream(testcaseBinaryFile));
+					AbstractTestCase testCase = (AbstractTestCase) ois.readObject();
+					testCase.setCallDisplay(this, this.getDefaultDataDumpDirectory());
+					//is this wise to use string?
+					String data = testCase.getExampleData();
+					if(data == null)
+						continue;
 					//FileInputStream fis = new FileInputStream(graphFile);
-					BufferedReader br= new BufferedReader(new FileReader(graphFile));
+					//BufferedReader br= new BufferedReader(new FileReader(graphFile));
+					File tmpFile = writeToTmpFile(data);
+					if(tmpFile==null)
+					{
+						continue;
+					}
+					tmpFiles.add(tmpFile);
 					
-					
+					BufferedReader br = createInput(tmpFile);
+					if(br == null)
+						continue;
 					testGraphsInputs.add(br);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
+				} catch (Exception e) {
+					
 					e.printStackTrace();
+					
+				}finally
+				{
+					if(ois!=null)
+					{
+						try
+						{
+							ois.close();
+							ois = null;
+						}catch(Exception ee)
+						{
+							ee.printStackTrace();
+						}
+					}
 				}
 			}else
 			{
-				log.severe("Skipping file:"+f+" - it is not a directory or no graph file present: "+graphFile);
+				log.severe("Skipping file:"+f+" - it is not a directory or no file present: "+testcaseBinaryFile);
 			}
 		}
 		FileOutputStream fos=null;
@@ -380,6 +413,9 @@ public class CLIRunner implements CallDisplayInterface {
 		} catch (Exception e) {
 			
 			e.printStackTrace();
+			
+		}finally
+		{
 			if(fos!=null)
 			{
 				try {
@@ -399,8 +435,82 @@ public class CLIRunner implements CallDisplayInterface {
 					e1.printStackTrace();
 				}
 			}
+			for(File f:tmpFiles)
+			{
+				if(f!=null)
+				{
+					try
+					{
+						//f.deleteOnExit();
+						f.delete();
+					}catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		
+	}
+
+	/**
+	 * @param tmpFile
+	 * @return
+	 */
+	private BufferedReader createInput(File tmpFile) {
+
+		try {
+			BufferedReader br= new BufferedReader(new FileReader(tmpFile));
+			return br;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * @param data
+	 * @return
+	 */
+	private File writeToTmpFile(String data) {
+		File f = new File(""+Math.random());
+		OutputStreamWriter osw=null;
+		FileOutputStream fos=null;
+		try {
+			fos=new FileOutputStream(f);
+			osw = new OutputStreamWriter(fos);
+			osw.write(data);
+			osw.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}finally
+		{
+			if(osw!=null)
+			{
+				try {
+					osw.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					osw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				osw = null;
+				fos = null;
+			}
+		}
+		return f;
 	}
 
 	private void runTest() {

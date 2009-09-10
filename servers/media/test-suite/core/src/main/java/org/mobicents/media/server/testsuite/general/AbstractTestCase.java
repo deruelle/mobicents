@@ -15,8 +15,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -53,36 +55,44 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	protected transient Logger logger = Logger.getLogger(this.getClass().getName());
 	private TestState testState = TestState.Stoped;
 	public transient final static String _CASE_FILE = "testcase.bin";
-	public transient final static String _COLLECTIVE_CASE_FILE="graph.txt";
+	public transient final static String _COLLECTIVE_RTP_FILE = "rtp.txt";
 	public static final String _LINE_SEPARATOR;
 	static {
 		String lineSeparator = System.getProperty("line.separator");
 		_LINE_SEPARATOR = lineSeparator;
 	}
 
+	// Dump section
+	private transient File _RTP_TXT_DUMP_FILE;
+	private transient FileOutputStream _RTP_TXT_DUMP_FOS;
+	private transient OutputStreamWriter _RTP_TXT_DUMP_OSW;
+
+	//private transient FileInputStream _RTP_TXT_DUMP_FIS;
+	//private transient InputStreamReader _RTP_TXT_DUMP_ISR;
+
 	public static final int _TURN_OFF_BOUNDRY = -1;
 	// Yes, it would be good thing to ser
 	protected transient SdpFactory sdpFactory;
 	protected transient CallDisplayInterface callDisplay;
 	protected Map<Long, AbstractCall> callSequenceToCall;
-	
+
 	// We mix view, but this is easier to achieve perf with that.
 	protected transient CallStateTableModel model;
 	// protected part - some variables that we might use.
 	protected InetAddress clientTestNodeAddress;
 	protected InetAddress serverJbossBindAddress;
-	
-	
-	
+
 	// timestamp :), its used for files
 	protected long testTimesTamp = System.currentTimeMillis();
 	protected transient File testDumpDirectory;
-	// Call creators
-	protected transient final ScheduledExecutorService executors;
+	
 	protected transient ScheduledFuture callCreatorTask;
 	protected transient ScheduledFuture gracefulStopTask;
 	// Timer guard:
 	protected transient final ScheduledExecutorService timeGuard;
+	// 
+	protected transient final ScheduledExecutorService executors;
+
 	// Some getters
 	// Some stats
 	protected long ongoingCallNumber;
@@ -91,61 +101,111 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	protected long totalCalls;
 	protected long maxErrorCallNumber;
 
-	
 	protected transient RtpSocketFactory socketFactory;
-	
-	//FIXME: this will go into MGCP test case, will be removed from here
+
+	// FIXME: this will go into MGCP test case, will be removed from here
 	// some mgcp magic
 	protected transient JainMgcpStackImpl stack;
 	protected transient JainMgcpStackProviderImpl provider;
 	// We need this to map TXID to Call :)
 	protected transient Map<Integer, AbstractCall> mgcpTransactionToProxy = new HashMap<Integer, AbstractCall>();
 	protected transient Map<String, AbstractCall> requestIdIdToProxy = new HashMap<String, AbstractCall>();
-	
+
 	public AbstractTestCase() {
 		this.callSequenceToCall = new HashMap<Long, AbstractCall>();
 		// model = new CallStateTableModel(this.callSequenceToCall);
 		AbstractCall.resetSequence();
-                NamedThreadFactory executorsThreadFactory = new NamedThreadFactory("ExecutorsTestCaseFactory");
-                NamedThreadFactory timeGuardThreadFactory = new NamedThreadFactory("GuardThreadFactoryTestCaseFactory");
-                executors = Executors.newScheduledThreadPool(3,executorsThreadFactory);
-                timeGuard = Executors.newScheduledThreadPool(5,timeGuardThreadFactory);
+		NamedThreadFactory executorsThreadFactory = new NamedThreadFactory("ExecutorsTestCaseFactory");
+		NamedThreadFactory timeGuardThreadFactory = new NamedThreadFactory("GuardThreadFactoryTestCaseFactory");
+		executors = Executors.newScheduledThreadPool(3, executorsThreadFactory);
+		timeGuard = Executors.newScheduledThreadPool(2, timeGuardThreadFactory);
 
 	}
 
-	public AbstractTestCase(CallDisplayInterface cdi) throws IllegalStateException, SocketException, IOException {
-		setCallDisplay(cdi);
-		model = new CallStateTableModel(this.callSequenceToCall);
-		AbstractCall.resetSequence();
-                 NamedThreadFactory executorsThreadFactory = new NamedThreadFactory("ExecutorsTestCaseFactory");
-                NamedThreadFactory timeGuardThreadFactory = new NamedThreadFactory("GuardThreadFactoryTestCaseFactory");
-                executors = Executors.newScheduledThreadPool(3,executorsThreadFactory);
-                timeGuard = Executors.newScheduledThreadPool(5,timeGuardThreadFactory);
-                this.init();
-                
-                
-	}
+	// public AbstractTestCase(CallDisplayInterface cdi) throws
+	// IllegalStateException, SocketException, IOException {
+	// setCallDisplay(cdi);
+	// model = new CallStateTableModel(this.callSequenceToCall);
+	// AbstractCall.resetSequence();
+	// NamedThreadFactory executorsThreadFactory = new
+	// NamedThreadFactory("ExecutorsTestCaseFactory");
+	// NamedThreadFactory timeGuardThreadFactory = new
+	// NamedThreadFactory("GuardThreadFactoryTestCaseFactory");
+	// executors = Executors.newScheduledThreadPool(3,executorsThreadFactory);
+	// timeGuard = Executors.newScheduledThreadPool(5,timeGuardThreadFactory);
+	// this.init();
+	//                
+	//                
+	// }
 
-	private void init() throws SocketException, IOException
-	{
-		if(this.socketFactory==null)
-		{
-			this.socketFactory = new RtpSocketFactoryImpl();
-			//this.socketFactory.setPortRange("5000-10000");
-			
+	private void init() throws SocketException, IOException {
+
+		// init streams
+		boolean finished = false;
+		try {
+			_RTP_TXT_DUMP_FOS = new FileOutputStream(_RTP_TXT_DUMP_FILE);
+			_RTP_TXT_DUMP_OSW = new OutputStreamWriter(_RTP_TXT_DUMP_FOS);
+
+			//_RTP_TXT_DUMP_FIS = new FileInputStream(_RTP_TXT_DUMP_FILE);
+			//_RTP_TXT_DUMP_ISR = new InputStreamReader(_RTP_TXT_DUMP_FIS);
+			finished = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (!finished) {
+				if (_RTP_TXT_DUMP_OSW != null) {
+					_RTP_TXT_DUMP_OSW.close();
+					_RTP_TXT_DUMP_OSW = null;
+					_RTP_TXT_DUMP_FOS = null;
+				}
+//				if (_RTP_TXT_DUMP_ISR != null) {
+//					_RTP_TXT_DUMP_ISR.close();
+//					_RTP_TXT_DUMP_ISR = null;
+//					_RTP_TXT_DUMP_FIS = null;
+//				}
+			}
 		}
-		
-		if(this.socketFactory!=null)
-		{
-			
+
+		if (this.socketFactory == null) {
+			this.socketFactory = new RtpSocketFactoryImpl();
+			// this.socketFactory.setPortRange("5000-10000");
+
+		}
+
+		if (this.socketFactory != null) {
+
 			this.socketFactory.setBindAddress(this.callDisplay.getLocalAddress());
 			this.socketFactory.setFormatMap(this.callDisplay.getCodecs());
 			this.socketFactory.start();
 		}
 	}
+
 	
 	
 	
+	public OutputStreamWriter getRtpOSW() {
+		return _RTP_TXT_DUMP_OSW;
+	}
+
+	
+	public InputStreamReader getRtpISR() {
+		FileInputStream _RTP_TXT_DUMP_FIS;
+		try {
+			_RTP_TXT_DUMP_FIS = new FileInputStream(_RTP_TXT_DUMP_FILE);
+			InputStreamReader _RTP_TXT_DUMP_ISR = new InputStreamReader(_RTP_TXT_DUMP_FIS);
+			return _RTP_TXT_DUMP_ISR;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
+	public ScheduledExecutorService getExecutors() {
+		return executors;
+	}
+
 	protected void incrementOngoignCall() {
 		this.ongoingCallNumber++;
 		this.totalCalls++;
@@ -182,7 +242,10 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
 	public AbstractCall getCallBySequence(Long seq) {
 
-		return this.callSequenceToCall.get(seq);
+		AbstractCall ac = this.callSequenceToCall.get(seq);
+		if(ac!=null)
+			ac.setTestCase(this);
+		return ac;
 	}
 
 	public void callStateChanged(AbstractCall c) {
@@ -241,30 +304,28 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		return this.totalCalls;
 	}
 
-	
-	
 	public void stop(boolean onGracefull) {
-		
+
 		synchronized (this.testState) {
 			switch (this.testState) {
 			case Terminating:
-				
+
 				if (!onGracefull) {
 					return;
 				}
 				try {
-					
+
 					if (this.provider != null) {
 						try {
 							this.provider.removeJainMgcpListener(this);
 							this.stack.deleteProvider(this.provider);
-							
+
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 
 					}
-					
+
 					if (this.stack != null) {
 						try {
 							this.stack.close();
@@ -273,12 +334,12 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 						}
 
 					}
-					
+
 					if (callCreatorTask != null) {
 
 						callCreatorTask.cancel(true);
 					}
-					
+
 					// FIXME: add more?
 
 					try {
@@ -291,45 +352,57 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					
+					if(_RTP_TXT_DUMP_OSW!=null)
+					{
+						try{
+							_RTP_TXT_DUMP_OSW.flush();
+							_RTP_TXT_DUMP_OSW.close();
+							_RTP_TXT_DUMP_OSW=null;
+							_RTP_TXT_DUMP_FOS=null;
+						}catch(Exception e)
+						{
+							e.printStackTrace();
+						}
+						
+					}
 					try {
 						this.socketFactory.stop();
-						
+
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					// Now lets serialize.
-					
+
 					serialize();
-					dumpSampleTraffic();
+					//dumpSampleTraffic();
 				} finally {
 					this.testState = TestState.Stoped;
 					this.gracefulStopTask = null;
-                                        if(this.timeGuard!=null)
-                                        {
-                                            this.timeGuard.shutdownNow();
-                                        }
-                                        if(this.executors!=null)
-                                        {
-                                            this.executors.shutdownNow();
-                                        }
-                                        
+					if (this.timeGuard != null) {
+						this.timeGuard.shutdownNow();
+					}
+					if (this.executors != null) {
+						this.executors.shutdownNow();
+					}
+
 				}
 				break;
 			case Running:
-				
+
 				this.testState = TestState.Terminating;
-				
+
 				// this.gracefulStopTask = this.
 				// so we dont have to press stop twice, this is stupid.
-				
+
 				if (this.gracefulStopTask == null) {
-					
+
 					this.gracefulStopTask = this.executors.schedule(new GracefulStopTask(this), this.callDisplay.getCallDuration() + 1000, TimeUnit.MILLISECONDS);
 				}
 				break;
 
 			default:
-				
+
 				break;
 
 			}
@@ -371,10 +444,9 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		this.clientTestNodeAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
 		this.serverJbossBindAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
 
-		
 		this.sdpFactory = SdpFactory.getInstance();
 		this.testDumpDirectory = new File(cdi.getDefaultDataDumpDirectory(), "" + this.testTimesTamp);
-		
+
 		if (!this.testDumpDirectory.exists()) {
 
 			if (!this.testDumpDirectory.mkdirs()) {
@@ -388,16 +460,18 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 				throw new IllegalStateException("Failed to validate dump dir, its either not writeable or is not a directory: " + this.testDumpDirectory);
 			}
 		}
-
+		_RTP_TXT_DUMP_FILE = new File(this.testDumpDirectory, _COLLECTIVE_RTP_FILE);
 		this.init();
-		
+
 	}
 
 	// This method is used on loaded test case
 	public void setCallDisplay(CallDisplayInterface cdi, File testDumpDirectory) throws UnknownHostException, IllegalStateException {
 		this.callDisplay = cdi;
 		this.sdpFactory = SdpFactory.getInstance();
-		this.testDumpDirectory = testDumpDirectory;
+		this.testDumpDirectory = new File(testDumpDirectory,""+this.testTimesTamp);
+		
+		_RTP_TXT_DUMP_FILE = new File(this.testDumpDirectory, _COLLECTIVE_RTP_FILE);
 		model = new CallStateTableModel(this.callSequenceToCall);
 		for (AbstractCall call : this.callSequenceToCall.values()) {
 			call.setDumpDir(testDumpDirectory);
@@ -508,9 +582,9 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	}
 
 	public void processMgcpResponseEvent(JainMgcpResponseEvent response) {
-		
-		//System.out.println("Recived response "+ response);
-		
+
+		// System.out.println("Recived response "+ response);
+
 		try {
 
 			AbstractCall cp = getCall(response);
@@ -601,6 +675,16 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	 * Perofrms all serialization actions
 	 */
 	protected void serialize() {
+		this.localAddress = this.callDisplay.getLocalAddress();
+		this.localPort = this .callDisplay.getLocalPort();
+		this.remoteAddress = this.callDisplay.getRemoteAddress();
+		this.remotePort = this.callDisplay.getRemotePort();
+		this.cps = this.callDisplay.getCPS();
+		this.callDuration = this.callDisplay.getCallDuration();
+		this.maxCalls = this.callDisplay.getMaxCalls();
+		this.maxConcurrentCalls = this.callDisplay.getMaxConcurrentCalls();
+		this.maxFailCalls = this.callDisplay.getMaxFailCalls();
+
 		FileUtils.serializeTestCase(this);
 	}
 
@@ -612,124 +696,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
 	}
 
-	private void dumpSampleTraffic()
-	{
-		
-		if(this.callSequenceToCall!=null && this.callSequenceToCall.size()>0)
-		{
-			int index0 = this.callSequenceToCall.size()/2;
-			Iterator<Long> seqIterator= this.callSequenceToCall.keySet().iterator();
-			while(index0>0)
-			{
 
-				//seqIterator.next();
-				index0--;
-			}
-			
-			
-			AbstractCall call = null;
-			while(call==null && seqIterator.hasNext())
-			{
-				Long seq = seqIterator.next();
-				
-				call = this.callSequenceToCall.get(seq);
-				if(call.getState()==CallState.IN_ERROR || call.getState() == CallState.TIMED_OUT)
-				{
-					call = null;
-					continue;
-				}else
-				{
-					break;
-				}
-			}
-			
-			if(call!=null)
-			{
-				//on end file dumps traffic along with jitter to this file, saves a lot of place, allows us to make mooore calls
-				File callDumpFile = call.getGraphDataFileName();
-				
-				FileInputStream inputChannel=null;
-				FileOutputStream outputChannel=null;
-				try {
-					inputChannel = new FileInputStream(callDumpFile);
-					outputChannel = new FileOutputStream(new File(this.getTestDumpDirectory(),_COLLECTIVE_CASE_FILE));
-					outputChannel.write((this.getCallDisplayInterface().getCallDuration()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((this.getCallDisplayInterface().getCPS()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((this.getCallDisplayInterface().getMaxConcurrentCalls()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((this.getCallDisplayInterface().getMaxFailCalls()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((this.getErrorCallNumber()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((this.getCallDisplayInterface().getMaxCalls()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((this.getTotalCallNumber()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					
-					
-					//outputChannel.write((call.getCallID().toString().getBytes()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((call.getSequence()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((call.getAvgJitter()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					outputChannel.write((call.getPeakJitter()+AbstractTestCase._LINE_SEPARATOR).getBytes());
-					
-					while(inputChannel.available()>0)
-					{
-						byte[] b = new byte[inputChannel.available()];
-						int read=inputChannel.read(b);
-						//FIXME: should we add more 
-						outputChannel.write(b,0,read);
-					}
-					
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					if(inputChannel!=null)
-					{
-						try {
-							inputChannel.close();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					
-					if(outputChannel!=null)
-					{
-						try {
-							outputChannel.close();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					if(inputChannel!=null)
-					{
-						try {
-							inputChannel.close();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					
-					if(outputChannel!=null)
-					{
-						try {
-							outputChannel.close();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-				}
-			}else
-			{
-				logger.severe("Failed to find call to add data to collective dump file.");
-			}
-			
-		}
-		
-	}
-	
-	
 	/**
 	 * This method is called after stop, to dump case data.
 	 */
@@ -753,5 +720,79 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		}
 	}
 
+	/**
+	 * @return
+	 */
+	public String getExampleData() {
+		StringBuffer sb = new StringBuffer();
+		if (this.callSequenceToCall != null && this.callSequenceToCall.size() > 0) {
+			int index0 = this.callSequenceToCall.size() / 2;
+			Iterator<Long> seqIterator = this.callSequenceToCall.keySet().iterator();
+			while (index0 > 0) {
+
+				// seqIterator.next();
+				index0--;
+			}
+
+			AbstractCall call = null;
+			while (call == null && seqIterator.hasNext()) {
+				Long seq = seqIterator.next();
+
+				call = this.callSequenceToCall.get(seq);
+				if (call.getState() == CallState.IN_ERROR || call.getState() == CallState.TIMED_OUT) {
+					call = null;
+					continue;
+				} else {
+					break;
+				}
+			}
+
+			if (call != null) {
+
+				
+					sb.append((this.callDuration + AbstractTestCase._LINE_SEPARATOR));
+					sb.append((this.cps + AbstractTestCase._LINE_SEPARATOR));
+					sb.append((this.maxConcurrentCalls + AbstractTestCase._LINE_SEPARATOR));
+					sb.append((this.maxFailCalls + AbstractTestCase._LINE_SEPARATOR));
+					sb.append((this.getErrorCallNumber() + AbstractTestCase._LINE_SEPARATOR));
+					sb.append((this.maxCalls + AbstractTestCase._LINE_SEPARATOR));
+					sb.append((this.getTotalCallNumber() + AbstractTestCase._LINE_SEPARATOR));
+					
+					call.setTestCase(this);
+					// sb.append((call.getCallID().toString()+AbstractTestCase._LINE_SEPARATOR));
+					sb.append((call.getSequence() + AbstractTestCase._LINE_SEPARATOR));
+					sb.append((call.getAvgJitter() + AbstractTestCase._LINE_SEPARATOR));
+					sb.append((call.getPeakJitter() + AbstractTestCase._LINE_SEPARATOR));
+
+					//
+					sb.append(call.getCallSpecificData());
+				
+
+			
+				
+			} else {
+				logger.severe("Failed to find call to add data to collective dump file.");
+			}
+
+		}
+		if(sb.length()>0)
+		{
+			return sb.toString();
+		}
+		else
+		{
+			return null;
+		}
+	}
 	
+	
+	//Those are only for dump purposes
+	private String localAddress = "127.0.0.1", remoteAddress = "127.0.0.1";
+	private int localPort = 2428, remotePort = 2427;
+	private int cps = 1;
+	private long callDuration = 2500;
+	private long maxCalls = AbstractTestCase._TURN_OFF_BOUNDRY;
+	private int maxConcurrentCalls = AbstractTestCase._TURN_OFF_BOUNDRY;
+	private int maxFailCalls = AbstractTestCase._TURN_OFF_BOUNDRY;
+
 }

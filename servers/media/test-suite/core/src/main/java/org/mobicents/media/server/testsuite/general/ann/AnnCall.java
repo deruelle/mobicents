@@ -32,6 +32,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 
@@ -58,6 +59,10 @@ public class AnnCall extends AbstractCall {
 
 	private RequestIdentifier ri = null;
 
+	
+	
+	
+	
 	public AnnCall(AbstractTestCase testCase, String fileToPlay) throws IOException {
 		super(testCase);
 		super.endpointName = "/mobicents/media/aap/$";
@@ -330,7 +335,7 @@ public class AnnCall extends AbstractCall {
 
 			this.setLocalFlowState(AnnCallState.SENT_CRCX);
 			super.setState(CallState.INITIAL);
-
+			super.onStart();
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.setLocalFlowState(AnnCallState.TERMINATED);
@@ -364,6 +369,7 @@ public class AnnCall extends AbstractCall {
 			this.setLocalFlowState(AnnCallState.TERMINATED);
 		}
 
+		super.onStop();
 	}
 
 	@Override
@@ -404,4 +410,5 @@ public class AnnCall extends AbstractCall {
 
 
 	}
+	
 }
