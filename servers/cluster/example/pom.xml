@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.cluster</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0BETA1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>example-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>Mobicents :: Cluster :: ${pom.artifactId}</name>
+
+	<modules>
+		<module>jar</module>
+		<module>sar</module>
+	</modules>
+</project>
