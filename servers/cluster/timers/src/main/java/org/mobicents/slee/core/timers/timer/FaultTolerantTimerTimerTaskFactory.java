@@ -1,7 +1,7 @@
 package org.mobicents.slee.core.timers.timer;
 
-import javax.java.util.FaultTolerantTimerTimerTask;
 
+import org.mobicents.slee.core.timers.FaultTolerantTimerTimerTask;
 import org.mobicents.slee.core.timers.TimerTask;
 import org.mobicents.slee.core.timers.TimerTaskData;
 

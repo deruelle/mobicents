@@ -1,12 +1,9 @@
-package javax.java.util;
+package org.mobicents.slee.core.timers;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-import org.mobicents.slee.core.timers.FaultTolerantScheduler;
-import org.mobicents.slee.core.timers.PeriodicScheduleStrategy;
-import org.mobicents.slee.core.timers.TimerTask;
 import org.mobicents.slee.core.timers.timer.FaultTolerantTimerTimerTaskData;
 
 import EDU.oswego.cs.dl.util.concurrent.Takable;
@@ -62,13 +59,19 @@ public class FaultTolerantTimerTimerTask extends TimerTask {
 			}
 		}
 		else {
-			taskData.getJavaUtilTimerTask().run();
+			try{
+				taskData.getJavaUtilTimerTask().run();
+			}catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 			if(taskData.getPeriodicScheduleStrategy() == null)
 			{
 				if (scheduler != null) {
-					scheduler.removeLocalResource(taskData);
+					scheduler.remove(taskData,true);
 				}
 			}
+			//FIXME: do we need to check other strategies here?
 		}				
 	}
 	

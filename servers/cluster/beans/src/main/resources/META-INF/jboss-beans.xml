@@ -60,16 +60,17 @@
    </bean>
 	<bean name="Mobicents.Cache" class="org.mobicents.slee.runtime.cache.MobicentsCache">
 		<constructor>
-          	<!-- 
+          	 <!-- 
           	<parameter><inject bean="jboss.cache:service=CacheManager"></inject></parameter>
           	<parameter class="java.lang.String">pessimistic-shared-repeatable</parameter>
           	<parameter><inject bean="RealTransactionManager"/></parameter>
             -->
            
+          
           <parameter class="org.jboss.cache.CacheFactory"><inject bean="Mobicents.JBossCacheFactory"/></parameter>
           <parameter class="org.jboss.cache.config.Configuration"><inject bean="Mobicents.CacheConfig"/></parameter>
           <parameter class="javax.transaction.TransactionManager"><inject bean="RealTransactionManager"/></parameter>
-      
+     
      	</constructor>			
      	<start method="startRootRegion">
      		<parameter>
@@ -97,14 +98,14 @@
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="javax.slee:name=Mobicents.FTFRegistration",exposedInterface=org.mobicents.ftf.FTFRegistrationMBean.class,registerDirectly=true)</annotation>
 
 		<property name="transactionManager">
-			<inject bean="Mobicents.TransactionManager" />
+			<inject bean="RealTransactionManager"/>
 		</property>
 		<property name="defaultElectionPolicy">
 			<inject bean="Mobicents.FTFDefaultElector" />
 		</property>
 		<!-- demand>HAPartition</demand -->
 		<demand>Mobicents.FTFDefaultElector</demand>
-		<demand>Mobicents.TransactionManager</demand>
+		<demand>RealTransactionManager</demand>
 	</bean>
 	
 	

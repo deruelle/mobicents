@@ -5,10 +5,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import javax.java.util.FaultTolerantTimerTimerTask;
 
 
 import org.mobicents.slee.core.timers.FaultTolerantScheduler;
+import org.mobicents.slee.core.timers.FaultTolerantTimerTimerTask;
 import org.mobicents.slee.core.timers.PeriodicScheduleStrategy;
 import org.mobicents.slee.runtime.cache.MobicentsCache;
 import org.mobicents.slee.runtime.cache.TimerTasksCacheData;
