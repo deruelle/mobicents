@@ -30,15 +30,18 @@ import java.io.IOException;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.spi.SyncSource;
 
 /**
  *
  * @author kulikov
  */
-public class EchoSink extends AbstractSink {
+public class EchoSink extends AbstractSink implements SyncSource {
     protected EchoSource source;
     private Format[] supported = new Format[0];
+    private long timestamp;
     
     public EchoSink(String name) {
         super(name);
@@ -59,6 +62,17 @@ public class EchoSink extends AbstractSink {
     }
 
     public void onMediaTransfer(Buffer buffer) throws IOException {
+        timestamp = buffer.getTimeStamp();
         source.delivery(buffer);
+    }
+
+    public void sync(MediaSource mediaSource) {
+    }
+
+    public void unsync(MediaSource mediaSource) {
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 }

@@ -50,7 +50,7 @@ public class Rfc2833DetectorTest {
         endpoint.setTimer(timer);
 
         generator = new Rfc2833GeneratorImpl("Rfc2833DetectorTest", timer);
-        generator.setDuration(100); // 100 ms
+        generator.setToneDuration(100); // 100 ms
         generator.setVolume(10);
         generator.setEndpoint(endpoint);
 

@@ -49,8 +49,8 @@ public class MixerOutput extends AbstractSource {
     }
     
     @Override
-    public void evolve(Buffer buffer, long sequenceNumber) {
-        mixer.evolve(buffer, sequenceNumber);
+    public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
+        mixer.evolve(buffer, timestamp, sequenceNumber);
     }    
 
     private boolean isSilence(Buffer buffer) {

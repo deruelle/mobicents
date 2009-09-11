@@ -40,6 +40,7 @@ import org.mobicents.media.server.impl.AbstractSinkSet;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.SyncSource;
 
 /**
  * Combines several signals for transmission over a single medium. A
@@ -50,12 +51,13 @@ import org.mobicents.media.server.spi.Endpoint;
  * <br>Multiplexer combines data and sends them, it is used as output for components.
  * @author Oleg Kulikov
  */
-public class Multiplexer extends AbstractSinkSet implements Outlet {
+public class Multiplexer extends AbstractSinkSet implements Outlet, SyncSource {
 
     private Format[] inputFormats = null;
     private Output output;
     private Buffer buff;
-
+    private long timestamp;
+    
     /**
      * Creates new instance of multiplexer.
      * 
@@ -64,6 +66,7 @@ public class Multiplexer extends AbstractSinkSet implements Outlet {
     public Multiplexer(String name) {
         super(name);
         output = new Output(name);
+        output.setSyncSource(this);
     }
 
     public void connect(MediaSink sink) {
@@ -206,6 +209,7 @@ public class Multiplexer extends AbstractSinkSet implements Outlet {
          */
         public void onMediaTransfer(Buffer buffer) throws IOException {
             buff = buffer;
+            timestamp = buffer.getTimeStamp();
             output.run();
         }
 
@@ -227,6 +231,7 @@ public class Multiplexer extends AbstractSinkSet implements Outlet {
         protected Format[] getOtherPartyFormats() {
             return otherParty.getFormats();
         }
+
     }
 
     class Output extends AbstractSource {
@@ -282,7 +287,7 @@ public class Multiplexer extends AbstractSinkSet implements Outlet {
         }
 
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             if (!stopped) {
                 buffer.copy(buff);
             }
@@ -296,6 +301,16 @@ public class Multiplexer extends AbstractSinkSet implements Outlet {
 
     @Override
     public void destroySink(AbstractSink sink) {
+    }
+
+    public void sync(MediaSource mediaSource) {
+    }
+
+    public void unsync(MediaSource mediaSource) {
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
 }

@@ -50,6 +50,7 @@ public class LocalConnectionTest {
     @Before
     public void setUp() throws Exception {
         timer = new TimerImpl();
+        timer.start();
         tester = new TransmissionTester(timer);
         
         sourceFactory = new TesterSourceFactory(tester);
@@ -81,6 +82,7 @@ public class LocalConnectionTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

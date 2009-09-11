@@ -89,6 +89,7 @@ public class TranscodingBridgeTest {
 
         // creating timer
         timer = new TimerImpl();
+        timer.start();
         tester = new TransmissionTester2(timer);
         
         HashMap<Integer, Format> rtpmap = new HashMap();
@@ -177,6 +178,7 @@ public class TranscodingBridgeTest {
     public void tearDown() {
         rtpFactory1.stop();
         rtpFactory2.stop();
+        timer.stop();
     }
 
     private void setupTester() throws Exception {

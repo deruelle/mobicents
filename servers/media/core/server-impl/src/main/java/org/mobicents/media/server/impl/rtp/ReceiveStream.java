@@ -45,11 +45,11 @@ public class ReceiveStream extends AbstractSource {
     private RtpDepacketizer depacketizer;
     
     /** Creates a new instance of ReceiveStream */
-    public ReceiveStream(RtpSocket rtpSocket, int jitter) {
+    public ReceiveStream(RtpSocket rtpSocket, int jitter, int period) {
         super("ReceiveStream");
         setSyncSource(rtpSocket.timer);
         this.rtpSocket = rtpSocket;
-        depacketizer = new RtpDepacketizer(jitter, getSyncSource().getHeartBeat(), rtpSocket.getRtpMap());
+        depacketizer = new RtpDepacketizer(jitter, period, rtpSocket.getRtpMap());
     }
 
     protected void push(RtpPacket rtpPacket) {
@@ -67,7 +67,7 @@ public class ReceiveStream extends AbstractSource {
         return fmts;
     }
 
-    public void evolve(Buffer buffer, long seq) {
+    public void evolve(Buffer buffer, long timestamp, long seq) {
         depacketizer.evolve(buffer);
     }
 }

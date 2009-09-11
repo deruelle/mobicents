@@ -71,7 +71,7 @@ public class EchoSource extends AbstractSource {
     }
 
     @Override
-    public void evolve(Buffer buffer, long sequenceNumber) {
+    public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
         buffer.copy(this.buffer);
     }
 }

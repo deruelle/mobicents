@@ -76,8 +76,8 @@ public class AdvancedAudioPlayerImpl extends AbstractSource implements AdvancedA
     }
     
     @Override
-    public void evolve(Buffer buffer, long sequenceNumber) {
-        engine.evolve(buffer, sequenceNumber);
+    public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
+        engine.evolve(buffer, timestamp, sequenceNumber);
     }
 
     public Format[] getFormats() {

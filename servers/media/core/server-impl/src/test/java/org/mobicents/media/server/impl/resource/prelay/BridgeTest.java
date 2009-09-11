@@ -71,7 +71,8 @@ public class BridgeTest {
         s2 = new ArrayList();
 
         timer = new TimerImpl();
-
+        timer.start();
+        
         channelFactory = new ChannelFactory();
         channelFactory.start();
 
@@ -132,6 +133,7 @@ public class BridgeTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
 

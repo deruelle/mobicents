@@ -64,7 +64,8 @@ public class EndpointTransmittorTest {
 	@Before
 	public void setUp() {
 		timer = new TimerImpl();
-
+                timer.start();
+                
 		gen = new SineGenerator("test.sine", timer);
 		gen.setAmplitude(Short.MAX_VALUE);
 		gen.setFrequency(F);
@@ -81,6 +82,7 @@ public class EndpointTransmittorTest {
 
 	@After
 	public void tearDown() {
+            timer.stop();
 	}
 
 	/**
@@ -238,9 +240,9 @@ public class EndpointTransmittorTest {
 		}
 
 		@Override
-		public void evolve(Buffer buffer, long seq) {
-			super.evolve(buffer, seq);
-			time += ((double) getSyncSource().getHeartBeat()) / 1000.0;
+		public void evolve(Buffer buffer, long timestamp, long seq) {
+			super.evolve(buffer, timestamp, seq);
+			time += ((double) getDuration()) / 1000.0;
 
 			if (time >= (this.generationTime / 1000.0)) {
 				buffer.setEOM(true);

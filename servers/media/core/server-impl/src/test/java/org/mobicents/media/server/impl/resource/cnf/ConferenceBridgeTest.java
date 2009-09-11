@@ -73,7 +73,8 @@ public class ConferenceBridgeTest {
         s3 = new ArrayList();
 
         timer = new TimerImpl();
-
+        timer.start();
+        
         cnfBridgeFactory = new CnfBridgeFactory();
         cnfBridgeFactory.setName("Conf");
 
@@ -150,6 +151,7 @@ public class ConferenceBridgeTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

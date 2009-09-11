@@ -68,6 +68,7 @@ public class EchoTest {
         res = false;
         
         timer = new TimerImpl();
+        timer.start();
         
         playerFactory = new AudioPlayerFactory();
         playerFactory.setName("audio.player");
@@ -104,6 +105,7 @@ public class EchoTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

@@ -45,7 +45,7 @@ public class RecorderTest {
         failed = false;
         stopped = false;
         timer = new TimerImpl();
-
+        timer.start();
         player = new AudioPlayerImpl("test", timer);
         player.addListener(new PlayerListener());
         
@@ -57,6 +57,7 @@ public class RecorderTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
     
     private void testRecording(String src, String dst) throws Exception {

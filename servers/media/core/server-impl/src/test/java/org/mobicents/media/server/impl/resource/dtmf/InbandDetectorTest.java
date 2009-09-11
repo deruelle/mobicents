@@ -46,13 +46,15 @@ public class InbandDetectorTest {
         
         semaphore = new Semaphore(0);
         timer = new TimerImpl();
-
+        timer.start();
+        
         generator = new InbandGeneratorImpl("InbandDetectorTest", timer);
         detector = new InbandDetectorImpl("InbandDetectorTest");
     }
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**
@@ -64,7 +66,7 @@ public class InbandDetectorTest {
      */
     private void checkTone(String tone, int duration, int eventID) throws InterruptedException {
         generator.setDigit(tone);
-        generator.setDuration(duration); // 100 ms
+        generator.setToneDuration(duration); // 100 ms
         generator.setVolume(0);
         
         DTMFListener listener = new DTMFListener(eventID);

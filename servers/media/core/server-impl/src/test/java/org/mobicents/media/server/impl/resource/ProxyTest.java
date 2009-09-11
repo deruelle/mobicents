@@ -41,6 +41,7 @@ public class ProxyTest {
     @Before
     public void setUp() {
         timer = new TimerImpl();
+        timer.start();
         proxy = new Proxy("test");
         tester = new TransmissionTester(timer);
         tester.connect(proxy.getInput());
@@ -49,6 +50,7 @@ public class ProxyTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

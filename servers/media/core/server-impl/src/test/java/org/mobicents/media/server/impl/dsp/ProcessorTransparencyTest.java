@@ -68,6 +68,7 @@ public class ProcessorTransparencyTest {
     @Before
     public void setUp() {
         timer = new TimerImpl();
+        timer.start();
         tester = new TransmissionTester(timer);
         
         proxy = new Proxy("test");
@@ -108,6 +109,7 @@ public class ProcessorTransparencyTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     @Test

@@ -70,6 +70,8 @@ public class ProcessorTest {
     @Before
     public void setUp() {
         timer = new TimerImpl();
+        timer.start();
+        
         tester = new TransmissionTester2(timer);
         
         proxy = new Proxy("test");
@@ -110,6 +112,7 @@ public class ProcessorTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     @Test

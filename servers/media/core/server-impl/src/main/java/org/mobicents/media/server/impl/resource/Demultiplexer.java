@@ -40,6 +40,7 @@ import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.AbstractSourceSet;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.SyncSource;
 
 /**
  * A Demultiplexer is a media processing component that takes an interleaved 
@@ -53,7 +54,8 @@ public class Demultiplexer extends AbstractSourceSet implements Inlet {
     private Format[] outputFormats = new Format[0];
     private Input input = null;
     private Buffer buff;
-
+    private long timestamp;
+    
     /**
      * Creates new instance of the demultiplexer.
      * 
@@ -84,6 +86,7 @@ public class Demultiplexer extends AbstractSourceSet implements Inlet {
     @Override
     public AbstractSource createSource(MediaSink otherParty) {
         Output output = new Output(getName() + "[output]");
+        output.setSyncSource(input);
         output.setEndpoint(getEndpoint());
         output.setConnection(getConnection());
         return output;
@@ -153,7 +156,7 @@ public class Demultiplexer extends AbstractSourceSet implements Inlet {
      * Implements input stream of the Demultiplxer.
      * 
      */
-    private class Input extends AbstractSink {
+    private class Input extends AbstractSink implements SyncSource {
 
         /**
          * Creates new instance of input stream.
@@ -194,6 +197,7 @@ public class Demultiplexer extends AbstractSourceSet implements Inlet {
          */
         public void onMediaTransfer(Buffer buffer) throws IOException {
             buff = buffer;
+            timestamp = buffer.getTimeStamp();
             Collection<AbstractSource> streams = getStreams();
             for (AbstractSource stream : streams) {
                 ((Output) stream).run();
@@ -209,6 +213,16 @@ public class Demultiplexer extends AbstractSourceSet implements Inlet {
         public Format[] getFormats() {
             reassemblyFormats();
             return outputFormats;
+        }
+
+        public void sync(MediaSource mediaSource) {
+        }
+
+        public void unsync(MediaSource mediaSource) {
+        }
+
+        public long getTimestamp() {
+            return timestamp;
         }
     }
 
@@ -258,13 +272,13 @@ public class Demultiplexer extends AbstractSourceSet implements Inlet {
         }
 
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             buffer.copy(buff);
         }
     }
 
     @Override
-    public void evolve(Buffer buffer, long sequenceNumber) {
+    public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

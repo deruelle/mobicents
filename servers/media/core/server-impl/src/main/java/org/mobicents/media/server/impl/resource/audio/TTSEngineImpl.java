@@ -60,6 +60,8 @@ public class TTSEngineImpl extends AbstractSource implements TTSEngine {
     private byte[] localBuff;
     private int pSize = 320;
     
+    private long timestamp;
+    
     public TTSEngineImpl(String name) {
         super(name);
     }
@@ -101,12 +103,12 @@ public class TTSEngineImpl extends AbstractSource implements TTSEngine {
     }
 
     @Override
-    public void evolve(Buffer buffer, long sequenceNumber) {
+    public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
         if (isReady) {
             buffer.setSequenceNumber(sequenceNumber);
             buffer.setFormat(Codec.LINEAR_AUDIO);
-            buffer.setDuration(getSyncSource().getHeartBeat());
-            buffer.setTimeStamp(System.currentTimeMillis());
+            buffer.setDuration(getDuration());
+            buffer.setTimeStamp(getSyncSource().getTimestamp());
             buffer.setDiscard(false);
             
             byte[] data = (byte[]) buffer.getData();

@@ -70,8 +70,6 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
     private AudioFormat format;
     /** audio stream */
     private transient AudioInputStream stream = null;
-    /** the size of the packet in bytes */
-    private int packetSize;
     /** Name (path) of the file to play */
     private String file;
     /** Flag indicating end of media */
@@ -124,7 +122,6 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
             throw new IOException("Unsupported format: " + stream.getFormat());
         }
 
-        packetSize = getPacketSize();
         eom = false;
     }
 
@@ -173,15 +170,15 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
      * 
      * @return the size of packets in bytes;
      */
-    private int getPacketSize() {
-        int pSize = (int) (getSyncSource().getHeartBeat() * format.getChannels() * format.getSampleSizeInBits() * format.getSampleRate() / 8000);
+    private int getPacketSize(long packetDuration) {
+        int pSize = (int) (packetDuration * format.getChannels() * format.getSampleSizeInBits() * format.getSampleRate() / 8000);
         if (pSize < 0) {
             // For Format for which bit is AudioFormat.NOT_SPECIFIED, 160 is
             // passed
             pSize = 160;
             if (format == AVProfile.GSM) {
                 //For GSM the RTP Packet size is 33
-                pSize = 33;
+                pSize = (int)(33 * (packetDuration/20));
             }
         }
         return pSize;
@@ -197,11 +194,11 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
      * @return the number of actualy read bytes.
      * @throws java.io.IOException
      */
-    private int readPacket(byte[] packet, int offset) throws IOException {
+    private int readPacket(byte[] packet, int offset, int psize) throws IOException {
         int length = 0;
         try {
-            while (length < packetSize) {
-                int len = stream.read(packet, offset + length, packetSize - length);
+            while (length < psize) {
+                int len = stream.read(packet, offset + length, psize - length);
                 if (len == -1) {
                     return length;
                 }
@@ -221,8 +218,8 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
      *            the buffer object to insert data to
      * @throws java.io.IOException
      */
-    private void readPacket(Buffer buffer) throws IOException {
-        buffer.setLength(readPacket((byte[]) buffer.getData(), buffer.getOffset()));
+    private void readPacket(Buffer buffer, int psize) throws IOException {
+        buffer.setLength(readPacket((byte[]) buffer.getData(), buffer.getOffset(), psize));
     }
 
     /**
@@ -231,14 +228,14 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
      * @param buffer
      *            the buffer for padding.
      */
-    private void padding(Buffer buffer) {
-        int count = packetSize - buffer.getLength();
+    private void padding(Buffer buffer, int psize) {
+        int count = psize - buffer.getLength();
         byte[] data = (byte[]) buffer.getData();
         int offset = buffer.getOffset() + buffer.getLength();
         for (int i = 0; i < count; i++) {
             data[i + offset] = 0;
         }
-        buffer.setLength(packetSize);
+        buffer.setLength(psize);
     }
 
     /**
@@ -254,9 +251,14 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
     }
 
     @Override
-    public void evolve(Buffer buffer, long seq) {
+    public void evolve(Buffer buffer, long timestamp, long seq) {
+        if (getDuration() == 0) {
+            buffer.setFlags(Buffer.FLAG_DISCARD);
+            return;
+        }
+        int psize = this.getPacketSize(getDuration());
         try {
-            readPacket(buffer);
+            readPacket(buffer, psize);
         } catch (IOException e) {
             failed(NotifyEvent.TX_FAILED, e);
             return;
@@ -265,13 +267,13 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
         if (buffer.getLength() == 0) {
             eom = true;
             //padding(buffer);
-        } else if (buffer.getLength() < packetSize) {
-            padding(buffer);
+        } else if (buffer.getLength() < psize) {
+            padding(buffer, psize);
         }
 
-        buffer.setDuration(getSyncSource().getHeartBeat());
+        buffer.setDuration(getDuration());
         buffer.setFormat(format);
-        buffer.setTimeStamp(getSyncSource().getTimestamp());
+        buffer.setTimeStamp(timestamp);
         buffer.setEOM(eom);
         buffer.setSequenceNumber(seq);
         

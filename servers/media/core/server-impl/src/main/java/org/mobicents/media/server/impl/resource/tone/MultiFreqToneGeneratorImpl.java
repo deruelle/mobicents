@@ -6,7 +6,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.spi.Timer;
+import org.mobicents.media.server.spi.SyncSource;
 import org.mobicents.media.server.spi.resource.FrequencyBean;
 import org.mobicents.media.server.spi.resource.MultiFreqToneGenerator;
 
@@ -34,12 +34,11 @@ public class MultiFreqToneGeneratorImpl extends AbstractSource implements MultiF
 
 	private volatile List<FrequencyBean> frequencies;
 
-	public MultiFreqToneGeneratorImpl(String name, Timer timer) {
+	public MultiFreqToneGeneratorImpl(String name, SyncSource syncSource) {
 		super(name);
-		setSyncSource(timer);
+		setSyncSource(syncSource);
 
 		dt = 1 / LINEAR_AUDIO.getSampleRate();
-		pSize = (int) ((double) getSyncSource().getHeartBeat() / 1000.0 / dt);
 	}
 
 	@Override
@@ -65,7 +64,7 @@ public class MultiFreqToneGeneratorImpl extends AbstractSource implements MultiF
 	}
 
 	@Override
-	public void evolve(Buffer buffer, long seq) {		
+	public void evolve(Buffer buffer, long timestamp, long seq) {		
 
 		try {
 			byte[] data = (byte[]) buffer.getData();
@@ -81,6 +80,7 @@ public class MultiFreqToneGeneratorImpl extends AbstractSource implements MultiF
 				tempDuration = tempDuration + duration;
 
 				if (time < (tempDuration / 1000.0)) {
+                        		pSize = (int) ((double) getDuration() / 1000.0 / dt);
 					for (int i = 0; i < pSize; i++) {
 						short v;
 						if (lowFreq == 0 || highFreq == 0) {
@@ -95,11 +95,11 @@ public class MultiFreqToneGeneratorImpl extends AbstractSource implements MultiF
 					buffer.setFormat(LINEAR_AUDIO);
 					buffer.setSequenceNumber(seq);
 					buffer.setTimeStamp(getSyncSource().getTimestamp());
-					buffer.setDuration(getSyncSource().getHeartBeat());
+					buffer.setDuration(getDuration());
 					buffer.setOffset(0);
 					buffer.setLength(2 * pSize);
 
-					time += ((double) getSyncSource().getHeartBeat()) / 1000.0;
+					time += ((double) getDuration()) / 1000.0;
 					buffer.setEOM(false);
 					if (time >= totalDuration) {
 						time = 0.0;

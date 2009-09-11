@@ -47,7 +47,7 @@ public class RtpSocketTest {
     public void setUp() throws Exception {
         timer = new TimerImpl();
         timer.setHeartBeat(HEART_BEAT);
-
+        timer.start();
         tester = new TransmissionTester(timer);
         
         HashMap<Integer, Format> rtpMap = new HashMap();
@@ -83,6 +83,7 @@ public class RtpSocketTest {
     public void tearDown() {
         rtpFactory1.stop();
         rtpFactory2.stop();
+        timer.stop();
     }
 
     @Test

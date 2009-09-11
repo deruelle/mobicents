@@ -24,6 +24,7 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.BaseComponent;
+import org.mobicents.media.server.spi.SyncSource;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
@@ -48,11 +49,13 @@ public class Processor extends BaseComponent implements SignalingProcessor {
     private Codec codec;
 
     private Buffer buff;
+    private long timestamp;
     
     public Processor(String name) {
         super(name);
         input = new Input(name);
         output = new Output(name);
+        output.setSyncSource(input);
     }
 
     protected void add(Codec codec) {
@@ -118,7 +121,7 @@ public class Processor extends BaseComponent implements SignalingProcessor {
     /**
      * Implements input of the processor.
      */
-    private class Input extends AbstractSink {
+    private class Input extends AbstractSink implements SyncSource {
 
         private Format fmt;
         private boolean isAcceptable;
@@ -155,6 +158,7 @@ public class Processor extends BaseComponent implements SignalingProcessor {
          * @see org.mobicents.media.server.impl.AbstractSink#onMediaTransfer(org.mobicents.media.Buffer) 
          */
         public void onMediaTransfer(Buffer buffer) throws IOException {
+            timestamp = buffer.getTimeStamp();
             output.transmit(buffer);
         }
 
@@ -195,6 +199,16 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         @Override
         public String toString() {
             return "Processor.Input[" + getName() + "]";
+        }
+
+        public void sync(MediaSource mediaSource) {
+        }
+
+        public void unsync(MediaSource mediaSource) {
+        }
+
+        public long getTimestamp() {
+            return timestamp;
         }
         
     }
@@ -329,7 +343,7 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         }
 
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             buffer.copy(buff);
         }
         

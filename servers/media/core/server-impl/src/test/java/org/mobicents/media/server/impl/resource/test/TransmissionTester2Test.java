@@ -37,11 +37,13 @@ public class TransmissionTester2Test {
     @Before
     public void setUp() {
         timer = new TimerImpl();
+        timer.start();
         tester = new TransmissionTester2(timer);
     }
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

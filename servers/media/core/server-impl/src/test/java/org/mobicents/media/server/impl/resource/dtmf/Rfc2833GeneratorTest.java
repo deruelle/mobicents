@@ -72,7 +72,7 @@ public class Rfc2833GeneratorTest {
         sink.start();
         
         generator.connect(sink);
-        generator.setDuration(100); // 100 ms
+        generator.setToneDuration(100); // 100 ms
         generator.setVolume(0);
         generator.setDigit("9");
         generator.setEndpoint(endpoint);

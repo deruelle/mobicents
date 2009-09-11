@@ -211,7 +211,7 @@ public class AudioMixer extends AbstractSinkSet implements Outlet {
      * 
      * @see org.mobicents.media.server.impl.AbstractSource#evolve(org.mobicents.media.Buffer, long). 
      */
-    public void evolve(Buffer buffer, long seq) {
+    public void evolve(Buffer buffer, long timestamp, long seq) {
         Collection<AbstractSink> streams = getStreams();
         ArrayList<byte[]> frames = new ArrayList();
         for (AbstractSink stream : streams) {
@@ -227,7 +227,7 @@ public class AudioMixer extends AbstractSinkSet implements Outlet {
         buffer.setOffset(0);
         buffer.setLength(data.length);
         buffer.setDuration(packetPeriod);
-        buffer.setTimeStamp(packetPeriod * seq);
+        buffer.setTimeStamp(timestamp);
         buffer.setSequenceNumber(seq);
 
         buffer.setFormat(LINEAR);

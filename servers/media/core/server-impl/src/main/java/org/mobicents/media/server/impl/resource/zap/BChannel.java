@@ -115,14 +115,14 @@ public class BChannel extends BaseComponent implements ResourceGroup {
         }
         
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             byte[] data = (byte[]) buffer.getData();
             try {
                 int len = file.read(data);
                 buffer.setOffset(0);
                 buffer.setLength(len);
                 buffer.setSequenceNumber(sequenceNumber);
-                buffer.setTimeStamp(System.currentTimeMillis());
+                buffer.setTimeStamp(timestamp);
                 buffer.setFormat(format);
             } catch (IOException e) {
                 buffer.setFlags(Buffer.FLAG_DISCARD);

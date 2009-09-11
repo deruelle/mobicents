@@ -37,6 +37,7 @@ import org.mobicents.media.Outlet;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.BaseComponent;
+import org.mobicents.media.server.spi.SyncSource;
 
 /**
  *
@@ -50,11 +51,13 @@ public class PacketRelay extends BaseComponent implements Inlet, Outlet {
     private Output output;
     
     private Buffer buff;
+    private long timestamp;
     
     public PacketRelay(String name) {
         super(name);
         input = new Input(name);
         output = new Output(name);
+        output.setSyncSource(input);
     }
     
     public void start() {
@@ -92,7 +95,7 @@ public class PacketRelay extends BaseComponent implements Inlet, Outlet {
         output.disconnect(sink);
     }
 
-    private class Input extends AbstractSink {
+    private class Input extends AbstractSink implements SyncSource {
         
         public Input(String name) {
             super(name + "[input]");
@@ -101,6 +104,7 @@ public class PacketRelay extends BaseComponent implements Inlet, Outlet {
         @Override
         public void onMediaTransfer(Buffer buffer) throws IOException {
             buff = buffer;
+            timestamp = buffer.getTimeStamp();
             output.run();
         }
 
@@ -124,6 +128,16 @@ public class PacketRelay extends BaseComponent implements Inlet, Outlet {
             }
             return output.isAcceptable(format);
         }
+
+        public void sync(MediaSource mediaSource) {
+        }
+
+        public void unsync(MediaSource mediaSource) {
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
     }
         
     private class Output extends AbstractSource {
@@ -141,7 +155,7 @@ public class PacketRelay extends BaseComponent implements Inlet, Outlet {
         }
         
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             buffer.copy(buff);
         }
 

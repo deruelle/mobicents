@@ -73,11 +73,13 @@ public class AudioPlayerTest {
         player.connect(sink);
         
         semaphore = new Semaphore(0);
+        timer.start();
     }
 
     @After
     public void tearDown() {
         player.disconnect(sink);
+        timer.stop();
     }
 
     @Test

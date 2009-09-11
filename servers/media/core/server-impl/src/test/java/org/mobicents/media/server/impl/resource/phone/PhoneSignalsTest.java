@@ -45,7 +45,7 @@ public class PhoneSignalsTest implements NotificationListener {
     @Before
     public void setUp() {
         timer = new TimerImpl();
-        
+        timer.start();
         short A = Short.MAX_VALUE /2;
         
         int[] F = new int[]{100, 200};
@@ -67,6 +67,7 @@ public class PhoneSignalsTest implements NotificationListener {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

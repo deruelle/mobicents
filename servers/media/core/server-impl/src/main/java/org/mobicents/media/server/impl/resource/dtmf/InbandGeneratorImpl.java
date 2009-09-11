@@ -31,7 +31,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.spi.Timer;
+import org.mobicents.media.server.spi.SyncSource;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.resource.DtmfGenerator;
 
@@ -80,11 +80,10 @@ public class InbandGeneratorImpl extends AbstractSource implements DtmfGenerator
     
     private double time = 0;
     
-    public InbandGeneratorImpl(String name, Timer timer) {
+    public InbandGeneratorImpl(String name, SyncSource syncSource) {
         super(name);
-        setSyncSource(timer);
+        setSyncSource(syncSource);
         dt = 1/LINEAR_AUDIO.getSampleRate();
-        pSize = (int)((double)getSyncSource().getHeartBeat()/1000.0/dt);
     }
 
 
@@ -104,14 +103,14 @@ public class InbandGeneratorImpl extends AbstractSource implements DtmfGenerator
         return this.digit;
     }
 
-    public void setDuration(int duration) {
+    public void setToneDuration(int duration) {
         if (duration < 40) {
             throw new IllegalArgumentException("Duration cannot be less than 40ms");
         }
         this.duration = duration;
     }
 
-    public int getDuration() {
+    public int getToneDuration() {
         return duration;
     }
 
@@ -140,11 +139,12 @@ public class InbandGeneratorImpl extends AbstractSource implements DtmfGenerator
     }
 
     @Override
-    public void evolve(Buffer buffer, long seq) {
+    public void evolve(Buffer buffer, long timestamp, long seq) {
         byte[] data = (byte[])buffer.getData();
         
         int k = 0;
         
+        pSize = (int)((double)getDuration()/1000.0/dt);
         for (int i = 0; i < pSize; i++) {
             short v = getValue(time + dt * i);
             data[k++] = (byte) v;
@@ -154,11 +154,11 @@ public class InbandGeneratorImpl extends AbstractSource implements DtmfGenerator
         buffer.setFormat(LINEAR_AUDIO);
         buffer.setSequenceNumber(seq);
         buffer.setTimeStamp(getSyncSource().getTimestamp());
-        buffer.setDuration(getSyncSource().getHeartBeat());
+        buffer.setDuration(getDuration());
         buffer.setOffset(0);
         buffer.setLength(2*pSize);
         
-        time += ((double)getSyncSource().getHeartBeat())/1000.0;
+        time += ((double)getDuration())/1000.0;
         buffer.setEOM(time > (double)duration/1000.0);
     }
     

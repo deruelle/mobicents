@@ -47,8 +47,9 @@ public class InbandGeneratorImplTest implements NotificationListener {
     @Before
     public void setUp() {
         timer = new TimerImpl();
+        timer.start();
         gen = new InbandGeneratorImpl("Gen", timer);
-        gen.setDuration(2000);
+        gen.setToneDuration(2000);
         gen.setDigit("0");
 
         det = new SpectraAnalyzer("det");
@@ -58,6 +59,7 @@ public class InbandGeneratorImplTest implements NotificationListener {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

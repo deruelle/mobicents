@@ -30,7 +30,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.spi.Timer;
+import org.mobicents.media.server.spi.SyncSource;
 
 /**
  * Generates sine wave signal with specified Amplitude and frequence.
@@ -61,9 +61,9 @@ public class PhoneSignalGenerator extends AbstractSource  {
     
     private int[] T;
     
-    public PhoneSignalGenerator(String name, Timer timer) {
+    public PhoneSignalGenerator(String name, SyncSource syncSource) {
         super(name);
-        setSyncSource(timer);
+        setSyncSource(syncSource);
         init();
     }
     
@@ -71,8 +71,6 @@ public class PhoneSignalGenerator extends AbstractSource  {
     private void init() {
         //number of seconds covered by one sample
         dt = 1/LINEAR_AUDIO.getSampleRate();
-        //packet size in samples
-        pSize = (int)((double)getSyncSource().getHeartBeat()/1000.0/dt);
     }
     
     public void setAmplitude(short A) {
@@ -123,11 +121,13 @@ public class PhoneSignalGenerator extends AbstractSource  {
         return (short)(v * A);
     }
 
-    public void evolve(Buffer buffer, long seq) {
+    public void evolve(Buffer buffer, long timestamp, long seq) {
         byte[] data = (byte[])buffer.getData();
         
         int k = 0;
         
+        //packet size in samples
+        pSize = (int)((double)getDuration()/1000.0/dt);
         for (int i = 0; i < pSize; i++) {
             short v = getValue(time + dt * i);
             data[k++] = (byte) v;
@@ -136,12 +136,12 @@ public class PhoneSignalGenerator extends AbstractSource  {
         
         buffer.setFormat(LINEAR_AUDIO);
         buffer.setSequenceNumber(seq);
-        buffer.setTimeStamp(getSyncSource().getTimestamp());
-        buffer.setDuration(getSyncSource().getHeartBeat());
+        buffer.setTimeStamp(timestamp);
+        buffer.setDuration(getDuration());
         buffer.setOffset(0);
         buffer.setLength(2*pSize);
         
-        time += ((double)getSyncSource().getHeartBeat())/1000.0;
+        time += ((double)getDuration())/1000.0;
     }
 
     public Format[] getFormats() {

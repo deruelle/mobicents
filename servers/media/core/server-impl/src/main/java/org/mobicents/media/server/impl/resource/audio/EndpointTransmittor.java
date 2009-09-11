@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.mobicents.media.server.impl.resource.audio;
 
 import java.io.IOException;
@@ -28,183 +27,176 @@ import org.mobicents.media.server.spi.dsp.Codec;
  */
 public class EndpointTransmittor extends BaseComponent implements Inlet, Outlet {
 
-	private final static long SILENCE = 80;
-	private Format format = Codec.LINEAR_AUDIO;
+    private final static long SILENCE = 80;
+    private Format format = Codec.LINEAR_AUDIO;
+    private Input input;
+    private Output output;
+    private volatile LinkedBlockingQueue<Buffer> queue = new LinkedBlockingQueue();
+    private boolean isAcceptable = false;
+    private Format fmt;
+    private volatile long silence;
+    private boolean isTransmittSilence;
+    public static final byte[] SILENCE_DATA = new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+    private Logger logger = Logger.getLogger(EndpointTransmittor.class);
 
-	private Input input;
-	private Output output;
+    public EndpointTransmittor(String name, Timer timer) {
+        super(name);
+        input = new Input(name);
+        output = new Output(name, timer);
+    }
 
-	private volatile LinkedBlockingQueue<Buffer> queue = new LinkedBlockingQueue();
+    public MediaSink getInput() {
+        return input;
+    }
 
-	private boolean isAcceptable = false;
-	private Format fmt;
+    public void start() {
+        input.start();
+        output.start();
+    }
 
-	private volatile long silence;
-	private boolean isTransmittSilence;
+    public void stop() {
+        input.stop();
+        output.stop();
+    }
 
-	public static final byte[] SILENCE_DATA = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    @Override
+    public void setEndpoint(Endpoint endpoint) {
+        input.setEndpoint(endpoint);
+        output.setEndpoint(endpoint);
+    }
 
-	private Logger logger = Logger.getLogger(EndpointTransmittor.class);
+    @Override
+    public void setConnection(Connection connection) {
+        input.setConnection(connection);
+        output.setConnection(connection);
+    }
 
-	public EndpointTransmittor(String name, Timer timer) {
-		super(name);
-		input = new Input(name);
-		output = new Output(name, timer);
-	}
+    public MediaSource getOutput() {
+        return output;
+    }
 
-	public MediaSink getInput() {
-		return input;
-	}
+    private Format[] combine(Format[] fmts, Format f) {
+        for (int i = 0; i < fmts.length; i++) {
+            if (fmts[i].matches(f)) {
+                return fmts;
+            }
+        }
+        Format[] formats = new Format[fmts.length + 1];
+        System.arraycopy(fmts, 0, formats, 0, fmts.length);
+        formats[fmts.length] = f;
+        return formats;
+    }
 
-	public void start() {
-		input.start();
-		output.start();
-	}
+    private class Input extends AbstractSink {
 
-	public void stop() {
-		input.stop();
-		output.stop();
-	}
+        public Input(String name) {
+            super(name);
+        }
 
-	@Override
-	public void setEndpoint(Endpoint endpoint) {
-		input.setEndpoint(endpoint);
-		output.setEndpoint(endpoint);
-	}
+        @Override
+        public void onMediaTransfer(Buffer buffer) throws IOException {
+            Buffer buff = new Buffer();
+            buff.copy(buffer);
+            queue.offer(buff);
+        }
 
-	@Override
-	public void setConnection(Connection connection) {
-		input.setConnection(connection);
-		output.setConnection(connection);
-	}
+        public Format[] getFormats() {
+            return output.getOtherPartyFormats();
+        }
 
-	public MediaSource getOutput() {
-		return output;
-	}
+        public boolean isAcceptable(Format format) {
+            // if (fmt != null && fmt.matches(format)) {
+            // return isAcceptable;
+            // }
+            Format[] supported = getFormats();
+            for (int i = 0; i < supported.length; i++) {
+                if (format.matches(supported[i])) {
+                    fmt = format;
+                    isAcceptable = true;
+                    return true;
+                }
+            }
 
-	private Format[] combine(Format[] fmts, Format f) {
-		for (int i = 0; i < fmts.length; i++) {
-			if (fmts[i].matches(f)) {
-				return fmts;
-			}
-		}
-		Format[] formats = new Format[fmts.length + 1];
-		System.arraycopy(fmts, 0, formats, 0, fmts.length);
-		formats[fmts.length] = f;
-		return formats;
-	}
+            fmt = format;
+            return false;
+        }
 
-	private class Input extends AbstractSink {
+        private Format[] getOtherPartyFormats() {
+            return otherParty != null ? otherParty.getFormats() : new Format[0];
+        }
+    }
 
-		public Input(String name) {
-			super(name);
-		}
+    private class Output extends AbstractSource {
 
-		@Override
-		public void onMediaTransfer(Buffer buffer) throws IOException {
-			Buffer buff = new Buffer();
-			buff.copy(buffer);
-			queue.offer(buff);
-		}
+        private boolean isSilence = false;
 
-		public Format[] getFormats() {
-			return output.getOtherPartyFormats();
-		}
+        public Output(String name, Timer timer) {
+            super(name);
+            setSyncSource(timer);
+        }
 
-		public boolean isAcceptable(Format format) {
-			// if (fmt != null && fmt.matches(format)) {
-			// return isAcceptable;
-			// }
-			Format[] supported = getFormats();
-			for (int i = 0; i < supported.length; i++) {
-				if (format.matches(supported[i])) {
-					fmt = format;
-					isAcceptable = true;
-					return true;
-				}
-			}
+        private Format[] getOtherPartyFormats() {
+            return otherParty != null ? otherParty.getFormats() : new Format[0];
+        }
 
-			fmt = format;
-			return false;
-		}
+        @Override
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
+            if (!queue.isEmpty()) {
+                if (logger.isDebugEnabled() && silence != 0) {
+                    logger.debug(this + " start audio data");
+                    this.isSilence = false;
+                }
+                Buffer buff = queue.poll();
+                buffer.copy(buff);
+                buffer.setSequenceNumber(sequenceNumber);
+                buffer.setDiscard(false);
+                silence = 0;
+            } else if (silence > SILENCE) {
+                if (logger.isDebugEnabled() && !this.isSilence) {
+                    logger.debug(this + " start audio silence");
+                    this.isSilence = true;
+                }
+                buffer.setOffset(0);
+                buffer.setLength(320);
+                buffer.setFormat(format);
+                buffer.setSequenceNumber(sequenceNumber);
+                buffer.setTimeStamp(System.currentTimeMillis());
+                buffer.setDiscard(false);
+                System.arraycopy(SILENCE_DATA, 0, (byte[]) buffer.getData(), 0, 320);
+            } else {
+                silence += getDuration();
+                buffer.setDiscard(true);
+            }
+        }
 
-		private Format[] getOtherPartyFormats() {
-			return otherParty != null ? otherParty.getFormats() : new Format[0];
-		}
-	}
+        public Format[] getFormats() {
+            return combine(input.getOtherPartyFormats(), format);
+        }
+    }
 
-	private class Output extends AbstractSource {
+    public void connect(MediaSource source) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-		private boolean isSilence = false;
+    public void disconnect(MediaSource source) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-		public Output(String name, Timer timer) {
-			super(name);
-			setSyncSource(timer);
-		}
+    public void connect(MediaSink sink) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-		private Format[] getOtherPartyFormats() {
-			return otherParty != null ? otherParty.getFormats() : new Format[0];
-		}
-
-		@Override
-		public void evolve(Buffer buffer, long sequenceNumber) {
-			if (!queue.isEmpty()) {
-				if (logger.isDebugEnabled() && silence != 0) {
-					logger.debug(this + " start audio data");
-					this.isSilence = false;
-				}
-				Buffer buff = queue.poll();
-				buffer.copy(buff);
-				buffer.setSequenceNumber(sequenceNumber);
-				buffer.setDiscard(false);
-				silence = 0;
-			} else if (silence > SILENCE) {
-				if (logger.isDebugEnabled() && !this.isSilence) {
-					logger.debug(this + " start audio silence");
-					this.isSilence = true;
-				}
-				buffer.setOffset(0);
-				buffer.setLength(320);
-				buffer.setFormat(format);
-				buffer.setSequenceNumber(sequenceNumber);
-				buffer.setTimeStamp(System.currentTimeMillis());
-				buffer.setDiscard(false);
-				System.arraycopy(SILENCE_DATA, 0, (byte[]) buffer.getData(), 0, 320);
-			} else {
-				silence += getSyncSource().getHeartBeat();
-				buffer.setDiscard(true);
-			}
-		}
-
-		public Format[] getFormats() {
-			return combine(input.getOtherPartyFormats(), format);
-		}
-
-	}
-
-	public void connect(MediaSource source) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public void disconnect(MediaSource source) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public void connect(MediaSink sink) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public void disconnect(MediaSink sink) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
+    public void disconnect(MediaSink sink) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

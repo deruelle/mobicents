@@ -63,6 +63,7 @@ public class RtpSocket {
     private RtpFactory rtpFactory = null;
     private RtpSocketListener listener;    // logger instance
     private Transceiver transceiver;
+    private int period = 20;
     private final static Logger logger = Logger.getLogger(RtpSocket.class);
 
     /**
@@ -82,7 +83,7 @@ public class RtpSocket {
         this.rtpMap.putAll(rtpMap);
 
         sendStream = new SendStream(this);
-        receiveStream = new ReceiveStream(this, jitter);
+        receiveStream = new ReceiveStream(this, jitter, period);
 
         this.rtpFactory = rtpFactory;
         this.localAddress = rtpFactory.publicAddress.getHostName();

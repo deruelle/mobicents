@@ -452,7 +452,7 @@ public class ChanneWithPipesTest {
         }
 
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
@@ -553,7 +553,7 @@ public class ChanneWithPipesTest {
             }
 
             @Override
-            public void evolve(Buffer buffer, long sequenceNumber) {
+            public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         }

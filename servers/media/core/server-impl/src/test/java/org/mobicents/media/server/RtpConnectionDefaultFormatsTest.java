@@ -73,6 +73,7 @@ public class RtpConnectionDefaultFormatsTest {
         semaphore = new Semaphore(0);
         
         timer = new TimerImpl();
+        timer.start();
         
         HashMap<Integer, Format> rtpmap = new HashMap();
         rtpmap.put(0, new AudioFormat(AudioFormat.ALAW, 8000, 8, 1));
@@ -133,6 +134,7 @@ public class RtpConnectionDefaultFormatsTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

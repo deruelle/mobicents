@@ -55,6 +55,8 @@ public class MultiFrequencyToneGeneratorImplTest implements NotificationListener
 		eventDetcted = false;
 
 		timer = new TimerImpl();
+                timer.start();
+                
 		gen = new MultiFreqToneGeneratorImpl("Gen", timer);
 		List<FrequencyBean> freq = new ArrayList<FrequencyBean>();
 
@@ -82,6 +84,7 @@ public class MultiFrequencyToneGeneratorImplTest implements NotificationListener
 
 	@After
 	public void tearDown() {
+            timer.stop();
 	}
 
 	/**

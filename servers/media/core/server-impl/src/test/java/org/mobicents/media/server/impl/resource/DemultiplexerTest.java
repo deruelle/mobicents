@@ -41,6 +41,7 @@ public class DemultiplexerTest {
     @Before
     public void setUp() {
         timer = new TimerImpl();
+        timer.start();
         demux = new Demultiplexer("test");
         tester = new TransmissionTester(timer);
         tester.connect(demux);
@@ -49,6 +50,7 @@ public class DemultiplexerTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

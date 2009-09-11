@@ -5,6 +5,7 @@
 
 package org.mobicents.media.server.impl.clock;
 
+import java.io.IOException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +14,18 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.Inlet;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.AbstractSource;
 import static org.junit.Assert.*;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.SyncSource;
 
 /**
  *
@@ -46,17 +58,28 @@ public class TimerImplTest {
     @Test
     public void testTimer() throws Exception {
         TimerImpl timer = new TimerImpl();
-        TestTask t1 = new TestTask();
-        TestTask t2 = new TestTask();
+        TestTask t1 = new TestTask("1");
+        TestTask t2 = new TestTask("2");
         
-        ScheduledFuture control1 = timer.synchronize(t1);
-        ScheduledFuture control2 = timer.synchronize(t2);
+        TestSink s1 = new TestSink("1");
+        TestSink s2 = new TestSink("2");
+        
+        t1.connect(s1);
+        t2.connect(s2);
+        
+        t1.setSyncSource(timer);
+        t2.setSyncSource(timer);
+        
+        timer.start();
+        
+        timer.sync(t1);
+        timer.sync(t2);
         
         Semaphore semaphore = new Semaphore(0);
         semaphore.tryAcquire(5, TimeUnit.SECONDS);
         
-        control1.cancel(true);
-        control2.cancel(true);
+        timer.unsync(t1);
+        timer.unsync(t2);
         
         int c1 = t1.getCountor();
         int c2 = t2.getCountor();
@@ -68,18 +91,53 @@ public class TimerImplTest {
         assertEquals(true, (t1.getCountor() - c1) <= 1);
         assertEquals(true, (t2.getCountor() - c2) <= 1);
         
+        t1.disconnect(s1);
+        t2.disconnect(s2);
+        
+        timer.stop();
     }
 
 
-    private class TestTask implements Runnable {
+    private class TestTask extends AbstractSource {
         private int countor;
+        
+        public TestTask(String name) {
+            super(name);
+        }
         
         public int getCountor() {
             return countor;
         }
         
-        public void run() {
+        @Override
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
+            System.out.println("tick");
             countor++;
         }
+
+        public Format[] getFormats() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    
+    private class TestSink extends AbstractSink {
+
+        public TestSink(String name) {
+            super(name);
+        }
+        
+        @Override
+        public void onMediaTransfer(Buffer buffer) throws IOException {
+        }
+
+        public Format[] getFormats() {
+            return new Format[0];
+        }
+
+        public boolean isAcceptable(Format format) {
+            return true;
+        }
+        
     }
 }

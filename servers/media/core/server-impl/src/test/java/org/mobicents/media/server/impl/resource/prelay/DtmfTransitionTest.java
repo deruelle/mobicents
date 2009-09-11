@@ -83,7 +83,8 @@ public class DtmfTransitionTest {
     public void setUp() throws Exception {
         list = new ArrayList();
         timer = new TimerImpl();
-
+        timer.start();
+        
         this.setupRTP();
         this.setupDSP();
         
@@ -97,6 +98,7 @@ public class DtmfTransitionTest {
     public void tearDown() {
         rtpFactory1.stop();
         rtpFactory2.stop();
+        timer.stop();
     }
 
     private void setupRTP() throws Exception {
@@ -395,7 +397,7 @@ public class DtmfTransitionTest {
 
 
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             buffer.setSequenceNumber(sequenceNumber);
             buffer.setDuration(20);
             buffer.setTimeStamp(sequenceNumber * 20);

@@ -65,8 +65,6 @@ public class SineGenerator extends AbstractSource implements Runnable {
     private void init() {
         //number of seconds covered by one sample
         dt = 1/LINEAR_AUDIO.getSampleRate();
-        //packet size in samples
-        pSize = (int)((double)getSyncSource().getHeartBeat()/1000.0/dt);
     }
     
     public void setAmplitude(short A) {
@@ -89,11 +87,12 @@ public class SineGenerator extends AbstractSource implements Runnable {
         return (short) (A* Math.sin(2 * Math.PI * f * t));
     }
 
-    public void evolve(Buffer buffer, long seq) {
+    public void evolve(Buffer buffer, long timestamp, long seq) {
         byte[] data = (byte[])buffer.getData();
         
         int k = 0;
         
+        pSize = (int)((double)getDuration()/1000.0/dt);       
         for (int i = 0; i < pSize; i++) {
             short v = getValue(time + dt * i);
             data[k++] = (byte) v;
@@ -103,11 +102,11 @@ public class SineGenerator extends AbstractSource implements Runnable {
         buffer.setFormat(LINEAR_AUDIO);
         buffer.setSequenceNumber(seq);
         buffer.setTimeStamp(getSyncSource().getTimestamp());
-        buffer.setDuration(getSyncSource().getHeartBeat());
+        buffer.setDuration(getDuration());
         buffer.setOffset(0);
         buffer.setLength(2*pSize);
         
-        time += ((double)getSyncSource().getHeartBeat())/1000.0;
+        time += ((double)getDuration())/1000.0;
     }
 
     public Format[] getFormats() {

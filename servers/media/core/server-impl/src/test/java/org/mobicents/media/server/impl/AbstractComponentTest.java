@@ -17,6 +17,8 @@ import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
+import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  *
@@ -32,6 +34,7 @@ public class AbstractComponentTest {
     private Inlet inlet = new InletImpl("test-inlet");
     private Outlet outlet = new OutletImpl("test-outlet");
     
+    private Timer timer;
     public AbstractComponentTest() {
     }
 
@@ -45,6 +48,9 @@ public class AbstractComponentTest {
 
     @Before
     public void setUp() {
+        timer = new TimerImpl();
+        src.setSyncSource(timer);
+        src2.setSyncSource(timer);
     }
 
     @After
@@ -244,7 +250,7 @@ public class AbstractComponentTest {
         }
 
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
@@ -283,6 +289,7 @@ public class AbstractComponentTest {
 
             public InnerSource(String name) {
                 super(name);
+                setSyncSource(timer);
             }
 
             public Format[] getFormats() {
@@ -294,7 +301,7 @@ public class AbstractComponentTest {
             }
 
             @Override
-            public void evolve(Buffer buffer, long sequenceNumber) {
+            public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         }
@@ -313,7 +320,7 @@ public class AbstractComponentTest {
         }
 
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -406,6 +413,7 @@ public class AbstractComponentTest {
 
             public InnerSource(String name) {
                 super(name);
+                setSyncSource(timer);
             }
 
             public Format[] getFormats() {
@@ -417,7 +425,7 @@ public class AbstractComponentTest {
             }
 
             @Override
-            public void evolve(Buffer buffer, long sequenceNumber) {
+            public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         }

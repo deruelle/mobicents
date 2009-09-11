@@ -150,7 +150,7 @@ public class Bridge extends BaseComponent implements ResourceGroup {
         }
 
         @Override
-        public void evolve(Buffer buffer, long sequenceNumber) {
+        public void evolve(Buffer buffer, long timestamp, long sequenceNumber) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

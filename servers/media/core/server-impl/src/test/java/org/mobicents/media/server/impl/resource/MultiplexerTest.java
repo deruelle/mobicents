@@ -43,6 +43,8 @@ public class MultiplexerTest {
     @Before
     public void setUp() {
         timer = new TimerImpl();
+        timer.start();
+        
         mux = new Multiplexer("test");
         tester = new TransmissionTester(timer);
         tester.connect(mux);
@@ -51,6 +53,7 @@ public class MultiplexerTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     @Test

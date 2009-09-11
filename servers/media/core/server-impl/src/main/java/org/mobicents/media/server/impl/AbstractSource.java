@@ -35,7 +35,7 @@ import org.mobicents.media.Format;
 import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.spi.Timer;
+import org.mobicents.media.server.spi.SyncSource;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -49,7 +49,7 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
 public abstract class AbstractSource extends BaseComponent implements MediaSource, Runnable {
 
     protected transient MediaSink otherParty;
-    private Timer timer;
+    private SyncSource syncSource;
     private volatile ScheduledFuture thread;
     private ReentrantLock state = new ReentrantLock();
     private BufferFactory bufferFactory = new BufferFactory(1);
@@ -63,7 +63,12 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
     private boolean warn;
     private Logger logger;
     private boolean completed = false;
-
+    
+    /** packetization period in millseconds */
+    private int period = 20;
+    private long timestamp;
+    private long duration;
+    
     /**
      * Creates new instance of source with specified name.
      * 
@@ -83,19 +88,36 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
      * 
      * @see org.mobicents.media.MediaSource#getSyncSource()
      */
-    public Timer getSyncSource() {
-        return timer;
+    public SyncSource getSyncSource() {
+        return syncSource;
     }
 
     /**
      * (Non Java-doc).
      * 
-     * @see org.mobicents.media.MediaSource#setSyncSource(Timer)
+     * @see org.mobicents.media.MediaSource#setSyncSource(SyncSource)
      */
-    public void setSyncSource(Timer timer) {
-        this.timer = timer;
+    public void setSyncSource(SyncSource syncSource) {
+        this.syncSource = syncSource;
     }
 
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.MediaSource#getPeriod() 
+     */
+    public int getPeriod() {
+        return period;
+    }
+    
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.MediaSource#setPeriod(int) 
+     */
+    public void setPeriod(int period) {
+        this.period = period;
+    }
     /**
      * This method is called just before start.
      * 
@@ -112,7 +134,7 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
     public void start() {
         state.lock();
         try {
-            if (thread != null) {
+            if (started) {
                 return;
             }
 
@@ -123,12 +145,15 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
             sequenceNumber = 0;
             beforeStart();
 
-            // if timer assigned (synchronized from timer) then start timer
-            // if synchronized from other component just exit silently
-            if (timer != null) {
-                thread = timer.synchronize(this);
+            // synchronize 
+            if (syncSource == null) {
+                throw new IllegalStateException("No source of synchronization: " + this);
             }
+            syncSource.sync(this);
             started = true;
+            
+            timestamp = syncSource.getTimestamp();
+            
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " started");
             }
@@ -148,10 +173,7 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
     public void stop() {
         state.lock();
         try {
-            if (thread != null) {
-                thread.cancel(false);
-                thread = null;
-            }
+            syncSource.unsync(this);
             started = false;
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " stopped");
@@ -254,12 +276,11 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
      * This method must be overriden by concrete media source. The media have to fill buffer with media data and
      * attributes.
      * 
-     * @param buffer
-     *            the buffer object for media.
+     * @param buffer the buffer object for media.
      * @param sequenceNumber
      *            the number of timer ticks from the begining.
      */
-    public abstract void evolve(Buffer buffer, long sequenceNumber);
+    public abstract void evolve(Buffer buffer, long timestamp, long sequenceNumber);
 
     protected String getSupportedFormatList() {
         String s = "";
@@ -272,14 +293,23 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
         return s;
     }
 
+    protected long getDuration() {
+        return duration;
+    }
+    
     public void run() {
         if (otherParty == null) {
             return;
         }
         
         Buffer buffer = bufferFactory.allocate();
+        
+        long now = syncSource.getTimestamp();
+        duration = now - timestamp;
+        
         try {
-            evolve(buffer, sequenceNumber);
+            evolve(buffer, now, sequenceNumber);
+            timestamp = now;
         } catch (Exception e) {
             logger.error("Not able to evolve data", e);
             return;

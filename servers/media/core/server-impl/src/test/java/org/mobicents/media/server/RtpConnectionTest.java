@@ -55,6 +55,8 @@ public class RtpConnectionTest {
     @Before
     public void setUp() throws Exception {
         timer = new TimerImpl();
+        timer.start();
+        
         tester = new TransmissionTester(timer);
         
         sourceFactory = new TesterSourceFactory(tester);
@@ -114,6 +116,7 @@ public class RtpConnectionTest {
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

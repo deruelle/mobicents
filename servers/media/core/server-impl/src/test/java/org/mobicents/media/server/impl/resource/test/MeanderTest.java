@@ -59,10 +59,13 @@ public class MeanderTest implements NotificationListener {
         det.setAmplitude(A);
         det.setPeriod(T);
         det.addListener(this); 
+        
+        timer.start();
     }
 
     @After
     public void tearDown() {
+        timer.stop();
     }
 
     /**

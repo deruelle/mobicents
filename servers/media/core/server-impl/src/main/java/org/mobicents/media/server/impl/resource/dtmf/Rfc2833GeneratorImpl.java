@@ -31,7 +31,7 @@ import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
-import org.mobicents.media.server.spi.Timer;
+import org.mobicents.media.server.spi.SyncSource;
 import org.mobicents.media.server.spi.resource.DtmfGenerator;
 
 /**
@@ -51,10 +51,9 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
     private int heartBeat = 20;
     private int eventDuration = 160;
     
-    public Rfc2833GeneratorImpl(String name, Timer timer) {
+    public Rfc2833GeneratorImpl(String name, SyncSource syncSource) {
         super(name);
-        setSyncSource(timer);
-        heartBeat = timer.getHeartBeat();
+        setSyncSource(syncSource);
     }
 
     private byte encode(String digit) {
@@ -103,14 +102,14 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
         return this.sDigit;
     }
 
-    public void setDuration(int duration) {
+    public void setToneDuration(int duration) {
         if (duration < 40) {
             throw new IllegalArgumentException("Duration cannot be less than 40ms");
         }
         this.duration = duration;
     }
 
-    public int getDuration() {
+    public int getToneDuration() {
         return this.duration;
     }
 
@@ -142,7 +141,7 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
         return Rfc2833DetectorImpl.FORMATS;
     }
 
-    public void evolve(Buffer buffer, long seq) {
+    public void evolve(Buffer buffer, long timestamp, long seq) {
         boolean marker = true;
         endOfEvent = false;
         if (seq == (mediaPackets - 3)) {
@@ -166,7 +165,7 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
         buffer.setLength(4);
         buffer.setFormat(AVProfile.DTMF);
         buffer.setSequenceNumber(seq);
-        buffer.setTimeStamp(getSyncSource().getTimestamp());
+        buffer.setTimeStamp(timestamp);
 
         if (seq == mediaPackets) {
             buffer.setEOM(true);

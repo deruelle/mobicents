@@ -30,7 +30,7 @@ package org.mobicents.media.server.impl.resource.test;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.spi.Timer;
+import org.mobicents.media.server.spi.SyncSource;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -49,14 +49,12 @@ public class MeanderGenerator extends AbstractSource implements Runnable{
     private double T;
     private short A;
     
-    public MeanderGenerator(String name, Timer timer) {
+    public MeanderGenerator(String name, SyncSource syncSource) {
         super(name);
-        setSyncSource(timer);
+        setSyncSource(syncSource);
         
         //number of seconds covered by one sample
         dt = 1/Codec.LINEAR_AUDIO.getSampleRate();
-        //packet size in samples
-        pSize = (int)((double)timer.getHeartBeat()/1000.0/dt);
     }
     
     public void setPeriod(double T) {
@@ -75,11 +73,13 @@ public class MeanderGenerator extends AbstractSource implements Runnable{
         return ((long)Math.floor(t/T)) % 2 == 0 ? A : 0;
     }
     
-    public void evolve(Buffer buffer, long seq) {
+    public void evolve(Buffer buffer, long timestamp, long seq) {
         byte[] data = (byte[])buffer.getData();
         
         int k = 0;
         
+        //packet size in samples
+        pSize = (int)((double)getDuration()/1000.0/dt);
         for (int i = 0; i < pSize; i++) {
             short v = getValue(time + dt * i);
             data[k++] = (byte) v;
@@ -89,10 +89,10 @@ public class MeanderGenerator extends AbstractSource implements Runnable{
         buffer.setFormat(Codec.LINEAR_AUDIO);
         buffer.setSequenceNumber(seq++);
         buffer.setTimeStamp(getSyncSource().getTimestamp());
-        buffer.setDuration(getSyncSource().getHeartBeat());
+        buffer.setDuration(getDuration());
         buffer.setOffset(0);
         buffer.setLength(2* pSize);
         
-        time += ((double)getSyncSource().getHeartBeat())/1000.0;
+        time += ((double)getDuration())/1000.0;
     }
 }
