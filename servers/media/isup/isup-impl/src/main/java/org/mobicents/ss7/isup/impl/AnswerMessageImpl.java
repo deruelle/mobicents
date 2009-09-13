@@ -76,8 +76,10 @@ import org.mobicents.ss7.isup.message.parameter.accessTransport.AccessTransport;
 class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 
 	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(_MESSAGE_CODE_ANM);
-
-	protected static final int _INDEX_F_MessageType = 0;
+	private static final int _MANDATORY_VAR_COUNT = 0;
+	
+	
+	static final int _INDEX_F_MessageType = 0;
 
 	static final int _INDEX_O_BackwardCallIndicators = 0;
 	static final int _INDEX_O_OptionalBackwardCallIndicators = 1;
@@ -151,9 +153,7 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 	@Override
 	protected int decodeMandatoryVariableParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 		
-
-
-		return 0;
+		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
 	}
 	/*
 	 * (non-Javadoc)
@@ -164,7 +164,7 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 	 */
 	@Override
 	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
 
 	}
 
@@ -303,7 +303,7 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 	@Override
 	protected int getNumberOfMandatoryVariableLengthParameters() {
 
-		return 0;
+		return _MANDATORY_VAR_COUNT;
 	}
 
 	/*

@@ -360,7 +360,12 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 	}
 
 	protected void decodeMandatoryVariableBody(byte[] parameterBody, int parameterIndex) throws ParameterRangeInvalidException {
-		// we dont have those.
+		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
+	}
+
+	@Override
+	protected int decodeMandatoryVariableParameters(byte[] b, int index) throws ParameterRangeInvalidException {
+		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
 	}
 
 	protected void decodeOptionalBody(byte[] parameterBody, byte parameterCode) throws ParameterRangeInvalidException {

@@ -238,11 +238,12 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 					//zeros
 					pointers=new byte[]{0x00};
 				}
+				bos.write(pointers);
 			}else
 			{
 				//do nothing?
 			}
-			bos.write(pointers);
+			
 		}else
 		{
 			if(optionalPartIsPossible())
