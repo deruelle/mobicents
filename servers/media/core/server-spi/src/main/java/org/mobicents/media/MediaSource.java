@@ -26,7 +26,7 @@
  */
 package org.mobicents.media;
 
-import org.mobicents.media.server.spi.Timer;
+import org.mobicents.media.server.spi.SyncSource;
 
 /**
  * Abstracts a read interface that pushes data in the form of Buffer objects.
@@ -36,21 +36,36 @@ import org.mobicents.media.server.spi.Timer;
  * 
  * @author Oleg Kulikov
  */
-public interface MediaSource extends Component {
+public interface MediaSource extends Component, Runnable {
     
     /**
      * Gets the source used for synchronization of processing
      * 
      * @return timer instance.
      */
-    public Timer getSyncSource();
+    public SyncSource getSyncSource();
 
     /**
      * Assign the source for synchronization of the processing.
      * 
-     * @param timer the timer instance.
+     * @param syncSource the source of synchronization.
      */
-    public void setSyncSource(Timer timer);
+    public void setSyncSource(SyncSource syncSource);
+    
+    /**
+     * Gets the packetization period.
+     * 
+     * @return the value of currently used packetization period in milliseconds.
+     * 
+     */
+    public int getPeriod();
+    
+    /**
+     * Assigns new packetization period.
+     * 
+     * @param period the value of packetization period in milliseconds.
+     */
+    public void setPeriod(int period);
     
     /**
      * Joins this source with media sink.

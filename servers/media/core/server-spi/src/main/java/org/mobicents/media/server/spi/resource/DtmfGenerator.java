@@ -12,8 +12,8 @@ public interface DtmfGenerator extends MediaSource {
 	public void setDigit(String digit);
 	public String getDigit();
 	
-	public void setDuration(int duration);
-	public int getDuration();
+	public void setToneDuration(int duration);
+	public int getToneDuration();
 	
 	public void setVolume(int volume);
 	public int getVolume();

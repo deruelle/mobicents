@@ -24,25 +24,16 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.spi;
+
+package org.mobicents.media.server.spi.rtp;
+
+import org.mobicents.media.Inlet;
+import org.mobicents.media.Outlet;
 
 /**
  *
  * @author kulikov
  */
-public interface Timer extends SyncSource {
-    /**
-     * Gets value of interval between timer ticks.
-     * 
-     * @return the int value in milliseconds.
-     */
-    public int getHeartBeat();
+public interface Packetizer extends Inlet, Outlet {
 
-    /**
-     * Modify interval between timer tick
-     * 
-     * @param heartBeat the new value of interval in milliseconds.
-     */
-    public void setHeartBeat(int heartBeat);
-    
 }
