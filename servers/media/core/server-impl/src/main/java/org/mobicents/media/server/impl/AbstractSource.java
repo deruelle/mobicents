@@ -385,9 +385,7 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
      * 
      */
     protected void completed() {
-        if (thread != null) {
-            thread.cancel(false);
-        }
+        syncSource.unsync(this);
         sendEvent(evtCompleted);
     }
 
