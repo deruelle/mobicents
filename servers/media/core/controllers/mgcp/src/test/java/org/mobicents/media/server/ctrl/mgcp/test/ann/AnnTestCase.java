@@ -196,5 +196,6 @@ public class AnnTestCase extends MgcpMicrocontainerTest {
     public void processMgcpResponseEvent(JainMgcpResponseEvent event) {
         super.processMgcpResponseEvent(event);
         response = event;
+//        semaphore.release();
     }
 }

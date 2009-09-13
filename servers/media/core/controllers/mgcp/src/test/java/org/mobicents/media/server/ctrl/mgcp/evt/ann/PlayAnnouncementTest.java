@@ -73,7 +73,8 @@ public class PlayAnnouncementTest {
 		res = false;
 
 		timer = new TimerImpl();
-
+                timer.start();
+                
 		playerFactory = new AudioPlayerFactory();
 		playerFactory.setName("audio.player");
 
@@ -105,6 +106,7 @@ public class PlayAnnouncementTest {
 
 	@After
 	public void tearDown() {
+            timer.stop();
 	}
 
 	/**
@@ -136,7 +138,8 @@ public class PlayAnnouncementTest {
 		System.out.println("Started");
 		semaphore.tryAcquire(10, TimeUnit.SECONDS);
 		
-		assertTrue("The amount of packets dos not match", Math.abs(150 - pcmaCount) < 10);
+                System.out.println(pcmaCount);
+		assertTrue("The amount of packets dos not match", Math.abs(150 - pcmaCount) < 20);
 
 		receiver.deleteConnection(rxConnection.getId());
 		sender.deleteConnection(txConnection.getId());
