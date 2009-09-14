@@ -67,8 +67,8 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	private transient FileOutputStream _RTP_TXT_DUMP_FOS;
 	private transient OutputStreamWriter _RTP_TXT_DUMP_OSW;
 
-	//private transient FileInputStream _RTP_TXT_DUMP_FIS;
-	//private transient InputStreamReader _RTP_TXT_DUMP_ISR;
+	// private transient FileInputStream _RTP_TXT_DUMP_FIS;
+	// private transient InputStreamReader _RTP_TXT_DUMP_ISR;
 
 	public static final int _TURN_OFF_BOUNDRY = -1;
 	// Yes, it would be good thing to ser
@@ -85,7 +85,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	// timestamp :), its used for files
 	protected long testTimesTamp = System.currentTimeMillis();
 	protected transient File testDumpDirectory;
-	
+
 	protected transient ScheduledFuture callCreatorTask;
 	protected transient ScheduledFuture gracefulStopTask;
 	// Timer guard:
@@ -146,8 +146,8 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 			_RTP_TXT_DUMP_FOS = new FileOutputStream(_RTP_TXT_DUMP_FILE);
 			_RTP_TXT_DUMP_OSW = new OutputStreamWriter(_RTP_TXT_DUMP_FOS);
 
-			//_RTP_TXT_DUMP_FIS = new FileInputStream(_RTP_TXT_DUMP_FILE);
-			//_RTP_TXT_DUMP_ISR = new InputStreamReader(_RTP_TXT_DUMP_FIS);
+			// _RTP_TXT_DUMP_FIS = new FileInputStream(_RTP_TXT_DUMP_FILE);
+			// _RTP_TXT_DUMP_ISR = new InputStreamReader(_RTP_TXT_DUMP_FIS);
 			finished = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,11 +158,11 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 					_RTP_TXT_DUMP_OSW = null;
 					_RTP_TXT_DUMP_FOS = null;
 				}
-//				if (_RTP_TXT_DUMP_ISR != null) {
-//					_RTP_TXT_DUMP_ISR.close();
-//					_RTP_TXT_DUMP_ISR = null;
-//					_RTP_TXT_DUMP_FIS = null;
-//				}
+				// if (_RTP_TXT_DUMP_ISR != null) {
+				// _RTP_TXT_DUMP_ISR.close();
+				// _RTP_TXT_DUMP_ISR = null;
+				// _RTP_TXT_DUMP_FIS = null;
+				// }
 			}
 		}
 
@@ -180,14 +180,10 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		}
 	}
 
-	
-	
-	
 	public OutputStreamWriter getRtpOSW() {
 		return _RTP_TXT_DUMP_OSW;
 	}
 
-	
 	public InputStreamReader getRtpISR() {
 		FileInputStream _RTP_TXT_DUMP_FIS;
 		try {
@@ -201,7 +197,6 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		return null;
 	}
 
-	
 	public ScheduledExecutorService getExecutors() {
 		return executors;
 	}
@@ -243,7 +238,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	public AbstractCall getCallBySequence(Long seq) {
 
 		AbstractCall ac = this.callSequenceToCall.get(seq);
-		if(ac!=null)
+		if (ac != null)
 			ac.setTestCase(this);
 		return ac;
 	}
@@ -313,6 +308,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 				if (!onGracefull) {
 					return;
 				}
+
 				try {
 
 					if (this.provider != null) {
@@ -348,34 +344,33 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 								call.stop();
 							}
 						}
-						
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					
-					if(_RTP_TXT_DUMP_OSW!=null)
-					{
-						try{
-							_RTP_TXT_DUMP_OSW.flush();
-							_RTP_TXT_DUMP_OSW.close();
-							_RTP_TXT_DUMP_OSW=null;
-							_RTP_TXT_DUMP_FOS=null;
-						}catch(Exception e)
-						{
-							e.printStackTrace();
-						}
-						
-					}
-					try {
-						this.socketFactory.stop();
 
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+
+					if (_RTP_TXT_DUMP_OSW != null) {
+						try {
+							_RTP_TXT_DUMP_OSW.flush();
+							_RTP_TXT_DUMP_OSW.close();
+							_RTP_TXT_DUMP_OSW = null;
+							_RTP_TXT_DUMP_FOS = null;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+					if (this.socketFactory != null)
+						try {
+							this.socketFactory.stop();
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					// Now lets serialize.
 
 					serialize();
-					//dumpSampleTraffic();
+					// dumpSampleTraffic();
 				} finally {
 					this.testState = TestState.Stoped;
 					this.gracefulStopTask = null;
@@ -387,7 +382,9 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 					}
 
 				}
+				this.testState = TestState.Stoped;
 				break;
+
 			case Running:
 
 				this.testState = TestState.Terminating;
@@ -469,8 +466,9 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	public void setCallDisplay(CallDisplayInterface cdi, File testDumpDirectory) throws UnknownHostException, IllegalStateException {
 		this.callDisplay = cdi;
 		this.sdpFactory = SdpFactory.getInstance();
-		this.testDumpDirectory = new File(testDumpDirectory,""+this.testTimesTamp);
-		
+		// this.testDumpDirectory = new
+		// File(testDumpDirectory,""+this.testTimesTamp);
+		this.testDumpDirectory = testDumpDirectory;
 		_RTP_TXT_DUMP_FILE = new File(this.testDumpDirectory, _COLLECTIVE_RTP_FILE);
 		model = new CallStateTableModel(this.callSequenceToCall);
 		for (AbstractCall call : this.callSequenceToCall.values()) {
@@ -676,7 +674,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 	 */
 	protected void serialize() {
 		this.localAddress = this.callDisplay.getLocalAddress();
-		this.localPort = this .callDisplay.getLocalPort();
+		this.localPort = this.callDisplay.getLocalPort();
 		this.remoteAddress = this.callDisplay.getRemoteAddress();
 		this.remotePort = this.callDisplay.getRemotePort();
 		this.cps = this.callDisplay.getCPS();
@@ -695,7 +693,6 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		aStream.defaultWriteObject();
 
 	}
-
 
 	/**
 	 * This method is called after stop, to dump case data.
@@ -746,47 +743,39 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 					break;
 				}
 			}
-
+			
 			if (call != null) {
 
-				
-					sb.append((this.callDuration + AbstractTestCase._LINE_SEPARATOR));
-					sb.append((this.cps + AbstractTestCase._LINE_SEPARATOR));
-					sb.append((this.maxConcurrentCalls + AbstractTestCase._LINE_SEPARATOR));
-					sb.append((this.maxFailCalls + AbstractTestCase._LINE_SEPARATOR));
-					sb.append((this.getErrorCallNumber() + AbstractTestCase._LINE_SEPARATOR));
-					sb.append((this.maxCalls + AbstractTestCase._LINE_SEPARATOR));
-					sb.append((this.getTotalCallNumber() + AbstractTestCase._LINE_SEPARATOR));
-					
-					call.setTestCase(this);
-					// sb.append((call.getCallID().toString()+AbstractTestCase._LINE_SEPARATOR));
-					sb.append((call.getSequence() + AbstractTestCase._LINE_SEPARATOR));
-					sb.append((call.getAvgJitter() + AbstractTestCase._LINE_SEPARATOR));
-					sb.append((call.getPeakJitter() + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((this.callDuration + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((this.cps + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((this.maxConcurrentCalls + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((this.maxFailCalls + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((this.getErrorCallNumber() + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((this.maxCalls + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((this.getTotalCallNumber() + AbstractTestCase._LINE_SEPARATOR));
 
-					//
-					sb.append(call.getCallSpecificData());
-				
+				call.setTestCase(this);
+				// sb.append((call.getCallID().toString()+AbstractTestCase._LINE_SEPARATOR));
+				sb.append((call.getSequence() + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((call.getAvgJitter() + AbstractTestCase._LINE_SEPARATOR));
+				sb.append((call.getPeakJitter() + AbstractTestCase._LINE_SEPARATOR));
 
-			
-				
+				//
+				sb.append(call.getCallSpecificData());
+
 			} else {
 				logger.severe("Failed to find call to add data to collective dump file.");
 			}
 
 		}
-		if(sb.length()>0)
-		{
+		if (sb.length() > 0) {
 			return sb.toString();
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
-	
-	
-	//Those are only for dump purposes
+
+	// Those are only for dump purposes
 	private String localAddress = "127.0.0.1", remoteAddress = "127.0.0.1";
 	private int localPort = 2428, remotePort = 2427;
 	private int cps = 1;

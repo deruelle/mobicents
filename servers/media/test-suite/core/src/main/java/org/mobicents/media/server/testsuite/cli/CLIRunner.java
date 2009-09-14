@@ -48,8 +48,8 @@ import org.mobicents.media.server.testsuite.general.ann.AnnouncementTest;
  */
 public class CLIRunner implements CallDisplayInterface {
 
-	private transient static final String _COLLECTIVE_FILE_NAME="graph.txt";
-	
+	private transient static final String _COLLECTIVE_FILE_NAME = "graph.txt";
+
 	private String localAddress = "127.0.0.1", remoteAddress = "127.0.0.1";
 	private int localPort = 2428, remotePort = 2427;
 	private int cps = 1;
@@ -134,7 +134,8 @@ public class CLIRunner implements CallDisplayInterface {
 		sb.append("--callduration    : specifies how long test runs(in milliseconds), default is 2500 \n");
 		sb.append("--cps             : specifies calls per second, default is 1 \n");
 		sb.append("--usage           : print this message\n");
-		sb.append("--collectivegraph : no arg option which creates collective file with data that can be presented as graph, can be set for test, and will be executed as end action, file is created in datadump directory.\n");
+		sb
+				.append("--collectivegraph : no arg option which creates collective file with data that can be presented as graph, can be set for test, and will be executed as end action, file is created in datadump directory.\n");
 		sb.append("example options part: --localaddress=127.0.0.1 --localport=2499 --concurentcalls=12 --audiocodec=\'8 pcma/8000\' --testtype=AnnTest\n");
 		log.severe("Usage: \n" + sb);
 
@@ -288,12 +289,11 @@ public class CLIRunner implements CallDisplayInterface {
 
 		CLIRunner cli = new CLIRunner();
 		cli.parseArgs(args);
-;
-		if(cli.performTestRun)
+		;
+		if (cli.performTestRun)
 			cli.runTest();
 		// This is required, since mgc stack leaves some threads alive....
-		if(cli.performCollectiveFile)
-		{
+		if (cli.performCollectiveFile) {
 			cli.doCollectiveFile();
 		}
 		System.exit(0);
@@ -304,120 +304,114 @@ public class CLIRunner implements CallDisplayInterface {
 	 * 
 	 */
 	private void doCollectiveFile() {
-		// Here we go through datadump directory and look for graph.txt file, and just concat
+		// Here we go through datadump directory and look for graph.txt file,
+		// and just concat
 		//
-		File outputFile = new File(this.dataDumpDir,_COLLECTIVE_FILE_NAME);
-		if(outputFile.exists())
-		{
+		File outputFile = new File(this.dataDumpDir, _COLLECTIVE_FILE_NAME);
+		if (outputFile.exists()) {
+			log.info("Dump file: " + outputFile + " already exists, removing it.");
 			outputFile.delete();
-			
+
 		}
 		ArrayList<BufferedReader> testGraphsInputs = new ArrayList<BufferedReader>();
 		ArrayList<File> tmpFiles = new ArrayList<File>();
 		String[] datadumpFiles = this.dataDumpDir.list();
-		for(String file:datadumpFiles)
-		{
-			File f = new File(this.dataDumpDir.getAbsoluteFile(),file);
-			File testcaseBinaryFile = new File(f,AbstractTestCase._CASE_FILE);
-			
-			
-			if(f.canRead() && f.isDirectory() && testcaseBinaryFile.canRead() && testcaseBinaryFile.isFile())
-			{
-				ObjectInputStream ois=null;
+		for (String file : datadumpFiles) {
+			File f = new File(this.dataDumpDir.getAbsoluteFile(), file);
+			File testcaseBinaryFile = new File(f, AbstractTestCase._CASE_FILE);
+
+			if (f.canRead() && f.isDirectory() && testcaseBinaryFile.canRead() && testcaseBinaryFile.isFile()) {
+				log.info("Attempting to read testcase from: " + f);
+				ObjectInputStream ois = null;
 				try {
-					//first we must get it.
-					 ois = new ObjectInputStream(new FileInputStream(testcaseBinaryFile));
+					// first we must get it.
+					ois = new ObjectInputStream(new FileInputStream(testcaseBinaryFile));
 					AbstractTestCase testCase = (AbstractTestCase) ois.readObject();
-					testCase.setCallDisplay(this, this.getDefaultDataDumpDirectory());
-					//is this wise to use string?
+
+					testCase.setCallDisplay(this, new File(this.getDefaultDataDumpDirectory(), "" + testCase.getTestTimeStamp()));
+					// is this wise to use string?
 					String data = testCase.getExampleData();
-					if(data == null)
+					if (data == null) {
+						log.info("Test case did not return example data to dump!!");
 						continue;
-					//FileInputStream fis = new FileInputStream(graphFile);
-					//BufferedReader br= new BufferedReader(new FileReader(graphFile));
+					}
+					// FileInputStream fis = new FileInputStream(graphFile);
+					// BufferedReader br= new BufferedReader(new
+					// FileReader(graphFile));
 					File tmpFile = writeToTmpFile(data);
-					if(tmpFile==null)
-					{
+					if (tmpFile == null) {
+						log.info("Test case did not provide tmp file with call specific data.");
 						continue;
 					}
 					tmpFiles.add(tmpFile);
-					
+
 					BufferedReader br = createInput(tmpFile);
-					if(br == null)
+					if (br == null) {
+						log.info("Failed to create reader for: " + tmpFile + "!");
 						continue;
+					}
 					testGraphsInputs.add(br);
 				} catch (Exception e) {
-					
+
 					e.printStackTrace();
-					
-				}finally
-				{
-					if(ois!=null)
-					{
-						try
-						{
+
+				} finally {
+					if (ois != null) {
+						try {
 							ois.close();
 							ois = null;
-						}catch(Exception ee)
-						{
+						} catch (Exception ee) {
 							ee.printStackTrace();
 						}
 					}
 				}
-			}else
-			{
-				log.severe("Skipping file:"+f+" - it is not a directory or no file present: "+testcaseBinaryFile);
+			} else {
+				log.severe("Skipping file:" + f + " - it is not a directory or no file present: " + testcaseBinaryFile);
 			}
 		}
-		FileOutputStream fos=null;
+		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(outputFile);
 			Set<BufferedReader> finishedReaders = new HashSet<BufferedReader>();
-			while(testGraphsInputs.size()!=finishedReaders.size())
-			{
-				
-				for(int index=0;index<testGraphsInputs.size();index++)
-				{
-					BufferedReader br = testGraphsInputs.get(index);
-					if(finishedReaders.contains(br))
-					{
-						fos.write("\t".getBytes());
-						continue;
-					}
-					String line=null;
-					try {
-						line = br.readLine();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					if(line == null)
-					{
-						//we remove;
-						finishedReaders.add(br);
-						fos.write(("\t").getBytes());
-						continue;
-					}
-					
-					fos.write((line+"\t").getBytes());
+			while (testGraphsInputs.size() != finishedReaders.size()) {
 
-					if(index == testGraphsInputs.size()-1)
-					{
+				for (int index = 0; index < testGraphsInputs.size(); index++) {
+					BufferedReader br = testGraphsInputs.get(index);
+					if (finishedReaders.contains(br)) {
+						fos.write("\t".getBytes());
+
+					} else {
+						String line = null;
+						try {
+							line = br.readLine();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if (line == null) {
+							// we remove;
+							finishedReaders.add(br);
+							fos.write(("\t").getBytes());
+
+						} else {
+							fos.write((line + "\t").getBytes());
+						}
+					}
+					if (index == testGraphsInputs.size() - 1) {
+
 						fos.write(AbstractTestCase._LINE_SEPARATOR.getBytes());
+					} else {
+
 					}
 				}
-				
-				
-				
+
 			}
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
-			
-		}finally
-		{
-			if(fos!=null)
-			{
+
+		} finally {
+			if (fos != null) {
 				try {
 					fos.close();
 				} catch (IOException e1) {
@@ -425,9 +419,8 @@ public class CLIRunner implements CallDisplayInterface {
 					e1.printStackTrace();
 				}
 			}
-			
-			for(BufferedReader br: testGraphsInputs)
-			{
+
+			for (BufferedReader br : testGraphsInputs) {
 				try {
 					br.close();
 				} catch (IOException e1) {
@@ -435,22 +428,18 @@ public class CLIRunner implements CallDisplayInterface {
 					e1.printStackTrace();
 				}
 			}
-			for(File f:tmpFiles)
-			{
-				if(f!=null)
-				{
-					try
-					{
-						//f.deleteOnExit();
+			for (File f : tmpFiles) {
+				if (f != null) {
+					try {
+						// f.deleteOnExit();
 						f.delete();
-					}catch(Exception e)
-					{
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
-		
+
 	}
 
 	/**
@@ -460,7 +449,7 @@ public class CLIRunner implements CallDisplayInterface {
 	private BufferedReader createInput(File tmpFile) {
 
 		try {
-			BufferedReader br= new BufferedReader(new FileReader(tmpFile));
+			BufferedReader br = new BufferedReader(new FileReader(tmpFile));
 			return br;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -474,11 +463,11 @@ public class CLIRunner implements CallDisplayInterface {
 	 * @return
 	 */
 	private File writeToTmpFile(String data) {
-		File f = new File(""+Math.random());
-		OutputStreamWriter osw=null;
-		FileOutputStream fos=null;
+		File f = new File("" + Math.random());
+		OutputStreamWriter osw = null;
+		FileOutputStream fos = null;
 		try {
-			fos=new FileOutputStream(f);
+			fos = new FileOutputStream(f);
 			osw = new OutputStreamWriter(fos);
 			osw.write(data);
 			osw.flush();
@@ -490,10 +479,8 @@ public class CLIRunner implements CallDisplayInterface {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
-		}finally
-		{
-			if(osw!=null)
-			{
+		} finally {
+			if (osw != null) {
 				try {
 					osw.flush();
 				} catch (IOException e) {
@@ -520,14 +507,14 @@ public class CLIRunner implements CallDisplayInterface {
 			log.info("Starting test case, prest 'q' to exit test");
 		} catch (UnknownHostException ex) {
 			log.log(Level.SEVERE, null, ex);
-			return ; 
+			return;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, null, e);
 			return;
 		}
 
 		try {
-			
+
 			this.testCase.start();
 			while (this.testCase.getTestState() != TestState.Stoped) {
 				try {
