@@ -117,26 +117,11 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 		AbstractCall.resetSequence();
 		NamedThreadFactory executorsThreadFactory = new NamedThreadFactory("ExecutorsTestCaseFactory");
 		NamedThreadFactory timeGuardThreadFactory = new NamedThreadFactory("GuardThreadFactoryTestCaseFactory");
-		executors = Executors.newScheduledThreadPool(3, executorsThreadFactory);
-		timeGuard = Executors.newScheduledThreadPool(2, timeGuardThreadFactory);
+		executors = Executors.newScheduledThreadPool(2, executorsThreadFactory);
+		timeGuard = Executors.newScheduledThreadPool(1, timeGuardThreadFactory);
 
 	}
 
-	// public AbstractTestCase(CallDisplayInterface cdi) throws
-	// IllegalStateException, SocketException, IOException {
-	// setCallDisplay(cdi);
-	// model = new CallStateTableModel(this.callSequenceToCall);
-	// AbstractCall.resetSequence();
-	// NamedThreadFactory executorsThreadFactory = new
-	// NamedThreadFactory("ExecutorsTestCaseFactory");
-	// NamedThreadFactory timeGuardThreadFactory = new
-	// NamedThreadFactory("GuardThreadFactoryTestCaseFactory");
-	// executors = Executors.newScheduledThreadPool(3,executorsThreadFactory);
-	// timeGuard = Executors.newScheduledThreadPool(5,timeGuardThreadFactory);
-	// this.init();
-	//                
-	//                
-	// }
 
 	private void init() throws SocketException, IOException {
 
@@ -158,11 +143,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 					_RTP_TXT_DUMP_OSW = null;
 					_RTP_TXT_DUMP_FOS = null;
 				}
-				// if (_RTP_TXT_DUMP_ISR != null) {
-				// _RTP_TXT_DUMP_ISR.close();
-				// _RTP_TXT_DUMP_ISR = null;
-				// _RTP_TXT_DUMP_FIS = null;
-				// }
+
 			}
 		}
 
