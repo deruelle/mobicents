@@ -7,83 +7,20 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
-import org.jboss.beans.metadata.api.annotations.Stop;
-import org.jboss.cache.Cache;
 import org.jboss.cache.factories.annotations.Start;
-import org.mobicents.ftf.FTFRegistration;
-import org.mobicents.ftf.resource.ResourceGroup;
-import org.mobicents.slee.core.timers.FaultTolerantScheduler;
-import org.mobicents.slee.core.timers.timer.FaulTolerantTimer;
-import org.mobicents.slee.runtime.cache.MobicentsCache;
+import org.mobicents.timers.timer.FaultTolerantTimer;
 
 
 public class MCClusterTest implements MCClusterTestMBean {
 
-	
-	org.jboss.ha.cachemanager.CacheManager cm;
 	private TransactionManager jta;
-
-
-	// private LIstener listener;
-	private FaulTolerantTimer faultTolerantTimer;
-	private FaultTolerantScheduler fts;
-	private FTFRegistration ftfRegistration;
-	private ResourceGroup resourceGroup;
-	private MobicentsCache mobicentsCache;
-
-
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.jb51.cluster.ClusterTestBean#getCacheMgr()
-	 */
-	public org.jboss.ha.cachemanager.CacheManager getCacheMgr() {
-		return this.cm;
-	}
-
-	public void setCacheMgr(org.jboss.ha.cachemanager.CacheManager cm) {
-		if (cm != null) {
-			// this.listener = new LIstener(this);
-			try {
-//				cache = cm.getCache(_CACHE_NAME, true);
-//				// cache.addCacheListener(this.listener);
-//				cache.create();
-//				cache.start();
-
-				// t.scheduleAtFixedRate(new CacheTimerTask(), 25000, 25000);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-
-	}
-
-
+	private FaultTolerantTimer faultTolerantTimer;
 
 	@Start
 	public void start() {
-		System.err.println("Starting");
-
-		if(ftfRegistration != null && resourceGroup !=null)
-		{
-			ftfRegistration.registerInFTF(resourceGroup, mobicentsCache.getJBossCache());
-		}
-		
-		
 		System.err.println("Started");
 	}
-
-	@Stop
-	public void stop()
-	{
-		if(ftfRegistration != null && resourceGroup !=null)
-		{
-			ftfRegistration.deregisterInFTF(resourceGroup);
-		}
-	}
+	
 	public TransactionManager getJta() {
 		return jta;
 	}
@@ -107,6 +44,7 @@ public class MCClusterTest implements MCClusterTestMBean {
 			e.printStackTrace();
 		}
 		this.faultTolerantTimer.schedule(new SerTimerTask(), milis);
+		System.err.println("Timer set, delay = "+milis);
 		try {
 			jta.commit();
 		} catch (SecurityException e) {
@@ -132,46 +70,18 @@ public class MCClusterTest implements MCClusterTestMBean {
 		
 	}
 
-	public void setFaultTolerantScheduler(FaultTolerantScheduler fts)
-	{
-		this.fts = fts;
-		this.faultTolerantTimer = new FaulTolerantTimer(fts);
-	}
-	public FaultTolerantScheduler getFaultTolerantScheduler()
-	{
-		return this.fts;
-	}
-	public FTFRegistration getFtfRegistration() {
-		return ftfRegistration;
-	}
-
-	public void setFtfRegistration(FTFRegistration ftfRegistration) {
-		this.ftfRegistration = ftfRegistration;
-	}
-
-	public ResourceGroup getResourceGroup() {
-		return resourceGroup;
-	}
-
-	public void setResourceGroup(ResourceGroup resourceGroup) {
-		this.resourceGroup = resourceGroup;
-	}
-
-	public MobicentsCache getMobicentsCache() {
-		return mobicentsCache;
-	}
-
-	public void setMobicentsCache(MobicentsCache mobicentsCache) {
-		this.mobicentsCache = mobicentsCache;
+	/* (non-Javadoc)
+	 * @see org.mobicents.cluster.test.MCClusterTestMBean#getFaultTolerantTimer()
+	 */
+	public FaultTolerantTimer getFaultTolerantTimer() {
+		return faultTolerantTimer;
 	}
 	
-	
-	//static facotry method to get CL
-	public static ClassLoader getClassLoader()
-	{
-		return MCClusterTest.class.getClassLoader();
+	/* (non-Javadoc)
+	 * @see org.mobicents.cluster.test.MCClusterTestMBean#setFaultTolerantTimer(org.mobicents.timers.timer.FaultTolerantTimer)
+	 */
+	public void setFaultTolerantTimer(FaultTolerantTimer faultTolerantTimer) {
+		this.faultTolerantTimer = faultTolerantTimer;
 	}
-
 	
-	 
 }

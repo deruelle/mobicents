@@ -10,10 +10,9 @@
 
 	<artifactId>example-parent</artifactId>
 	<packaging>pom</packaging>
-	<name>Mobicents :: Cluster :: ${pom.artifactId}</name>
 
 	<modules>
 		<module>jar</module>
-		<module>sar</module>
+		<module>beans</module>
 	</modules>
 </project>

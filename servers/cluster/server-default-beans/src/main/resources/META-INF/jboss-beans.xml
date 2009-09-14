@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:bean-deployer:2.0">
+
+	<bean name="Mobicents.CacheConfig" class="org.jboss.cache.config.Configuration">  
+         
+      <property name="runtimeConfig">
+         <bean name="MobicentsJBossCacheRuntimeConfig" class="org.jboss.cache.config.RuntimeConfig">
+            <property name="transactionManager">
+               <inject bean="RealTransactionManager"/>
+            </property>
+         </bean>
+      </property>
+      
+      <property name="isolationLevel">REPEATABLE_READ</property>
+      <property name="cacheMode">LOCAL</property>
+      <property name="lockParentForChildInsertRemove">false</property>
+      <property name="lockAcquisitionTimeout">15000</property>
+      <property name="concurrencyLevel">10000</property>
+      
+   </bean>
+   
+	<bean name="Mobicents.Cache" class="org.mobicents.cache.MobicentsCache">
+		<constructor>
+          <parameter class="org.jboss.cache.config.Configuration"><inject bean="Mobicents.CacheConfig"/></parameter> 
+     	</constructor>			
+	</bean>
+
+	<bean name="MobicentsJBossCacheJmxWrapper" class="org.jboss.cache.jmx.CacheJmxWrapper">
+      <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.cache:service=MobicentsJBossCache",exposedInterface=org.jboss.cache.jmx.CacheJmxWrapperMBean.class,registerDirectly=true)</annotation>
+      <constructor>
+          <parameter><value-factory bean="Mobicents.Cache" method="getJBossCache"/></parameter>
+      </constructor>
+   </bean>
+   
+   	<!-- cluster control -->
+	
+	<bean name="Mobicents.Cluster" class="org.mobicents.cluster.DefaultMobicentsCluster">
+		<constructor>
+			<parameter><inject bean="Mobicents.Cache"/></parameter>
+			<parameter><inject bean="RealTransactionManager"/></parameter>
+			<parameter><null/></parameter>
+		</constructor>				
+	</bean>
+		
+	   	
+</deployment>

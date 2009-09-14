@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:bean-deployer:2.0">
+
+	<bean name="Mobicents.FaultTolerantJavaUtilTimer" class="org.mobicents.timers.timer.FaultTolerantTimer">
+		<constructor>
+			<parameter>timer</parameter>
+			<parameter><inject bean="Mobicents.Cluster"/></parameter>
+			<!-- cluster local listener priority -->
+			<parameter>10</parameter>
+			<parameter><inject bean="RealTransactionManager"/></parameter>			
+		</constructor>		
+	</bean>
+	
+	<bean name="MCClusterTest" class="org.mobicents.cluster.test.MCClusterTest">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.mobicents:name=TimerTest",exposedInterface=org.mobicents.cluster.test.MCClusterTestMBean.class,registerDirectly=true)
+		</annotation>
+
+		<property name="faultTolerantTimer">
+			<inject bean="Mobicents.FaultTolerantJavaUtilTimer" />
+		</property>
+		<property name="jta">
+			<inject bean="RealTransactionManager" />
+		</property>		
+	</bean>
+
+</deployment>

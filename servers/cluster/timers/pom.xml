@@ -10,17 +10,10 @@
 	
 	<artifactId>timers</artifactId>
 	
-	<name>Mobicents :: Cluster :: ${pom.artifactId}</name>
-
 	<dependencies>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
-           	<artifactId>cache</artifactId>
-           	<version>${pom.version}</version>           	
-		</dependency>
-		<dependency>
-			<groupId>${pom.groupId}</groupId>
-           	<artifactId>ftf</artifactId>
+           	<artifactId>core</artifactId>
            	<version>${pom.version}</version>           	
 		</dependency>
 	</dependencies>
