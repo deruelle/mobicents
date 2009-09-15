@@ -182,6 +182,10 @@ public class Mtp2 implements Runnable {
     
     private Mtp3 mtp3;
     
+    private int nCount;
+    private int dCount;
+    private int eCount;
+    
     public Mtp2(String name) {
         this.name = name;
         
@@ -325,7 +329,7 @@ public class Mtp2 implements Runnable {
         return ((fcs) >> 8) ^ fcstab[((fcs) ^ (c)) & 0xff];
     }
     
-    private void processLssu(int fsn, int fib) throws IOException {
+    private void processLssu(int fsn, int fib) {
         int type = rxFrame[3] & 0x07;
         if (logger.isDebugEnabled()) {
             logger.debug("Link " + name + ", state=" + state + " process LSSU(" + type +")");
@@ -399,7 +403,19 @@ public class Mtp2 implements Runnable {
         }
     }
     
+    /**
+     * Processes FISU frames.
+     */
     private void processFISU() {
+        // acceptance procedure
+        int bsn = rxFrame[0] & 0x7F;
+        int bib = rxFrame[0] >> 7;
+        int fsn = rxFrame[1] & 0x7F;
+        int fib = rxFrame[1] >> 7;
+        
+        if (fsn != rxFSN && fib == txBIB) {
+            if (txBIB == 1) txBIB = (txBIB + 1) & 1;
+        }
         switch (state) {
             case MTP2_OUT_OF_SERVICE :
                 break;
@@ -425,7 +441,7 @@ public class Mtp2 implements Runnable {
         mtp3.onMessage(sio, sif);
     }
     
-    private void processFrame() throws IOException {
+    private void processFrame()  {        
         int bsn = rxFrame[0] & 0x7F;
         int bib = rxFrame[0] >> 7;
         int fsn = rxFrame[1] & 0x7F;
@@ -450,40 +466,75 @@ public class Mtp2 implements Runnable {
         
     }
     
-    private void processRx(byte[] buff, int len) throws IOException {
+    /**
+     * Handles received data.
+     * 
+     * @param buff the buffer which conatins received data.
+     * @param len the number of received bytes.
+     */
+    private void processRx(byte[] buff, int len) {
         int i = 0;
+        //start HDLC alg
         while (i < len) {
             while (rxState.bits <= 24 && i < len) {
                 int b = buff[i++] & 0xff;
                 hdlc.fasthdlc_rx_load_nocheck(rxState, b);
+                if (rxState.state == 0) {
+                    //octet counting mode
+                    nCount = (nCount + 1) % 16;
+                    if (nCount == 0) {
+                        countError();
+                    }
+                }
             }
+            
             int res = hdlc.fasthdlc_rx_run(rxState);
+            
             switch (res) {
                 case FastHDLC.RETURN_COMPLETE_FLAG :
-                    if (rxCRC == 0xF0B8) {
+                    //frame received and we count it
+                    countFrame();
+                    
+                    //checking length and CRC of the received frame
+                    if (rxLen == 0) {
+                        //empty frame, ignore it
+                    } else if (rxLen < 5) {
+                        //frame must be at least 5 bytes in length
+                        countError();
+                    } else if (rxCRC == 0xF0B8) {
+                        //good frame received
                         processFrame();
                     } else {
-                        if (logger.isTraceEnabled()) {
-                            logger.trace("CRC error on link '" + name + "'");
-                        }
+                        countError();
+                        logger.warn("CRC error on link '" + name + "'");
                     }
                     rxLen = 0;
                     rxCRC = 0xffff;
                     break;
                 case FastHDLC.RETURN_DISCARD_FLAG :
+                    //looking for next flag
+                    rxCRC = 0xffff;                    
                     rxLen = 0;
+                    eCount = 0;
+                    countFrame();
+                    countError();
                     break;
                 case FastHDLC.RETURN_EMPTY_FLAG :
                     rxLen = 0;
                     break;
                 default :
                     if (rxLen > 279) {
+                        rxState.state = 0;
                         rxLen = 0;
+                        rxCRC = 0xffff;
+                        eCount = 0;
+                        countFrame();
+                        countError();
+                        logger.warn("Overlong MTP frame, entering octet mode on link '" + name + "'");
                     } else {
                         rxFrame[rxLen++] = res;
                         rxCRC = PPP_FCS(rxCRC, res & 0xff);
-                    }
-                    
+                    }                    
             }
         }
     }
@@ -524,55 +575,73 @@ public class Mtp2 implements Runnable {
         
     }
     
+    /**
+     * The main handling method which performs reading and writting.
+     * It is supposed that reading is asynchronous and writting procedure is synchronized 
+     * with received data.
+     */
     public void run() {
         try {
-            if (logger.isTraceEnabled()) {
-                logger.trace("link " + name + " <<<<<< reading ");
-            }
+            //trying to read next portion of data into rxBuffer. 
+            //method returns the actual read number of bytes.
             int len = layer1.read(rxBuffer);
             if (logger.isTraceEnabled()) {
                 logger.trace("link " + name + " <<<<<< read " + dump(rxBuffer, RX_TX_BUFF_SIZE));
             }
+            
+            //handle received data
             processRx(rxBuffer, len);
-        } catch (IOException e) {
-            logger.error("Error during reading data from layer 1. Caused by", e);
-        }
-        
-        try {
+            
+            //prepare response for writting. 
+            //the result of this action is a filled txBuffer.
             processTx();
+            
+            //transmitt data buffer
             layer1.write(txBuffer);        
             if (logger.isTraceEnabled()) {
                 logger.trace("link " + name + " >>>> writes "  + dump(txBuffer, RX_TX_BUFF_SIZE));
             }
         } catch (IOException e) {
-            logger.error("Error during writting data from layer 1. Caused by", e);
+            logger.error("Error during reading data from layer 1. Caused by", e);
+            //notify MTP3 about failure.
+            state = MTP2_OUT_OF_SERVICE;
+            mtp3.failed();
         }
     }
     
-    private void print(String label, byte[] buff, int len) {
-        System.out.print(label + " ");
-        for (int i = 0; i < len; i++) {
-            String s = Integer.toHexString(buff[i] & 0xff);
-            if (s.length() == 1) {
-                s = "0" + s;
-            }
-            System.out.print(s + " ");
+    private void countError() {
+        eCount++;
+        switch (state) {
+            case MTP2_READY :
+            case MTP2_INSERVICE :
+                if (eCount >= 64) {
+                    mtp3.failed();
+                    state = MTP2_OUT_OF_SERVICE;
+                }
+                break;
+            case MTP2_PROVING :
+                if (eCount >= 1) {
+                    //TODO abort initial alignment
+                }
+                break;
         }
-        System.out.println();
     }
     
-    private void print(String label, int[] buff, int len) {
-        System.out.print(label + " ");
-        for (int i = 0; i < len; i++) {
-            String s = Integer.toHexString(buff[i] & 0xff);
-            if (s.length() == 1) {
-                s = "0" + s;
+    /**
+     * Increment number of received frames decrement error monitor countor for each 
+     * 256 good frames.
+     * 
+     */
+    private void countFrame() {
+        if (state == MTP2_READY || state == MTP2_INSERVICE) {
+            dCount = (dCount + 1) % 256;
+            //decrement error countor for each 256 frames
+            if (dCount == 0 && eCount > 0) {
+                eCount--;
             }
-            System.out.print(s + " ");
         }
-        System.out.println();
     }
-
+    
     private String dump(byte[] buff, int size) {
         String s = "";
         for (int i = 0; i < size; i++) {
