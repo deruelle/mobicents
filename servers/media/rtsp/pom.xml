@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -9,7 +11,7 @@
 
 	<groupId>org.mobicents.rtsp</groupId>
 	<artifactId>mobicents-rtsp</artifactId>
-	<version>1.0.0.BETA1</version>
+	<version>1.0.0.BETA1-SNAPSHOT</version>
 	<name>Mobicents RTSP Impl</name>
 	<url>http://www.mobicents.org/products_media_server.html</url>
 
@@ -45,13 +47,13 @@
 
 	<scm>
 		<connection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/rtsp/mobicents-rtsp-1.0.0.BETA1
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/rtsp
 		</connection>
 		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/rtsp/mobicents-rtsp-1.0.0.BETA1
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/rtsp
 		</developerConnection>
 		<url>
-			http://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/rtsp/mobicents-rtsp-1.0.0.BETA1
+			http://mobicents.googlecode.com/svn/trunk/servers/media/rtsp
 		</url>
 	</scm>
 
