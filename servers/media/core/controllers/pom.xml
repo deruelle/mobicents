@@ -15,6 +15,7 @@
 	
 	<modules>
 		<module>mgcp</module>
+		<module>rtsp</module>
 		<!-- module>mgcp/mgcp-stack</module -->
 	</modules>
 </project>
