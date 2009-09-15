@@ -66,8 +66,8 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
     
     /** packetization period in millseconds */
     private int period = 20;
-    private long timestamp;
-    private long duration;
+    private volatile long timestamp;
+    private volatile long duration;
     
     /**
      * Creates new instance of source with specified name.
@@ -294,7 +294,7 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
     }
 
     protected long getDuration() {
-        return duration;
+        return this.duration;
     }
     
     public void run() {
@@ -305,7 +305,7 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
         Buffer buffer = bufferFactory.allocate();
         
         long now = syncSource.getTimestamp();
-        duration = now - timestamp;
+        this.duration = now - timestamp;
         
         try {
             evolve(buffer, now, sequenceNumber);

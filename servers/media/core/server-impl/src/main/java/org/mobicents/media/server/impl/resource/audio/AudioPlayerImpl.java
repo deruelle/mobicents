@@ -256,7 +256,11 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
             buffer.setFlags(Buffer.FLAG_DISCARD);
             return;
         }
-        int psize = this.getPacketSize(getDuration());
+        
+        long duration = getDuration();
+        
+        int psize = this.getPacketSize(duration);        
+        
         try {
             readPacket(buffer, psize);
         } catch (IOException e) {

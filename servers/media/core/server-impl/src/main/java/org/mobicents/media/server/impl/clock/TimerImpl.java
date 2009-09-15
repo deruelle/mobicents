@@ -40,7 +40,7 @@ public class TimerImpl implements Timer {
     private int heartBeat = 20;
     private HashMap<String, ScheduledFuture> controls = new HashMap();
     
-    private long timestamp;
+    private volatile long timestamp;
     private Clock clock = new Clock();
     private ScheduledFuture clockControl;
     
