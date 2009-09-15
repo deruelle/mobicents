@@ -73,7 +73,7 @@ public class ConnectionActivity implements ConnectionListener {
             call.removeConnection(id);
         } catch (Exception e) {
         }
-    	//connection.getEndpoint().deleteConnection(connection.getId());
+    	connection.getEndpoint().deleteConnection(connection.getId());
         connection.removeListener(this);
         this.connection = null;
     }
