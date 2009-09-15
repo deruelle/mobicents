@@ -46,6 +46,7 @@ public class Main {
 	private final static String BOOT_URL = "/conf/bootstrap-beans.xml";
 	private final static String LOG4J_URL = "/conf/log4j.properties";
 	public static final String MMS_HOME = "mms.home.dir";
+	public static final String MMS_MEDIA = "mms.media.dir";
 
 	private static int index = 0;
 
@@ -59,6 +60,7 @@ public class Main {
 
 		String homeDir = getHomeDir(args);
 		System.setProperty(MMS_HOME, homeDir);
+		System.setProperty(MMS_MEDIA, homeDir + File.separator +"media"+ File.separator);
 
 		String Log4jURL = homeDir + LOG4J_URL;
 		

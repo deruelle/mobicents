@@ -29,6 +29,11 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>mms-controllers-rtsp</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mobicents.external.jspeex</groupId>
 			<artifactId>jspeex</artifactId>
 			<version>0.9.7</version>

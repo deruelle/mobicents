@@ -33,6 +33,10 @@
 			<source>src/main/config/mgcp-conf.xml</source>
 			<destName>deploy/mgcp-conf.xml</destName>
 		</file>
+		<file>
+			<source>src/main/config/rtsp-conf.xml</source>
+			<destName>deploy/rtsp-conf.xml</destName>
+		</file>
 
 		<!-- file>
 			<source>src/main/config/ivr-beans.xml</source>

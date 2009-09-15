@@ -1,0 +1,13 @@
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+	<!-- Resource type definition -->
+	<bean name="RtspController"
+		class="org.mobicents.media.server.ctrl.rtsp.RtspController">
+		<property name="namingService">
+			<inject bean="MediaServer" />
+		</property>
+		<property name="mediaDir">${mms.media.dir}</property>
+		<property name="bindAddress">127.0.0.1</property>
+		<property name="port">554</property>
+		<property name="audioPlayer">audio.player</property>
+	</bean>
+</deployment>
