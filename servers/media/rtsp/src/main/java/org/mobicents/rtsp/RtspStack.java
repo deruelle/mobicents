@@ -1,6 +1,5 @@
 package org.mobicents.rtsp;
 
-import java.net.URI;
 
 /**
  * 

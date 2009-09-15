@@ -2,6 +2,11 @@ package org.mobicents.rtsp;
 
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RtspResponseStatus extends HttpResponseStatus {
 
 	/**

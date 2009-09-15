@@ -12,6 +12,11 @@ import org.mobicents.rtsp.RtspRequest;
 import org.mobicents.rtsp.RtspResponse;
 import org.mobicents.rtsp.RtspVersion;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class Client {
 
 	/**

@@ -2,6 +2,8 @@ package org.mobicents.rtsp;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Set;
 
 import org.jboss.netty.handler.codec.http.DefaultHttpMessage;
 import org.jboss.netty.handler.codec.http.HttpMethod;
@@ -18,6 +20,10 @@ public class DefaultRtspRequest extends DefaultHttpMessage implements
 	private final String uri;
 	private final String host;
 	private final int port;
+
+	private final static String COLON = ":";
+	private final static String SP = " ";
+	private final static String CRLF = "\r\n";
 
 	public DefaultRtspRequest(RtspVersion rtspVersion, RtspMethod method,
 			String uri) throws URISyntaxException {
@@ -55,6 +61,27 @@ public class DefaultRtspRequest extends DefaultHttpMessage implements
 	public String toString() {
 		return getMethod().toString() + ' ' + getUri() + ' '
 				+ getProtocolVersion().getText();
+	}
+
+	public String debug() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(this.toString());
+		buffer.append(CRLF);
+		Set<String> headers = this.getHeaderNames();
+
+		for (String header : headers) {
+			List<String> values = this.getHeaders(header);
+			for (String value : values) {
+
+				buffer.append(header);
+				buffer.append(COLON);
+				buffer.append(SP);
+				buffer.append(value);
+				buffer.append(CRLF);
+			}
+		}
+
+		return buffer.toString();
 	}
 
 	public String getHost() {

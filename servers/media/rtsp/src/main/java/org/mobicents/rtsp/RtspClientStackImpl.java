@@ -120,5 +120,4 @@ public class RtspClientStackImpl implements RtspStack {
 		channel.write(rtspRequest);
 	}
 
-
 }

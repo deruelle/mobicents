@@ -4,7 +4,7 @@ import org.jboss.netty.handler.codec.http.HttpVersion;
 
 /**
  * 
- * @author amit.bhayani
+ * @author amit bhayani
  *
  */
 public class RtspVersion extends HttpVersion {

@@ -6,6 +6,11 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 @ChannelPipelineCoverage("one")
 public class RtspRequestHandler extends SimpleChannelUpstreamHandler {
 
@@ -24,9 +29,6 @@ public class RtspRequestHandler extends SimpleChannelUpstreamHandler {
 			throws Exception {
 
 		RtspRequest rtspRequest = (RtspRequest) e.getMessage();
-		System.out.println("Server side Request = "
-				+ (RtspRequest) e.getMessage());
-
 		rtspServerStackImpl.processRtspRequest(rtspRequest, e.getChannel());
 
 	}

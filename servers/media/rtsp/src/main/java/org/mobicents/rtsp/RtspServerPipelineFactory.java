@@ -7,7 +7,7 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
 
 /**
  * 
- * @author amit.bhayani
+ * @author amit bhayani
  * 
  */
 public class RtspServerPipelineFactory implements ChannelPipelineFactory {

@@ -8,7 +8,7 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
 /**
  * 
  * @author amit.bhayani
- *
+ * 
  */
 public class RtspClientPipelineFactory implements ChannelPipelineFactory {
 
@@ -24,7 +24,8 @@ public class RtspClientPipelineFactory implements ChannelPipelineFactory {
 		pipeline.addLast("decoder", new RtspResponseDecoder());
 
 		pipeline.addLast("encoder", new RtspRequestEncoder());
-		pipeline.addLast("handler", new RtspResponseHandler(this.rtspClientStackImpl));
+		pipeline.addLast("handler", new RtspResponseHandler(
+				this.rtspClientStackImpl));
 		return pipeline;
 	}
 

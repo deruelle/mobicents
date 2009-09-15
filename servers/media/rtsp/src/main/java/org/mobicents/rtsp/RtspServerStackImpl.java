@@ -2,9 +2,10 @@ package org.mobicents.rtsp;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ServerBootstrap;
@@ -50,9 +51,12 @@ public class RtspServerStackImpl implements RtspStack {
 		InetSocketAddress bindAddress = new InetSocketAddress(this.inetAddress,
 				this.port);
 
-		bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(
-				Executors.newCachedThreadPool(), Executors
-						.newCachedThreadPool()));
+		bootstrap = new ServerBootstrap(
+				new NioServerSocketChannelFactory(
+						Executors
+								.newCachedThreadPool(new RtspServerBossThreadFactory()),
+						Executors
+								.newCachedThreadPool(new RtspServerWorkerThreadFactory())));
 
 		// Set up the event pipeline factory.
 		bootstrap.setPipelineFactory(new RtspServerPipelineFactory(this));
@@ -103,5 +107,30 @@ public class RtspServerStackImpl implements RtspStack {
 	public void sendRquest(RtspRequest rtspRequest) {
 		throw new UnsupportedOperationException("Not Supported yet");
 	}
+}
 
+class RtspServerBossThreadFactory implements ThreadFactory {
+
+	public static final AtomicLong sequence = new AtomicLong(0);
+	private ThreadGroup factoryThreadGroup = new ThreadGroup(
+			"RtspServerBossThreadGroup[" + sequence.incrementAndGet() + "]");
+
+	public Thread newThread(Runnable r) {
+		Thread t = new Thread(this.factoryThreadGroup, r);
+		t.setPriority(Thread.NORM_PRIORITY);
+		return t;
+	}
+}
+
+class RtspServerWorkerThreadFactory implements ThreadFactory {
+
+	public static final AtomicLong sequence = new AtomicLong(0);
+	private ThreadGroup factoryThreadGroup = new ThreadGroup(
+			"RtspServerWorkerThreadGroup[" + sequence.incrementAndGet() + "]");
+
+	public Thread newThread(Runnable r) {
+		Thread t = new Thread(this.factoryThreadGroup, r);
+		t.setPriority(Thread.NORM_PRIORITY);
+		return t;
+	}
 }

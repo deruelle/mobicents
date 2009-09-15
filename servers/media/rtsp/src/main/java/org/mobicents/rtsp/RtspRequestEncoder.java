@@ -5,6 +5,11 @@ import org.jboss.netty.handler.codec.http.HttpMessage;
 import org.jboss.netty.handler.codec.http.HttpMessageEncoder;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RtspRequestEncoder extends HttpMessageEncoder {
 
 	public RtspRequestEncoder() {
