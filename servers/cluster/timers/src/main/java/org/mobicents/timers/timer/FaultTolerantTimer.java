@@ -59,7 +59,7 @@ public class FaultTolerantTimer extends java.util.Timer {
 	@Override
 	public int purge() {
 		int count = 0;
-		for (org.mobicents.timers.TimerTask timerTask : scheduler.getLocalRunningTasks().values()) {
+		for (org.mobicents.timers.TimerTask timerTask : scheduler.getLocalRunningTasks()) {
 			FaultTolerantTimerTimerTask ftTimerTask = (FaultTolerantTimerTimerTask) timerTask;
 			if (ftTimerTask.isCanceled()) {
 				scheduler.cancel(ftTimerTask.getData().getTaskID());

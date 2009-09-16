@@ -1,6 +1,9 @@
 package org.mobicents.timers;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -10,49 +13,47 @@ import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Logger;
 import org.jboss.cache.Fqn;
-import org.mobicents.cluster.ClientLocalListener;
 import org.mobicents.cluster.MobicentsCluster;
 import org.mobicents.cluster.cache.ClusteredCacheData;
 import org.mobicents.timers.cache.FaultTolerantSchedulerCacheData;
 import org.mobicents.timers.cache.TimerTaskCacheData;
-
 
 /**
  * 
  * @author martins
  *
  */
-public class FaultTolerantScheduler implements ClientLocalListener {
+public class FaultTolerantScheduler {
 
 	private static final Logger logger = Logger.getLogger(FaultTolerantScheduler.class);
 	
 	/**
-	 * 
+	 * the executor of timer tasks
 	 */
 	private final ScheduledThreadPoolExecutor executor;
 	
 	/**
-	 * 
+	 * the scheduler cache data
 	 */
 	private final FaultTolerantSchedulerCacheData cacheData;
 	
 	/**
-	 * jta tx manager
+	 * the jta tx manager
 	 */
 	private final TransactionManager txManager;
 	
 	/**
-	 * Contains local running tasks. NOTE: never ever check for values, class instances may differ due cache replication, ALWAYS use keys.
+	 * the local running tasks. NOTE: never ever check for values, class instances may differ due cache replication, ALWAYS use keys.
 	 */
 	private final ConcurrentHashMap<Serializable, TimerTask> localRunningTasks = new ConcurrentHashMap<Serializable, TimerTask>();
 	
 	/**
-	 * 
+	 * the timer task factory associated with this scheduler
 	 */
 	private TimerTaskFactory timerTaskFactory;
 	
 	/**
-	 * 
+	 * the base fqn used to store tasks data in mobicents cluster's cache
 	 */
 	private final Fqn baseFqn;
 	
@@ -60,16 +61,16 @@ public class FaultTolerantScheduler implements ClientLocalListener {
 	 * the scheduler name
 	 */
 	private final String name;
-	
+		
 	/**
-	 * the priority of the scheduler as a client local listener of the mobicents cluster
-	 */
-	private final byte priority;
-	
-	/**
-	 * 
+	 * the mobicents cluster 
 	 */
 	private final MobicentsCluster cluster;
+	
+	/**
+	 * listener for fail over events in mobicents cluster
+	 */
+	private final ClientLocalListener clusterClientLocalListener;
 	
 	/**
 	 * 
@@ -85,60 +86,87 @@ public class FaultTolerantScheduler implements ClientLocalListener {
 		this.executor = new ScheduledThreadPoolExecutor(corePoolSize);
 		this.baseFqn = Fqn.fromElements(name);
 		this.cluster = cluster;
-		this.cacheData = new FaultTolerantSchedulerCacheData(baseFqn,cluster.getMobicentsCache());
+		this.cacheData = new FaultTolerantSchedulerCacheData(baseFqn,cluster);
 		if (!cacheData.exists()) {
 			cacheData.create();
 		}
 		this.timerTaskFactory = timerTaskFactory;
-		this.txManager = txManager;
-		this.priority = priority;
-		cluster.addLocalListener(this);
+		this.txManager = txManager;		
+		clusterClientLocalListener = new ClientLocalListener(priority);
+		cluster.addLocalListener(clusterClientLocalListener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.cluster.client.LocalListener#getBaseFqn()
+	/**
+	 * Retrieves the {@link TimerTaskData} associated with the specified taskID. 
+	 * @param taskID
+	 * @return null if there is no such timer task data
 	 */
-	public Fqn getBaseFqn() {
-		return baseFqn;
+	public TimerTaskData getTimerTaskData(Serializable taskID) {
+		TimerTaskCacheData timerTaskCacheData = new TimerTaskCacheData(taskID, baseFqn, cluster);
+		if (timerTaskCacheData.exists()) {
+			return timerTaskCacheData.getTaskData();
+		}
+		else {
+			return null;
+		}
 	}
 	
 	/**
-	 * Retrieves
+	 * Retrieves the executor of timer tasks.
 	 * @return
 	 */
-	public FaultTolerantSchedulerCacheData getCacheData() {
-		return cacheData;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public ScheduledThreadPoolExecutor getExecutor() {
+	ScheduledThreadPoolExecutor getExecutor() {
 		return executor;
 	}
 	
 	/**
-	 * 
+	 * Retrieves local running tasks map.
 	 * @return
 	 */
-	public ConcurrentHashMap<Serializable, TimerTask> getLocalRunningTasks() {
+	ConcurrentHashMap<Serializable, TimerTask> getLocalRunningTasksMap() {
 		return localRunningTasks;
 	}
 	
 	/**
-	 *  
+	 * Retrieves a set containing all local running tasks. Removals on the set
+	 * will not be propagated to the internal state of the scheduler.
+	 * 
+	 * @return
+	 */
+	public Set<TimerTask> getLocalRunningTasks() {
+		return new HashSet<TimerTask>(localRunningTasks.values());
+	}
+	
+	/**
+	 *  Retrieves the scheduler name.
 	 * @return the name
 	 */
 	public String getName() {
 		return name;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mobicents.cluster.ClientLocalListener#getPriority()
+	/**
+	 *  Retrieves the priority of the scheduler as a client local listener of the mobicents cluster.
+	 * @return the priority
 	 */
 	public byte getPriority() {
-		return priority;
+		return clusterClientLocalListener.getPriority();
+	}
+	
+	/**
+	 * Retrieves the jta tx manager.
+	 * @return
+	 */
+	public TransactionManager getTransactionManager() {
+		return txManager;
+	}
+
+	/**
+	 * Retrieves the timer task factory associated with this scheduler.
+	 * @return
+	 */
+	public TimerTaskFactory getTimerTaskFactory() {
+		return timerTaskFactory;
 	}
 	
 	// logic 
@@ -152,7 +180,7 @@ public class FaultTolerantScheduler implements ClientLocalListener {
 	 * 
 	 * @param task
 	 */
-	 void schedule(TimerTask task,boolean updateStorage) {
+	 private void schedule(TimerTask task,boolean updateStorage) {
 		 if(logger.isDebugEnabled())
 		 {
 			 logger.debug("schedule() : "+task+" - "+updateStorage);
@@ -263,7 +291,7 @@ public class FaultTolerantScheduler implements ClientLocalListener {
 	 * 
 	 * @param taskData
 	 */
-	public void recover(TimerTaskData taskData) {
+	private void recover(TimerTaskData taskData) {
 		TimerTask task = timerTaskFactory.newTimerTask(taskData);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Recovering task with id "+taskData.getTaskID());
@@ -276,53 +304,86 @@ public class FaultTolerantScheduler implements ClientLocalListener {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Shutdown now.");
 		}
-		cluster.removeLocalListener(this);
+		cluster.removeLocalListener(clusterClientLocalListener);
 		executor.shutdownNow();
 		localRunningTasks.clear();
 	}
 	
 	@Override
 	public String toString() {
-		return "FaultTolerantScheduler [ local tasks = "+localRunningTasks.size()+" , all tasks "+cacheData.getTaskIDs().size()+" ]";
+		return "FaultTolerantScheduler [ name = "+name+" ]";
 	}
-
-	public TransactionManager getTxManager() {
-		return txManager;
-	}
-
-	public TimerTaskFactory getTimerTaskFactory() {
-		return timerTaskFactory;
+	
+	public String toDetailedString() {
+		return "FaultTolerantScheduler [ name = "+name+" , local tasks = "+localRunningTasks.size()+" , all tasks "+cacheData.getTaskIDs().size()+" ]";
 	}
 	
 	public void stop() {
 		this.shutdownNow();		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mobicents.ftf.FTFListener#lostOwnership(org.mobicents.slee.runtime.cache.ClusteredCacheData)
-	 */
-	public void lostOwnership(ClusteredCacheData clusteredCacheData) {
-		// TODO Auto-generated method stub
-		
-	}
+	private class ClientLocalListener implements org.mobicents.cluster.ClientLocalListener {
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.ftf.FTFListener#wonOwnership(org.mobicents.slee.runtime.cache.ClusteredCacheData)
-	 */
-	public void wonOwnership(ClusteredCacheData clusteredCacheData) {
-		
-		if (logger.isDebugEnabled()) {
-			logger.debug("wonOwnership( clusterCacheData = "+clusteredCacheData+")");
+		/**
+		 * the priority of the scheduler as a client local listener of the mobicents cluster
+		 */
+		private final byte priority;
+				
+		/**
+		 * @param priority
+		 */
+		public ClientLocalListener(byte priority) {
+			this.priority = priority;
 		}
 
-		try {
-			Serializable taskID = TimerTaskCacheData.getTaskID(clusteredCacheData);
-			TimerTaskCacheData timerTaskCacheData = new TimerTaskCacheData(taskID, baseFqn, cluster);
-			recover(timerTaskCacheData.getTaskData());
+		/* (non-Javadoc)
+		 * @see org.mobicents.cluster.client.LocalListener#getBaseFqn()
+		 */
+		public Fqn getBaseFqn() {
+			return baseFqn;
 		}
-		catch (Throwable e) {
-			logger.error(e.getMessage(),e);
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.cluster.ClientLocalListener#getPriority()
+		 */
+		public byte getPriority() {
+			return priority;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.ftf.FTFListener#lostOwnership(org.mobicents.slee.runtime.cache.ClusteredCacheData)
+		 */
+		public void lostOwnership(ClusteredCacheData clusteredCacheData) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.ftf.FTFListener#wonOwnership(org.mobicents.slee.runtime.cache.ClusteredCacheData)
+		 */
+		public void wonOwnership(ClusteredCacheData clusteredCacheData) {
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("wonOwnership( clusterCacheData = "+clusteredCacheData+")");
+			}
+
+			try {
+				Serializable taskID = TimerTaskCacheData.getTaskID(clusteredCacheData);
+				TimerTaskCacheData timerTaskCacheData = new TimerTaskCacheData(taskID, baseFqn, cluster);
+				recover(timerTaskCacheData.getTaskData());
+			}
+			catch (Throwable e) {
+				logger.error(e.getMessage(),e);
+			}
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return FaultTolerantScheduler.this.toString();
+		}
+		
 	}
-	
 }

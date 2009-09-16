@@ -6,7 +6,7 @@ import java.util.Set;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
 import org.mobicents.cache.CacheData;
-import org.mobicents.cache.MobicentsCache;
+import org.mobicents.cluster.MobicentsCluster;
 
 
 /**
@@ -18,16 +18,14 @@ import org.mobicents.cache.MobicentsCache;
  */
 
 public class FaultTolerantSchedulerCacheData extends CacheData {
-		
-	
+			
 	/**
 	 * 
 	 * @param txManager 
 	 * @param txManager
 	 */
-	public FaultTolerantSchedulerCacheData(Fqn baseFqn, MobicentsCache mobicentsCache) {
-		super(baseFqn,
-				mobicentsCache);
+	public FaultTolerantSchedulerCacheData(Fqn baseFqn, MobicentsCluster cluster) {
+		super(baseFqn,cluster.getMobicentsCache());
 	}
 
 	public Set<?> getTaskIDs() {

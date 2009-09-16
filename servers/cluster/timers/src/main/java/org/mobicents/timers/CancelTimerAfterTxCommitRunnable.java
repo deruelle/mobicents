@@ -35,7 +35,7 @@ public class CancelTimerAfterTxCommitRunnable implements Runnable {
 			logger.debug("Cancelling timer task for timer ID "+taskID);
 		}
 		
-		executor.getLocalRunningTasks().remove(taskID);
+		executor.getLocalRunningTasksMap().remove(taskID);
 		
 		try {
 			task.getScheduledFuture().cancel(false);		
