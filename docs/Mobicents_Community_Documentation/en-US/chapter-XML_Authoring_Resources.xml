@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="bs-XML_Authoring_Resources">
@@ -113,7 +113,7 @@
       <para>You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element.   A title might assist the reader with understanding what a large list contains.  </para>
       <important>
         <title>Lead-in Sentence is Mandatory</title>
-        <para>A list must have an introductory sentence;  it must not be a sentence fragment.  Sentence fragments are very hard to translate.  </para>
+        <para>A list must have an introductory sentence;  it must not be a sentence fragment.  Sentence fragments are very hard to translate.   </para>
       </important>
       <para>The XML structure looks like this when published:</para>
       <orderedlist>
@@ -244,9 +244,57 @@
           <para>To scale large diagrams or screenshots to fit within  page boundaries, set <userinput>width=&quot;450&quot;</userinput> to scale the screenshot within the boundaries of an A4 page.</para>
         </listitem>
         <listitem>
-          <para>If you need to include a screenshot of a user interface, consider including only the area that relates to what you are discussing.  You can get a much better result if you capture a small section of a user interface, because the user can easily see the detail of the area referred to in the procedure or concept.</para>
+          <para>If you need to include a screenshot of a large user interface, consider including only the area that relates to what you are discussing.  You can get a much better result if you capture a small section of a user interface, because the user can easily see the detail of the area referred to in the procedure or concept.</para>
         </listitem>
       </itemizedlist>
+      <para>If you are using a Linux-based operating system, chances are you will be using a graphics package such as  The GNU Image Manipulation Program (GIMP). You can use The GIMP to capture screen shots, and save them in a format that will provide the best output for both HTML and PDF.  </para>
+      <procedure>
+        <title>Correctly Capturing Screenshots</title>
+        <para>The following procedure describes how to correctly capture and save a screen shot using the Create Screenshot function in The GIMP.   The procedure assumes that you have The GIMP installed, and the program is open.</para>
+        <step>
+          <title>Prepare the Content to Capture</title>
+          <para>Ensure you have the correct application open, and that the part of the application you need to capture is activated.  The GIMP will capture the screen immediately, unless a delay is set.</para>
+        </step>
+        <step>
+          <title>Select the Creat Screenshot Option</title>
+          <para>Click <guimenu>File</guimenu>   &gt;  <guimenu>Create</guimenu> &gt; <guimenu>Screenshot</guimenu>.</para>
+        </step>
+        <step>
+          <title>Confirm Capture Options</title>
+          <para>In the Screenshot dialog box, select the capture option you require according to the following guidelines:  <itemizedlist>
+              <listitem>
+                <para>Do not include window decorations in <emphasis>any</emphasis> of your screenshots.</para>
+              </listitem>
+              <listitem>
+                <para>Consider  capturing only the section of the screen you need to refer to in the documentation.  It will be clearer for the reader.  </para>
+              </listitem>
+            </itemizedlist></para>
+        </step>
+        <step>
+          <title>Capture the Screen</title>
+          <para>Click the <guibutton>Snap</guibutton> button to begin capturing the screen area. Select the program, or area of the screen you want to capture.</para>
+        </step>
+        <step>
+          <title>Scale the Image</title>
+          <para>Click <guimenu>Image</guimenu> &gt; <guimenu>Scale Image</guimenu>.  </para>
+          <para>If you need to scale a large screen shot or diagram, use the following settings:<itemizedlist>
+              <listitem>
+                <para>In the <guilabel>Image Size</guilabel> group, set the <guilabel>Width</guilabel> to (no greater than) 450 pixels.</para>
+              </listitem>
+              <listitem>
+                <para>In the <guilabel>Quality</guilabel> group, set <guimenu>Interpolation</guimenu> to <guimenu>Sinc (Lancosz3)</guimenu>.</para>
+              </listitem>
+            </itemizedlist></para>
+          <para>Click <guibutton>Scale</guibutton> to set the image scale.</para>
+        </step>
+        <step>
+          <title>Save the Image</title>
+          <para>Click <guimenu>File</guimenu> &gt; <guimenu>Save As</guimenu>.</para>
+          <para>Name the image according to the image file naming conventions.  If in doubt, look at the naming convention in the Images folder of your user guide directory.</para>
+          <para>In the Save Image dialog, select PNG image (*.png) from the Image Type drop down menu.</para>
+          <para>Click <guibutton>Save</guibutton>.</para>
+        </step>
+      </procedure>
     </section>
     <section>
       <title>Warning, Important, and Note</title>
@@ -444,6 +492,7 @@ public class ExClient
   <section>
     <title>Fixing Validation Errors</title>
     <para>Sometimes XML structure errors can still creep into the document you&apos;re working on.  It may not be your fault, but you may be required to correct the errors before your user guide can be published. </para>
-    <para>Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you&apos;re using. By doing this, structure errors that occur between chapter or sections are easily identified.</para>
+    <para>Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you&apos;re using. By doing this, structure errors that occur between chapterS or sections are easily identified.</para>
+    <para/>
   </section>
 </chapter>

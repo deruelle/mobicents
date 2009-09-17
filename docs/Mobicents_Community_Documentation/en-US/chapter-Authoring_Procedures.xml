@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="ap-Authoring_Procedures">
@@ -27,9 +27,9 @@
     <title>GCode Documentation Ticket</title>
     <para>All documentation changes must originate from a documentation ticket.  Documentation tickets allows changes associated with a product enhancement to be tracked easily from the origins of the enhancement to the completed changes.  </para>
     <para>When a documentation ticket is closed in the final phase, the ticket remains in the GCode Ticket system for posterity.  </para>
-    <para>The following procedure details how to create a documentation ticket as a result of a product enhancement.  </para>
     <procedure id="ap-procedure-Creating_A_Documentation_Ticket">
       <title>Creating a Documentation Ticket</title>
+      <para>The following procedure details how to create a documentation ticket as a result of a product enhancement.  </para>
       <step>
         <title>Search Before Opening a New Issue</title>
         <para>On the <guilabel>Issues</guilabel> page, enter a search query that reflects the issue you have discovered.</para>
@@ -50,6 +50,9 @@
         <title>Complete the Summary field</title>
         <para>Prefix the summary with one of the following codes to clearly identify the affected user guide:<itemizedlist>
             <listitem>
+              <para>[DIA Guide] - Diameter User Guide</para>
+            </listitem>
+            <listitem>
               <para>[JSS Guide] - JAIN SLEE Server User Guide</para>
             </listitem>
             <listitem>
@@ -62,7 +65,7 @@
               <para>[SPS Guide] - SIP Presence Service User Guide</para>
             </listitem>
             <listitem>
-              <para>[PLAT Guide] - Platform User Guide</para>
+              <para>[PLAT Guide] - Platform Installation Guide</para>
             </listitem>
           </itemizedlist></para>
         <para>Include a descriptive (but short) summary of the enhancement in the <guilabel>Summary</guilabel> field.</para>
@@ -90,10 +93,10 @@
         <para>You will notice that two labels are automatically added; <literal>Type-Enhancement</literal>, <literal>Priority-Medium </literal>and <literal>Component-Docs</literal>.   These categories are acceptable by default.</para>
         <para>Append the following extra categories at a minimum to the <guilabel>Labels</guilabel> field:<itemizedlist>
             <listitem>
-              <para><literal>Component-&amp;lt;server_name&amp;gt;</literal> - specifies the server to which the ticket relates.</para>
+              <para><literal>Component-[server_name]</literal> - specifies the server to which the ticket relates.</para>
             </listitem>
             <listitem>
-              <para><literal>Version-&amp;lt;version_number&amp;gt;</literal> - specifies the base version number affected by this ticket.</para>
+              <para><literal>Version-[version_number]</literal> - specifies the base version number affected by this ticket.</para>
             </listitem>
           </itemizedlist></para>
       </step>
@@ -103,9 +106,9 @@
       </step>
     </procedure>
     <para>The ticket is now saved in the system, and the people in the Owner and Cc fields have been sent a link to the ticket for comment.  </para>
-    <para>Part of effective ticket management requires the developers responsible for each server to review new tickets to approve the enhancement and  add supplementary information to the ticket.</para>
     <procedure>
       <title>Developer Ticket Approval</title>
+      <para>Part of effective ticket management requires the developers responsible for each server to review new tickets to approve the enhancement and  add supplementary information to the ticket.</para>
       <step>
         <title>Review Raised Tickets</title>
         <para>Developers must regularly check the GCode ticket queue for new issues.  To do this, search for the server prefix (for example <userinput>[MSS Guide]</userinput> for the SIP Servlets Server User Guide) in the Summary field.</para>
@@ -211,13 +214,13 @@
               <term>Validate XML Regularly</term>
               <listitem>
                 <para>It is easy to make XML structure errors if you are not using an XML Editing program that controls structure for you.  Regularly validating your content will identify structure issues early.  You will have a  better idea about what section might contain the error,  based on what section you have recently edited.</para>
-                <para>If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven"/> for troubleshooting information.</para>
+                <para>If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven"/> for troubleshooting information. If you are not using Publican, then you must find another way to validate your content.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
               <term>Smaller Changes Result In Trouble-free Commits</term>
               <listitem>
-                <para>Make smaller, consecutive changes to existing XML chapters, rather than large structural changes.  Commit your validated changes regularly.  </para>
+                <para>Make smaller, consecutive changes to existing XML chapters, rather than large structural changes.  Commit your validated changes regularly.</para>
                 <para>GCode SVN can merge small changes from multiple authors effectively.   However, larger changes may result in SVN mismatches.  You must manually resolve the SVN mismatch conflict.  This is often very time consuming, and annoying.</para>
               </listitem>
             </varlistentry>
@@ -245,7 +248,7 @@
         <step>
           <title>Commit Changes to GCode SVN</title>
           <para>Commit structurally valid XML back into the GCode SVN regularly throughout the day.        </para>
-          <para>For each commit, make a note of the SVN commit number so it can be added to the GCode Ticket at the end of the</para>
+          <para>For each commit, make a note of the SVN commit number so it can be added to the GCode Ticket when you update the ticket with your progress.</para>
           <important>
             <title>Commit Regularly</title>
             <para>For documentation, the risk of  SVN merge failure increases the longer you wait between commits.  It is much easier to commit regularly than to manually merge your changes into someone else&apos;s changes.  </para>
@@ -280,7 +283,7 @@
     <para>The Review phase involves the content author and the reviewer in that the content author must discuss and incorporate any feedback provided by the reviewer.  </para>
     <section>
       <title>Review Preparation</title>
-      <para>Before sending off the changes for review, there are a few administration tasks that must be attended to.  </para>
+      <para>Before sending off the changes for review, there are a few administration tasks that must be completed.  </para>
       <procedure>
         <title>Update XML Comments to Review </title>
         <step>

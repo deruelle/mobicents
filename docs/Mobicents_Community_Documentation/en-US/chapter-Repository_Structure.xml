@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="rs-Repository_Structure">
@@ -9,7 +9,10 @@
     <para>To obtain read-write access, notify one of the project owners listed on the Google Code Project Home Page.  Ensure the Google account information is included in the request. </para>
   </note>
   <para>The most recent commit of the User Guide is located in the <filename>/trunk</filename> directory. Within this directory, each user guide is separated into the server folder to which it belongs.   Click on the links in the list to inspect the document repository structure.</para>
-  <itemizedlist>
+<!--SSDP:  This information will change when the single-sourced docs project is moved forward.  The repository structure will be changed.-->  <itemizedlist>
+    <listitem>
+      <para><ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/diameter/diameter-docs/en-US">Diameter</ulink></para>
+    </listitem>
     <listitem>
       <para><ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/jain-slee/jain-slee-docs">JAIN SLEE Server</ulink></para>
     </listitem>
@@ -17,17 +20,18 @@
       <para><ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/media/media-server-docs">Media Server</ulink></para>
     </listitem>
     <listitem>
-      <para><ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/sip-presence/sip-presence-docs">SIP Presence Server</ulink></para>
+      <para><ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/sip-presence/docs/src/main/resources/en-US">SIP Presence Server</ulink></para>
     </listitem>
     <listitem>
       <para><ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/sip-servlets/sip-servlets-docs">SIP Servlets Server</ulink></para>
     </listitem>
   </itemizedlist>
   <para>In all docs directories, there is an en-US folder.  This folder contains all the XML files that are required for the User Guide.  </para>
-  <para>The exception to this is the single XML file prefixed with <filename>all-</filename>.  For example, in the sip-servlets-docs repository, the file is named <filename>all-SIP_Servlets_Server_User_Guide.xml</filename>.  This file is used by Maven JDocBook to produce the documentation that is hosted on the Hudson Build Server.</para>
+<!--SSDP: This information about the all-*.xml file may also become redundant when the Single Source Project is implemented.-->  <para>The exception to this is the single XML file prefixed with <filename>all-</filename>.  For example, in the sip-servlets-docs repository, the file is named <filename>all-SIP_Servlets_Server_User_Guide.xml</filename>.  This file is used by Maven JDocBook to produce the documentation that is hosted on the Hudson Build Server.  </para>
+  <para>For the SIP Presence Service, this file is not required.  In future, all server streams will not require this file, because the Maven build process will automatically build the documents from the latest SVN snapshot. Until this process has been implemented, the all-*.xml file is required.</para>
   <important>
     <title>Do Not Update the all-*.xml File</title>
-    <para>Never incorporate changes directly into the <filename>all-&amp;lt;user guide name&amp;gt;.xml</filename> file.  Updating this file with documentation changes will result in lost work.  </para>
-    <para>Update the individual XML files that comprise the User Guide.  The changes made in individual files will eventually be merged into the all-*.xml file.</para>
+    <para>Never incorporate changes directly into the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file.  Updating this file with documentation changes will result in lost work.  </para>
+    <para>Update the individual XML files that comprise the User Guide.  The changes made in individual files will be merged into the all-*.xml file as part of the Authoring process.</para>
   </important>
 </chapter>

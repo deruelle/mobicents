@@ -8,8 +8,8 @@
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="chapter-Repository_Structure.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="chapter-Book_Structure.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="chapter-Language_Guidelines.xml"/>
-  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="chapter-Authoring_Procedures.xml"/>
-  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="chapter-Publican_and_Maven.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="chapter-XML_Authoring_Resources.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="chapter-Publican_and_Maven.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="chapter-Authoring_Procedures.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Revision_History.xml"/>
 </book>

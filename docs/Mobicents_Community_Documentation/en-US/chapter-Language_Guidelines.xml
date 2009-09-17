@@ -4,8 +4,7 @@
 <chapter id="chapter-Language_Guidelines">
   <title>Language Guidelines</title>
   <para>To maintain language consistency within the source documentation, it is important for each content author to write in a similar tone.   Maintaining consistent  tone  throughout the user guides will make the  Mobicents and JBCP User Documentation Suite (UDS) appear to be a unified suite of documents, rather than a separated group of user guides.   </para>
-  <para>The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will really appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).  </para>
-  <para>There are a few ways the team can achieve a consistent writing style.  Some of the examples mentioned in the following sections were actual examples found in the user guides.  </para>
+  <para>The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will  appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).  </para>
   <section>
     <title>Active Voice</title>
     <para>Use the active voice (&quot;Start Linuxconf by typing...&quot;) rather than passive (&quot;Linuxconf can be started by typing...&quot;) whenever possible. Active voice makes for more lively, interesting reading.</para>

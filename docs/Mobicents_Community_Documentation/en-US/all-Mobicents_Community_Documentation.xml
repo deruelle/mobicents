@@ -463,7 +463,12 @@ public class ExClient
 	<para>
 		The most recent commit of the User Guide is located in the <filename>/trunk</filename> directory. Within this directory, each user guide is separated into the server folder to which it belongs. Click on the links in the list to inspect the document repository structure.
 	</para>
-	<itemizedlist>
+	<!-- SSDP:  This information will change when the single-sourced docs project is moved forward.  The repository structure will be changed. --> <itemizedlist>
+		<listitem>
+			<para>
+				<ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/diameter/diameter-docs/en-US">Diameter</ulink>
+			</para>
+		</listitem>
 		<listitem>
 			<para>
 				<ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/jain-slee/jain-slee-docs">JAIN SLEE Server</ulink>
@@ -476,7 +481,7 @@ public class ExClient
 		</listitem>
 		<listitem>
 			<para>
-				<ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/sip-presence/sip-presence-docs">SIP Presence Server</ulink>
+				<ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/sip-presence/docs/src/main/resources/en-US">SIP Presence Server</ulink>
 			</para>
 		</listitem>
 		<listitem>
@@ -488,186 +493,27 @@ public class ExClient
 	<para>
 		In all docs directories, there is an en-US folder. This folder contains all the XML files that are required for the User Guide.
 	</para>
-	<para>
+	<!-- SSDP: This information about the all-*.xml file may also become redundant when the Single Source Project is implemented. --> <para>
 		The exception to this is the single XML file prefixed with <filename>all-</filename>. For example, in the sip-servlets-docs repository, the file is named <filename>all-SIP_Servlets_Server_User_Guide.xml</filename>. This file is used by Maven JDocBook to produce the documentation that is hosted on the Hudson Build Server.
+	</para>
+	<para>
+		For the SIP Presence Service, this file is not required. In future, all server streams will not require this file, because the Maven build process will automatically build the documents from the latest SVN snapshot. Until this process has been implemented, the all-*.xml file is required.
 	</para>
 	<important>
 		<title>Do Not Update the all-*.xml File</title>
 		<para>
-			Never incorporate changes directly into the <filename>all-&lt;user guide name&gt;.xml</filename> file. Updating this file with documentation changes will result in lost work.
+			Never incorporate changes directly into the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file. Updating this file with documentation changes will result in lost work.
 		</para>
 		<para>
-			Update the individual XML files that comprise the User Guide. The changes made in individual files will eventually be merged into the all-*.xml file.
+			Update the individual XML files that comprise the User Guide. The changes made in individual files will be merged into the all-*.xml file as part of the Authoring process.
 		</para>
 	</important>
 </chapter>
 	<chapter id="Book_Structure" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Book Structure</title>
 	<para>
-		The structure of each user guide in the Mobicents User Documentation Suite (UDS) is controlled by the DocBook XML Document Type Definition (DTD). Before updating any user guide in the GCode SVN, it is very important to understand the way each user guide is constructed.
+		The structure of each user guide in the Mobicents User Documentation Suite (UDS) is controlled by the DocBook XML Document Type Definition (DTD). Before updating any user guide in the GCode SVN, it is very important to understand the way each user guide is constructed, and have a good understanding of the DocBook XML standard.
 	</para>
-	<para>
-		As previously discussed, the Publican Tool chain requires a set of XML files to be present in the directory in order to publish a book to an output format. <xref linkend="table-Book-Structure"/>describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide.
-	</para>
-	<table frame="all" id="table-Book-Structure" pgwide="1">
-		<title>Book Components</title>
-		<tgroup cols="3" colsep="1">
-			<colspec align="left" colname="c0" colnum="1"/>
-			<colspec align="left" colname="c1" colnum="2"/>
-			<colspec align="left" colname="c2" colnum="3"/>
-			<thead>
-				<row>
-					<entry align="center">
-						XML Book Component
-					</entry>
-					<entry align="center">
-						Description
-					</entry>
-					<entry>
-						Order of Component in the Book
-					</entry>
-				</row>
-			</thead>
-			<tbody>
-				<row>
-					<entry>
-						<filename><replaceable>[Book_Name]</replaceable>.xml</filename>
-					</entry>
-					<entry>
-						Contains the structure of the user guide, represented by xi:include references to each chapter-<replaceable>[Chapter_Name]</replaceable>.xml component, and other mandatory components in this table.
-					</entry>
-					<entry>
-						Top Level (or Parent) component of any user guide.
-					</entry>
-				</row>
-				<row>
-					<entry>
-						<filename>Book_Info.xml</filename>
-					</entry>
-					<entry>
-						Contains information about the book title, book version number, abstract and copyright information.
-					</entry>
-					<entry>
-						1st Child. This is the opening information a reader will see in the user guide.
-					</entry>
-				</row>
-				<row>
-					<entry>
-						<filename>Author_Group.xml</filename>
-					</entry>
-					<entry>
-						Contains contact information about the authors that contributed to the content of the book.
-					</entry>
-					<entry>
-						2nd Child. This component is included in the <filename>Book_Info.xml</filename> component.
-					</entry>
-				</row>
-				<row>
-					<entry>
-						<filename>Preface.xml</filename>
-					</entry>
-					<entry>
-						Contains pre-defined content explaining the typographical standards used in the guide, and other information that will assist the reader with using the guide.
-					</entry>
-					<entry>
-						3rd Child. This component is included after the <filename>Book_Info.xml</filename> content.
-					</entry>
-				</row>
-				<row>
-					<entry>
-						<filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename>
-					</entry>
-					<entry>
-						Contains XML markup and content included at a Chapter level in the document. The XML file is named only for human-readability.
-					</entry>
-					<entry>
-						4th. This is the top level element for each chapter in the user guide. The order of these files in the <filename><replaceable>[Book_Name]</replaceable>.xml</filename> file determines the structure of the guide.
-					</entry>
-				</row>
-				<row>
-					<entry>
-						<filename>section-<replaceable>[Section_Name]</replaceable>.xml</filename>
-					</entry>
-					<entry>
-						Contains XML markup and content included at a Section level in the document. The XML file is named only for human-readability.
-					</entry>
-					<entry>
-						5th. This component is included in <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename> files by xi:include reference.
-					</entry>
-				</row>
-				<row>
-					<entry>
-						<filename>Revision History.xml</filename>
-					</entry>
-					<entry>
-						Contains a record of the revisions made to the document over time. Top-level information about changes in the guide are provided to the reader.
-					</entry>
-					<entry>
-						6th.
-					</entry>
-				</row>
-			</tbody>
-		</tgroup>
-	</table>
-	<para>
-		To ensure Maven JDocBook can publish the content generated by the Publican Tool chain, additional XML content is required. Maven JDocBook does not have access to the Publican Tool chain common_content directory, therefore, the required XML files must be included as xi:fallback references in the <filename>preface.xml</filename> and <filename>book_info.xml</filename> files.
-	</para>
-	<table frame="all" id="table-Maven_JDocBook_Content" pgwide="1">
-		<title>Maven JDocBook Content</title>
-		<tgroup cols="3" colsep="1">
-			<colspec align="left" colname="c0" colnum="1"/>
-			<colspec align="left" colname="c1" colnum="2"/>
-			<colspec align="left" colname="c2" colnum="3"/>
-			<thead>
-				<row>
-					<entry align="center">
-						XML Component
-					</entry>
-					<entry align="center">
-						Description
-					</entry>
-					<entry>
-						Order of Component in the Book
-					</entry>
-				</row>
-			</thead>
-			<tbody>
-				<row>
-					<entry>
-						<filename>Conventions.xml</filename>
-					</entry>
-					<entry>
-						Contains typographical standards used within the guide.
-					</entry>
-					<entry>
-						Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.
-					</entry>
-				</row>
-				<row>
-					<entry>
-						<filename>Feedback.xml</filename>
-					</entry>
-					<entry>
-						Contains information about how to raise a bug against the user documentation.
-					</entry>
-					<entry>
-						Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.
-					</entry>
-				</row>
-				<row>
-					<entry>
-						<filename>Legal_Notice.xml</filename>
-					</entry>
-					<entry>
-						Contains standardized Red Hat legal information.
-					</entry>
-					<entry>
-						Inserted by xi:fallback reference at the end of the <filename>Book_Info.xml</filename> file
-					</entry>
-				</row>
-			</tbody>
-		</tgroup>
-	</table>
 	<para>
 		The content is contained within XML files in the fallback_content directory of each user guide repository. The fallback_content directory contains copies of the XML files located in the <filename>/usr/share/publican/Common_Content</filename> directory.
 	</para>
@@ -694,6 +540,265 @@ public class ExClient
     &lt;/xi:fallback&gt;
 &lt;/xi:include&gt;
 </programlisting>
+	<section>
+		<title>XML Book Components</title>
+		<para>
+			Each book in the UDS is constructed using a standardized structure, to maintain consistency throughout the project. The structure present as of September 2009 follows the Publican Toolchain directory structure. <xref linkend="table-Book-Structure"/> describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide.
+		</para>
+		<table frame="all" id="table-Book-Structure" pgwide="1">
+			<title>Book Components</title>
+			<tgroup cols="3" colsep="1">
+				<colspec align="left" colname="c0" colnum="1"/>
+				<colspec align="left" colname="c1" colnum="2"/>
+				<colspec align="left" colname="c2" colnum="3"/>
+				<thead>
+					<row>
+						<entry align="center">
+							XML Book Component
+						</entry>
+						<entry align="center">
+							Description
+						</entry>
+						<entry>
+							Order of Component in the Book
+						</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+							<filename><replaceable>[Book_Name]</replaceable>.xml</filename>
+						</entry>
+						<entry>
+							Contains the structure of the user guide, represented by xi:include references to each chapter-<replaceable>[Chapter_Name]</replaceable>.xml component, and other mandatory components in this table.
+						</entry>
+						<entry>
+							Top Level (or Parent) component of any user guide.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Book_Info.xml</filename>
+						</entry>
+						<entry>
+							Contains information about the book title, book version number, abstract and copyright information.
+						</entry>
+						<entry>
+							1st Child. This is the opening information a reader will see in the user guide.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Author_Group.xml</filename>
+						</entry>
+						<entry>
+							Contains contact information about the authors that contributed to the content of the book.
+						</entry>
+						<entry>
+							2nd Child. This component is included in the <filename>Book_Info.xml</filename> component.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Preface.xml</filename>
+						</entry>
+						<entry>
+							Contains pre-defined content explaining the typographical standards used in the guide, and other information that will assist the reader with using the guide.
+						</entry>
+						<entry>
+							3rd Child. This component is included after the <filename>Book_Info.xml</filename> content.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename>
+						</entry>
+						<entry>
+							Contains XML markup and content included at a Chapter level in the document. The XML file is named only for human-readability.
+						</entry>
+						<entry>
+							4th. This is the top level element for each chapter in the user guide. The order of these files in the <filename><replaceable>[Book_Name]</replaceable>.xml</filename> file determines the structure of the guide.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>section-<replaceable>[Section_Name]</replaceable>.xml</filename>
+						</entry>
+						<entry>
+							Contains XML markup and content included at a Section level in the document. The XML file is named only for human-readability.
+						</entry>
+						<entry>
+							5th. This component is included in <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename> files by xi:include reference.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Revision History.xml</filename>
+						</entry>
+						<entry>
+							Contains a record of the revisions made to the document over time. Top-level information about changes in the guide are provided to the reader.
+						</entry>
+						<entry>
+							6th.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+		<para>
+			To ensure Maven JDocBook can publish the content generated by the Publican Tool chain, additional XML content is required. Maven JDocBook does not have access to the Publican Tool chain common_content directory. Therefore, the required XML files must be included as xi:fallback references in the <filename>preface.xml</filename> and <filename>book_info.xml</filename> files.
+		</para>
+		<table frame="all" id="table-Maven_JDocBook_Content" pgwide="1">
+			<title>Maven JDocBook Content</title>
+			<tgroup cols="3" colsep="1">
+				<colspec align="left" colname="c0" colnum="1"/>
+				<colspec align="left" colname="c1" colnum="2"/>
+				<colspec align="left" colname="c2" colnum="3"/>
+				<thead>
+					<row>
+						<entry align="center">
+							XML Component
+						</entry>
+						<entry align="center">
+							Description
+						</entry>
+						<entry>
+							Order of Component in the Book
+						</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+							<filename>Conventions.xml</filename>
+						</entry>
+						<entry>
+							Contains typographical standards used within the guide.
+						</entry>
+						<entry>
+							Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Feedback.xml</filename>
+						</entry>
+						<entry>
+							Contains information about how to raise a bug against the user documentation.
+						</entry>
+						<entry>
+							Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Legal_Notice.xml</filename>
+						</entry>
+						<entry>
+							Contains standardized Red Hat legal information.
+						</entry>
+						<entry>
+							Inserted by xi:fallback reference at the end of the <filename>Book_Info.xml</filename> file
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+	
+	<section>
+		<title>Maven Variables</title>
+		<para>
+			Througout the UDS, Maven variables are used to substitute values when Maven builds the documentation. The values that are substituted into the documentation by Maven include version numbers, installation paths, and product names. What information is substituted for each variable, largely depends on whether the deliverable is for Mobicents or JBCP.
+		</para>
+		<para>
+			<xref linkend="table-SIP_Presence_Service_Maven_Variables"/> lists the Maven variables used within the SIP Presence Service, and explains what each one represents.
+		</para>
+		<table frame="all" id="table-SIP_Presence_Service_Maven_Variables" pgwide="1">
+			<title>SIP Presence Service Maven Variables</title>
+			<tgroup cols="3" colsep="1">
+				<colspec colname="c1"/>
+				<colspec colname="c2"/>
+				<colspec colname="c3"/>
+				<thead>
+					<row>
+						<entry>
+							Variable Name
+						</entry>
+						<entry>
+							Description
+						</entry>
+						<entry>
+							Substituted Values (if applicable)
+						</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+							${platform.name}
+						</entry>
+						<entry>
+							Substitutes the Platform name, based on whether the documentation is being produced for Mobicents or JBCP.
+						</entry>
+						<entry>
+							Mobicents, JBCP
+						</entry>
+					</row>
+					<row>
+						<entry>
+							${bookid}
+						</entry>
+						<entry>
+							Substitutes the Book ID, which is used to populate the book identifier in the preface. The Book ID is necessary for readers to uniquely identify the book when raising documentation tickets.
+						</entry>
+						<entry>
+							doc-<replaceable>[book_name]</replaceable>. For example, <literal>doc-SIP_Servlets_Server_User_Guide</literal>.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							${release.integrated.filename}
+						</entry>
+						<entry>
+							Substitutes the Binary filename for the release, based on the binary file nomenclature for the community and product.
+						</entry>
+						<entry>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							${release.xdms.filename}
+						</entry>
+						<entry>
+							Specific to the XML Document Management Server, the binary file name for the release based on the binary file nomenclature for the community and product.
+						</entry>
+						<entry>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							${version}
+						</entry>
+						<entry>
+							Substitues the product version number for the release. This variable is used to substitute the version numbers in all path names.
+						</entry>
+						<entry>
+						</entry>
+					</row>
+					<row>
+						<entry>
+						</entry>
+						<entry>
+						</entry>
+						<entry>
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
 </chapter>
 	<chapter id="chapter-Language_Guidelines" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Language Guidelines</title>
@@ -701,10 +806,7 @@ public class ExClient
 		To maintain language consistency within the source documentation, it is important for each content author to write in a similar tone. Maintaining consistent tone throughout the user guides will make the Mobicents and JBCP User Documentation Suite (UDS) appear to be a unified suite of documents, rather than a separated group of user guides.
 	</para>
 	<para>
-		The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will really appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).
-	</para>
-	<para>
-		There are a few ways the team can achieve a consistent writing style. Some of the examples mentioned in the following sections were actual examples found in the user guides.
+		The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).
 	</para>
 	<section>
 		<title>Active Voice</title>
@@ -861,6 +963,902 @@ public class ExClient
 	</section>
 
 </chapter>
+	<chapter id="bs-XML_Authoring_Resources" lang="en-US">
+	<title>XML Authoring Resources</title>
+	<para>
+		The Mobicents User Documentation Suite is authored entirely in XML. For someone starting out with XML, there are many things to consider. What is the best authoring tool to use? What elements, and structure is definitely valid in Publican? How do I create screenshots that scale correctly?
+	</para>
+	<para>
+		This chapter discusses a number of helpful tips that will help new content authors produce valid, professional-looking XML documentation.
+	</para>
+	<section id="at-Authoring_Tools">
+		<title>Authoring Tools</title>
+		<para>
+			While you can write XML using a basic text editor, the easiest way to author XML is by using an XML Authoring Tool. A good XML Authoring Tool can auto-complete structure for you, and most importantly, validate the XML content you have written to ensure it is well-formed and valid to the standard.
+		</para>
+		<para>
+			The number of XML authoring tools available can seem daunting to a first-time content author. The following applications will help you to get started with XML authoring, and ease your transition into the world of structured authoring.
+		</para>
+		<formalpara>
+			<title>Syntext Serna Free XML Editor</title>
+			<para>
+				Syntext offer a What You See Is What You Get (WYSIWYG) XML editor called <ulink url="http://www.syntext.com/products/serna-free/">Serna Free</ulink> .
+			</para>
+		</formalpara>
+		<para>
+			This editor hides much of the complexity of XML authoring, and lets you focus on authoring the content. You still must have good knowledge of XML structure, because the application still requires you to select the right parent tag before it can auto-complete subsequent selections. It is not aware of the specific tag requirements that Publican demands.
+		</para>
+		<para>
+			Serna is a cross-platform editor. By far, the best feature of this editor is the fact that you can open up the root XML file (for example, at the &lt;book&gt; level), and all xi:include links, cross-references, and graphics are opened up in the editor as one seamless file. This really helps with validation, and makes linking between chapters and sections easy.
+		</para>
+		<para>
+			Serna Free can introduce invalid XML structure into a user guide, even though the document is valid according to the Serna XML validator. This often happens when dragging and dropping large sections of XML structure, or when commenting sections back into the XML structure. If other authors are using programs other than Serna Free, the way they have commented out XML sections may not be supported by Serna.
+		</para>
+		<formalpara>
+			<title>XML Copy Editor</title>
+			<para>
+				XML Copy Editor is a text-based editor, that has no WYSIWYG functionality. You must know your XML rules very well to use this editor.
+			</para>
+		</formalpara>
+		<para>
+			XML Copy Editor contains a DocBook XML Parser, which will validate your XML. What it can't do is open all the xi:includes and resolve internal &lt;xref&gt; declarations that are not in the same file. This will result in a lot of validation errors, that may mask the real issue.
+		</para>
+		<para>
+			The advantage that XML Copy Editor offers is the ability to edit the XML structure in a basic text interface. This can be very useful when you are trying to debug your XML documentation. You can use a program such as xmllint to output a full XML file, and then revalidate it using XML Copy Editor. For more information about this technique, refer to
+		</para>
+	</section>
+	
+	<section>
+		<title id="xst-XML_Structure_Tips">XML Structure Tips</title>
+		<para>
+			In DocBook, the content that is being documented often benefits from advanced XML tagging. There are certain additions to structure that can be useful to help the reader in quickly grasping information. The following sections are grouped into common areas that you will use regularly in XML authoring.
+		</para>
+		<section>
+			<title>Lists - Bulleted and Numbered</title>
+			<para>
+				The two most common list types in DocBook are not named according to such programs as Microsoft Word, or Open Office. You would think that for a bulleted list, you would start the list using &lt;bullets&gt; or &lt;bulletedlist&gt;. Likewise, for a numbered list, you might consider using &lt;numlist&gt; or &lt;numberedlist&gt;.
+			</para>
+			<para>
+				In DocBook, these types of lists are referred to according to the following nomenclature:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Bulleted List - &lt;itemizedlist&gt;
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Numbered List - &lt;orderedlist&gt;
+					</para>
+				</listitem>
+			</itemizedlist>
+			<important>
+				<title>&lt;orderedlist&gt; is no substitute for &lt;procedure&gt;</title>
+				<para>
+					If you are documenting a complex set of steps, you must use a &lt;procedure&gt; to contain the steps. Procedures can contain multiple steps, and offer greater content flexibility. For more information about &lt;procedure&gt;, refer to <xref linkend="ps-Procedural_Steps"/>
+				</para>
+			</important>
+			<formalpara>
+				<title>&lt;itemizedlist&gt;</title>
+				<para>
+					An itemized list is used to replace a semi-colon separated list in a sentence.
+				</para>
+			</formalpara>
+			<para>
+				The XML form of an itemized list has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/itemizedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.
+			</para>
+			<example>
+				<title>&lt;itemizedlist&gt; Mandatory Elements</title>
+				
+<programlisting>&lt;itemizedlist&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item One.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Two.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Three.&lt;/para&gt;
+  &lt;/listitem&gt;
+&lt;/itemizedlist&gt;
+</programlisting>
+			</example>
+			<important>
+				<title>Lead-in Sentence is Mandatory</title>
+				<para>
+					A list must have an introductory sentence; it must not be a sentence fragment. Sentence fragments are very hard to translate.
+				</para>
+			</important>
+			<para>
+				The XML Structure looks like this when published:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Item One.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Two.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Three.
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+				You can further enhance the &lt;itemizedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;itemizedlist&gt; element. A title might assist the reader with understanding what a large list contains. It might be useful if The XML structure looks like this when published:
+			</para>
+			<itemizedlist>
+				<title>&lt;itemizedlist&gt; Title</title>
+				<listitem>
+					<para>
+						Item One.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Two.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Three.
+					</para>
+				</listitem>
+			</itemizedlist>
+			<formalpara>
+				<title>&lt;orderedlist&gt;</title>
+				<para>
+					An &lt;orderedlist&gt; is just like an &lt;itemizedlist&gt;, except it displays the content in number order. This type of list is better suited to listing small substeps in &lt;procedure&gt; lists.
+				</para>
+			</formalpara>
+			<para>
+				The XML form of an itemized list has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/orderedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.
+			</para>
+			<example>
+				<title>&lt;orderedlist&gt; Mandatory Elements</title>
+				
+<programlisting>&lt;orderedlist&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item One.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Two.&lt;/para&gt;
+  &lt;/listitem&gt;
+  &lt;listitem&gt;
+    &lt;para&gt;Item Three.&lt;/para&gt;
+  &lt;/listitem&gt;
+&lt;/orderedlist&gt;
+</programlisting>
+			</example>
+			<para>
+				You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element. A title might assist the reader with understanding what a large list contains.
+			</para>
+			<important>
+				<title>Lead-in Sentence is Mandatory</title>
+				<para>
+					A list must have an introductory sentence; it must not be a sentence fragment. Sentence fragments are very hard to translate.
+				</para>
+			</important>
+			<para>
+				The XML structure looks like this when published:
+			</para>
+			<orderedlist>
+				<title>&lt;orderedlist&gt; Title</title>
+				<listitem>
+					<para>
+						Item One.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Two.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Item Three.
+					</para>
+				</listitem>
+			</orderedlist>
+		</section>
+		
+		<section>
+			<title id="ps-Procedural_Steps">Procedural Steps</title>
+			<para>
+				When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitations regarding what level of detail each &lt;listitem&gt; tag can contain.
+			</para>
+			<para>
+				The best option for large workflows, or detailed steps, is the &lt;procedure&gt; element.
+			</para>
+			<para>
+				You may not be aware, but this element is used extensively throughout this user guide to capture the steps involved in the Authoring Process.
+			</para>
+			<para>
+				The biggest advantage to using a &lt;procedure&gt; element is that it uses the &lt;step&gt; element. &lt;step&gt; elements are classed as 'top-level' elements, and can contain a much wider variety of child elements than the &lt;listitem&gt; element used in &lt;itemizedlist&gt; and &lt;orderedlist&gt;.
+			</para>
+			<para>
+				The XML form of a procedure has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">DocBook.org &lt;procedure&gt; page</ulink>. Be sure to visit the pages of the child elements that the &lt;procedure&gt; tag supports, particularly the <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">&lt;step&gt; element</ulink>.
+			</para>
+			<para>
+				The minimum set of elements required for all procedure lists in the Mobicents UDS are described in the following example:
+			</para>
+			<example>
+				<title>&lt;procedure&gt; Mandatory Elements</title>
+				
+<programlisting>&lt;procedure&gt;
+  &lt;title&gt;&lt;procedure&gt; Title&lt;/title&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step One Title&lt;/title&gt;
+    &lt;para&gt;Step one info.&lt;/para&gt;
+  &lt;/step&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step Two Title&lt;/title&gt;
+    &lt;para&gt;Step two info.&lt;/step&gt;
+&lt;/procedure&gt;
+</programlisting>
+			</example>
+			<para>
+				The XML structure looks like this when published:
+			</para>
+			<procedure>
+				<title>&lt;procedure&gt; Title</title>
+				<step>
+					<title>Step One Title</title>
+					<para>
+						Step one info.
+					</para>
+				</step>
+				<step>
+					<title>Step Two Title</title>
+					<para>
+						Step two info.
+					</para>
+				</step>
+			</procedure>
+			
+			<para>
+				You can further enhance the &lt;procedure&gt; by adding in any number of supported child elements into each &lt;step&gt;. Each &lt;step&gt; can contain any number of &lt;para&gt; tags, and also permits &lt;itemizedlist&gt; and &lt;orderedlist&gt; tags. Be sure that the tags inserted are compatible with the Publican Toolchain.
+			</para>
+			<example>
+				<title>&lt;procedure&gt; Extra Elements</title>
+				
+<programlisting>&lt;procedure&gt;
+  &lt;title&gt;&lt;procedure&gt; Title&lt;/title&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step 1 Title&lt;/title&gt;
+    &lt;para&gt;Step one info.  You can have multiple &lt;para&gt; elements, in one step.&lt;/para&gt;
+    &lt;para&gt;Second para to further describe step.  &lt;/para&gt;
+  &lt;/step&gt;
+  &lt;step&gt;
+    &lt;title&gt;Step 2 Title&lt;/title&gt;
+    &lt;para&gt;If you find you need substeps, use an &lt;orderedlist&gt; to capture these:&lt;/para&gt;
+    &lt;orderedlist&gt;
+      &lt;title&gt;&lt;orderedlist&gt; instead of &lt;substeps&gt;&lt;/title&gt;
+      &lt;listitem&gt;
+        &lt;para&gt;Substep one.&lt;/para&gt;
+      &lt;/listitem&gt;
+      &lt;listitem&gt;
+        &lt;para&gt;Substep two, etc.&lt;/para&gt;
+      &lt;/listitem&gt;
+    &lt;/orderedlist&gt;
+  &lt;/step&gt;
+&lt;/procedure&gt;
+</programlisting>
+			</example>
+			<procedure>
+				<title>&lt;procedure&gt; Title</title>
+				<step>
+					<title>Step 1 Title</title>
+					<para>
+						Step one info. You can have multiple &lt;para&gt; elements, in one step.
+					</para>
+					<para>
+						Second para to further describe step.
+					</para>
+				</step>
+				<step>
+					<title>Step 2 Title</title>
+					<para>
+						If you find you need substeps, use an &lt;orderedlist&gt; to capture these:
+					</para>
+					<para>
+						The ordered list should have a lead-in sentence introducing the list:
+					</para>
+					<orderedlist>
+						<listitem>
+							<para>
+								Substep one.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Substep two, etc.
+							</para>
+						</listitem>
+					</orderedlist>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section>
+			<title>Graphics and Screenshots</title>
+			<para>
+				There are a number of graphical tags that are supported in DocBook. For consistency, the best tag to use is the &lt;figure&gt; tag.
+			</para>
+			<para>
+				The &lt;figure&gt; tag has the advantage of containing a well-formatted title for the figure. It is suitable for both diagrams, and screenshots.
+			</para>
+			<example>
+				<title>&lt;figure&gt; tag structure</title>
+				
+<programlisting>&lt;figure&gt;
+  &lt;title&gt;Mobicents Icon&lt;/title&gt;
+  &lt;mediaobject&gt;
+    &lt;imageobject&gt;
+      &lt;imagedata fileref="images/mcd-mobicents_icon_64x64.png"/&gt;
+    &lt;/imageobject&gt;
+  &lt;/mediaobject&gt;
+&lt;/figure&gt;
+</programlisting>
+			</example>
+			<para>
+				The XML structure looks like this when published:
+			</para>
+			<figure>
+				<title>Mobicents Icon</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/mcd-mobicents_icon_64x64.png" format="PNG"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+			<note>
+				<title>Is a Screen shot Really Required?</title>
+				<para>
+					Screenshots increase the maintenance of a user guide. What happens if the interface changes? What happens if the product logo is updated? These situations require the screenshot to be recaptured again.
+				</para>
+				<para>
+					Think carefully before inserting a screenshot. Often, you can explain what fields a user must complete in the user interface without a screenshot. If you can, you will save a lot of maintenance in the future.
+				</para>
+			</note>
+			<para>
+				The &lt;imagedata&gt; tag defines the image path, and sets the way the image is displayed in the published output. Use the following recommendations when inserting &lt;figure&gt; tags:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						To scale large diagrams or screenshots to fit within page boundaries, set <userinput>width="450"</userinput> to scale the screenshot within the boundaries of an A4 page.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						If you need to include a screenshot of a large user interface, consider including only the area that relates to what you are discussing. You can get a much better result if you capture a small section of a user interface, because the user can easily see the detail of the area referred to in the procedure or concept.
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+				If you are using a Linux-based operating system, chances are you will be using a graphics package such as The GNU Image Manipulation Program (GIMP). You can use The GIMP to capture screen shots, and save them in a format that will provide the best output for both HTML and PDF.
+			</para>
+			<procedure>
+				<title>Correctly Capturing Screenshots</title>
+				<para>
+					The following procedure describes how to correctly capture and save a screen shot using the Create Screenshot function in The GIMP. The procedure assumes that you have The GIMP installed, and the program is open.
+				</para>
+				<step>
+					<title>Prepare the Content to Capture</title>
+					<para>
+						Ensure you have the correct application open, and that the part of the application you need to capture is activated. The GIMP will capture the screen immediately, unless a delay is set.
+					</para>
+				</step>
+				<step>
+					<title>Select the Creat Screenshot Option</title>
+					<para>
+						Click <guimenu>File</guimenu> &gt; <guimenu>Create</guimenu> &gt; <guimenu>Screenshot</guimenu>.
+					</para>
+				</step>
+				<step>
+					<title>Confirm Capture Options</title>
+					<para>
+						In the Screenshot dialog box, select the capture option you require according to the following guidelines: 
+						<itemizedlist>
+							<listitem>
+								<para>
+									Do not include window decorations in <emphasis>any</emphasis> of your screenshots.
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									Consider capturing only the section of the screen you need to refer to in the documentation. It will be clearer for the reader.
+								</para>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</step>
+				<step>
+					<title>Capture the Screen</title>
+					<para>
+						Click the <guibutton>Snap</guibutton> button to begin capturing the screen area. Select the program, or area of the screen you want to capture.
+					</para>
+				</step>
+				<step>
+					<title>Scale the Image</title>
+					<para>
+						Click <guimenu>Image</guimenu> &gt; <guimenu>Scale Image</guimenu>.
+					</para>
+					<para>
+						If you need to scale a large screen shot or diagram, use the following settings:
+						<itemizedlist>
+							<listitem>
+								<para>
+									In the <guilabel>Image Size</guilabel> group, set the <guilabel>Width</guilabel> to (no greater than) 450 pixels.
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									In the <guilabel>Quality</guilabel> group, set <guimenu>Interpolation</guimenu> to <guimenu>Sinc (Lancosz3)</guimenu>.
+								</para>
+							</listitem>
+						</itemizedlist>
+					</para>
+					<para>
+						Click <guibutton>Scale</guibutton> to set the image scale.
+					</para>
+				</step>
+				<step>
+					<title>Save the Image</title>
+					<para>
+						Click <guimenu>File</guimenu> &gt; <guimenu>Save As</guimenu>.
+					</para>
+					<para>
+						Name the image according to the image file naming conventions. If in doubt, look at the naming convention in the Images folder of your user guide directory.
+					</para>
+					<para>
+						In the Save Image dialog, select PNG image (*.png) from the Image Type drop down menu.
+					</para>
+					<para>
+						Click <guibutton>Save</guibutton>.
+					</para>
+				</step>
+			</procedure>
+
+		</section>
+		
+		<section>
+			<title>Warning, Important, and Note</title>
+			<para>
+				To alert readers to information that might otherwise be overlooked, DocBook supports a number of elements you can use to highlight concepts for readers. The supported options are limited to:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Warning
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Important
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Note
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+				The options are listed in order of priority, and alert the reader to the following conditions:
+			</para>
+			<variablelist>
+				<varlistentry>
+					<term>Warning</term>
+					<listitem>
+						<para>
+							Warnings contain information that must not be ignored. Ignoring recommendations in Warnings may result in data loss, or other catastrophic issues.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Important</term>
+					<listitem>
+						<para>
+							Includes information that might be easily overlooked and may cause unnecessary frustration when using the software. For example, configuration changes that only apply to the current session, or services that need restarting before an update will apply
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Note</term>
+					<listitem>
+						<para>
+							Contains information that may be useful to the reader. Ignoring a note should have no negative consequences for the reader, but may result in the reader missing out on usability tips, or a shortcut that may help them complete a task.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<para>
+				The way these elements are formatted depends on what publishing system you use to produce a user guide. The JBCP user guide style (produced using Publican) formats this information in a conspicuous way; lots of colour, bold graphics, and a slightly different typeface to the normal content. In the Mobicents documentation, JDocBook formats the information slighly less agressively by using softer colours, but it is still quite conspicuous to the reader.
+			</para>
+			<para>
+				When writing information for any of these elements, you can maximize the effectiveness of the information by keeping the structure of the information consistent. Consider the following examples to see how effective this is.
+			</para>
+			<example>
+				<title>Warnings and Importants</title>
+				<para>
+					Use the following XML structure when creating a Warning or Important annotation. See the sample Warning and Inportant in this example as a reference.
+				</para>
+				
+<programlisting role="XML">&lt;warning&gt;
+  &lt;title&gt;Warning Summary&lt;/title&gt;
+  &lt;para&gt;Imperetive instruction to the user.  Reason why the user should obey the instruction.&lt;/para&gt;
+&lt;/warning&gt;
+</programlisting>
+				
+<programlisting role="XML">&lt;important&gt;
+  &lt;title&gt;Important Summary&lt;/title&gt;
+  &lt;para&gt;Information that will save the reader unnecessary frustration.&lt;/para&gt;
+&lt;/important&gt;
+</programlisting>
+			</example>
+			<warning>
+				<title>Open Office Package Dependencies</title>
+				<para>
+					Do not uninstall Open Office from Gnome Desktop systems. Open Office package dependencies may result in critical system files, including X Windows System files, being unintentionally removed.
+				</para>
+			</warning>
+			<important>
+				<title>Install MSS for JBoss 0.7 or Later</title>
+				<para>
+					Only MSS for JBoss v0.7 bundles the Diameter JBoss Service (the Diameter SAR, or Servlet Archive), which is required to run the Diameter Event-Charging Service.
+				</para>
+			</important>
+		</section>
+		
+		<section>
+			<title>Symbols in XML (Special Characters)</title>
+			<para>
+				When writing XML documentation, certain symbols can prevent XML validating correctly. When parsing an XML document, the validator interprets symbols as XML processing instructions. As a rule, a good WYSIWYG XML Editor (for example, Syntext Serna) will correctly substitute special characters with their literal value entities automatically.
+			</para>
+			<para>
+				If you are editing XML using a basic text editing program, this automation may not exist. You must manually insert symbol entities when you need to insert a keyboard symbol (commonly) or non-keyboard symbols (copyright, etc).
+			</para>
+			<para>
+				The most common symbol entities that will break XML publishing are listed for reference. The entities have a deliberate space after the &amp;, so that they are not resolved when this guide is published. Remove the space between the &amp; and symbol entity declaration when using them.
+			</para>
+			<para>
+				<variablelist>
+					<varlistentry>
+						<term>&amp; lt;</term>
+						<listitem>
+							<para>
+								Inserts a left angle bracket "&lt;" symbol. The left angle bracket is used to begin all XML elements, therefore the parser will assume that the text directly proceeding the symbol is a DocBook XML element. This will cause the publish to fail. Use this symbol entity when writing menu paths, referring to XML elements within &lt;para&gt; or other CDATA tags, or within XML code samples.
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&amp; gt;</term>
+						<listitem>
+							<para>
+								Inserts a right angle bracket "&gt;" symbol. Use this symbol to close off XML tags when describing XML tags in CDATA elements such as &lt;para&gt; tags.
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>&amp; amp;</term>
+						<listitem>
+							<para>
+								Inserts an ampersand "&amp;" symbol. Ampersand is used to start an entity reference, so this will break the XML publish if you directly insert it into your document.
+							</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</para>
+		</section>
+		
+		<section>
+			<title>Program Menus, Buttons, and Labels</title>
+			<para>
+				In DocBook, there are a number of tags that can be used to mark-up items that the user has access to in a program Graphical User Interface (GUI). A user appreciates consistency in the way user commands are represented because it allows them to quickly identify the sequence of menu transitions required to execute a product feature.
+			</para>
+			<para>
+				The following examples describe situations that you will encounter when writing procedures, and show you a consistent way to mark-up the information.
+			</para>
+			<para>
+				<example>
+					<title>GUI Menu Transitions</title>
+					<formalpara>
+						<title>I need to:</title>
+						<para>
+							Highlight a GUI menu path that a user must follow to access a feature.
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>Suitable XML elements include:</title>
+						<para>
+							&lt;guimenu&gt;
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>I use these elements following these guidelines:</title>
+						<para>
+							There is no need to use &lt;guimenuitem&gt; or &lt;guisubmenu&gt;; the elements are formatted no different to &lt;guimenuitem&gt;.
+						</para>
+					</formalpara>
+					<para>
+						A GUI menu path must be separated by the greater than angle bracket for each menu item a user selects.
+					</para>
+					<para>
+						Do not include the ellipsis from sub-menus (three periods "..." indicating the user must select further options when the screen is displayed).
+					</para>
+					<formalpara>
+						<title>An example in XML code:</title>
+						<para>
+							
+<programlisting>&lt;guimenu&gt;Document &gt; WebDAV &gt; WebDAV Properties&lt;/guimenu&gt;
+</programlisting>
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>How it looks when published:</title>
+						<para>
+							<guimenu> Document &gt; WebDAV &gt; WebDAV Properties</guimenu>
+						</para>
+					</formalpara>
+				</example>
+				<example>
+					<title>GUI Buttons</title>
+					<formalpara>
+						<title>I need to:</title>
+						<para>
+							Highlight a GUI button a user must click within a GUI.
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>Suitable XML elements include:</title>
+						<para>
+							&lt;guibutton&gt;
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>I use these elements following these guidelines:</title>
+						<para>
+							Ordinarily you would not need to include the text ‘button’ in a procedure or description. For example, ‘Click <guibutton>OK</guibutton> to continue’, is perfectly acceptable. It may be necessary to distinguish between buttons and links, for example, ‘Click the <guibutton>Unload</guibutton> button’.
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>An example in XML code:</title>
+						<para>
+							
+<programlisting>&lt;para&gt;To save and close the document, click &lt;guibutton&gt;Save&lt;/guibutton&gt;, then click &lt;guibutton&gt;Close&lt;/guibutton&gt;.
+</programlisting>
+						</para>
+					</formalpara>
+					<formalpara>
+						<title>How it looks when published:</title>
+						<para>
+							To save and close the document, click <guibutton>Save</guibutton>, then click <guibutton>Close</guibutton>.
+						</para>
+					</formalpara>
+				</example>
+			</para>
+		</section>
+		
+		<section>
+			<title>Code Examples</title>
+			<para>
+				The Mobicents and JBCP documentation has a strong focus on code examples. The correct XML element to use for XML and Java code examples is the &lt;programlisting&gt; tag.
+			</para>
+			<para>
+				&lt;programlisting&gt; has been used extensively throughout this user guide to highlight the XML structure you need to use in specific situations. There are two ways you will need to use this element within Mobicents and JBCP user documentation.
+			</para>
+			<para>
+				An advantage of using &lt;programlisting&gt; is that you can specify the way Maven and Publican displays the information to the user. This is achieved using the <literal>role</literal> attribute. When <literal>role</literal> is defined, Maven will format the code example with highlighting that will assist the reader in understanding the code structure.
+			</para>
+			<formalpara>
+				<title>XML Samples</title>
+				<para>
+					For XML samples, you must specify XML (in uppercase) as the role value.
+				</para>
+			</formalpara>
+			<para>
+				The code for an XML program listing will look similar to the following example.
+			</para>
+			
+<programlisting role="XML">&lt;programlisting role="XML"&gt;
+  &lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+  &lt;/important&gt;
+&lt;/programlisting&gt;
+</programlisting>
+			<para>
+				When output, the XML tags are highlighted to assist the reader.
+			</para>
+			
+<programlisting role="XML">&lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+&lt;/important&gt;
+</programlisting>
+			<para>
+				If XML is not specified, the output looks far less attractive.
+			</para>
+			
+<programlisting>&lt;important&gt;
+    &lt;title&gt;Important Summary&lt;/title&gt;
+    &lt;para&gt;Information that will save the reader unnecessary
+      frustration.&lt;/para&gt;
+&lt;/important&gt;
+</programlisting>
+			<formalpara>
+				<title>Java Samples</title>
+				<para>
+					For Java code samples, the same rules apply. Instead of "XML", "JAVA" is specified as the <literal>role</literal> attribute value.
+				</para>
+			</formalpara>
+			
+<programlisting role="JAVA">
+package org.jboss.book.jca.ex1;
+
+import javax.naming.InitialContext;
+
+public class ExClient
+{
+   public static void main(String args[]) 
+       throws Exception
+   {
+      InitialContext iniCtx = new InitialContext();
+      Object         ref    = iniCtx.lookup("EchoBean");
+      EchoHome       home   = (EchoHome) ref;
+      Echo           echo   = home.create();
+
+      System.out.println("Created Echo");
+
+      System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
+   }
+   
+}
+</programlisting>
+		</section>
+
+	</section>
+	
+	<section>
+		<title>Fixing Validation Errors</title>
+		<para>
+			Sometimes XML structure errors can still creep into the document you're working on. It may not be your fault, but you may be required to correct the errors before your user guide can be published.
+		</para>
+		<para>
+			Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you're using. By doing this, structure errors that occur between chapterS or sections are easily identified.
+		</para>
+	</section>
+
+</chapter>
+	<chapter id="pam-Publican_and_Maven" lang="en-US">
+	<title>Publican and Maven</title>
+	<para>
+		The Mobicents community documentation is authored using XML DocBook 4.5. Because the XML content is also used to produce the JBCP product documentation, certain XML elements must not be used because the Publican Toolchain restricts some elements when validating content.
+	</para>
+	<para>
+		If Publican is installed on your system, execute <userinput>xmlClean --banned</userinput> in a terminal to view the banned elements.
+	</para>
+	<para>
+		If Publican is not available on your system, the list of elements and the reasons why they are banned is explained in <xref linkend="table-fpxe-Forbidden_Publican_XML_Elements"/>.
+	</para>
+	<para>
+		<table frame="all" id="table-fpxe-Forbidden_Publican_XML_Elements" pgwide="1">
+			<title>Forbidden Publican XML Elements</title>
+			<tgroup cols="2" colsep="1">
+				<colspec colname="c1"/>
+				<colspec colname="c2"/>
+				<thead>
+					<row>
+						<entry>
+							Banned XML Element
+						</entry>
+						<entry>
+							Why Can't I Use It?
+						</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+							&lt;caution&gt;
+						</entry>
+						<entry>
+							This element is unnecessary. Use &lt;important&gt; or &lt;warning&gt;
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;entrytbl&gt;
+						</entry>
+						<entry>
+							Nested tables break PDF generation. Reconsider your data structure.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;glossdiv&gt;
+						</entry>
+						<entry>
+							This element set imposes English-language order on glossaries, rendering them useless when translated.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;glosslist&gt;
+						</entry>
+						<entry>
+							This element set imposes English-language order on glossaries, rendering them useless when translated.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;inlinegraphic&gt;
+						</entry>
+						<entry>
+							This element breaks Section 508 accessibility standards and makes translation extremely difficult.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;link&gt;
+						</entry>
+						<entry>
+							This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;olink&gt;
+						</entry>
+						<entry>
+							This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							&lt;tip&gt;
+						</entry>
+						<entry>
+							This element is unnecessary. Use &lt;note&gt; or &lt;important&gt;.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</para>
+	<para>
+		In additon to the banned elements, there are two attributes that must not be used anywhere within the XML source:
+	</para>
+	<variablelist>
+		<varlistentry>
+			<term>endterm</term>
+			<listitem>
+				<para>
+					Hides data from translators and, consequently, causes translation errors.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>xreflabel</term>
+			<listitem>
+				<para>
+					Hides data from translators and, consequently, causes translation errors.
+				</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+</chapter>
 	<chapter id="ap-Authoring_Procedures" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Authoring Procedures</title>
 	<para>
@@ -907,11 +1905,11 @@ public class ExClient
 		<para>
 			When a documentation ticket is closed in the final phase, the ticket remains in the GCode Ticket system for posterity.
 		</para>
-		<para>
-			The following procedure details how to create a documentation ticket as a result of a product enhancement.
-		</para>
 		<procedure id="ap-procedure-Creating_A_Documentation_Ticket">
 			<title>Creating a Documentation Ticket</title>
+			<para>
+				The following procedure details how to create a documentation ticket as a result of a product enhancement.
+			</para>
 			<step>
 				<title>Search Before Opening a New Issue</title>
 				<para>
@@ -949,6 +1947,11 @@ public class ExClient
 					<itemizedlist>
 						<listitem>
 							<para>
+								[DIA Guide] - Diameter User Guide
+							</para>
+						</listitem>
+						<listitem>
+							<para>
 								[JSS Guide] - JAIN SLEE Server User Guide
 							</para>
 						</listitem>
@@ -969,7 +1972,7 @@ public class ExClient
 						</listitem>
 						<listitem>
 							<para>
-								[PLAT Guide] - Platform User Guide
+								[PLAT Guide] - Platform Installation Guide
 							</para>
 						</listitem>
 					</itemizedlist>
@@ -1024,12 +2027,12 @@ public class ExClient
 					<itemizedlist>
 						<listitem>
 							<para>
-								<literal>Component-&lt;server_name&gt;</literal> - specifies the server to which the ticket relates.
+								<literal>Component-[server_name]</literal> - specifies the server to which the ticket relates.
 							</para>
 						</listitem>
 						<listitem>
 							<para>
-								<literal>Version-&lt;version_number&gt;</literal> - specifies the base version number affected by this ticket.
+								<literal>Version-[version_number]</literal> - specifies the base version number affected by this ticket.
 							</para>
 						</listitem>
 					</itemizedlist>
@@ -1046,11 +2049,11 @@ public class ExClient
 		<para>
 			The ticket is now saved in the system, and the people in the Owner and Cc fields have been sent a link to the ticket for comment.
 		</para>
-		<para>
-			Part of effective ticket management requires the developers responsible for each server to review new tickets to approve the enhancement and add supplementary information to the ticket.
-		</para>
 		<procedure>
 			<title>Developer Ticket Approval</title>
+			<para>
+				Part of effective ticket management requires the developers responsible for each server to review new tickets to approve the enhancement and add supplementary information to the ticket.
+			</para>
 			<step>
 				<title>Review Raised Tickets</title>
 				<para>
@@ -1227,7 +2230,7 @@ public class ExClient
 									It is easy to make XML structure errors if you are not using an XML Editing program that controls structure for you. Regularly validating your content will identify structure issues early. You will have a better idea about what section might contain the error, based on what section you have recently edited.
 								</para>
 								<para>
-									If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven"/> for troubleshooting information.
+									If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven"/> for troubleshooting information. If you are not using Publican, then you must find another way to validate your content.
 								</para>
 							</listitem>
 						</varlistentry>
@@ -1281,7 +2284,7 @@ public class ExClient
 						Commit structurally valid XML back into the GCode SVN regularly throughout the day.
 					</para>
 					<para>
-						For each commit, make a note of the SVN commit number so it can be added to the GCode Ticket at the end of the
+						For each commit, make a note of the SVN commit number so it can be added to the GCode Ticket when you update the ticket with your progress.
 					</para>
 					<important>
 						<title>Commit Regularly</title>
@@ -1346,7 +2349,7 @@ public class ExClient
 		<section>
 			<title>Review Preparation</title>
 			<para>
-				Before sending off the changes for review, there are a few administration tasks that must be attended to.
+				Before sending off the changes for review, there are a few administration tasks that must be completed.
 			</para>
 			<procedure>
 				<title>Update XML Comments to Review </title>
@@ -2076,1170 +3079,6 @@ public class ExClient
 			</step>
 		</procedure>
 
-	</section>
-
-</chapter>
-	<chapter id="pam-Publican_and_Maven" lang="en-US">
-	<title>Publican and Maven</title>
-	<para>
-		The Mobicents community documentation is authored using XML DocBook 4.5. Because the XML content is also used to produce the JBCP product documentation, certain XML elements must not be used because the Publican Toolchain restricts some elements when validating content.
-	</para>
-	<para>
-		If Publican is installed on your system, execute <userinput>xmlClean --banned</userinput> in a terminal to view the banned elements.
-	</para>
-	<para>
-		If Publican is not available on your system, the list of elements and the reasons why they are banned is explained in <xref linkend="table-fpxe-Forbidden_Publican_XML_Elements"/>.
-	</para>
-	<para>
-		<table frame="all" id="table-fpxe-Forbidden_Publican_XML_Elements" pgwide="1">
-			<title>Forbidden Publican XML Elements</title>
-			<tgroup cols="2" colsep="1">
-				<colspec colname="c1"/>
-				<colspec colname="c2"/>
-				<thead>
-					<row>
-						<entry>
-							Banned XML Element
-						</entry>
-						<entry>
-							Why Can't I Use It?
-						</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>
-							&lt;caution&gt;
-						</entry>
-						<entry>
-							This element is unnecessary. Use &lt;important&gt; or &lt;warning&gt;
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;entrytbl&gt;
-						</entry>
-						<entry>
-							Nested tables break PDF generation. Reconsider your data structure.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;glossdiv&gt;
-						</entry>
-						<entry>
-							This element set imposes English-language order on glossaries, rendering them useless when translated.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;glosslist&gt;
-						</entry>
-						<entry>
-							This element set imposes English-language order on glossaries, rendering them useless when translated.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;inlinegraphic&gt;
-						</entry>
-						<entry>
-							This element breaks Section 508 accessibility standards and makes translation extremely difficult.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;link&gt;
-						</entry>
-						<entry>
-							This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;olink&gt;
-						</entry>
-						<entry>
-							This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;tip&gt;
-						</entry>
-						<entry>
-							This element is unnecessary. Use &lt;note&gt; or &lt;important&gt;.
-						</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
-	</para>
-	<para>
-		In additon to the banned elements, there are two attributes that must not be used anywhere within the XML source:
-	</para>
-	<variablelist>
-		<varlistentry>
-			<term>endterm</term>
-			<listitem>
-				<para>
-					Hides data from translators and, consequently, causes translation errors.
-				</para>
-			</listitem>
-		</varlistentry>
-		<varlistentry>
-			<term>xreflabel</term>
-			<listitem>
-				<para>
-					Hides data from translators and, consequently, causes translation errors.
-				</para>
-			</listitem>
-		</varlistentry>
-	</variablelist>
-	<section lang="en-US">
-	<!--  This document was created with Syntext Serna Free.  --><title>[Name of RA]</title>
-	<para>
-		This section provides information about the [RA Name] Resource Adapter (RA).
-	</para>
-	<section>
-		<title>Activities</title>
-		<!-- In this section, provide the reader with information about any Activity objects, and any extensions available to the Activity objects.  Because of the long naming standards for many java classes, it is better to list these on a single line.  I did consider a table, but I think the interface names would wrap, and look awkward.  I think the best option here might be to use a <variablelist> for each primary activity object.  Then use a <formalpara>, with the <title> being the name of each major extension.  An example is provided for reference. --> <para>
-			An activity object represents a set of related events in a RA resource. This RA Type defines the following Activity objects:
-		</para>
-		<!-- This example is taken from the MGCP RA.  Delete the content that is not relevant to your adapter. --> <variablelist>
-			<title>[RA Name] Activity Objects</title>
-			<varlistentry>
-				<term><classname role="XML">net.java.slee.resource.mgcp.MgcpConnectionActivity</classname></term>
-				<listitem>
-					<para>
-						Controls the management of a connection including creation, modification, destruction and state audit. This activity ends implicitly when a DeleteConnection (MGCP server role) or DeleteConnectionResponse (MGCP Call Agent role) event is received.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname role="JAVA">net.java.slee.resource.mgcp.MgcpEndpointActivity</classname></term>
-				<listitem>
-					<para>
-						Controls the management of an endpoint including event detection and signal generation, and configuration and state audit. Because a MGCP endpoint does not have a lifecycle, this activity does not end implicitly on MGCP events.
-					</para>
-				</listitem>
-			</varlistentry>
-		</variablelist>
-	</section>
-	
-	<section>
-		<title>Interface</title>
-		<para>
-			The interface consists of the following methods:
-		</para>
-		<variablelist>
-			<title>Interface Methods</title>
-			<varlistentry>
-				<term><classname role="JAVA">public void addJainMgcpListener(JainMgcpListener jainMgcpListener) throws java.util.TooManyListenersException</classname></term>
-				<listitem>
-					<para>
-						Adds a JAIN MGCP Listener to the list of Event Listeners registered on an implementation of the <interfacename>JainMgcpProvider</interfacename> interface.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname role="JAVA">public JainMgcpStack getJainMgcpStack()</classname></term>
-				<listitem>
-					<para>
-						Returns an object reference to the underlying JAIN MGCP Stack to which this JAIN MGCP Provider is bound.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname role="JAVA">public void removeJainMgcpListener(JainMgcpListener jainMgcpListener)</classname></term>
-				<listitem>
-					<para>
-						Removes a JAIN MGCP Listener from the list of Event Listeners registered on an implementation of the <interfacename>JainMgcpProvider</interfacename> interface. If the object reference to the JainMgcpListener does not correspond to a registered Listener, this method simply returns.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname role="JAVA">public void sendMgcpEvents(JainMgcpEvent[] jainMgcpEvents) throws java.lang.IllegalArgumentException</classname></term>
-				<listitem>
-					<para>
-						Sends a list of MGCP commands and responses into the MGCP stack. The use of a list is intended to facilitate "piggybacking" of messages, all of whose destinations are the same. Specific vendor implementations may impose restrictions on the number of command and response messages, the sequencing of those messages, and other such limitations on the usage of this method.
-					</para>
-				</listitem>
-			</varlistentry>
-		</variablelist>
-		<formalpara>
-			<title>Extensions</title>
-			<para>
-				Extensions are the methods used to create and/or retrieve [RA Name] RA Activity Objects. Extensions also provide useful methods that generate valid and unique [RA Name] event identifiers while honoring the RA entity domain.
-			</para>
-		</formalpara>
-		<variablelist>
-			<title>Interface Extensions</title>
-			<varlistentry>
-				<term><classname>public MgcpConnectionActivity getConnectionActivity(ConnectionIdentifier connectionIdentifier,EndpointIdentifier endpointIdentifier)</classname></term>
-				<listitem>
-					<para>
-						Retrieves a connection activity for the specified ConnectionIdentifier. The activity is created if does not exists.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>public MgcpConnectionActivity getConnectionActivity(int transactionHandle,EndpointIdentifier endpointIdentifier)</classname></term>
-				<listitem>
-					<para>
-						Retrieves a connection activity for an unknown ConnectionIdentifier, used when sending <classname>CreateConnection</classname> events and receive further related messages from a Mgcp Server. The activity is created if does not exists. The transactionHandle will be used by the Resource Adaptor to learn the returned ConnectionIdentifier and deliver the response in this activity.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>public MgcpEndpointActivity getEndpointActivity(EndpointIdentifier endpointIdentifier)</classname></term>
-				<listitem>
-					<para>
-						Retrieves an endpoint activity for the specified EndpointIdentifier. The activity is created if does not exists.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>public int getUniqueTransactionHandler()</classname></term>
-				<listitem>
-					<para>
-						Retrieves an unique transaction handler to be used on mgcp messages.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>public CallIdentifier getUniqueCallIdentifier()</classname></term>
-				<listitem>
-					<para>
-						Retrieves an unique valid CallIdentifier to be used on mgcp commands.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>public RequestIdentifier getUniqueRequestIdentifier()</classname></term>
-				<listitem>
-					<para>
-						Retrieves an unique valid RequestIdentifier to be used on NotificationRequest commands.
-					</para>
-				</listitem>
-			</varlistentry>
-		</variablelist>
-	</section>
-	
-	<section>
-		<title>Events</title>
-		<para>
-			Events defined for this RA follow the naming convention of [eventname] # [vendor] # [version].
-		</para>
-		<variablelist>
-			<title>Events</title>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.CREATE_CONNECTION # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.CreateConnection</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpConnectionActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.CREATE_CONNECTION_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.CreateConnectionResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpConnectionActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.MODIFY_CONNECTION # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.ModifyConnection</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpConnectionActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.MODIFY_CONNECTION_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.ModifyConnectionResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpConnectionActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.DELETE_CONNECTION # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.DeleteConnection</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpConnectionActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.DELETE_CONNECTION_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.DeleteConnectionResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpConnectionActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.AUDIT_CONNECTION # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.AuditConnection</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpConnectionActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.AUDIT_CONNECTION_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.AuditConnectionResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpConnectionActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.AUDIT_ENDPOINT # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.AuditEndpoint</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.AUDIT_ENDPOINT_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.AuditEndpointResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.ENDPOINT_CONFIGURATION # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.EndpointConfiguration</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.ENDPOINT_CONFIGURATION_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.EndpointConfigurationResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.NOTIFICATION_REQUEST # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.NotificationRequest</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.NOTIFICATION_REQUEST_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.NotificationRequestResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.NOTIFY # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.Notify</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.NOTIFY_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.NotifyResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.RESTART_IN_PROGRESS # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.RestartInProgress</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.RESTART_IN_PROGRESS_RESPONSE # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>jain.protocol.ip.mgcp.message.RestartInProgressResponse</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><classname>net.java.slee.resource.mgcp.TRANSACTION_TIMEOUT # net.java # 1.0</classname></term>
-				<listitem>
-					<para>
-						Event class name: <classname>net.java.slee.resource.mgcp.event.TransactionTimeout</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-					<para>
-						Activity object: <classname>net.java.slee.resource.mgcp.MgcpEndpointActivity</classname>
-					</para>
-				</listitem>
-			</varlistentry>
-		</variablelist>
-	</section>
-
-</section>
-</chapter>
-	<chapter id="bs-XML_Authoring_Resources" lang="en-US">
-	<title>XML Authoring Resources</title>
-	<para>
-		The Mobicents User Documentation Suite is authored entirely in XML. For someone starting out with XML, there are many things to consider. What is the best authoring tool to use? What elements, and structure is definitely valid in Publican? How do I create screenshots that scale correctly?
-	</para>
-	<para>
-		This chapter discusses a number of helpful tips that will help new content authors produce valid, professional-looking XML documentation.
-	</para>
-	<section id="at-Authoring_Tools">
-		<title>Authoring Tools</title>
-		<para>
-			While you can write XML using a basic text editor, the easiest way to author XML is by using an XML Authoring Tool. A good XML Authoring Tool can auto-complete structure for you, and most importantly, validate the XML content you have written to ensure it is well-formed and valid to the standard.
-		</para>
-		<para>
-			The number of XML authoring tools available can seem daunting to a first-time content author. The following applications will help you to get started with XML authoring, and ease your transition into the world of structured authoring.
-		</para>
-		<formalpara>
-			<title>Syntext Serna Free XML Editor</title>
-			<para>
-				Syntext offer a What You See Is What You Get (WYSIWYG) XML editor called <ulink url="http://www.syntext.com/products/serna-free/">Serna Free</ulink> .
-			</para>
-		</formalpara>
-		<para>
-			This editor hides much of the complexity of XML authoring, and lets you focus on authoring the content. You still must have good knowledge of XML structure, because the application still requires you to select the right parent tag before it can auto-complete subsequent selections. It is not aware of the specific tag requirements that Publican demands.
-		</para>
-		<para>
-			Serna is a cross-platform editor. By far, the best feature of this editor is the fact that you can open up the root XML file (for example, at the &lt;book&gt; level), and all xi:include links, cross-references, and graphics are opened up in the editor as one seamless file. This really helps with validation, and makes linking between chapters and sections easy.
-		</para>
-		<para>
-			Serna Free can introduce invalid XML structure into a user guide, even though the document is valid according to the Serna XML validator. This often happens when dragging and dropping large sections of XML structure, or when commenting sections back into the XML structure. If other authors are using programs other than Serna Free, the way they have commented out XML sections may not be supported by Serna.
-		</para>
-		<formalpara>
-			<title>XML Copy Editor</title>
-			<para>
-				XML Copy Editor is a text-based editor, that has no WYSIWYG functionality. You must know your XML rules very well to use this editor.
-			</para>
-		</formalpara>
-		<para>
-			XML Copy Editor contains a DocBook XML Parser, which will validate your XML. What it can't do is open all the xi:includes and resolve internal &lt;xref&gt; declarations that are not in the same file. This will result in a lot of validation errors, that may mask the real issue.
-		</para>
-		<para>
-			The advantage that XML Copy Editor offers is the ability to edit the XML structure in a basic text interface. This can be very useful when you are trying to debug your XML documentation. You can use a program such as xmllint to output a full XML file, and then revalidate it using XML Copy Editor. For more information about this technique, refer to
-		</para>
-	</section>
-	
-	<section>
-		<title id="xst-XML_Structure_Tips">XML Structure Tips</title>
-		<para>
-			In DocBook, the content that is being documented often benefits from advanced XML tagging. There are certain additions to structure that can be useful to help the reader in quickly grasping information. The following sections are grouped into common areas that you will use regularly in XML authoring.
-		</para>
-		<section>
-			<title>Lists - Bulleted and Numbered</title>
-			<para>
-				The two most common list types in DocBook are not named according to such programs as Microsoft Word, or Open Office. You would think that for a bulleted list, you would start the list using &lt;bullets&gt; or &lt;bulletedlist&gt;. Likewise, for a numbered list, you might consider using &lt;numlist&gt; or &lt;numberedlist&gt;.
-			</para>
-			<para>
-				In DocBook, these types of lists are referred to according to the following nomenclature:
-			</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Bulleted List - &lt;itemizedlist&gt;
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Numbered List - &lt;orderedlist&gt;
-					</para>
-				</listitem>
-			</itemizedlist>
-			<important>
-				<title>&lt;orderedlist&gt; is no substitute for &lt;procedure&gt;</title>
-				<para>
-					If you are documenting a complex set of steps, you must use a &lt;procedure&gt; to contain the steps. Procedures can contain multiple steps, and offer greater content flexibility. For more information about &lt;procedure&gt;, refer to <xref linkend="ps-Procedural_Steps"/>
-				</para>
-			</important>
-			<formalpara>
-				<title>&lt;itemizedlist&gt;</title>
-				<para>
-					An itemized list is used to replace a semi-colon separated list in a sentence.
-				</para>
-			</formalpara>
-			<para>
-				The XML form of an itemized list has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/itemizedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.
-			</para>
-			<example>
-				<title>&lt;itemizedlist&gt; Mandatory Elements</title>
-				
-<programlisting>&lt;itemizedlist&gt;
-  &lt;listitem&gt;
-    &lt;para&gt;Item One.&lt;/para&gt;
-  &lt;/listitem&gt;
-  &lt;listitem&gt;
-    &lt;para&gt;Item Two.&lt;/para&gt;
-  &lt;/listitem&gt;
-  &lt;listitem&gt;
-    &lt;para&gt;Item Three.&lt;/para&gt;
-  &lt;/listitem&gt;
-&lt;/itemizedlist&gt;
-</programlisting>
-			</example>
-			<important>
-				<title>Lead-in Sentence is Mandatory</title>
-				<para>
-					A list must have an introductory sentence; it must not be a sentence fragment. Sentence fragments are very hard to translate.
-				</para>
-			</important>
-			<para>
-				The XML Structure looks like this when published:
-			</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Item One.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Item Two.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Item Three.
-					</para>
-				</listitem>
-			</itemizedlist>
-			<para>
-				You can further enhance the &lt;itemizedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;itemizedlist&gt; element. A title might assist the reader with understanding what a large list contains. It might be useful if The XML structure looks like this when published:
-			</para>
-			<itemizedlist>
-				<title>&lt;itemizedlist&gt; Title</title>
-				<listitem>
-					<para>
-						Item One.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Item Two.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Item Three.
-					</para>
-				</listitem>
-			</itemizedlist>
-			<formalpara>
-				<title>&lt;orderedlist&gt;</title>
-				<para>
-					An &lt;orderedlist&gt; is just like an &lt;itemizedlist&gt;, except it displays the content in number order. This type of list is better suited to listing small substeps in &lt;procedure&gt; lists.
-				</para>
-			</formalpara>
-			<para>
-				The XML form of an itemized list has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/orderedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.
-			</para>
-			<example>
-				<title>&lt;orderedlist&gt; Mandatory Elements</title>
-				
-<programlisting>&lt;orderedlist&gt;
-  &lt;listitem&gt;
-    &lt;para&gt;Item One.&lt;/para&gt;
-  &lt;/listitem&gt;
-  &lt;listitem&gt;
-    &lt;para&gt;Item Two.&lt;/para&gt;
-  &lt;/listitem&gt;
-  &lt;listitem&gt;
-    &lt;para&gt;Item Three.&lt;/para&gt;
-  &lt;/listitem&gt;
-&lt;/orderedlist&gt;
-</programlisting>
-			</example>
-			<para>
-				You can further enhance the &lt;orderedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;orderedlist&gt; element. A title might assist the reader with understanding what a large list contains.
-			</para>
-			<important>
-				<title>Lead-in Sentence is Mandatory</title>
-				<para>
-					A list must have an introductory sentence; it must not be a sentence fragment. Sentence fragments are very hard to translate.
-				</para>
-			</important>
-			<para>
-				The XML structure looks like this when published:
-			</para>
-			<orderedlist>
-				<title>&lt;orderedlist&gt; Title</title>
-				<listitem>
-					<para>
-						Item One.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Item Two.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Item Three.
-					</para>
-				</listitem>
-			</orderedlist>
-		</section>
-		
-		<section>
-			<title id="ps-Procedural_Steps">Procedural Steps</title>
-			<para>
-				When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitations regarding what level of detail each &lt;listitem&gt; tag can contain.
-			</para>
-			<para>
-				The best option for large workflows, or detailed steps, is the &lt;procedure&gt; element.
-			</para>
-			<para>
-				You may not be aware, but this element is used extensively throughout this user guide to capture the steps involved in the Authoring Process.
-			</para>
-			<para>
-				The biggest advantage to using a &lt;procedure&gt; element is that it uses the &lt;step&gt; element. &lt;step&gt; elements are classed as 'top-level' elements, and can contain a much wider variety of child elements than the &lt;listitem&gt; element used in &lt;itemizedlist&gt; and &lt;orderedlist&gt;.
-			</para>
-			<para>
-				The XML form of a procedure has a number of mandatory elements. For a complete list, refer to the <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">DocBook.org &lt;procedure&gt; page</ulink>. Be sure to visit the pages of the child elements that the &lt;procedure&gt; tag supports, particularly the <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">&lt;step&gt; element</ulink>.
-			</para>
-			<para>
-				The minimum set of elements required for all procedure lists in the Mobicents UDS are described in the following example:
-			</para>
-			<example>
-				<title>&lt;procedure&gt; Mandatory Elements</title>
-				
-<programlisting>&lt;procedure&gt;
-  &lt;title&gt;&lt;procedure&gt; Title&lt;/title&gt;
-  &lt;step&gt;
-    &lt;title&gt;Step One Title&lt;/title&gt;
-    &lt;para&gt;Step one info.&lt;/para&gt;
-  &lt;/step&gt;
-  &lt;step&gt;
-    &lt;title&gt;Step Two Title&lt;/title&gt;
-    &lt;para&gt;Step two info.&lt;/step&gt;
-&lt;/procedure&gt;
-</programlisting>
-			</example>
-			<para>
-				The XML structure looks like this when published:
-			</para>
-			<procedure>
-				<title>&lt;procedure&gt; Title</title>
-				<step>
-					<title>Step One Title</title>
-					<para>
-						Step one info.
-					</para>
-				</step>
-				<step>
-					<title>Step Two Title</title>
-					<para>
-						Step two info.
-					</para>
-				</step>
-			</procedure>
-			
-			<para>
-				You can further enhance the &lt;procedure&gt; by adding in any number of supported child elements into each &lt;step&gt;. Each &lt;step&gt; can contain any number of &lt;para&gt; tags, and also permits &lt;itemizedlist&gt; and &lt;orderedlist&gt; tags. Be sure that the tags inserted are compatible with the Publican Toolchain.
-			</para>
-			<example>
-				<title>&lt;procedure&gt; Extra Elements</title>
-				
-<programlisting>&lt;procedure&gt;
-  &lt;title&gt;&lt;procedure&gt; Title&lt;/title&gt;
-  &lt;step&gt;
-    &lt;title&gt;Step 1 Title&lt;/title&gt;
-    &lt;para&gt;Step one info.  You can have multiple &lt;para&gt; elements, in one step.&lt;/para&gt;
-    &lt;para&gt;Second para to further describe step.  &lt;/para&gt;
-  &lt;/step&gt;
-  &lt;step&gt;
-    &lt;title&gt;Step 2 Title&lt;/title&gt;
-    &lt;para&gt;If you find you need substeps, use an &lt;orderedlist&gt; to capture these:&lt;/para&gt;
-    &lt;orderedlist&gt;
-      &lt;title&gt;&lt;orderedlist&gt; instead of &lt;substeps&gt;&lt;/title&gt;
-      &lt;listitem&gt;
-        &lt;para&gt;Substep one.&lt;/para&gt;
-      &lt;/listitem&gt;
-      &lt;listitem&gt;
-        &lt;para&gt;Substep two, etc.&lt;/para&gt;
-      &lt;/listitem&gt;
-    &lt;/orderedlist&gt;
-  &lt;/step&gt;
-&lt;/procedure&gt;
-</programlisting>
-			</example>
-			<procedure>
-				<title>&lt;procedure&gt; Title</title>
-				<step>
-					<title>Step 1 Title</title>
-					<para>
-						Step one info. You can have multiple &lt;para&gt; elements, in one step.
-					</para>
-					<para>
-						Second para to further describe step.
-					</para>
-				</step>
-				<step>
-					<title>Step 2 Title</title>
-					<para>
-						If you find you need substeps, use an &lt;orderedlist&gt; to capture these:
-					</para>
-					<para>
-						The ordered list should have a lead-in sentence introducing the list:
-					</para>
-					<orderedlist>
-						<listitem>
-							<para>
-								Substep one.
-							</para>
-						</listitem>
-						<listitem>
-							<para>
-								Substep two, etc.
-							</para>
-						</listitem>
-					</orderedlist>
-				</step>
-			</procedure>
-
-		</section>
-		
-		<section>
-			<title>Graphics and Screenshots</title>
-			<para>
-				There are a number of graphical tags that are supported in DocBook. For consistency, the best tag to use is the &lt;figure&gt; tag.
-			</para>
-			<para>
-				The &lt;figure&gt; tag has the advantage of containing a well-formatted title for the figure. It is suitable for both diagrams, and screenshots.
-			</para>
-			<example>
-				<title>&lt;figure&gt; tag structure</title>
-				
-<programlisting>&lt;figure&gt;
-  &lt;title&gt;Mobicents Icon&lt;/title&gt;
-  &lt;mediaobject&gt;
-    &lt;imageobject&gt;
-      &lt;imagedata fileref="images/mcd-mobicents_icon_64x64.png"/&gt;
-    &lt;/imageobject&gt;
-  &lt;/mediaobject&gt;
-&lt;/figure&gt;
-</programlisting>
-			</example>
-			<para>
-				The XML structure looks like this when published:
-			</para>
-			<figure>
-				<title>Mobicents Icon</title>
-				<mediaobject>
-					<imageobject>
-						<imagedata fileref="images/mcd-mobicents_icon_64x64.png" format="PNG"/>
-					</imageobject>
-				</mediaobject>
-			</figure>
-			<note>
-				<title>Is a Screen shot Really Required?</title>
-				<para>
-					Screenshots increase the maintenance of a user guide. What happens if the interface changes? What happens if the product logo is updated? These situations require the screenshot to be recaptured again.
-				</para>
-				<para>
-					Think carefully before inserting a screenshot. Often, you can explain what fields a user must complete in the user interface without a screenshot. If you can, you will save a lot of maintenance in the future.
-				</para>
-			</note>
-			<para>
-				The &lt;imagedata&gt; tag defines the image path, and sets the way the image is displayed in the published output. Use the following recommendations when inserting &lt;figure&gt; tags:
-			</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						To scale large diagrams or screenshots to fit within page boundaries, set <userinput>width="450"</userinput> to scale the screenshot within the boundaries of an A4 page.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						If you need to include a screenshot of a user interface, consider including only the area that relates to what you are discussing. You can get a much better result if you capture a small section of a user interface, because the user can easily see the detail of the area referred to in the procedure or concept.
-					</para>
-				</listitem>
-			</itemizedlist>
-		</section>
-		
-		<section>
-			<title>Warning, Important, and Note</title>
-			<para>
-				To alert readers to information that might otherwise be overlooked, DocBook supports a number of elements you can use to highlight concepts for readers. The supported options are limited to:
-			</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Warning
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Important
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Note
-					</para>
-				</listitem>
-			</itemizedlist>
-			<para>
-				The options are listed in order of priority, and alert the reader to the following conditions:
-			</para>
-			<variablelist>
-				<varlistentry>
-					<term>Warning</term>
-					<listitem>
-						<para>
-							Warnings contain information that must not be ignored. Ignoring recommendations in Warnings may result in data loss, or other catastrophic issues.
-						</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>Important</term>
-					<listitem>
-						<para>
-							Includes information that might be easily overlooked and may cause unnecessary frustration when using the software. For example, configuration changes that only apply to the current session, or services that need restarting before an update will apply
-						</para>
-					</listitem>
-				</varlistentry>
-				<varlistentry>
-					<term>Note</term>
-					<listitem>
-						<para>
-							Contains information that may be useful to the reader. Ignoring a note should have no negative consequences for the reader, but may result in the reader missing out on usability tips, or a shortcut that may help them complete a task.
-						</para>
-					</listitem>
-				</varlistentry>
-			</variablelist>
-			<para>
-				The way these elements are formatted depends on what publishing system you use to produce a user guide. The JBCP user guide style (produced using Publican) formats this information in a conspicuous way; lots of colour, bold graphics, and a slightly different typeface to the normal content. In the Mobicents documentation, JDocBook formats the information slighly less agressively by using softer colours, but it is still quite conspicuous to the reader.
-			</para>
-			<para>
-				When writing information for any of these elements, you can maximize the effectiveness of the information by keeping the structure of the information consistent. Consider the following examples to see how effective this is.
-			</para>
-			<example>
-				<title>Warnings and Importants</title>
-				<para>
-					Use the following XML structure when creating a Warning or Important annotation. See the sample Warning and Inportant in this example as a reference.
-				</para>
-				
-<programlisting role="XML">&lt;warning&gt;
-  &lt;title&gt;Warning Summary&lt;/title&gt;
-  &lt;para&gt;Imperetive instruction to the user.  Reason why the user should obey the instruction.&lt;/para&gt;
-&lt;/warning&gt;
-</programlisting>
-				
-<programlisting role="XML">&lt;important&gt;
-  &lt;title&gt;Important Summary&lt;/title&gt;
-  &lt;para&gt;Information that will save the reader unnecessary frustration.&lt;/para&gt;
-&lt;/important&gt;
-</programlisting>
-			</example>
-			<warning>
-				<title>Open Office Package Dependencies</title>
-				<para>
-					Do not uninstall Open Office from Gnome Desktop systems. Open Office package dependencies may result in critical system files, including X Windows System files, being unintentionally removed.
-				</para>
-			</warning>
-			<important>
-				<title>Install MSS for JBoss 0.7 or Later</title>
-				<para>
-					Only MSS for JBoss v0.7 bundles the Diameter JBoss Service (the Diameter SAR, or Servlet Archive), which is required to run the Diameter Event-Charging Service.
-				</para>
-			</important>
-		</section>
-		
-		<section>
-			<title>Symbols in XML (Special Characters)</title>
-			<para>
-				When writing XML documentation, certain symbols can prevent XML validating correctly. When parsing an XML document, the validator interprets symbols as XML processing instructions. As a rule, a good WYSIWYG XML Editor (for example, Syntext Serna) will correctly substitute special characters with their literal value entities automatically.
-			</para>
-			<para>
-				If you are editing XML using a basic text editing program, this automation may not exist. You must manually insert symbol entities when you need to insert a keyboard symbol (commonly) or non-keyboard symbols (copyright, etc).
-			</para>
-			<para>
-				The most common symbol entities that will break XML publishing are listed for reference. The entities have a deliberate space after the &amp;, so that they are not resolved when this guide is published. Remove the space between the &amp; and symbol entity declaration when using them.
-			</para>
-			<para>
-				<variablelist>
-					<varlistentry>
-						<term>&amp; lt;</term>
-						<listitem>
-							<para>
-								Inserts a left angle bracket "&lt;" symbol. The left angle bracket is used to begin all XML elements, therefore the parser will assume that the text directly proceeding the symbol is a DocBook XML element. This will cause the publish to fail. Use this symbol entity when writing menu paths, referring to XML elements within &lt;para&gt; or other CDATA tags, or within XML code samples.
-							</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>&amp; gt;</term>
-						<listitem>
-							<para>
-								Inserts a right angle bracket "&gt;" symbol. Use this symbol to close off XML tags when describing XML tags in CDATA elements such as &lt;para&gt; tags.
-							</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>&amp; amp;</term>
-						<listitem>
-							<para>
-								Inserts an ampersand "&amp;" symbol. Ampersand is used to start an entity reference, so this will break the XML publish if you directly insert it into your document.
-							</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-			</para>
-		</section>
-		
-		<section>
-			<title>Program Menus, Buttons, and Labels</title>
-			<para>
-				In DocBook, there are a number of tags that can be used to mark-up items that the user has access to in a program Graphical User Interface (GUI). A user appreciates consistency in the way user commands are represented because it allows them to quickly identify the sequence of menu transitions required to execute a product feature.
-			</para>
-			<para>
-				The following examples describe situations that you will encounter when writing procedures, and show you a consistent way to mark-up the information.
-			</para>
-			<para>
-				<example>
-					<title>GUI Menu Transitions</title>
-					<formalpara>
-						<title>I need to:</title>
-						<para>
-							Highlight a GUI menu path that a user must follow to access a feature.
-						</para>
-					</formalpara>
-					<formalpara>
-						<title>Suitable XML elements include:</title>
-						<para>
-							&lt;guimenu&gt;
-						</para>
-					</formalpara>
-					<formalpara>
-						<title>I use these elements following these guidelines:</title>
-						<para>
-							There is no need to use &lt;guimenuitem&gt; or &lt;guisubmenu&gt;; the elements are formatted no different to &lt;guimenuitem&gt;.
-						</para>
-					</formalpara>
-					<para>
-						A GUI menu path must be separated by the greater than angle bracket for each menu item a user selects.
-					</para>
-					<para>
-						Do not include the ellipsis from sub-menus (three periods "..." indicating the user must select further options when the screen is displayed).
-					</para>
-					<formalpara>
-						<title>An example in XML code:</title>
-						<para>
-							
-<programlisting>&lt;guimenu&gt;Document &gt; WebDAV &gt; WebDAV Properties&lt;/guimenu&gt;
-</programlisting>
-						</para>
-					</formalpara>
-					<formalpara>
-						<title>How it looks when published:</title>
-						<para>
-							<guimenu> Document &gt; WebDAV &gt; WebDAV Properties</guimenu>
-						</para>
-					</formalpara>
-				</example>
-				<example>
-					<title>GUI Buttons</title>
-					<formalpara>
-						<title>I need to:</title>
-						<para>
-							Highlight a GUI button a user must click within a GUI.
-						</para>
-					</formalpara>
-					<formalpara>
-						<title>Suitable XML elements include:</title>
-						<para>
-							&lt;guibutton&gt;
-						</para>
-					</formalpara>
-					<formalpara>
-						<title>I use these elements following these guidelines:</title>
-						<para>
-							Ordinarily you would not need to include the text ‘button’ in a procedure or description. For example, ‘Click <guibutton>OK</guibutton> to continue’, is perfectly acceptable. It may be necessary to distinguish between buttons and links, for example, ‘Click the <guibutton>Unload</guibutton> button’.
-						</para>
-					</formalpara>
-					<formalpara>
-						<title>An example in XML code:</title>
-						<para>
-							
-<programlisting>&lt;para&gt;To save and close the document, click &lt;guibutton&gt;Save&lt;/guibutton&gt;, then click &lt;guibutton&gt;Close&lt;/guibutton&gt;.
-</programlisting>
-						</para>
-					</formalpara>
-					<formalpara>
-						<title>How it looks when published:</title>
-						<para>
-							To save and close the document, click <guibutton>Save</guibutton>, then click <guibutton>Close</guibutton>.
-						</para>
-					</formalpara>
-				</example>
-			</para>
-		</section>
-		
-		<section>
-			<title>Code Examples</title>
-			<para>
-				The Mobicents and JBCP documentation has a strong focus on code examples. The correct XML element to use for XML and Java code examples is the &lt;programlisting&gt; tag.
-			</para>
-			<para>
-				&lt;programlisting&gt; has been used extensively throughout this user guide to highlight the XML structure you need to use in specific situations. There are two ways you will need to use this element within Mobicents and JBCP user documentation.
-			</para>
-			<para>
-				An advantage of using &lt;programlisting&gt; is that you can specify the way Maven and Publican displays the information to the user. This is achieved using the <literal>role</literal> attribute. When <literal>role</literal> is defined, Maven will format the code example with highlighting that will assist the reader in understanding the code structure.
-			</para>
-			<formalpara>
-				<title>XML Samples</title>
-				<para>
-					For XML samples, you must specify XML (in uppercase) as the role value.
-				</para>
-			</formalpara>
-			<para>
-				The code for an XML program listing will look similar to the following example.
-			</para>
-			
-<programlisting role="XML">&lt;programlisting role="XML"&gt;
-  &lt;important&gt;
-    &lt;title&gt;Important Summary&lt;/title&gt;
-    &lt;para&gt;Information that will save the reader unnecessary
-      frustration.&lt;/para&gt;
-  &lt;/important&gt;
-&lt;/programlisting&gt;
-</programlisting>
-			<para>
-				When output, the XML tags are highlighted to assist the reader.
-			</para>
-			
-<programlisting role="XML">&lt;important&gt;
-    &lt;title&gt;Important Summary&lt;/title&gt;
-    &lt;para&gt;Information that will save the reader unnecessary
-      frustration.&lt;/para&gt;
-&lt;/important&gt;
-</programlisting>
-			<para>
-				If XML is not specified, the output looks far less attractive.
-			</para>
-			
-<programlisting>&lt;important&gt;
-    &lt;title&gt;Important Summary&lt;/title&gt;
-    &lt;para&gt;Information that will save the reader unnecessary
-      frustration.&lt;/para&gt;
-&lt;/important&gt;
-</programlisting>
-			<formalpara>
-				<title>Java Samples</title>
-				<para>
-					For Java code samples, the same rules apply. Instead of "XML", "JAVA" is specified as the <literal>role</literal> attribute value.
-				</para>
-			</formalpara>
-			
-<programlisting role="JAVA">
-package org.jboss.book.jca.ex1;
-
-import javax.naming.InitialContext;
-
-public class ExClient
-{
-   public static void main(String args[]) 
-       throws Exception
-   {
-      InitialContext iniCtx = new InitialContext();
-      Object         ref    = iniCtx.lookup("EchoBean");
-      EchoHome       home   = (EchoHome) ref;
-      Echo           echo   = home.create();
-
-      System.out.println("Created Echo");
-
-      System.out.println("Echo.echo('Hello') = " + echo.echo("Hello"));
-   }
-   
-}
-</programlisting>
-		</section>
-
-	</section>
-	
-	<section>
-		<title>Fixing Validation Errors</title>
-		<para>
-			Sometimes XML structure errors can still creep into the document you're working on. It may not be your fault, but you may be required to correct the errors before your user guide can be published.
-		</para>
-		<para>
-			Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you're using. By doing this, structure errors that occur between chapter or sections are easily identified.
-		</para>
 	</section>
 
 </chapter>
