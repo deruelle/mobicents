@@ -128,8 +128,9 @@ public class DeleteConnectionAction implements Callable {
         } else if (endpointID != null && callID != null && connectionID != null) {
             response = this.deleteConnection(endpointID.getLocalEndpointName(), connectionID.toString());
         } else {
-            response = this.callDeleteConnections(callID.toString());
-        }
+        	//This is error condition        	
+            response = new DeleteConnectionResponse(controller, ReturnCode.Protocol_Error);
+        } 
         //Otherwise it wont be sent.
         response.setTransactionHandle(txID);
         logger.info("Response TX=" + txID + ", response=" + response.getReturnCode());
