@@ -32,6 +32,6 @@
   <important>
     <title>Do Not Update the all-*.xml File</title>
     <para>Never incorporate changes directly into the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file.  Updating this file with documentation changes will result in lost work.  </para>
-    <para>Update the individual XML files that comprise the User Guide.  The changes made in individual files will be merged into the all-*.xml file as part of the Authoring process.</para>
+    <para>Update the individual XML files that comprise the User Guide.  Changes made in individual files are merged into the all-*.xml file as part of the Authoring process.</para>
   </important>
 </chapter>

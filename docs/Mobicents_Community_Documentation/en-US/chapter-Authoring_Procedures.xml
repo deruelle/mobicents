@@ -214,7 +214,7 @@
               <term>Validate XML Regularly</term>
               <listitem>
                 <para>It is easy to make XML structure errors if you are not using an XML Editing program that controls structure for you.  Regularly validating your content will identify structure issues early.  You will have a  better idea about what section might contain the error,  based on what section you have recently edited.</para>
-                <para>If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven"/> for troubleshooting information. If you are not using Publican, then you must find another way to validate your content.</para>
+                <para>If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven"/> for troubleshooting information. If you are not using Publican or a Linux distribution, then you must find another way to validate your content.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -247,7 +247,7 @@
         </step>
         <step>
           <title>Commit Changes to GCode SVN</title>
-          <para>Commit structurally valid XML back into the GCode SVN regularly throughout the day.        </para>
+          <para>Commit <emphasis>structurally valid</emphasis> XML back into the GCode SVN regularly throughout the day.        </para>
           <para>For each commit, make a note of the SVN commit number so it can be added to the GCode Ticket when you update the ticket with your progress.</para>
           <important>
             <title>Commit Regularly</title>

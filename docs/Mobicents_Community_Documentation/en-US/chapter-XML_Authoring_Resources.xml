@@ -5,7 +5,6 @@
   <title>XML Authoring Resources</title>
   <para>The Mobicents User Documentation Suite is authored entirely  in XML.  For someone starting out with XML, there are many things to consider.  What is the best authoring tool to use?  What elements, and structure is definitely valid in Publican? How do I create screenshots that scale correctly?</para>
   <para>This chapter discusses a number of helpful tips that will help new content authors produce valid, professional-looking XML documentation.</para>
-  <para/>
   <section id="at-Authoring_Tools">
     <title>Authoring Tools</title>
     <para>While you can write XML using a basic text editor, the easiest way to author XML is by using an XML Authoring Tool.  A good XML Authoring Tool can auto-complete structure for you, and most importantly, validate the XML content you have written to ensure it is well-formed and valid to the standard.</para>
@@ -358,12 +357,15 @@
       <title>Symbols in XML (Special Characters)</title>
       <para>When writing XML documentation, certain symbols can prevent XML validating correctly.  When parsing an XML document, the validator interprets symbols as XML processing instructions.  As a rule, a good WYSIWYG XML Editor (for example, Syntext Serna) will correctly substitute special characters with their literal value entities automatically.  </para>
       <para>If you are editing XML using a basic text editing program, this automation may not exist.  You must manually insert symbol entities when you need to insert a keyboard symbol (commonly) or non-keyboard symbols (copyright, etc).</para>
-      <para>The most common symbol entities that will break XML publishing are listed for reference. The entities have a deliberate space after the &amp;, so that they are not resolved when this guide is published.  Remove the space between the &amp; and symbol entity declaration when  using them.</para>
+      <para>The most common symbol entities that will break XML publishing are listed for reference. </para>
+      <note>
+        <para>The entities have a deliberate space after the &amp;, so that they are not resolved when this guide is published.  Remove the space between the &amp; and symbol entity declaration when  using them.</para>
+      </note>
       <para><variablelist>
           <varlistentry>
             <term>&amp; lt;</term>
             <listitem>
-              <para>Inserts a left angle bracket &quot;&lt;&quot; symbol.  The left angle bracket is used to begin all XML elements, therefore the parser will assume that the text directly proceeding the symbol is a DocBook XML element.  This will cause the publish to fail.  Use this symbol entity when writing menu paths, referring to XML elements within &lt;para&gt; or other CDATA tags, or within XML code samples.</para>
+              <para>Inserts a left angle bracket &quot;&lt;&quot; symbol.  The left angle bracket is used to open all XML elements, therefore the parser will assume that the text directly proceeding the symbol is a DocBook XML element.  This will cause the publish to fail.  Use this symbol entity when writing menu paths, referring to XML elements within &lt;para&gt; or other CDATA tags, or within XML code samples.</para>
             </listitem>
           </varlistentry>
           <varlistentry>
@@ -492,7 +494,7 @@ public class ExClient
   <section>
     <title>Fixing Validation Errors</title>
     <para>Sometimes XML structure errors can still creep into the document you&apos;re working on.  It may not be your fault, but you may be required to correct the errors before your user guide can be published. </para>
-    <para>Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you&apos;re using. By doing this, structure errors that occur between chapterS or sections are easily identified.</para>
-    <para/>
+    <para>Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you&apos;re using. By doing this, structure errors that occur between chapters or sections are easily identified.</para>
+    <para>If you are using a Linux distribution such as Fedora or Red Hat Enterprise Linux, you can use the mkbk bash script to create the all-*.xml file.  The mkbk script  is capable of publishing this user guide, and selected community documentation guides that haven&apos;t been fully Mavenized.  </para>
   </section>
 </chapter>

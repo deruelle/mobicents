@@ -256,7 +256,7 @@ public class ExClient
 		<formalpara>
 			<title>Current UDS Status</title>
 			<para>
-				Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to internal Red Hat customers. The Mobicents UDS forms the backbone of the JBCP Product Documentation. The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.
+				Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to Red Hat customers. The Mobicents UDS forms the backbone of the JBCP Product Documentation. The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.
 			</para>
 		</formalpara>
 	</section>
@@ -301,7 +301,7 @@ public class ExClient
 							Austin, Texas
 						</entry>
 						<entry>
-							Project Manager and Founder
+							Development Manager and Founder
 						</entry>
 						<entry>
 							<email>iivanov@redhat.com</email>
@@ -420,7 +420,7 @@ public class ExClient
 							Warsaw, Poland
 						</entry>
 						<entry>
-							Media Server Developer
+							Media Server Developer, Diameter Developer
 						</entry>
 						<entry>
 							<email>baranowb@gmail.com</email>
@@ -441,9 +441,148 @@ public class ExClient
 							<email>pslegr@redhat.com</email>
 						</entry>
 					</row>
+					<row>
+						<entry>
+							Rob Cardwell
+						</entry>
+						<entry>
+							McLean, VA, USA
+						</entry>
+						<entry>
+							Program Manager
+						</entry>
+						<entry>
+							<email>rcardwel@redhat.com</email>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							Mr Vicky Kak
+						</entry>
+						<entry>
+							India
+						</entry>
+						<entry>
+							JBCP Product Support
+						</entry>
+						<entry>
+							<email>vkak@redhat.com</email>
+						</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>
+	</section>
+	
+	<section>
+		<title>Meetings and Communication</title>
+		<para>
+			Because the team is so geographically dispersed, some challenges can exist when trying to communicate with the different server teams. To ensure that you have the best chance of obtaining the information you require, a number of different methods exist to reach out to the development team.
+		</para>
+		<section>
+			<title>IRC Channels</title>
+			<para>
+				Internet Relay Chat (IRC) is used extensively throughout many JBoss projects as an effective communication tool; Mobicents is no exception. The main server the developers use is through the codehaus.org IRC server. The required information to connect to this server is listed for reference:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Server name = irc.codehaus.org
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Room name = #mobicents
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Password = no password is required for this server.
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+				Depending on the connection load of the codehaus.org server (which serves multiple projects and rooms), the team may have to switch over to the java chat freenode.net server. The freenode.net server offers a java IRC interface which requires no IRC client configuration. The address for this service is <ulink url="http://java.freenode.net//index.php?channel=mobicents. ">http://java.freenode.net//index.php?channel=mobicents</ulink>. If you want to use the IRC service through an IRC Chat client (such as XChat, or Pidgin), you will need the following information to connect to the server:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Server name = niven.freenode.net
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Room name = #mobicents
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Password = no password is required for this server.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+		
+		<section>
+			<title>Team Meetings</title>
+			<para>
+				The entire Mobicents Development Team meet weekly to discuss Mobicents and JBCP issues. The meeting time is Wednesday 15:30 UTC.
+			</para>
+			<para>
+				The meetings are held in the Codehaus IRC #mobicents room (depending on the number of connections available). If irc.codehaus.org is busy, the meetings take place on the Freenode #mobicents room. The team will post a notification in the Codehaus room if the meeting location is relocated.
+			</para>
+		</section>
+		
+		<section>
+			<title>Email Correspondence</title>
+			<para>
+				Keep emails as short, and concise, as possible. Past experience, and direct feedback from the team, indicates that it is much easier for the developers to quickly scan an email for relevance to them if received in this format.
+			</para>
+			<para>
+				If you know the question relates to a server team, or individual, it is highly recommended that you send the email directly to them, and carbon copy the Red Hat JBCP email list (jbcp-dev@redhat.com), so the rest of the team is informed.
+			</para>
+			<para>
+				If an answer is required to your email, make it clear that you expect a response. It can be effective to put "Feedback Required" in the subject line to flag the email to developers.
+			</para>
+			<para>
+				For Red Hat related issues, such as product documentation or strategic planning discussions, all correspondence must be routed through Red Hat email accounts.
+			</para>
+		</section>
+		
+		<section>
+			<title>Forums</title>
+			<para>
+				There are two Google Group forums that are monitored by the Mobicents Developers:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						<ulink url="http://groups.google.com/group/mobicents-public">mobicents-public</ulink>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<ulink url="http://groups.google.com/group/mobicents-core">mobicents-core</ulink>
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+				Both forums use a G-mail account for access. It is recommended that you create a new G-mail account for the sole purpose of accessing the Mobicents forums. If you subscribe to the daily digests or emails, the email traffic is excessive.
+			</para>
+			<formalpara>
+				<title>mobicents-public</title>
+				<para>
+					This high-traffic forum is the publicly accessible forum, used by the community to ask questions about configuring the platform. Often, discussion threads from mobicents-public will be used as a development barometer for new feature priorities and bug fix priorities. The Mobicents Team Meeting logs are posted to this forum so the community is informed about the project happenings.
+				</para>
+			</formalpara>
+			<formalpara>
+				<title>mobicents-core</title>
+				<para>
+					This forum is a membership-only forum, for the exclusive use of Mobicents developers and vetted individuals (such as Red Hat Content Authors). The forum is used to discuss private project-related issues not suitable for public consumption. You must submit an application to get access to the forum.
+				</para>
+			</formalpara>
+		</section>
+
 	</section>
 
 </chapter>
@@ -505,300 +644,9 @@ public class ExClient
 			Never incorporate changes directly into the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file. Updating this file with documentation changes will result in lost work.
 		</para>
 		<para>
-			Update the individual XML files that comprise the User Guide. The changes made in individual files will be merged into the all-*.xml file as part of the Authoring process.
+			Update the individual XML files that comprise the User Guide. Changes made in individual files are merged into the all-*.xml file as part of the Authoring process.
 		</para>
 	</important>
-</chapter>
-	<chapter id="Book_Structure" lang="en-US">
-	<!--  This document was created with Syntext Serna Free.  --><title>Book Structure</title>
-	<para>
-		The structure of each user guide in the Mobicents User Documentation Suite (UDS) is controlled by the DocBook XML Document Type Definition (DTD). Before updating any user guide in the GCode SVN, it is very important to understand the way each user guide is constructed, and have a good understanding of the DocBook XML standard.
-	</para>
-	<para>
-		The content is contained within XML files in the fallback_content directory of each user guide repository. The fallback_content directory contains copies of the XML files located in the <filename>/usr/share/publican/Common_Content</filename> directory.
-	</para>
-	<note>
-		<title>Fallback Content Accuracy Check</title>
-		<para>
-			The front-matter information located in the fallback_content directory of each user guide repository, is not maintained by the Publican Tool chain Team, or upgraded when Publican updates are installed. Therefore, manually verify that the information contained in these files are kept current with the standards present in the latest Publican Tool chain version.
-		</para>
-	</note>
-	<para>
-		Fallback content is added to each xi:include element that Maven JDocBook does not have access to. The structure described in the following XML sample is for the <filename>Legal_Notice.xml</filename> information in the <filename>Book_Info.xml</filename> file.
-	</para>
-	<para>
-		The xi:include element can have any number of xi:fallback elements defined. However, in the Mobicents UDS only one fallback is required.
-	</para>
-	
-<programlisting role="XML">&lt;!--FOR PUBLICAN --&gt;
-&lt;xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
- href="Common_Content/Legal_Notice.xml"&gt;
-    &lt;!--FOR JDOCBOOK:--&gt;
-    &lt;xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude"&gt;
-        &lt;xi:include href="fallback_content/Legal_Notice.xml"
-         xmlns:xi="http://www.w3.org/2001/XInclude"&gt;&lt;/xi:include&gt;
-    &lt;/xi:fallback&gt;
-&lt;/xi:include&gt;
-</programlisting>
-	<section>
-		<title>XML Book Components</title>
-		<para>
-			Each book in the UDS is constructed using a standardized structure, to maintain consistency throughout the project. The structure present as of September 2009 follows the Publican Toolchain directory structure. <xref linkend="table-Book-Structure"/> describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide.
-		</para>
-		<table frame="all" id="table-Book-Structure" pgwide="1">
-			<title>Book Components</title>
-			<tgroup cols="3" colsep="1">
-				<colspec align="left" colname="c0" colnum="1"/>
-				<colspec align="left" colname="c1" colnum="2"/>
-				<colspec align="left" colname="c2" colnum="3"/>
-				<thead>
-					<row>
-						<entry align="center">
-							XML Book Component
-						</entry>
-						<entry align="center">
-							Description
-						</entry>
-						<entry>
-							Order of Component in the Book
-						</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>
-							<filename><replaceable>[Book_Name]</replaceable>.xml</filename>
-						</entry>
-						<entry>
-							Contains the structure of the user guide, represented by xi:include references to each chapter-<replaceable>[Chapter_Name]</replaceable>.xml component, and other mandatory components in this table.
-						</entry>
-						<entry>
-							Top Level (or Parent) component of any user guide.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							<filename>Book_Info.xml</filename>
-						</entry>
-						<entry>
-							Contains information about the book title, book version number, abstract and copyright information.
-						</entry>
-						<entry>
-							1st Child. This is the opening information a reader will see in the user guide.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							<filename>Author_Group.xml</filename>
-						</entry>
-						<entry>
-							Contains contact information about the authors that contributed to the content of the book.
-						</entry>
-						<entry>
-							2nd Child. This component is included in the <filename>Book_Info.xml</filename> component.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							<filename>Preface.xml</filename>
-						</entry>
-						<entry>
-							Contains pre-defined content explaining the typographical standards used in the guide, and other information that will assist the reader with using the guide.
-						</entry>
-						<entry>
-							3rd Child. This component is included after the <filename>Book_Info.xml</filename> content.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							<filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename>
-						</entry>
-						<entry>
-							Contains XML markup and content included at a Chapter level in the document. The XML file is named only for human-readability.
-						</entry>
-						<entry>
-							4th. This is the top level element for each chapter in the user guide. The order of these files in the <filename><replaceable>[Book_Name]</replaceable>.xml</filename> file determines the structure of the guide.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							<filename>section-<replaceable>[Section_Name]</replaceable>.xml</filename>
-						</entry>
-						<entry>
-							Contains XML markup and content included at a Section level in the document. The XML file is named only for human-readability.
-						</entry>
-						<entry>
-							5th. This component is included in <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename> files by xi:include reference.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							<filename>Revision History.xml</filename>
-						</entry>
-						<entry>
-							Contains a record of the revisions made to the document over time. Top-level information about changes in the guide are provided to the reader.
-						</entry>
-						<entry>
-							6th.
-						</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
-		<para>
-			To ensure Maven JDocBook can publish the content generated by the Publican Tool chain, additional XML content is required. Maven JDocBook does not have access to the Publican Tool chain common_content directory. Therefore, the required XML files must be included as xi:fallback references in the <filename>preface.xml</filename> and <filename>book_info.xml</filename> files.
-		</para>
-		<table frame="all" id="table-Maven_JDocBook_Content" pgwide="1">
-			<title>Maven JDocBook Content</title>
-			<tgroup cols="3" colsep="1">
-				<colspec align="left" colname="c0" colnum="1"/>
-				<colspec align="left" colname="c1" colnum="2"/>
-				<colspec align="left" colname="c2" colnum="3"/>
-				<thead>
-					<row>
-						<entry align="center">
-							XML Component
-						</entry>
-						<entry align="center">
-							Description
-						</entry>
-						<entry>
-							Order of Component in the Book
-						</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>
-							<filename>Conventions.xml</filename>
-						</entry>
-						<entry>
-							Contains typographical standards used within the guide.
-						</entry>
-						<entry>
-							Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							<filename>Feedback.xml</filename>
-						</entry>
-						<entry>
-							Contains information about how to raise a bug against the user documentation.
-						</entry>
-						<entry>
-							Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							<filename>Legal_Notice.xml</filename>
-						</entry>
-						<entry>
-							Contains standardized Red Hat legal information.
-						</entry>
-						<entry>
-							Inserted by xi:fallback reference at the end of the <filename>Book_Info.xml</filename> file
-						</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
-	</section>
-	
-	<section>
-		<title>Maven Variables</title>
-		<para>
-			Througout the UDS, Maven variables are used to substitute values when Maven builds the documentation. The values that are substituted into the documentation by Maven include version numbers, installation paths, and product names. What information is substituted for each variable, largely depends on whether the deliverable is for Mobicents or JBCP.
-		</para>
-		<para>
-			<xref linkend="table-SIP_Presence_Service_Maven_Variables"/> lists the Maven variables used within the SIP Presence Service, and explains what each one represents.
-		</para>
-		<table frame="all" id="table-SIP_Presence_Service_Maven_Variables" pgwide="1">
-			<title>SIP Presence Service Maven Variables</title>
-			<tgroup cols="3" colsep="1">
-				<colspec colname="c1"/>
-				<colspec colname="c2"/>
-				<colspec colname="c3"/>
-				<thead>
-					<row>
-						<entry>
-							Variable Name
-						</entry>
-						<entry>
-							Description
-						</entry>
-						<entry>
-							Substituted Values (if applicable)
-						</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>
-							${platform.name}
-						</entry>
-						<entry>
-							Substitutes the Platform name, based on whether the documentation is being produced for Mobicents or JBCP.
-						</entry>
-						<entry>
-							Mobicents, JBCP
-						</entry>
-					</row>
-					<row>
-						<entry>
-							${bookid}
-						</entry>
-						<entry>
-							Substitutes the Book ID, which is used to populate the book identifier in the preface. The Book ID is necessary for readers to uniquely identify the book when raising documentation tickets.
-						</entry>
-						<entry>
-							doc-<replaceable>[book_name]</replaceable>. For example, <literal>doc-SIP_Servlets_Server_User_Guide</literal>.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							${release.integrated.filename}
-						</entry>
-						<entry>
-							Substitutes the Binary filename for the release, based on the binary file nomenclature for the community and product.
-						</entry>
-						<entry>
-						</entry>
-					</row>
-					<row>
-						<entry>
-							${release.xdms.filename}
-						</entry>
-						<entry>
-							Specific to the XML Document Management Server, the binary file name for the release based on the binary file nomenclature for the community and product.
-						</entry>
-						<entry>
-						</entry>
-					</row>
-					<row>
-						<entry>
-							${version}
-						</entry>
-						<entry>
-							Substitues the product version number for the release. This variable is used to substitute the version numbers in all path names.
-						</entry>
-						<entry>
-						</entry>
-					</row>
-					<row>
-						<entry>
-						</entry>
-						<entry>
-						</entry>
-						<entry>
-						</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
-	</section>
-
 </chapter>
 	<chapter id="chapter-Language_Guidelines" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Language Guidelines</title>
@@ -808,6 +656,11 @@ public class ExClient
 	<para>
 		The reader will subconciously notice the consistency, will be able to easily process the information contained within the user guide, and will appreciate the effort you have put in to keeping the writing style professional and consistent (even though they may not tell you directly).
 	</para>
+	<important>
+		<para>
+			The Mobicents and JBCP UDS uses the English (US), or en-US dictionary. Ensure that you follow the requirements of this dictionary when writing content for the UDS.
+		</para>
+	</important>
 	<section>
 		<title>Active Voice</title>
 		<para>
@@ -960,6 +813,435 @@ public class ExClient
 				</para>
 			</formalpara>
 		</example>
+	</section>
+
+</chapter>
+	<chapter id="pam-Publican_and_Maven" lang="en-US">
+	<title>Publican and Maven</title>
+	<para>
+		The UDS XML is structured in such a way that it can be published using Maven JDocBook and Publican. Maven, and the JDocBook plugin are used to produce the community branded XML content, and to produce XML that is used by Publican to produce the Red Hat branded product documentation.
+	</para>
+	<section>
+		<title>Publican Toolchain</title>
+		<para>
+			The Publican Toolchain is a set of Linux utilities that work in concert to validate, and publish XML to various output formats. Publican is used by Red Hat's Engineering Content Services division as the de facto standard for producing product documentation according to brand, and translation, requirements.
+		</para>
+		<para>
+			For a complete guide to Publican, including installation instructions and commands, visit the <ulink url="https://fedorahosted.org/publican/">Publican home page on fedorapeople.com</ulink>. This page contains, among other information, the User Guide for Publican. The user guide is compatible with Version 0.39 and above.
+		</para>
+		<!-- SSDP: Next paragraph is dependent on implementing the Single Source docs project successfully, and the documentation being produced from the one source. --> <section>
+			<title>Banned XML Elements </title>
+			<para>
+				For standardization and translation reasons, Publican imposes restrictions on what XML elements and attributes are acceptable in product documentation. Because the Mobicents and JBCP documentation shares a common source of XML, it is critical that the XML source does not contain any illegal elements.
+			</para>
+			<para>
+				If Publican is installed on your system, execute <userinput>xmlClean --banned</userinput> in a terminal to view the banned elements.
+			</para>
+			<para>
+				If Publican is not available on your system, the list of elements and the reasons why they are banned is explained in <xref linkend="table-fpxe-Forbidden_Publican_XML_Elements"/>.
+			</para>
+			<para>
+				<table frame="all" id="table-fpxe-Forbidden_Publican_XML_Elements" pgwide="1">
+					<title>Forbidden Publican XML Elements</title>
+					<tgroup cols="2" colsep="1">
+						<colspec colname="c1"/>
+						<colspec colname="c2"/>
+						<thead>
+							<row>
+								<entry>
+									Banned XML Element
+								</entry>
+								<entry>
+									Why Can't I Use It?
+								</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>
+									&lt;caution&gt;
+								</entry>
+								<entry>
+									This element is unnecessary. Use &lt;important&gt; or &lt;warning&gt;
+								</entry>
+							</row>
+							<row>
+								<entry>
+									&lt;entrytbl&gt;
+								</entry>
+								<entry>
+									Nested tables break PDF generation. Reconsider your data structure.
+								</entry>
+							</row>
+							<row>
+								<entry>
+									&lt;glossdiv&gt;
+								</entry>
+								<entry>
+									This element set imposes English-language order on glossaries, rendering them useless when translated.
+								</entry>
+							</row>
+							<row>
+								<entry>
+									&lt;glosslist&gt;
+								</entry>
+								<entry>
+									This element set imposes English-language order on glossaries, rendering them useless when translated.
+								</entry>
+							</row>
+							<row>
+								<entry>
+									&lt;inlinegraphic&gt;
+								</entry>
+								<entry>
+									This element breaks Section 508 accessibility standards and makes translation extremely difficult.
+								</entry>
+							</row>
+							<row>
+								<entry>
+									&lt;link&gt;
+								</entry>
+								<entry>
+									This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
+								</entry>
+							</row>
+							<row>
+								<entry>
+									&lt;olink&gt;
+								</entry>
+								<entry>
+									This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
+								</entry>
+							</row>
+							<row>
+								<entry>
+									&lt;tip&gt;
+								</entry>
+								<entry>
+									This element is unnecessary. Use &lt;note&gt; or &lt;important&gt;.
+								</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+			<para>
+				In additon to the banned elements, there are two attributes that must not be used anywhere within the XML source:
+			</para>
+			<variablelist>
+				<varlistentry>
+					<term>endterm</term>
+					<listitem>
+						<para>
+							Hides data from translators and, consequently, causes translation errors.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>xreflabel</term>
+					<listitem>
+						<para>
+							Hides data from translators and, consequently, causes translation errors.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+
+	</section>
+	
+	<section>
+		<title>XML Book Components</title>
+		<para>
+			Each book in the UDS is constructed using a standardized structure, to maintain consistency throughout the project. The structure present as of September 2009 follows the Publican Toolchain directory structure. <xref linkend="table-Book-Structure"/> describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide.
+		</para>
+		<table frame="all" id="table-Book-Structure" pgwide="1">
+			<title>Book Components</title>
+			<tgroup cols="3" colsep="1">
+				<colspec align="left" colname="c0" colnum="1"/>
+				<colspec align="left" colname="c1" colnum="2"/>
+				<colspec align="left" colname="c2" colnum="3"/>
+				<thead>
+					<row>
+						<entry align="center">
+							XML Book Component
+						</entry>
+						<entry align="center">
+							Description
+						</entry>
+						<entry>
+							Order of Component in the Book
+						</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+							<filename><replaceable>[Book_Name]</replaceable>.xml</filename>
+						</entry>
+						<entry>
+							Contains the structure of the user guide, represented by xi:include references to each chapter-<replaceable>[Chapter_Name]</replaceable>.xml component, and other mandatory components in this table.
+						</entry>
+						<entry>
+							Top Level (or Parent) component of any user guide.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Book_Info.xml</filename>
+						</entry>
+						<entry>
+							Contains information about the book title, book version number, abstract and copyright information.
+						</entry>
+						<entry>
+							1st Child. This is the opening information a reader will see in the user guide.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Author_Group.xml</filename>
+						</entry>
+						<entry>
+							Contains contact information about the authors that contributed to the content of the book.
+						</entry>
+						<entry>
+							2nd Child. This component is included in the <filename>Book_Info.xml</filename> component.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Preface.xml</filename>
+						</entry>
+						<entry>
+							Contains pre-defined content explaining the typographical standards used in the guide, and other information that will assist the reader with using the guide.
+						</entry>
+						<entry>
+							3rd Child. This component is included after the <filename>Book_Info.xml</filename> content.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename>
+						</entry>
+						<entry>
+							Contains XML markup and content included at a Chapter level in the document. The XML file is named only for human-readability.
+						</entry>
+						<entry>
+							4th. This is the top level element for each chapter in the user guide. The order of these files in the <filename><replaceable>[Book_Name]</replaceable>.xml</filename> file determines the structure of the guide.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>section-<replaceable>[Section_Name]</replaceable>.xml</filename>
+						</entry>
+						<entry>
+							Contains XML markup and content included at a Section level in the document. The XML file is named only for human-readability.
+						</entry>
+						<entry>
+							5th. This component is included in <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename> files by xi:include reference.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Revision History.xml</filename>
+						</entry>
+						<entry>
+							Contains a record of the revisions made to the document over time. Top-level information about changes in the guide are provided to the reader.
+						</entry>
+						<entry>
+							6th.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+		<para>
+			To ensure Maven JDocBook can publish the content generated by the Publican Tool chain, additional XML content is required. Maven JDocBook does not have access to the Publican Tool chain common_content directory. Therefore, the required XML files must be included as xi:fallback references in the <filename>preface.xml</filename> and <filename>book_info.xml</filename> files.
+		</para>
+		<para>
+			The content is contained within XML files in the fallback_content directory of each user guide repository. The fallback_content directory contains copies of the XML files located in the <filename>/usr/share/publican/Common_Content</filename> directory.
+		</para>
+		<note>
+			<title>Fallback Content Accuracy Check</title>
+			<para>
+				The front-matter information located in the fallback_content directory of each user guide repository, is not maintained by the Publican Tool chain Team, or upgraded when Publican updates are installed. Therefore, manually verify that the information contained in these files are kept current with the standards present in the latest Publican Tool chain version.
+			</para>
+		</note>
+		<para>
+			Fallback content is added to each xi:include element that Maven JDocBook does not have access to. The structure described in the following XML sample is for the <filename>Legal_Notice.xml</filename> information in the <filename>Book_Info.xml</filename> file.
+		</para>
+		
+<programlisting role="XML">&lt;!--FOR PUBLICAN --&gt;
+&lt;xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+ href="Common_Content/Legal_Notice.xml"&gt;
+    &lt;!--FOR JDOCBOOK:--&gt;
+    &lt;xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude"&gt;
+        &lt;xi:include href="fallback_content/Legal_Notice.xml"
+         xmlns:xi="http://www.w3.org/2001/XInclude"&gt;&lt;/xi:include&gt;
+    &lt;/xi:fallback&gt;
+&lt;/xi:include&gt;
+</programlisting>
+		<para>
+			The xi:include element can have any number of xi:fallback elements defined. However, in the Mobicents UDS only one fallback is required.
+		</para>
+		<table frame="all" id="table-Maven_JDocBook_Content" pgwide="1">
+			<title>Maven JDocBook Content</title>
+			<tgroup cols="3" colsep="1">
+				<colspec align="left" colname="c0" colnum="1"/>
+				<colspec align="left" colname="c1" colnum="2"/>
+				<colspec align="left" colname="c2" colnum="3"/>
+				<thead>
+					<row>
+						<entry align="center">
+							XML Component
+						</entry>
+						<entry align="center">
+							Description
+						</entry>
+						<entry>
+							Order of Component in the Book
+						</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+							<filename>Conventions.xml</filename>
+						</entry>
+						<entry>
+							Contains typographical standards used within the guide.
+						</entry>
+						<entry>
+							Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Feedback.xml</filename>
+						</entry>
+						<entry>
+							Contains information about how to raise a bug against the JBCP user documentation.
+						</entry>
+						<entry>
+							Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<filename>Legal_Notice.xml</filename>
+						</entry>
+						<entry>
+							Contains standardized Red Hat legal information.
+						</entry>
+						<entry>
+							Inserted by xi:fallback reference at the end of the <filename>Book_Info.xml</filename> file
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+	
+	<section>
+		<title>Maven &amp; JDocBook</title>
+		<section>
+			<title>Maven Variables</title>
+			<para>
+				Througout the UDS, Maven variables are used to substitute values when Maven builds the documentation. The values that are substituted into the documentation by Maven include version numbers, installation paths, and product names. What information is substituted for each variable, largely depends on whether the deliverable is for Mobicents or JBCP.
+			</para>
+			<para>
+				<xref linkend="table-SIP_Presence_Service_Maven_Variables"/> lists the Maven variables used within the SIP Presence Service, and explains what each one represents.
+			</para>
+			<table frame="all" id="table-SIP_Presence_Service_Maven_Variables" pgwide="1">
+				<title>SIP Presence Service Maven Variables</title>
+				<tgroup cols="3" colsep="1">
+					<colspec colname="c1"/>
+					<colspec colname="c2"/>
+					<colspec colname="c3"/>
+					<thead>
+						<row>
+							<entry>
+								Variable Name
+							</entry>
+							<entry>
+								Description
+							</entry>
+							<entry>
+								Substituted Values (if applicable)
+							</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>
+								${platform.name}
+							</entry>
+							<entry>
+								Substitutes the Platform name, based on whether the documentation is being produced for Mobicents or JBCP.
+							</entry>
+							<entry>
+								Mobicents, JBCP
+							</entry>
+						</row>
+						<row>
+							<entry>
+								${bookid}
+							</entry>
+							<entry>
+								Substitutes the Book ID, which is used to populate the book identifier in the preface. The Book ID is necessary for readers to uniquely identify the book when raising documentation tickets.
+							</entry>
+							<entry>
+								doc-<replaceable>[book_name]</replaceable>. For example, <literal>doc-SIP_Servlets_Server_User_Guide</literal>.
+							</entry>
+						</row>
+						<row>
+							<entry>
+								${release.integrated.filename}
+							</entry>
+							<entry>
+								Substitutes the Binary filename for the release, based on the binary file nomenclature for the community and product.
+							</entry>
+							<entry>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								${release.xdms.filename}
+							</entry>
+							<entry>
+								Specific to the XML Document Management Server, the binary file name for the release based on the binary file nomenclature for the community and product.
+							</entry>
+							<entry>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								${version}
+							</entry>
+							<entry>
+								Substitues the product version number for the release. This variable is used to substitute the version numbers in all path names.
+							</entry>
+							<entry>
+							</entry>
+						</row>
+						<row>
+							<entry>
+							</entry>
+							<entry>
+							</entry>
+							<entry>
+							</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+			<!-- SSDP: Adding caveat about the early stages of the Single Source Docs not being fully implemented. --> <note>
+				<para>
+					At this stage, not all book have been "Mavenized". The Single Source Docs Project is in the early stages, and further testing must be undertaken before the strategy is fully realized.
+				</para>
+			</note>
+		</section>
+
 	</section>
 
 </chapter>
@@ -1528,15 +1810,20 @@ public class ExClient
 				If you are editing XML using a basic text editing program, this automation may not exist. You must manually insert symbol entities when you need to insert a keyboard symbol (commonly) or non-keyboard symbols (copyright, etc).
 			</para>
 			<para>
-				The most common symbol entities that will break XML publishing are listed for reference. The entities have a deliberate space after the &amp;, so that they are not resolved when this guide is published. Remove the space between the &amp; and symbol entity declaration when using them.
+				The most common symbol entities that will break XML publishing are listed for reference.
 			</para>
+			<note>
+				<para>
+					The entities have a deliberate space after the &amp;, so that they are not resolved when this guide is published. Remove the space between the &amp; and symbol entity declaration when using them.
+				</para>
+			</note>
 			<para>
 				<variablelist>
 					<varlistentry>
 						<term>&amp; lt;</term>
 						<listitem>
 							<para>
-								Inserts a left angle bracket "&lt;" symbol. The left angle bracket is used to begin all XML elements, therefore the parser will assume that the text directly proceeding the symbol is a DocBook XML element. This will cause the publish to fail. Use this symbol entity when writing menu paths, referring to XML elements within &lt;para&gt; or other CDATA tags, or within XML code samples.
+								Inserts a left angle bracket "&lt;" symbol. The left angle bracket is used to open all XML elements, therefore the parser will assume that the text directly proceeding the symbol is a DocBook XML element. This will cause the publish to fail. Use this symbol entity when writing menu paths, referring to XML elements within &lt;para&gt; or other CDATA tags, or within XML code samples.
 							</para>
 						</listitem>
 					</varlistentry>
@@ -1736,128 +2023,13 @@ public class ExClient
 			Sometimes XML structure errors can still creep into the document you're working on. It may not be your fault, but you may be required to correct the errors before your user guide can be published.
 		</para>
 		<para>
-			Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you're using. By doing this, structure errors that occur between chapterS or sections are easily identified.
+			Often, the easiest way to diagnose a structure error is to assemble all the chapters and sections into one large file, and open this up in an alternative validation tool to the one you're using. By doing this, structure errors that occur between chapters or sections are easily identified.
+		</para>
+		<para>
+			If you are using a Linux distribution such as Fedora or Red Hat Enterprise Linux, you can use the mkbk bash script to create the all-*.xml file. The mkbk script is capable of publishing this user guide, and selected community documentation guides that haven't been fully Mavenized.
 		</para>
 	</section>
 
-</chapter>
-	<chapter id="pam-Publican_and_Maven" lang="en-US">
-	<title>Publican and Maven</title>
-	<para>
-		The Mobicents community documentation is authored using XML DocBook 4.5. Because the XML content is also used to produce the JBCP product documentation, certain XML elements must not be used because the Publican Toolchain restricts some elements when validating content.
-	</para>
-	<para>
-		If Publican is installed on your system, execute <userinput>xmlClean --banned</userinput> in a terminal to view the banned elements.
-	</para>
-	<para>
-		If Publican is not available on your system, the list of elements and the reasons why they are banned is explained in <xref linkend="table-fpxe-Forbidden_Publican_XML_Elements"/>.
-	</para>
-	<para>
-		<table frame="all" id="table-fpxe-Forbidden_Publican_XML_Elements" pgwide="1">
-			<title>Forbidden Publican XML Elements</title>
-			<tgroup cols="2" colsep="1">
-				<colspec colname="c1"/>
-				<colspec colname="c2"/>
-				<thead>
-					<row>
-						<entry>
-							Banned XML Element
-						</entry>
-						<entry>
-							Why Can't I Use It?
-						</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>
-							&lt;caution&gt;
-						</entry>
-						<entry>
-							This element is unnecessary. Use &lt;important&gt; or &lt;warning&gt;
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;entrytbl&gt;
-						</entry>
-						<entry>
-							Nested tables break PDF generation. Reconsider your data structure.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;glossdiv&gt;
-						</entry>
-						<entry>
-							This element set imposes English-language order on glossaries, rendering them useless when translated.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;glosslist&gt;
-						</entry>
-						<entry>
-							This element set imposes English-language order on glossaries, rendering them useless when translated.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;inlinegraphic&gt;
-						</entry>
-						<entry>
-							This element breaks Section 508 accessibility standards and makes translation extremely difficult.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;link&gt;
-						</entry>
-						<entry>
-							This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;olink&gt;
-						</entry>
-						<entry>
-							This element is undesirable. Use &lt;xref&gt; for internal links and &lt;ulink&gt; for external links.
-						</entry>
-					</row>
-					<row>
-						<entry>
-							&lt;tip&gt;
-						</entry>
-						<entry>
-							This element is unnecessary. Use &lt;note&gt; or &lt;important&gt;.
-						</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</table>
-	</para>
-	<para>
-		In additon to the banned elements, there are two attributes that must not be used anywhere within the XML source:
-	</para>
-	<variablelist>
-		<varlistentry>
-			<term>endterm</term>
-			<listitem>
-				<para>
-					Hides data from translators and, consequently, causes translation errors.
-				</para>
-			</listitem>
-		</varlistentry>
-		<varlistentry>
-			<term>xreflabel</term>
-			<listitem>
-				<para>
-					Hides data from translators and, consequently, causes translation errors.
-				</para>
-			</listitem>
-		</varlistentry>
-	</variablelist>
 </chapter>
 	<chapter id="ap-Authoring_Procedures" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Authoring Procedures</title>
@@ -2230,7 +2402,7 @@ public class ExClient
 									It is easy to make XML structure errors if you are not using an XML Editing program that controls structure for you. Regularly validating your content will identify structure issues early. You will have a better idea about what section might contain the error, based on what section you have recently edited.
 								</para>
 								<para>
-									If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven"/> for troubleshooting information. If you are not using Publican, then you must find another way to validate your content.
+									If your XML does not validate, refer to <xref linkend="pam-Publican_and_Maven"/> for troubleshooting information. If you are not using Publican or a Linux distribution, then you must find another way to validate your content.
 								</para>
 							</listitem>
 						</varlistentry>
@@ -2281,7 +2453,7 @@ public class ExClient
 				<step>
 					<title>Commit Changes to GCode SVN</title>
 					<para>
-						Commit structurally valid XML back into the GCode SVN regularly throughout the day.
+						Commit <emphasis>structurally valid</emphasis> XML back into the GCode SVN regularly throughout the day.
 					</para>
 					<para>
 						For each commit, make a note of the SVN commit number so it can be added to the GCode Ticket when you update the ticket with your progress.

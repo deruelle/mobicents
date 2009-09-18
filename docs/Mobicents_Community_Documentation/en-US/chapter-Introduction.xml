@@ -14,16 +14,16 @@
     <para>The documentation suite evolved to a point where the Mobicents Community Project team expressed interest in self-managing the community documentation, and hosting it on the  GCode SVN repository.  This decision simplified the way the team controlled the versioning of user guide content, and allowed the documentation to be branched when the development cycle dictated.  It also assisted the Red Hat Technical Writers in developing the product documentation for the JBoss Communication Platform.</para>
     <formalpara>
       <title>Current UDS Status</title>
-      <para>Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to internal Red Hat customers.  The  Mobicents UDS forms the backbone of the JBCP Product Documentation.  The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.</para>
+      <para>Red Hat has productized the community project, and ships the JBoss Communications Platform (JBCP) to  Red Hat customers.  The  Mobicents UDS forms the backbone of the JBCP Product Documentation.  The community project and the Red Hat writers work closely to ensure the correct information appears in the Product User Documentation.</para>
     </formalpara>
   </section>
   <section>
     <title>The Mobicents Team</title>
     <para>The Mobicents team is comprised of a   geographically dispersed group of contributors.  </para>
     <para>In some cases, team members are responsible for a number of projects within the Mobicents ecosystem.  </para>
-    <table frame="all" id="A0A795D5" pgwide="1">
+    <table frame="all" pgwide="1" id="A0A795D5">
       <title>Mobicents Team Members Role</title>
-      <tgroup colsep="1" cols="4">
+      <tgroup cols="4" colsep="1">
         <colspec colname="c1"/>
         <colspec colname="c2"/>
         <colspec colname="c3"/>
@@ -40,7 +40,7 @@
           <row>
             <entry>Ivelin Ivanov</entry>
             <entry>Austin, Texas</entry>
-            <entry>Project Manager and Founder</entry>
+            <entry>Development Manager and Founder</entry>
             <entry>
               <email>iivanov@redhat.com</email>
               <email>ivelin.atanasoff.ivanov@gmail.com</email>
@@ -112,7 +112,7 @@
           <row>
             <entry>Bartosz Baranowski</entry>
             <entry>Warsaw, Poland</entry>
-            <entry>Media Server Developer</entry>
+            <entry>Media Server Developer, Diameter Developer</entry>
             <entry>
               <email>baranowb@gmail.com</email>
               <email>bbaranow@redhat.com</email>
@@ -126,8 +126,88 @@
               <email>pslegr@redhat.com</email>
             </entry>
           </row>
+          <row>
+            <entry>Rob Cardwell</entry>
+            <entry>McLean, VA, USA</entry>
+            <entry>Program Manager</entry>
+            <entry>
+              <email>rcardwel@redhat.com</email>
+            </entry>
+          </row>
+          <row>
+            <entry> Mr Vicky Kak</entry>
+            <entry>India</entry>
+            <entry>JBCP Product Support</entry>
+            <entry>
+              <email>vkak@redhat.com</email>
+            </entry>
+          </row>
         </tbody>
       </tgroup>
     </table>
+  </section>
+  <section>
+    <title>Meetings and Communication</title>
+    <para>  Because the team is so geographically dispersed, some challenges can exist when trying to communicate with the different server teams.  To ensure that you have the best chance of obtaining the information you require, a number of different methods exist to reach out to the development team.</para>
+    <section>
+      <title>IRC Channels</title>
+      <para>Internet Relay Chat (IRC) is used extensively throughout many JBoss projects as an effective communication tool;  Mobicents is no exception.  The main server the developers use is through the codehaus.org IRC server.  The required information to connect to this server is listed for reference:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Server name = irc.codehaus.org</para>
+        </listitem>
+        <listitem>
+          <para>Room name = #mobicents</para>
+        </listitem>
+        <listitem>
+          <para>Password = no password is required for this server.</para>
+        </listitem>
+      </itemizedlist>
+      <para>Depending on the connection load  of the codehaus.org server (which serves multiple projects and rooms), the team may have to switch over to the java chat freenode.net server.  The freenode.net server offers a java IRC interface which requires no IRC client configuration.  The address for this service is <ulink url="http://java.freenode.net//index.php?channel=mobicents. ">http://java.freenode.net//index.php?channel=mobicents</ulink>.  If you want to use the IRC service through an IRC Chat client (such as XChat, or Pidgin), you will need the following information to connect to the server:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Server name = niven.freenode.net</para>
+        </listitem>
+        <listitem>
+          <para>Room name = #mobicents</para>
+        </listitem>
+        <listitem>
+          <para>Password = no password is required for this server.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+    <section>
+      <title>Team Meetings</title>
+      <para>The entire Mobicents Development Team meet weekly to discuss Mobicents and JBCP issues.  The meeting time is Wednesday 15:30 UTC.   </para>
+      <para>The meetings are held in the Codehaus IRC #mobicents room  (depending on the number of connections available).  If irc.codehaus.org is busy, the meetings take place on the Freenode #mobicents room.  The team will post a notification in the Codehaus  room if the meeting location is relocated. </para>
+    </section>
+    <section>
+      <title>Email Correspondence</title>
+      <para>Keep emails   as short, and concise, as possible.  Past experience, and direct feedback from the team, indicates that it is much easier for the developers to quickly scan an email for relevance to them if received in this format.  </para>
+      <para>If you know the question relates to a server team, or individual, it is highly recommended that you send the email directly to them, and carbon copy the Red Hat JBCP email list (jbcp-dev@redhat.com), so the rest of the team is informed.</para>
+      <para>If an answer is required to your email, make it clear that you expect a response.   It can be effective to put  &quot;Feedback Required&quot; in the subject line to flag the email to developers.  </para>
+      <para>For Red Hat related issues, such as product documentation or strategic planning discussions, all correspondence must be routed through Red Hat email accounts.  </para>
+    </section>
+    <section>
+      <title>Forums</title>
+      <para>There are two Google Group forums that are monitored by the Mobicents Developers:</para>
+      <itemizedlist>
+        <listitem>
+          <para><ulink url="http://groups.google.com/group/mobicents-public">mobicents-public</ulink></para>
+        </listitem>
+        <listitem>
+          <para><ulink url="http://groups.google.com/group/mobicents-core">mobicents-core</ulink></para>
+        </listitem>
+      </itemizedlist>
+      <para>Both forums use a G-mail account for access.  It is recommended that you create a new G-mail account for the sole purpose of accessing the Mobicents forums.  If you subscribe to the daily digests or emails, the email traffic is excessive.</para>
+      <formalpara>
+        <title>mobicents-public</title>
+        <para>This high-traffic forum is the publicly accessible forum,  used by the community to ask questions about configuring the platform.  Often, discussion threads from mobicents-public will be used as a development barometer for new feature priorities and bug fix priorities.  The Mobicents Team Meeting logs are posted to this forum so the community is informed about the project happenings.</para>
+       </formalpara>
+      <formalpara>
+        <title>mobicents-core</title>
+        <para>This forum is a membership-only forum, for the exclusive use of Mobicents developers and vetted individuals (such as Red Hat Content Authors).  The forum is used to discuss private project-related issues not suitable for public consumption. You must submit an application to get access to the forum.  </para>
+      </formalpara>
+    </section>
   </section>
 </chapter>
