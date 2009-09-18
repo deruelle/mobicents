@@ -12,8 +12,10 @@ import java.util.Arrays;
 
 
 import org.mobicents.ss7.isup.message.CircuitGroupBlockingMessage;
+import org.mobicents.ss7.isup.message.CircuitGroupQueryResponseMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupResetAckMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupResetMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.*;
 
 
@@ -26,50 +28,11 @@ import org.mobicents.ss7.isup.message.parameter.*;
  */
 public class GRATest extends MessageHarness {
 	
-	public void testOne() throws Exception
-	{
-
-		byte[] message={
-
-				CircuitGroupResetAckMessage._MESSAGE_CODE_GRA
-
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-				
-		};
-
-		//CircuitGroupResetAckMessage grs=new CircuitGroupResetAckMessageImpl(this,message);
-		CircuitGroupResetAckMessage grs=super.messageFactory.createGRA();
-		grs.decodeElement(message);
-		byte[] encodedBody = grs.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
+	
 	
 	public void testTwo_Params() throws Exception
 	{
-		byte[] message={
-
-				CircuitGroupResetAckMessage._MESSAGE_CODE_GRA
-
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-				
-		};
+		byte[] message = getDefaultBody();
 
 		//CircuitGroupResetAckMessage grs=new CircuitGroupResetAckMessageImpl(this,message);
 		CircuitGroupResetAckMessage grs=super.messageFactory.createGRA();
@@ -105,6 +68,33 @@ public class GRATest extends MessageHarness {
 			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
 		
+	}
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
+		byte[] message={
+
+				0x0C
+				,(byte) 0x0B
+				,CircuitGroupResetAckMessage._MESSAGE_CODE_GRA
+
+				,0x01 // ptr to variable part
+				//no optional, so no pointer
+				//RangeAndStatus._PARAMETER_CODE
+				,0x05
+				,0x01
+				,0x02
+				,0x03
+				,0x04
+				,0x05
+				
+		};
+
+		return message;
+	}
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createGRA();
 	}
 	
 }

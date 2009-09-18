@@ -12,7 +12,9 @@ import java.util.Arrays;
 
 
 import org.mobicents.ss7.isup.message.CircuitGroupBlockingMessage;
+import org.mobicents.ss7.isup.message.CircuitGroupResetAckMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupResetMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.*;
 
 
@@ -25,42 +27,11 @@ import org.mobicents.ss7.isup.message.parameter.*;
  */
 public class GRSTest extends MessageHarness {
 	
-	public void testOne() throws Exception
-	{
-
-		byte[] message={
-
-				CircuitGroupResetMessage._MESSAGE_CODE_GRS
-
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x01
-				,0x01
-				
-		};
-
-		//CircuitGroupResetMessage grs=new CircuitGroupResetMessageImpl(this,message);
-		CircuitGroupResetMessage grs=super.messageFactory.createGRS();
-		grs.decodeElement(message);
-		byte[] encodedBody = grs.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
+	
 	
 	public void testTwo_Params() throws Exception
 	{
-		byte[] message={
-
-				CircuitGroupResetMessage._MESSAGE_CODE_GRS
-
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x01
-				,0x01
-				
-		};
+		byte[] message = getDefaultBody();
 
 		//CircuitGroupResetMessage grs=new CircuitGroupResetMessageImpl(this,message);
 		CircuitGroupResetMessage grs=super.messageFactory.createGRS();
@@ -84,5 +55,27 @@ public class GRSTest extends MessageHarness {
 		}
 		
 	}
-	
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
+		byte[] message={
+
+				0x0C
+				,(byte) 0x0B
+				,CircuitGroupResetMessage._MESSAGE_CODE_GRS
+
+				,0x01 // ptr to variable part
+				//no optional, so no pointer
+				//RangeAndStatus._PARAMETER_CODE
+				,0x01
+				,0x01
+				
+		};
+
+		return message;
+	}
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createGRS();
+	}
 }

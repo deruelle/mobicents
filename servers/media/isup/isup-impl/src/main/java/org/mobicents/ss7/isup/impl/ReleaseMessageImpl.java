@@ -15,6 +15,7 @@ import org.mobicents.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.ss7.isup.impl.message.parameter.AccessDeliveryInformationImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.AutomaticCongestionLevelImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
+import org.mobicents.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.DisplayInformationImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.HTRInformationImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.MessageTypeImpl;
@@ -110,17 +111,33 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 		int localIndex = index;
 
-		if (b.length - index > 1) {
+		if (b.length - index > 2) {
 
-			// Message Type
-			if (b[index] != this._MESSAGE_CODE_REL) {
-				throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_REL);
+			try {
+				byte[] cic = new byte[2];
+				cic[0] = b[index++];
+				cic[1] = b[index++];
+				super.cic = new CircuitIdentificationCodeImpl();
+				super.cic.decodeElement(cic);
+
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
+			}
+			try {
+				// Message Type
+				if (b[index] != this._MESSAGE_CODE_REL) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_REL);
+				}
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
 			}
 			index++;
 
 			return index - localIndex;
 		} else {
-			throw new ParameterRangeInvalidException("byte[] must have atleast one octet");
+			throw new ParameterRangeInvalidException("byte[] must have atleast three octets");
 		}
 	}
 

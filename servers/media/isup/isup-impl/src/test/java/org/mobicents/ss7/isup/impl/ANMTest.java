@@ -4,8 +4,10 @@ import java.util.Arrays;
 
 
 import org.mobicents.ss7.isup.message.AnswerMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.ss7.isup.message.parameter.CallReference;
+import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.ss7.isup.message.parameter.ServiceActivation;
 
 /**
@@ -18,107 +20,11 @@ import org.mobicents.ss7.isup.message.parameter.ServiceActivation;
 public class ANMTest extends MessageHarness {
 
 	
-	public void testOne() throws Exception
-	{
-		//FIXME: for now we strip MTP part
-		byte[] message={
-//				(byte) 0x9B 
-//				,(byte) 0xE6
-//				,0x13
-//				,(byte) 0xC5
-//				,0x00
-//				,(byte) 0xB7 
-//				,(byte) 0xD1 
-//				,(byte) 0x8D 
-//				,0x08 
-//				,0x00, 
-				AnswerMessage._MESSAGE_CODE_ANM
-				//No mandatory varaible part, no ptr
-				,0x01 // ptr to optional part
-				
-				
-				//Call reference
-				,0x01
-				,0x05
-				,0x01
-				,0x01
-				,0x01
-				,(byte)0xDE
-				,0x01
-				//ServiceActivation
-				,0x33
-				,0x07
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-				,0x06
-				,0x07
-				
-				
-				
-				
-				//End of optional part
-				,0x0
 
-				
-
-		};
-
-		//AnswerMessageImpl ANM=new AnswerMessageImpl(this,message);
-		AnswerMessage ANM=super.messageFactory.createANM();
-		ANM.decodeElement(message);
-		byte[] encodedBody = ANM.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
 	
 	public void testTwo_Params() throws Exception
 	{
-		//FIXME: for now we strip MTP part
-		byte[] message={
-//				(byte) 0x9B 
-//				,(byte) 0xE6
-//				,0x13
-//				,(byte) 0xC5
-//				,0x00
-//				,(byte) 0xB7 
-//				,(byte) 0xD1 
-//				,(byte) 0x8D 
-//				,0x08 
-//				,0x00, 
-				AnswerMessage._MESSAGE_CODE_ANM
-				//No mandatory varaible part, no ptr
-				,0x01 // ptr to optional part
-				
-				
-				//Call reference
-				,0x01
-				,0x05
-				,0x01
-				,0x01
-				,0x01
-				,(byte)0xDE
-				,0x01
-				//ServiceActivation
-				,0x33
-				,0x07
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-				,0x06
-				,0x07
-				
-				
-				
-				
-				//End of optional part
-				,0x0
-
-		};
+		byte[] message = getDefaultBody();
 
 		//AnswerMessageImpl ANM=new AnswerMessageImpl(this,message);
 		AnswerMessage ANM=super.messageFactory.createANM();
@@ -164,13 +70,52 @@ public class ANMTest extends MessageHarness {
 			e.printStackTrace();
 			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
-		
+
 	}
-	public static void main(String[] args)
-	{
-		System.err.println( ((0x01 & 0x3F)<<8) | (0xDE & 0xFF));
-		System.err.println( ((0x01 & 0x3F)<<16) | ((0x01 & 0xFF)<<8)  |(0x01 & 0xFF));
-		
-		
+	@Override
+	protected byte[] getDefaultBody() {
+		byte[] message={
+
+				0x0C
+				,(byte) 0x0B
+				,AnswerMessage._MESSAGE_CODE_ANM
+				//No mandatory varaible part, no ptr
+				,0x01 // ptr to optional part
+				
+				
+				//Call reference
+				,0x01
+				,0x05
+				,0x01
+				,0x01
+				,0x01
+				,(byte)0xDE
+				,0x01
+				//ServiceActivation
+				,0x33
+				,0x07
+				,0x01
+				,0x02
+				,0x03
+				,0x04
+				,0x05
+				,0x06
+				,0x07
+				
+				
+				
+				
+				//End of optional part
+				,0x0
+
+				
+
+		};
+		return message;
+	}
+
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createANM();
 	}
 }

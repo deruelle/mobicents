@@ -10,7 +10,9 @@ package org.mobicents.ss7.isup.impl;
 import java.util.Arrays;
 
 import org.mobicents.ss7.isup.impl.ReleaseMessageImpl;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.ReleaseMessage;
+import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 
 /**
  * Start time:15:07:07 2009-07-17<br>
@@ -20,21 +22,16 @@ import org.mobicents.ss7.isup.message.ReleaseMessage;
  */
 public class RELTest extends MessageHarness{
 
-	public void testOne() throws Exception
-	{
+
+	
+	@Override
+	protected byte[] getDefaultBody() {
 		//FIXME: for now we strip MTP part
 		byte[] message={
-				//9F,
-				//EB,
-				//0D,
-				//C5,
-				//00,
-				//B7,
-				//D1,
-				//8D,
-				//08,
-				//00,
-				0x0C,
+				
+				0x0C
+				,(byte) 0x0B
+				,0x0C,
 				0x02,
 				0x00,
 				0x02,
@@ -44,12 +41,10 @@ public class RELTest extends MessageHarness{
 
 		};
 
-		//ReleaseMessage iam=new ReleaseMessageImpl(this,message);
-		ReleaseMessage iam=super.messageFactory.createREL();
-		iam.decodeElement(message);
-		byte[] encodedBody = iam.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
+		return message;
 	}
-	
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createREL();
+	}
 }

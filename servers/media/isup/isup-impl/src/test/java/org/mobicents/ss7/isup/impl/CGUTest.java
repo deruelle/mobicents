@@ -12,7 +12,9 @@ import java.util.Arrays;
 
 
 import org.mobicents.ss7.isup.message.CircuitGroupBlockingMessage;
+import org.mobicents.ss7.isup.message.CircuitGroupUnblockingAckMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupUnblockingMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.*;
 
 
@@ -25,51 +27,11 @@ import org.mobicents.ss7.isup.message.parameter.*;
  */
 public class CGUTest extends MessageHarness {
 	
-	public void testOne() throws Exception
-	{
 
-		byte[] message={
-
-				CircuitGroupUnblockingMessage._MESSAGE_CODE_CGU
-				//Circuit group supervision message type
-				,0x01 // hardware failure oriented
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-		};
-
-		//CircuitGroupUnblockingMessage cgb=new CircuitGroupUnblockingMessageImpl(this,message);
-		CircuitGroupUnblockingMessage cgb=super.messageFactory.createCGU();
-		cgb.decodeElement(message);
-		byte[] encodedBody = cgb.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
 	
 	public void testTwo_Params() throws Exception
 	{
-		//FIXME: for now we strip MTP part
-		byte[] message={
-				CircuitGroupUnblockingMessage._MESSAGE_CODE_CGU
-				//Circuit group supervision message type
-				,0x01 // hardware failure oriented
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-
-		};
+		byte[] message = getDefaultBody();
 
 		//CircuitGroupUnblockingMessage cgb=new CircuitGroupUnblockingMessageImpl(this,message);
 		CircuitGroupUnblockingMessage cgb=super.messageFactory.createCGU();
@@ -106,5 +68,31 @@ public class CGUTest extends MessageHarness {
 		}
 		
 	}
-	
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
+		byte[] message={
+
+				0x0C
+				,(byte) 0x0B
+				,CircuitGroupUnblockingMessage._MESSAGE_CODE_CGU
+				//Circuit group supervision message type
+				,0x01 // hardware failure oriented
+				,0x01 // ptr to variable part
+				//no optional, so no pointer
+				//RangeAndStatus._PARAMETER_CODE
+				,0x05
+				,0x01
+				,0x02
+				,0x03
+				,0x04
+				,0x05
+		};
+		return message;
+	}
+
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createCGU();
+	}
 }

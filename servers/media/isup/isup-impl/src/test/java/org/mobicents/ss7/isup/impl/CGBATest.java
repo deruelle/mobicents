@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import org.mobicents.ss7.isup.message.CircuitGroupBlockingAckMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupBlockingMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.*;
 
 
@@ -25,51 +26,11 @@ import org.mobicents.ss7.isup.message.parameter.*;
  */
 public class CGBATest extends MessageHarness {
 	
-	public void testOne() throws Exception
-	{
 
-		byte[] message={
-
-				CircuitGroupBlockingAckMessage._MESSAGE_CODE_CGBA
-				//Circuit group supervision message type
-				,0x01 // hardware failure oriented
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-		};
-
-		//CircuitGroupBlockingAckMessage cgb=new CircuitGroupBlockingAckMessageImpl(this,message);
-		CircuitGroupBlockingAckMessage cgb=super.messageFactory.createCGBA();
-		cgb.decodeElement(message);
-		byte[] encodedBody = cgb.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
 	
 	public void testTwo_Params() throws Exception
 	{
-		//FIXME: for now we strip MTP part
-		byte[] message={
-				CircuitGroupBlockingAckMessage._MESSAGE_CODE_CGBA
-				//Circuit group supervision message type
-				,0x01 // hardware failure oriented
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-
-		};
+		byte[] message = getDefaultBody();
 
 		CircuitGroupBlockingAckMessage cgb=super.messageFactory.createCGBA();
 		cgb.decodeElement(message);
@@ -103,7 +64,32 @@ public class CGBATest extends MessageHarness {
 			e.printStackTrace();
 			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
-		
-	}
 	
+	}
+	@Override
+	protected byte[] getDefaultBody() {
+		byte[] message={
+
+				0x0C
+				,(byte) 0x0B
+				,CircuitGroupBlockingAckMessage._MESSAGE_CODE_CGBA
+				//Circuit group supervision message type
+				,0x01 // hardware failure oriented
+				,0x01 // ptr to variable part
+				//no optional, so no pointer
+				//RangeAndStatus._PARAMETER_CODE
+				,0x05
+				,0x01
+				,0x02
+				,0x03
+				,0x04
+				,0x05
+		};
+		return message;
+	}
+
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createCGBA();
+	}
 }

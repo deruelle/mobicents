@@ -12,7 +12,10 @@ import java.util.Arrays;
 import org.mobicents.ss7.isup.impl.InitialAddressMessageImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.EndOfOptionalParametersImpl;
 import org.mobicents.ss7.isup.message.CallProgressMessage;
+import org.mobicents.ss7.isup.message.CircuitGroupUnblockingMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.BackwardCallIndicators;
+import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.ss7.isup.message.parameter.ConnectedNumber;
 import org.mobicents.ss7.isup.message.parameter.EventInformation;
 import org.mobicents.ss7.isup.message.parameter.TransmissionMediumUsed;
@@ -25,87 +28,10 @@ import org.mobicents.ss7.isup.message.parameter.TransmissionMediumUsed;
  */
 public class CPGTest extends MessageHarness{
 
-	public void testOne() throws Exception
-	{
-		//FIXME: for now we strip MTP part
-		byte[] message={
-				CallProgressMessage._MESSAGE_CODE_CPG
-				//EventInformation
-				,0x02
-				//no mandatory varialbe part, no pointer
-				//pointer to optioanl part
-				,0x01
-				
-				//backward call idnicators
-				,BackwardCallIndicators._PARAMETER_CODE
-				,0x02
-				,0x02
-				,0x03
-				
-				//TransmissionMedium Used
-				,TransmissionMediumUsed._PARAMETER_CODE
-				,0x01
-				,0x03
-				
-				//Connected Number
-				,ConnectedNumber._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x4B
-				,(byte) (0x83&0xFF)
-				,0x60
-				,0x38
-				
-				
-				//End of Opt Part
-				,0x00
 
-		};
-
-		//CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
-		CallProgressMessage cpg=super.messageFactory.createCPG();
-		cpg.decodeElement(message);
-		byte[] encodedBody = cpg.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
-	
 	public void testTwo_Parameters() throws Exception
 	{
-		//FIXME: for now we strip MTP part
-		byte[] message={
-				CallProgressMessage._MESSAGE_CODE_CPG
-				//EventInformation
-				,0x02
-				//no mandatory varialbe part, no pointer
-				//pointer to optioanl part
-				,0x01
-				
-				//backward call idnicators
-				,BackwardCallIndicators._PARAMETER_CODE
-				,0x02
-				,(byte) 0xA6
-				,(byte) 0x9D
-				
-				//TransmissionMedium Used
-				,TransmissionMediumUsed._PARAMETER_CODE
-				,0x01
-				,0x03
-				
-				//Connected Number
-				,ConnectedNumber._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x4B
-				,(byte) (0x83&0xFF)
-				,0x60
-				,0x38
-				
-				
-				//End of Opt Part
-				,0x00
-
-		};
+		byte[] message = getDefaultBody();
 
 		//CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
 		CallProgressMessage cpg=super.messageFactory.createCPG();
@@ -147,5 +73,53 @@ public class CPGTest extends MessageHarness{
 		assertEquals("ConnectedNumber value getScreeningIndicator  does not match:",cn._SI_NETWORK_PROVIDED,cn.getScreeningIndicator(),cn._SI_NETWORK_PROVIDED);
 		assertEquals("ConnectedNumber value getAddress  does not match:","380683",cn.getAddress());
 		
+		
+		
+	}
+	
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
+		byte[] message={
+				0x0C
+				,(byte) 0x0B
+				,CallProgressMessage._MESSAGE_CODE_CPG
+				//EventInformation
+				,0x02
+				//no mandatory varialbe part, no pointer
+				//pointer to optioanl part
+				,0x01
+				
+				//backward call idnicators
+				,BackwardCallIndicators._PARAMETER_CODE
+				,0x02
+				,(byte) 0xA6
+				,(byte) 0x9D
+				
+				//TransmissionMedium Used
+				,TransmissionMediumUsed._PARAMETER_CODE
+				,0x01
+				,0x03
+				
+				//Connected Number
+				,ConnectedNumber._PARAMETER_CODE
+				,0x05
+				,0x01
+				,0x4B
+				,(byte) (0x83&0xFF)
+				,0x60
+				,0x38
+				
+				
+				//End of Opt Part
+				,0x00
+
+		};
+		return message;
+	}
+
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createCPG();
 	}
 }

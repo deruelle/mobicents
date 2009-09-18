@@ -11,7 +11,9 @@ package org.mobicents.ss7.isup.impl;
 import java.util.Arrays;
 
 
+import org.mobicents.ss7.isup.message.CircuitGroupBlockingAckMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupBlockingMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.*;
 
 
@@ -24,38 +26,15 @@ import org.mobicents.ss7.isup.message.parameter.*;
  */
 public class CGBTest extends MessageHarness {
 	
-	public void testOne() throws Exception
-	{
-
-		byte[] message={
-
-				CircuitGroupBlockingMessage._MESSAGE_CODE_CGB
-				//Circuit group supervision message type
-				,0x01 // hardware failure oriented
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-		};
-
-		//CircuitGroupBlockingMessage cgb=new CircuitGroupBlockingMessageImpl(this,message);
-		CircuitGroupBlockingMessage cgb=super.messageFactory.createCGB();
-		cgb.decodeElement(message);
-		byte[] encodedBody = cgb.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
+	
 	
 	public void testTwo_Params() throws Exception
 	{
 		//FIXME: for now we strip MTP part
 		byte[] message={
-				CircuitGroupBlockingMessage._MESSAGE_CODE_CGB
+				0x0C
+				,(byte) 0x0B
+				,CircuitGroupBlockingMessage._MESSAGE_CODE_CGB
 				//Circuit group supervision message type
 				,0x01 // hardware failure oriented
 				,0x01 // ptr to variable part
@@ -105,5 +84,31 @@ public class CGBTest extends MessageHarness {
 		}
 		
 	}
-	
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
+		byte[] message={
+				0x0C
+				,(byte) 0x0B
+				,CircuitGroupBlockingMessage._MESSAGE_CODE_CGB
+				//Circuit group supervision message type
+				,0x01 // hardware failure oriented
+				,0x01 // ptr to variable part
+				//no optional, so no pointer
+				//RangeAndStatus._PARAMETER_CODE
+				,0x05
+				,0x01
+				,0x02
+				,0x03
+				,0x04
+				,0x05
+
+		};
+		return message;
+	}
+
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createCGB();
+	}
 }

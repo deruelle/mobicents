@@ -14,6 +14,7 @@ import java.util.Arrays;
 import org.mobicents.ss7.isup.message.CircuitGroupBlockingMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupUnblockingAckMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupUnblockingMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.*;
 
 
@@ -26,51 +27,10 @@ import org.mobicents.ss7.isup.message.parameter.*;
  */
 public class CGUATest extends MessageHarness {
 	
-	public void testOne() throws Exception
-	{
-
-		byte[] message={
-
-				CircuitGroupUnblockingAckMessage._MESSAGE_CODE_CGUA
-				//Circuit group supervision message type
-				,0x01 // hardware failure oriented
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-		};
-
-		//CircuitGroupUnblockingAckMessage cgb=new CircuitGroupUnblockingAckMessageImpl(this,message);
-		CircuitGroupUnblockingAckMessage cgb=super.messageFactory.createCGUA();
-		cgb.decodeElement(message);
-		byte[] encodedBody = cgb.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
 	
 	public void testTwo_Params() throws Exception
 	{
-		//FIXME: for now we strip MTP part
-		byte[] message={
-				CircuitGroupUnblockingAckMessage._MESSAGE_CODE_CGUA
-				//Circuit group supervision message type
-				,0x01 // hardware failure oriented
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x05
-				,0x01
-				,0x02
-				,0x03
-				,0x04
-				,0x05
-
-		};
+		byte[] message = getDefaultBody();
 
 		//CircuitGroupUnblockingAckMessage cgb=new CircuitGroupUnblockingAckMessageImpl(this,message);
 		CircuitGroupUnblockingAckMessage cgb=super.messageFactory.createCGUA();
@@ -107,5 +67,31 @@ public class CGUATest extends MessageHarness {
 		}
 		
 	}
-	
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
+		byte[] message={
+
+				0x0C
+				,(byte) 0x0B
+				,CircuitGroupUnblockingAckMessage._MESSAGE_CODE_CGUA
+				//Circuit group supervision message type
+				,0x01 // hardware failure oriented
+				,0x01 // ptr to variable part
+				//no optional, so no pointer
+				//RangeAndStatus._PARAMETER_CODE
+				,0x05
+				,0x01
+				,0x02
+				,0x03
+				,0x04
+				,0x05
+		};
+		return message;
+	}
+
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createCGUA();
+	}
 }

@@ -21,6 +21,7 @@ import org.mobicents.ss7.isup.message.ResetCircuitMessage;
 import org.mobicents.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.ss7.isup.message.UnblockingMessage;
 import org.mobicents.ss7.isup.message.UnequippedCICMessage;
+import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 
 /**
  * Start time:15:07:07 2009-07-17<br>
@@ -30,21 +31,24 @@ import org.mobicents.ss7.isup.message.UnequippedCICMessage;
  */
 public class UCICTest extends MessageHarness{
 
-	public void testOne() throws Exception
-	{
 	
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
 		byte[] message={
-	
-				UnequippedCICMessage._MESSAGE_CODE_UCIC
+				
+				0x0C
+				,(byte) 0x0B
+				,UnequippedCICMessage._MESSAGE_CODE_UCIC
 
 		};
 
-		
-		UnequippedCICMessage bla=super.messageFactory.createUCIC();
-		bla.decodeElement(message);
-		byte[] encodedBody = bla.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
+
+
+		return message;
 	}
-	
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createUCIC();
+	}
 }

@@ -13,9 +13,11 @@ import org.mobicents.ss7.isup.impl.ReleaseMessageImpl;
 import org.mobicents.ss7.isup.message.BlockingAckMessage;
 import org.mobicents.ss7.isup.message.BlockingMessage;
 import org.mobicents.ss7.isup.message.ContinuityCheckRequestMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.LoopbackAckMessage;
 import org.mobicents.ss7.isup.message.OverloadMessage;
 import org.mobicents.ss7.isup.message.ReleaseMessage;
+import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 
 /**
  * Start time:15:07:07 2009-07-17<br>
@@ -25,21 +27,23 @@ import org.mobicents.ss7.isup.message.ReleaseMessage;
  */
 public class OLMTest extends MessageHarness{
 
-	public void testOne() throws Exception
-	{
 	
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
 		byte[] message={
-	
-				OverloadMessage._MESSAGE_CODE_OLM
+				
+				0x0C
+				,(byte) 0x0B
+				,OverloadMessage._MESSAGE_CODE_OLM
 
 		};
 
-		
-		OverloadMessage bla=super.messageFactory.createOLM();
-		bla.decodeElement(message);
-		byte[] encodedBody = bla.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
+
+		return message;
 	}
-	
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createOLM();
+	}
 }

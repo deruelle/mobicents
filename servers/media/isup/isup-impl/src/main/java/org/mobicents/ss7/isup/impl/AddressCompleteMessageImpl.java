@@ -22,6 +22,7 @@ import org.mobicents.ss7.isup.message.parameter.CCNRPossibleIndicator;
 import org.mobicents.ss7.isup.message.parameter.CallDiversionInformation;
 import org.mobicents.ss7.isup.message.parameter.CallReference;
 import org.mobicents.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
 import org.mobicents.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.ss7.isup.message.parameter.GenericNotificationIndicator;
@@ -327,10 +328,25 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 		int localIndex = index;
 		if (b.length - index > 1) {
+			try {
+				byte[] cic = new byte[2];
+				cic[0] = b[index++];
+				cic[1] = b[index++];
+				super.cic = new CircuitIdentificationCodeImpl();
+				super.cic.decodeElement(cic);
 
-			// Message Type
-			if (b[index] != this._MESSAGE_CODE_ACM) {
-				throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_ACM);
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
+			}
+			try {
+				// Message Type
+				if (b[index] != this._MESSAGE_CODE_ACM) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_ACM);
+				}
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
 			}
 			index++;
 			// this.circuitIdentificationCode = b[index++];
@@ -348,7 +364,7 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
 			// return 3;
 			return index - localIndex;
 		} else {
-			throw new IllegalArgumentException("byte[] must have atleast two octets");
+			throw new IllegalArgumentException("byte[] must have atleast five octets");
 		}
 
 	}

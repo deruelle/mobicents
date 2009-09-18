@@ -11,9 +11,11 @@ package org.mobicents.ss7.isup.impl;
 import java.util.Arrays;
 
 
+import org.mobicents.ss7.isup.message.CallProgressMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupBlockingMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupQueryMessage;
 import org.mobicents.ss7.isup.message.CircuitGroupResetMessage;
+import org.mobicents.ss7.isup.message.ISUPMessage;
 import org.mobicents.ss7.isup.message.parameter.*;
 
 
@@ -26,42 +28,11 @@ import org.mobicents.ss7.isup.message.parameter.*;
  */
 public class CQMTest extends MessageHarness {
 	
-	public void testOne() throws Exception
-	{
-
-		byte[] message={
-
-				CircuitGroupQueryMessage._MESSAGE_CODE_CQM
-
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x01
-				,0x01
-				
-		};
-
-		//CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
-		CircuitGroupQueryMessage grs=super.messageFactory.createCQM();
-		grs.decodeElement(message);
-		byte[] encodedBody = grs.encodeElement();
-		boolean equal = Arrays.equals(message, encodedBody);
-		assertTrue(super.makeStringCompare(message, encodedBody),equal);
-	}
+	
 	
 	public void testTwo_Params() throws Exception
 	{
-		byte[] message={
-
-				CircuitGroupQueryMessage._MESSAGE_CODE_CQM
-
-				,0x01 // ptr to variable part
-				//no optional, so no pointer
-				//RangeAndStatus._PARAMETER_CODE
-				,0x01
-				,0x01
-				
-		};
+		byte[] message = getDefaultBody();
 
 		//CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
 		CircuitGroupQueryMessage grs=super.messageFactory.createCQM();
@@ -84,7 +55,29 @@ public class CQMTest extends MessageHarness {
 			e.printStackTrace();
 			super.fail("Failed on get parameter["+CallReference._PARAMETER_CODE+"]:"+e);
 		}
-		
-	}
 	
+	}
+	@Override
+	protected byte[] getDefaultBody() {
+		//FIXME: for now we strip MTP part
+		byte[] message={
+
+				0x0C
+				,(byte) 0x0B
+				,CircuitGroupQueryMessage._MESSAGE_CODE_CQM
+
+				,0x01 // ptr to variable part
+				//no optional, so no pointer
+				//RangeAndStatus._PARAMETER_CODE
+				,0x01
+				,0x01
+				
+		};
+
+		return message;
+	}
+	@Override
+	protected ISUPMessage getDefaultMessage() {
+		return super.messageFactory.createCQM();
+	}
 }

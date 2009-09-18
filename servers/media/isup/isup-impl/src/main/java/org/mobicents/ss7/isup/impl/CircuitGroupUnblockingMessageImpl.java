@@ -12,6 +12,7 @@ import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.ss7.isup.impl.message.parameter.CircuitGroupSuperVisionMessageTypeImpl;
+import org.mobicents.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.RangeAndStatusImpl;
 import org.mobicents.ss7.isup.message.CircuitGroupUnblockingMessage;
@@ -61,11 +62,27 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 	@Override
 	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 		int localIndex = index;
-		if (b.length - index > 2) {
+		if (b.length - index > 3) {
 
-			// Message Type
-			if (b[index] != this._MESSAGE_CODE_CGU) {
-				throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_CGU);
+			try {
+				byte[] cic = new byte[2];
+				cic[0] = b[index++];
+				cic[1] = b[index++];
+				super.cic = new CircuitIdentificationCodeImpl();
+				super.cic.decodeElement(cic);
+
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
+			}
+			try {
+				// Message Type
+				if (b[index] != this._MESSAGE_CODE_CGU) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_CGU);
+				}
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
 			}
 			index++;
 			CircuitGroupSuperVisionMessageType cgsvmt = new CircuitGroupSuperVisionMessageTypeImpl(new byte[] { b[index] });
@@ -73,7 +90,7 @@ public class CircuitGroupUnblockingMessageImpl extends ISUPMessageImpl implement
 			index++;
 			return index - localIndex;
 		} else {
-			throw new IllegalArgumentException("byte[] must have atleast two octets");
+			throw new IllegalArgumentException("byte[] must have atleast four octets");
 		}
 	}
 

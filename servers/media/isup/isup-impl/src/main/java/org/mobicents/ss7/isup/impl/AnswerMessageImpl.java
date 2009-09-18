@@ -18,6 +18,7 @@ import org.mobicents.ss7.isup.impl.message.parameter.BackwardCallIndicatorsImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.BackwardGVNSImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.CallHistoryInformationImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.CallReferenceImpl;
+import org.mobicents.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.ConferenceTreatmentIndicatorsImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.ConnectedNumberImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.DisplayInformationImpl;
@@ -137,16 +138,32 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
 		int localIndex = index;
 		if (b.length - index > 1) {
 
-			// Message Type
-			if (b[index] != this._MESSAGE_CODE_ANM) {
-				throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_ANM);
+			try {
+				byte[] cic = new byte[2];
+				cic[0] = b[index++];
+				cic[1] = b[index++];
+				super.cic = new CircuitIdentificationCodeImpl();
+				super.cic.decodeElement(cic);
+
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
+			}
+			try {
+				// Message Type
+				if (b[index] != this._MESSAGE_CODE_ANM) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_ANM);
+				}
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
 			}
 			index++;
 			
 
 			return index - localIndex;
 		} else {
-			throw new IllegalArgumentException("byte[] must have atleast one octet");
+			throw new IllegalArgumentException("byte[] must have atleast three octets");
 		}
 	}
 

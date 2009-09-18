@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
+import org.mobicents.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.CircuitStateIndicatorImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.FacilityIndicatorImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.MessageTypeImpl;
@@ -65,17 +66,33 @@ public class CircuitGroupQueryResponseMessageImpl extends ISUPMessageImpl implem
 	@Override
 	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 		int localIndex = index;
-		if (b.length - index > 2) {
+		if (b.length - index > 3) {
 
-			// Message Type
-			if (b[index] != this._MESSAGE_CODE_CQR) {
-				throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_CQR);
+			try {
+				byte[] cic = new byte[2];
+				cic[0] = b[index++];
+				cic[1] = b[index++];
+				super.cic = new CircuitIdentificationCodeImpl();
+				super.cic.decodeElement(cic);
+
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
+			}
+			try {
+				// Message Type
+				if (b[index] != this._MESSAGE_CODE_CQR) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_CQR);
+				}
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
 			}
 			index++;
 			
 			return index - localIndex;
 		} else {
-			throw new IllegalArgumentException("byte[] must have atleast two octets");
+			throw new IllegalArgumentException("byte[] must have atleast three octets");
 		}
 	}
 

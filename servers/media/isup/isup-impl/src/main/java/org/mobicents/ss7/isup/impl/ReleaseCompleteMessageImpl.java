@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.ss7.isup.Utils;
 import org.mobicents.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
+import org.mobicents.ss7.isup.impl.message.parameter.CircuitIdentificationCodeImpl;
 import org.mobicents.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.ss7.isup.message.ReleaseCompleteMessage;
 import org.mobicents.ss7.isup.message.parameter.CauseIndicators;
@@ -65,17 +66,33 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	protected int decodeMandatoryParameters(byte[] b, int index) throws ParameterRangeInvalidException {
 		int localIndex = index;
 
-		if (b.length - index > 1) {
+		if (b.length - index > 2) {
 
-			// Message Type
-			if (b[index] != this._MESSAGE_CODE_RLC) {
-				throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_RLC + " it is: " + b[index] + ", index:" + index);
+			try {
+				byte[] cic = new byte[2];
+				cic[0] = b[index++];
+				cic[1] = b[index++];
+				super.cic = new CircuitIdentificationCodeImpl();
+				super.cic.decodeElement(cic);
+
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse CircuitIdentificationCode due to: ", e);
+			}
+			try {
+				// Message Type
+				if (b[index] != this._MESSAGE_CODE_RLC) {
+					throw new ParameterRangeInvalidException("Message code is not: " + this._MESSAGE_CODE_RLC);
+				}
+			} catch (Exception e) {
+				// AIOOBE or IllegalArg
+				throw new ParameterRangeInvalidException("Failed to parse MessageCode due to: ", e);
 			}
 			index++;
 
 			return index - localIndex;
 		} else {
-			throw new ParameterRangeInvalidException("byte[] must have atleast two octets");
+			throw new ParameterRangeInvalidException("byte[] must have atleast three octets");
 		}
 	}
 

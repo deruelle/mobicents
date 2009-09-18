@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.mobicents.ss7.isup.ISUPComponent;
 import org.mobicents.ss7.isup.ParameterRangeInvalidException;
 import org.mobicents.ss7.isup.TransactionKey;
+import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.ss7.isup.message.parameter.MessageType;
 import org.mobicents.ss7.isup.ISUPTransaction;
@@ -17,6 +18,8 @@ import org.mobicents.ss7.isup.ISUPTransaction;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface ISUPMessage extends ISUPComponent {
+	
+	// FIXME: those should be in each message, not sure why Oleg wnts it like that ;/
 	// ///////////
 	// STATICS //
 	// ///////////
@@ -297,5 +300,8 @@ public interface ISUPMessage extends ISUPComponent {
 	 * @return
 	 */
 	public TransactionKey generateTransactionKey();
+	
+	public CircuitIdentificationCode getCircuitIdentificationCode();
+	public void setCircuitIdentificationCode(CircuitIdentificationCode cic);
 
 }

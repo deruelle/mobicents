@@ -16,6 +16,7 @@ import org.mobicents.ss7.isup.Utils;
 import org.mobicents.ss7.isup.impl.message.parameter.EndOfOptionalParametersImpl;
 import org.mobicents.ss7.isup.message.ISUPMessage;
 
+import org.mobicents.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.ss7.isup.message.parameter.ISUPParameter;
 import org.mobicents.ss7.isup.message.parameter.MessageType;
 
@@ -66,7 +67,9 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 
 	protected Object source;
 
-	private ISUPTransaction tx;
+	protected ISUPTransaction tx;
+	
+	protected CircuitIdentificationCode cic;
 
 	public ISUPMessageImpl(Object source,Set<Integer> mandatoryCodes,Set<Integer> mandatoryVariableCodes,Set<Integer> optionalCodes,Map<Integer, Integer> mandatoryCode2Index,Map<Integer, Integer> mandatoryVariableCode2Index,Map<Integer, Integer> optionalCode2Index)  {
 		super();
@@ -201,7 +204,7 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 		// defined by the message type; thus, the names of the parameters and
 		// the length indicators are not
 		// included in the message.
-
+		this.cic.encodeElement(bos);
 		for (ISUPParameter p : parameters.values()) {
 			// System.err.println("ENCODE F: "+p.getCode()+"---> "+Utils.toHex(p.encodeElement()));
 			p.encodeElement(bos);
@@ -549,5 +552,18 @@ abstract class ISUPMessageImpl implements ISUPMessage {
 	{
 		return super.toString()+"["+getMessageType().getCode()+"]: F"+this.f_Parameters+", V"+this.v_Parameters+", O"+this.o_Parameters;
 	}
+
+	public CircuitIdentificationCode getCircuitIdentificationCode() {
+		return this.cic;
+	}
+
+	public void setCircuitIdentificationCode(CircuitIdentificationCode cic) {
+		this.cic = cic;
+		
+	}
+	
+	
+	
+	
 	
 }
