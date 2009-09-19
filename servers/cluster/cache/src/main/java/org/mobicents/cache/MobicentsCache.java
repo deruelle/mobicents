@@ -25,7 +25,7 @@ public class MobicentsCache {
 	
 	@SuppressWarnings("unchecked")
 	public MobicentsCache(Configuration cacheConfiguration) {
-		this.jBossCache = new DefaultCacheFactory().createCache(false);
+		this.jBossCache = new DefaultCacheFactory().createCache(cacheConfiguration,false);
 		this.managedCache = false;
 		startCache();	
 	}
