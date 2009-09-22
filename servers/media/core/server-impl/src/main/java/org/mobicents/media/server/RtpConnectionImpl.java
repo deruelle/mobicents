@@ -245,8 +245,8 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
 
         // add peer to RTP socket
         Format[] supported = formats;
+        javax.sdp.Connection conn = null;
 
-        InetAddress address = InetAddress.getByName(sdp.getConnection().getAddress());
 
         Vector<MediaDescription> mediaDescriptions = sdp.getMediaDescriptions(false);
         for (MediaDescription md : mediaDescriptions) {
@@ -277,6 +277,12 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
                         ", index=" + getIndex() + " selected preffered = " + subset);
             }
             
+            conn = md.getConnection();
+            if(conn == null){
+            	//Use session-level if media-level "c=" field is not defined
+            	conn = sdp.getConnection();
+            }
+            InetAddress address = InetAddress.getByName(conn.getAddress());
             int port = md.getMedia().getMediaPort();
             rtpSocket.setPeer(address, port);
             updateRtpMap(rtpSocket, subset);
