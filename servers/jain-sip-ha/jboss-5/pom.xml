@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.mobicents.ha.javax.sip</groupId>
+		<artifactId>mobicents-jain-sip-ha-parent</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>org.mobicents.ha.javax.sip</groupId>
+	<artifactId>mobicents-jain-sip-jboss5</artifactId>
+	
+	<packaging>jar</packaging>		
+	
+	<dependencies>	
+		<dependency>
+			<groupId>org.mobicents.ha.javax.sip</groupId>
+			<artifactId>mobicents-jain-sip-ha-core</artifactId>
+			<version>${version}</version>
+		</dependency>	
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+   				<groupId>org.mobicents.tools</groupId>
+    			<version>${mobicents.tools.mavenplugin.eclipse.version}</version>
+				<inherited>true</inherited>
+				<executions />
+				<configuration>
+					<excludePoms />
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>																							
+					</classpathExcludes>
+					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
+					<eclipseProjectName>jain-sip-ha-jboss5</eclipseProjectName>
+				</configuration>
+			</plugin>
+		</plugins>		
+	</build>
+
+	<!-- dupe info from parent, but it's only way to retrieve the parent without checkout -->
+
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<name>JBoss Snapshot Repository</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+</project>

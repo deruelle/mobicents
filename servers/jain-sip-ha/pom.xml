@@ -1,0 +1,111 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents</artifactId>
+		<version>13-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>org.mobicents.ha.javax.sip</groupId>
+	<artifactId>mobicents-jain-sip-ha-parent</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	
+	<packaging>pom</packaging>
+		
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/jain-sip-ha</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/jain-sip-ha</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/servers/jain-sip-ha</url>
+	</scm>
+
+	<properties>
+		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
+	</properties>
+
+	<modules>
+		<module>core</module>
+	</modules>	
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-api</artifactId>
+			<version>${jain-sip-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-ri</artifactId>
+			<version>${jain-sip-ri.version}</version>
+		</dependency>
+	</dependencies>	
+			
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>				
+				<module>jboss-4</module>				
+				<module>jboss-5</module>				
+			</modules>
+			<build>
+				<plugins>
+					<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<configuration>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<tagBase>https://mobicents.googlecode.com/svn/tags/servers/jain-sip-ha</tagBase>
+					</configuration>
+					</plugin>
+				</plugins>
+			</build>		
+		</profile>
+		<profile>			
+			<id>jboss-4</id>
+			<modules>				
+				<module>jboss-4</module>				
+			</modules>			
+		</profile>
+		<profile>			
+			<id>jboss-5</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>		
+				<module>jboss-5</module>		
+			</modules>			
+		</profile>
+		<profile>			
+			<id>all</id>
+			<modules>	
+				<module>jboss-4</module>	
+				<module>jboss-5</module>		
+			</modules>			
+		</profile>
+	</profiles>	
+	
+	<!-- dupe info from parent, but it's only way to retrieve the parent without checkout -->
+
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<name>JBoss Snapshot Repository</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+</project>
