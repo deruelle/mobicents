@@ -68,7 +68,7 @@ There are two common problems that occur in sentence construction: Sentence frag
   </section>
   <section>
     <title>Conversational Language</title>
-    <para>It is often tempting  to write like you are talking to someone face to face.  It is an easy way of writing, and allows you to write using a stream of conciousness method.   </para>
+    <para>It is often tempting  to write like you are talking to someone face to face.  It is an easy way of writing, and allows you to write using a stream of consciousness method.   </para>
     <para>The problem with this type of writing style, is that it is very hard for the reader to quickly grasp a concept.  They must read through the content and try to extract the information that is relevant to them from the information you have provided them.  The writing style often leads to verbosity (or wordiness) and this can quickly frustrate readers.</para>
     <para>The following examples will show you how pruning your writing can cut down the word count, and allow readers to easily understand the information they are reading.</para>
     <example>
@@ -86,7 +86,7 @@ As the SIP Servlets Server employs JBoss Application Server as its servlet conta
       </formalpara>
       <formalpara>
         <title>Result</title>
-        <para>After the edit, notice how concise the paragraph is.  Also notice how the colloquialism in the reference has been removed.  Depending on the readers&apos; language skills, the usage of &quot;dig further&quot; might not be understood.  When this is translated to other languages, the meaning of this sentence might also be lost in translation.</para>
+        <para>After the edit, notice how concise the paragraph is.  Also notice how the colloquialism in the reference has been removed.  Depending on the reader&apos;s language skills, the usage of &quot;dig further&quot; might not be understood.  When this is translated to other languages, the meaning of this sentence might also be lost in translation.</para>
       </formalpara>
     </example>
     <example>

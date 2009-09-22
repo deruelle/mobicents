@@ -21,7 +21,7 @@
       <para>XML Copy Editor is a text-based editor, that has no WYSIWYG functionality.  You must know your XML rules very well to use this editor.  </para>
     </formalpara>
     <para>XML Copy Editor contains a DocBook XML Parser, which will validate your XML.  What it can&apos;t do is open all the xi:includes and resolve internal &lt;xref&gt; declarations that are not in the same file.  This will result in a lot of validation errors, that may mask the real issue.</para>
-    <para>The advantage that XML Copy Editor offers is the ability to edit the XML structure in a basic text interface.  This can be very useful when you are trying to debug your XML documentation.  You can use a program such as xmllint to output a full XML file, and then revalidate it using XML Copy Editor.  For more information about this technique, refer to </para>
+    <para>The advantage that XML Copy Editor offers is the ability to edit the XML structure in a basic text interface.  This can be very useful when you are trying to debug your XML documentation.  You can use a program such as xmllint to output a full XML file, and then re-validate it using XML Copy Editor.  For more information about this technique, refer to </para>
   </section>
   <section>
     <title id="xst-XML_Structure_Tips">XML Structure Tips</title>
@@ -92,7 +92,7 @@
       </itemizedlist>
       <formalpara>
         <title>&lt;orderedlist&gt;</title>
-        <para>An &lt;orderedlist&gt; is just like an &lt;itemizedlist&gt;, except  it displays the content in number order.  This type of list is better suited to listing small substeps  in &lt;procedure&gt; lists.  </para>
+        <para>An &lt;orderedlist&gt; is just like an &lt;itemizedlist&gt;, except  it displays the content in number order.  This type of list is better suited to listing small sub-steps  in &lt;procedure&gt; lists.  </para>
       </formalpara>
       <para>The  XML form of an itemized list has a number of mandatory elements.  For a complete list, refer to the  <ulink url="http://www.docbook.org/tdg/en/html/orderedlist.html">DocBook.org &lt;itemizedlist&gt; page</ulink>.  </para>
       <example>
@@ -131,9 +131,9 @@
     <section>
       <title id="ps-Procedural_Steps">Procedural Steps</title>
       <para>When it is necessary to document a complex set of installation instructions, an &lt;orderedlist&gt; is usually not the best XML element to choose. It has limitations regarding what level of detail each &lt;listitem&gt; tag can contain.</para>
-      <para>The best option for large workflows, or detailed steps, is the &lt;procedure&gt; element.</para>
+      <para>The best option for large work-flows, or detailed steps, is the &lt;procedure&gt; element.</para>
       <para>You may not be aware, but this element is used extensively throughout this user guide to capture the steps involved in the Authoring Process.</para>
-      <para>The biggest advantage to using a &lt;procedure&gt; element is that it uses the &lt;step&gt; element.  &lt;step&gt; elements are classed as &apos;top-level&apos; elements, and can contain a much wider variety of child elements than the &lt;listitem&gt; element used in &lt;itemizedlist&gt; and &lt;orderedlist&gt;.</para>
+      <para>The biggest advantage to using a &lt;procedure&gt; element is that it uses the &lt;step&gt; element.  &lt;step&gt; elements  can contain a much wider variety of child elements than the &lt;listitem&gt; element used in &lt;itemizedlist&gt; and &lt;orderedlist&gt;.</para>
       <para>The  XML form of a procedure has a number of mandatory elements.  For a complete list, refer to the  <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">DocBook.org &lt;procedure&gt; page</ulink>.    Be sure to visit the pages of the child elements that the &lt;procedure&gt; tag supports, particularly the  <ulink url="http://www.docbook.org/tdg/en/html/procedure.html">&lt;step&gt; element</ulink>.</para>
       <para>The minimum set of elements required for all procedure lists in the Mobicents UDS are described in the following example:</para>
       <example>
@@ -195,14 +195,14 @@
         </step>
         <step>
           <title>Step 2 Title</title>
-          <para>If you find you need substeps, use an &lt;orderedlist&gt; to capture these:</para>
+          <para>If you find you need sub-steps, use an &lt;orderedlist&gt; to capture these:</para>
           <para>The ordered list should have a lead-in sentence introducing the list:</para>
           <orderedlist>
             <listitem>
-              <para>Substep one.</para>
+              <para>Sub-step one.</para>
             </listitem>
             <listitem>
-              <para>Substep two, etc.</para>
+              <para>Sub-step two, etc.</para>
             </listitem>
           </orderedlist>
         </step>
@@ -234,16 +234,16 @@
       </figure>
       <note>
         <title>Is a Screen shot Really Required?</title>
-        <para>Screenshots increase the maintenance of a user guide.  What happens if the interface changes?  What happens if the product logo is updated? These situations require the screenshot to be recaptured again.  </para>
-        <para>Think carefully before inserting a screenshot.  Often, you can explain what fields a user must complete in the user interface without a screenshot.  If you can, you will save a lot of maintenance in the future.  </para>
+        <para>Screenshots increase the maintenance of a user guide.  What happens if the interface changes?  What happens if the product logo is updated? These situations require the screen shot to be recaptured again.  </para>
+        <para>Think carefully before inserting a screen shot.  Often, you can explain what fields a user must complete in the user interface without a screen shot.  If you can, you will save a lot of maintenance in the future.  </para>
       </note>
       <para>The &lt;imagedata&gt; tag defines the image path, and sets the way the image is displayed in the published output.  Use the following recommendations when inserting &lt;figure&gt; tags:</para>
       <itemizedlist>
         <listitem>
-          <para>To scale large diagrams or screenshots to fit within  page boundaries, set <userinput>width=&quot;450&quot;</userinput> to scale the screenshot within the boundaries of an A4 page.</para>
+          <para>To scale large diagrams or screenshots to fit within  page boundaries, set <userinput>width=&quot;450&quot;</userinput> to scale the screen shot within the boundaries of an A4 page.</para>
         </listitem>
         <listitem>
-          <para>If you need to include a screenshot of a large user interface, consider including only the area that relates to what you are discussing.  You can get a much better result if you capture a small section of a user interface, because the user can easily see the detail of the area referred to in the procedure or concept.</para>
+          <para>If you need to include a screen shot of a large user interface, consider including only the area that relates to what you are discussing.  You can get a much better result if you capture a small section of a user interface, because the user can easily see the detail of the area referred to in the procedure or concept.</para>
         </listitem>
       </itemizedlist>
       <para>If you are using a Linux-based operating system, chances are you will be using a graphics package such as  The GNU Image Manipulation Program (GIMP). You can use The GIMP to capture screen shots, and save them in a format that will provide the best output for both HTML and PDF.  </para>
@@ -255,7 +255,7 @@
           <para>Ensure you have the correct application open, and that the part of the application you need to capture is activated.  The GIMP will capture the screen immediately, unless a delay is set.</para>
         </step>
         <step>
-          <title>Select the Creat Screenshot Option</title>
+          <title>Select the Create Screenshot Option</title>
           <para>Click <guimenu>File</guimenu>   &gt;  <guimenu>Create</guimenu> &gt; <guimenu>Screenshot</guimenu>.</para>
         </step>
         <step>
@@ -330,11 +330,11 @@
           </listitem>
         </varlistentry>
       </variablelist>
-      <para>The way these elements are formatted depends on what publishing system you use to produce a user guide.  The JBCP user guide  style (produced using Publican) formats this information in a conspicuous way; lots of colour, bold graphics, and a slightly different typeface to the normal content.  In the Mobicents documentation, JDocBook formats the information slighly less agressively by using softer colours, but it is still quite conspicuous to the reader.</para>
+      <para>The way these elements are formatted depends on what publishing system you use to produce a user guide.  The JBCP user guide  style (produced using Publican) formats this information in a conspicuous way; lots of color, bold graphics, and a slightly different typeface to the normal content.  In the Mobicents documentation, JDocBook formats the information slightly less aggressively by using softer colors, but it is still quite conspicuous to the reader.</para>
       <para>When writing information for any of these elements, you can maximize the effectiveness of the information by keeping the structure of the information consistent.  Consider the following examples to see how effective this is.</para>
       <example>
         <title>Warnings and Importants</title>
-        <para>Use the following XML structure when creating a Warning or Important annotation.  See the sample Warning and Inportant in this example as a reference.</para>
+        <para>Use the following XML structure when creating a Warning or Important annotation.  See the sample Warning and Important in this example as a reference.</para>
         <programlisting role="XML">&lt;warning&gt;
   &lt;title&gt;Warning Summary&lt;/title&gt;
   &lt;para&gt;Imperetive instruction to the user.  Reason why the user should obey the instruction.&lt;/para&gt;

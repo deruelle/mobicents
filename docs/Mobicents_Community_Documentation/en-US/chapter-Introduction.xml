@@ -76,7 +76,7 @@
           <row>
             <entry>Oleg Kulikov</entry>
             <entry>Volgograd, Russian Federation</entry>
-            <entry/>
+            <entry>Media Server Developer</entry>
             <entry>
               <email>okulikov@redhat.com</email>
               <email>oleg.kulikoff@gmail.com</email>
@@ -148,7 +148,7 @@
   </section>
   <section>
     <title>Meetings and Communication</title>
-    <para>  Because the team is so geographically dispersed, some challenges can exist when trying to communicate with the different server teams.  To ensure that you have the best chance of obtaining the information you require, a number of different methods exist to reach out to the development team.</para>
+    <para>Because the team is so geographically dispersed, some challenges can exist when trying to communicate with the different server teams.  To ensure that you have the best chance of obtaining the information you require, a number of different methods exist to reach out to the development team.</para>
     <section>
       <title>IRC Channels</title>
       <para>Internet Relay Chat (IRC) is used extensively throughout many JBoss projects as an effective communication tool;  Mobicents is no exception.  The main server the developers use is through the codehaus.org IRC server.  The required information to connect to this server is listed for reference:</para>
@@ -178,13 +178,22 @@
     </section>
     <section>
       <title>Team Meetings</title>
-      <para>The entire Mobicents Development Team meet weekly to discuss Mobicents and JBCP issues.  The meeting time is Wednesday 15:30 UTC.   </para>
-      <para>The meetings are held in the Codehaus IRC #mobicents room  (depending on the number of connections available).  If irc.codehaus.org is busy, the meetings take place on the Freenode #mobicents room.  The team will post a notification in the Codehaus  room if the meeting location is relocated. </para>
+      <para>A number of meetings are held each week to share information openly within the team. </para>
+      <formalpara>
+        <title>Weekly &quot;Mobicents All&quot; Meeting</title>
+        <para>The entire Mobicents Development Team meet weekly to discuss Mobicents and JBCP issues.  The meeting time is Wednesday 15:30 UTC.   </para>
+      </formalpara>
+      <para>The meeting is held in the Codehaus IRC #mobicents room  (depending on the number of connections available).  If irc.codehaus.org has reached connection capacity, the meeting takes place on the Freenode #mobicents room.  The team will post a notification in the Codehaus  room if the meeting location is relocated. </para>
+      <para>Minutes  from the weekly meeting are posted to the mobicents-public forum.</para>
+      <formalpara>
+        <title>Productization Meeting</title>
+        <para>Currently, the productization lead and the Red Hat technical writer  meet to discuss any issues relating to product documentation and pending releases.  This meeting occurs at 9am Brno, Czech Republic time (5.00pm Brisbane, Australia time) every second Tuesday.  Contact Pavel Slegr, the productization lead,   to determine the next scheduled meeting time.     </para>
+      </formalpara>
     </section>
     <section>
       <title>Email Correspondence</title>
-      <para>Keep emails   as short, and concise, as possible.  Past experience, and direct feedback from the team, indicates that it is much easier for the developers to quickly scan an email for relevance to them if received in this format.  </para>
-      <para>If you know the question relates to a server team, or individual, it is highly recommended that you send the email directly to them, and carbon copy the Red Hat JBCP email list (jbcp-dev@redhat.com), so the rest of the team is informed.</para>
+      <para>Keep emails   as short, and concise, as possible.  Past experience, and direct feedback from the team, indicates  it is much easier for  developers to quickly scan an email for relevance to them if received in this format.  </para>
+      <para>If you know the question relates to a server team, or individual,  send the email directly to them, and carbon copy the Red Hat JBCP email list (jbcp-dev@redhat.com), so the rest of the team is informed.</para>
       <para>If an answer is required to your email, make it clear that you expect a response.   It can be effective to put  &quot;Feedback Required&quot; in the subject line to flag the email to developers.  </para>
       <para>For Red Hat related issues, such as product documentation or strategic planning discussions, all correspondence must be routed through Red Hat email accounts.  </para>
     </section>
@@ -203,7 +212,7 @@
       <formalpara>
         <title>mobicents-public</title>
         <para>This high-traffic forum is the publicly accessible forum,  used by the community to ask questions about configuring the platform.  Often, discussion threads from mobicents-public will be used as a development barometer for new feature priorities and bug fix priorities.  The Mobicents Team Meeting logs are posted to this forum so the community is informed about the project happenings.</para>
-       </formalpara>
+      </formalpara>
       <formalpara>
         <title>mobicents-core</title>
         <para>This forum is a membership-only forum, for the exclusive use of Mobicents developers and vetted individuals (such as Red Hat Content Authors).  The forum is used to discuss private project-related issues not suitable for public consumption. You must submit an application to get access to the forum.  </para>

@@ -3,10 +3,10 @@
 ]>
 <chapter id="pam-Publican_and_Maven">
   <title>Publican and Maven</title>
-  <para>The UDS XML is structured in such a way that it can be published using Maven JDocBook and Publican.  Maven, and the JDocBook plugin are used to produce the community branded XML content, and to produce XML that is used by Publican to produce the Red Hat branded product documentation.</para>
+  <para>The UDS XML is structured in such a way that it can be published using Maven JDocBook and Publican.  Maven, and the JDocBook plug-in are used to produce the community branded XML content, and to produce XML that is used by Publican to produce the Red Hat branded product documentation.</para>
   <section>
     <title>Publican Toolchain</title>
-    <para>The Publican Toolchain is a set of Linux utilities that work in concert to validate, and publish XML to various output formats.  Publican is used by Red Hat&apos;s  Engineering Content Services division as the de facto standard for producing product documentation according to brand, and translation, requirements.</para>
+    <para>The Publican Toolchain is a set of Linux utilities that work in concert to validate, and publish XML to various output formats.  Publican is used by Red Hat&apos;s  Engineering Content Services division as the de-facto standard for producing product documentation according to brand, and translation, requirements.</para>
     <para>For a complete guide to Publican, including installation instructions and commands, visit the <ulink url="https://fedorahosted.org/publican/">Publican home page on fedorapeople.com</ulink>. This page contains, among other information, the User Guide for Publican.  The user guide is compatible with  Version 0.39 and above. </para>
 <!--SSDP: Next paragraph is dependent on implementing the Single Source docs project successfully, and the documentation being produced from the one source.-->    <section>
       <title>Banned XML Elements </title>
@@ -60,7 +60,7 @@
             </tbody>
           </tgroup>
         </table></para>
-      <para>In additon to the banned elements, there are two attributes that must not be used anywhere within the XML source:</para>
+      <para>In addition to the banned elements, there are two attributes that must not be used anywhere within the XML source:</para>
       <variablelist>
         <varlistentry>
           <term>endterm</term>
@@ -76,84 +76,83 @@
         </varlistentry>
       </variablelist>
     </section>
-  </section>
-  <section>
-    <title>XML Book Components</title>
-    <para>Each book in the UDS is constructed using a standardized structure, to maintain consistency throughout the project.  The structure present as of September 2009 follows the Publican Toolchain directory structure.  <xref linkend="table-Book-Structure"/> describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide. </para>
-    <table frame="all" pgwide="1" id="table-Book-Structure">
-      <title>Book Components</title>
-      <tgroup cols="3" colsep="1">
-        <colspec colnum="1" colname="c0" align="left"/>
-        <colspec colnum="2" colname="c1" align="left"/>
-        <colspec colnum="3" colname="c2" align="left"/>
-        <thead>
-          <row>
-            <entry align="center">XML Book Component</entry>
-            <entry align="center">Description</entry>
-            <entry>Order of Component in the Book</entry>
-          </row>
-        </thead>
-        <tbody>
-          <row>
-            <entry>
-              <filename><replaceable>[Book_Name]</replaceable>.xml</filename>
-            </entry>
-            <entry>Contains the structure of the user guide, represented by xi:include references to each chapter-<replaceable>[Chapter_Name]</replaceable>.xml component, and other mandatory components in this table.</entry>
-            <entry>Top Level (or Parent) component of any user guide. </entry>
-          </row>
-          <row>
-            <entry>
-              <filename>Book_Info.xml</filename>
-            </entry>
-            <entry>Contains information about the book title, book version number, abstract and copyright information.</entry>
-            <entry>1st Child. This is the opening information a reader will see in the user guide. </entry>
-          </row>
-          <row>
-            <entry>
-              <filename>Author_Group.xml</filename>
-            </entry>
-            <entry>Contains contact information about the authors that contributed to the content of the book.</entry>
-            <entry>2nd Child. This component is included in the <filename>Book_Info.xml</filename> component.</entry>
-          </row>
-          <row>
-            <entry>
-              <filename>Preface.xml</filename>
-            </entry>
-            <entry>Contains pre-defined content explaining the typographical standards used in the guide, and other information that will assist the reader with using the guide.</entry>
-            <entry>3rd Child. This component is included after the <filename>Book_Info.xml</filename> content.</entry>
-          </row>
-          <row>
-            <entry>
-              <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename>
-            </entry>
-            <entry>Contains XML markup and content included at a Chapter level in the document. The XML file is named only for human-readability.</entry>
-            <entry>4th. This is the top level element for each chapter in the user guide. The order of these files in the <filename><replaceable>[Book_Name]</replaceable>.xml</filename> file determines the structure of the guide.</entry>
-          </row>
-          <row>
-            <entry>
-              <filename>section-<replaceable>[Section_Name]</replaceable>.xml</filename>
-            </entry>
-            <entry>Contains XML markup and content included at a Section level in the document. The XML file is named only for human-readability.</entry>
-            <entry>5th. This component is included in <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename> files by xi:include reference.</entry>
-          </row>
-          <row>
-            <entry>
-              <filename>Revision History.xml</filename>
-            </entry>
-            <entry>Contains a record of the revisions made to the document over time. Top-level information about changes in the guide are provided to the reader.</entry>
-            <entry>6th. </entry>
-          </row>
-        </tbody>
-      </tgroup>
-    </table>
-    <para>To ensure Maven JDocBook can publish the content generated by the Publican Tool chain, additional XML content is required.  Maven JDocBook does not have access to the Publican Tool chain common_content directory. Therefore, the required XML files must be included as xi:fallback references in the <filename>preface.xml</filename> and <filename>book_info.xml</filename> files.  </para>
-    <para>The content is contained within XML files in the fallback_content directory of each user guide repository.   The fallback_content directory contains copies of the XML files located in the <filename>/usr/share/publican/Common_Content</filename> directory.</para>
-    <note>
-      <title>Fallback Content Accuracy Check</title>
-      <para>The front-matter information located in the fallback_content directory of each user guide repository, is not maintained by the Publican Tool chain Team, or upgraded when Publican updates are installed.  Therefore, manually verify that the information contained in these files are kept current with the standards present in the latest Publican Tool chain version.</para>
-    </note>
-    <para>Fallback content is added to each xi:include element that Maven JDocBook does not have access to.  The structure described in the following XML sample is for the <filename>Legal_Notice.xml</filename> information in the <filename>Book_Info.xml</filename> file.</para>
-    <programlisting role="XML">&lt;!--FOR PUBLICAN --&gt;
+    <section>
+      <title>XML Book Components</title>
+      <para>Each book in the UDS is constructed using a standardized structure, to maintain consistency throughout the project.  The structure present as of September 2009 follows the Publican Toolchain directory structure.  <xref linkend="table-Book-Structure"/> describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide. </para>
+      <table frame="all" pgwide="1" id="table-Book-Structure">
+        <title>Book Components</title>
+        <tgroup cols="3" colsep="1">
+          <colspec colnum="1" colname="c0" align="left"/>
+          <colspec colnum="2" colname="c1" align="left"/>
+          <colspec colnum="3" colname="c2" align="left"/>
+          <thead>
+            <row>
+              <entry align="center">XML Book Component</entry>
+              <entry align="center">Description</entry>
+              <entry>Order of Component in the Book</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>
+                <filename><replaceable>[Book_Name]</replaceable>.xml</filename>
+              </entry>
+              <entry>Contains the structure of the user guide, represented by xi:include references to each chapter-<replaceable>[Chapter_Name]</replaceable>.xml component, and other mandatory components in this table.</entry>
+              <entry>Top Level (or Parent) component of any user guide. </entry>
+            </row>
+            <row>
+              <entry>
+                <filename>Book_Info.xml</filename>
+              </entry>
+              <entry>Contains information about the book title, book version number, abstract and copyright information.</entry>
+              <entry>1st Child. This is the opening information a reader will see in the user guide. </entry>
+            </row>
+            <row>
+              <entry>
+                <filename>Author_Group.xml</filename>
+              </entry>
+              <entry>Contains contact information about the authors that contributed to the content of the book.</entry>
+              <entry>2nd Child. This component is included in the <filename>Book_Info.xml</filename> component.</entry>
+            </row>
+            <row>
+              <entry>
+                <filename>Preface.xml</filename>
+              </entry>
+              <entry>Contains pre-defined content explaining the typographical standards used in the guide, and other information that will assist the reader with using the guide.</entry>
+              <entry>3rd Child. This component is included after the <filename>Book_Info.xml</filename> content.</entry>
+            </row>
+            <row>
+              <entry>
+                <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename>
+              </entry>
+              <entry>Contains XML markup and content included at a Chapter level in the document. The XML file is named only for human-readability.</entry>
+              <entry>4th. This is the top level element for each chapter in the user guide. The order of these files in the <filename><replaceable>[Book_Name]</replaceable>.xml</filename> file determines the structure of the guide.</entry>
+            </row>
+            <row>
+              <entry>
+                <filename>section-<replaceable>[Section_Name]</replaceable>.xml</filename>
+              </entry>
+              <entry>Contains XML markup and content included at a Section level in the document. The XML file is named only for human-readability.</entry>
+              <entry>5th. This component is included in <filename>chapter-<replaceable>[Chapter_Name]</replaceable>.xml</filename> files by xi:include reference.</entry>
+            </row>
+            <row>
+              <entry>
+                <filename>Revision History.xml</filename>
+              </entry>
+              <entry>Contains a record of the revisions made to the document over time. Top-level information about changes in the guide are provided to the reader.</entry>
+              <entry>6th. </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+      <para>To ensure Maven JDocBook can publish the content generated by the Publican Tool chain, additional XML content is required.  Maven JDocBook does not have access to the Publican Tool chain common_content directory. The required XML files must be included as xi:fallback references in the <filename>preface.xml</filename> and <filename>book_info.xml</filename> files.  </para>
+      <para>The content is contained within XML files in the fallback_content directory of each user guide repository.   The fallback_content directory contains copies of the XML files located in the <filename>/usr/share/publican/Common_Content</filename> directory.</para>
+      <note>
+        <title>Fallback Content Accuracy Check</title>
+        <para>The front-matter information located in the fallback_content directory of each user guide repository, is not maintained by the Publican Tool chain Team, or upgraded when Publican updates are installed.  Therefore, manually verify that the information contained in these files are kept current with the standards present in the latest Publican Tool chain version.</para>
+      </note>
+      <para>Fallback content is added to each xi:include element that Maven JDocBook does not have access to.  The structure described in the following XML sample is for the <filename>Legal_Notice.xml</filename> information in the <filename>Book_Info.xml</filename> file.</para>
+      <programlisting role="XML">&lt;!--FOR PUBLICAN --&gt;
 &lt;xi:include xmlns:xi=&quot;http://www.w3.org/2001/XInclude&quot;
  href=&quot;Common_Content/Legal_Notice.xml&quot;&gt;
     &lt;!--FOR JDOCBOOK:--&gt;
@@ -162,52 +161,123 @@
          xmlns:xi=&quot;http://www.w3.org/2001/XInclude&quot;&gt;&lt;/xi:include&gt;
     &lt;/xi:fallback&gt;
 &lt;/xi:include&gt;</programlisting>
-    <para>The xi:include element can have any number of xi:fallback elements defined.  However, in the Mobicents UDS only one fallback is required.</para>
-    <table frame="all" pgwide="1" id="table-Maven_JDocBook_Content">
-      <title>Maven JDocBook Content</title>
-      <tgroup cols="3" colsep="1">
-        <colspec colnum="1" colname="c0" align="left"/>
-        <colspec colnum="2" colname="c1" align="left"/>
-        <colspec colnum="3" colname="c2" align="left"/>
-        <thead>
-          <row>
-            <entry align="center">XML Component</entry>
-            <entry align="center">Description</entry>
-            <entry>Order of Component in the Book</entry>
-          </row>
-        </thead>
-        <tbody>
-          <row>
-            <entry>
-              <filename>Conventions.xml</filename>
-            </entry>
-            <entry>Contains typographical standards used within the guide.</entry>
-            <entry>Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.</entry>
-          </row>
-          <row>
-            <entry>
-              <filename>Feedback.xml</filename>
-            </entry>
-            <entry>Contains information about how to raise a bug against the JBCP user documentation.</entry>
-            <entry>Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.</entry>
-          </row>
-          <row>
-            <entry>
-              <filename>Legal_Notice.xml</filename>
-            </entry>
-            <entry>Contains standardized Red Hat legal information. </entry>
-            <entry>Inserted by xi:fallback reference at the end of the <filename>Book_Info.xml</filename> file</entry>
-          </row>
-        </tbody>
-      </tgroup>
-    </table>
+      <para>The xi:include element can have any number of xi:fallback elements defined.  However, in the Mobicents UDS only one fallback is required.</para>
+      <table frame="all" pgwide="1" id="table-Maven_JDocBook_Content">
+        <title>Maven JDocBook Content</title>
+        <tgroup cols="3" colsep="1">
+          <colspec colnum="1" colname="c0" align="left"/>
+          <colspec colnum="2" colname="c1" align="left"/>
+          <colspec colnum="3" colname="c2" align="left"/>
+          <thead>
+            <row>
+              <entry align="center">XML Component</entry>
+              <entry align="center">Description</entry>
+              <entry>Order of Component in the Book</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>
+                <filename>Conventions.xml</filename>
+              </entry>
+              <entry>Contains typographical standards used within the guide.</entry>
+              <entry>Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.</entry>
+            </row>
+            <row>
+              <entry>
+                <filename>Feedback.xml</filename>
+              </entry>
+              <entry>Contains information about how to raise a bug against the JBCP user documentation.</entry>
+              <entry>Inserted by xi:fallback reference at the end of the <filename>Preface.xml</filename> file.</entry>
+            </row>
+            <row>
+              <entry>
+                <filename>Legal_Notice.xml</filename>
+              </entry>
+              <entry>Contains standardized Red Hat legal information. </entry>
+              <entry>Inserted by xi:fallback reference at the end of the <filename>Book_Info.xml</filename> file</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+      <section id="sfp-Script_for_Publishing">
+        <title>Script for Publishing</title>
+<!--SSDP: This script will not be relevant after the docs are split into individual server folders, because the script won't be able to use Publican to do a test publish.  For now, it works for all books except for SIP Presence Service.-->        <para>For Linux users, a bash script is available that allows common Publican commands to be substituted with abridged commands.  The script is called <command>mkbk</command> (short for make book). You must have Publican installed and configured before running this script; Publican is a dependency.</para>
+        <para>The script is contained in the source folder for this user guide.  To obtain this script, check out the Mobicents_Community_Documentation directory from the GCode SVN.  </para>
+        <formalpara>
+          <title>Syntax</title>
+          <para><command>mkbk <replaceable>[book_name] [condition] [output]</replaceable></command></para>
+        </formalpara>
+        <para>Where:</para>
+        <para> <replaceable>[book_name]</replaceable> is the abbreviated name of the XML User Guide to publish:</para>
+        <itemizedlist>
+          <listitem>
+            <para>dia = &quot;Diameter_User_Guide&quot;</para>
+          </listitem>
+          <listitem>
+            <para>jss = &quot;JAIN_SLEE_Server_User_Guide&quot;</para>
+          </listitem>
+          <listitem>
+            <para>ms = &quot;Media_Server_User_Guide&quot;</para>
+          </listitem>
+          <listitem>
+            <para>mcd = &quot;Mobicents_Community_Documentation&quot;</para>
+          </listitem>
+          <listitem>
+            <para>pig = &quot;Platform_Installation_Guide&quot;</para>
+          </listitem>
+          <listitem>
+            <para>sps = &quot;SIP_Presence_Service_User_Guide&quot;</para>
+          </listitem>
+          <listitem>
+            <para>sss = &quot;SIP_Servlets_Server_User_Guide&quot;</para>
+          </listitem>
+        </itemizedlist>
+        <para><replaceable>[condition]</replaceable> is one of the following options:</para>
+        <itemizedlist>
+          <listitem>
+            <para>mob = Mobicents Community Documentation</para>
+          </listitem>
+          <listitem>
+            <para>jbcp = JBCP Product Documentation</para>
+          </listitem>
+        </itemizedlist>
+        <para><replaceable>[output]</replaceable> is one of the following Publican output types:</para>
+        <itemizedlist>
+          <listitem>
+            <para>html-single-en-US = Output HTML Single English User Guide</para>
+          </listitem>
+          <listitem>
+            <para>pdf-en-US = Output PDF English User Guide</para>
+          </listitem>
+          <listitem>
+            <para>xml-en-US - Output XML files that can be used for troubleshooting XML structure errors.</para>
+          </listitem>
+        </itemizedlist>
+        <formalpara>
+          <title>Usage</title>
+          <para>To use the script, you must open a terminal and navigate to the user guide directory that contains the en-US folder for the book.  From this directory, the mkbk script can correctly call publican as part of executing the script.</para>
+        </formalpara>
+        <para><command>mkbk test</command> tests the book for XML structure errors.</para>
+        <para><command>mkbk sss jbcp html-single-en-US</command> publishes the SIP Servlets Server User Guide to Red Hat Style standards. </para>
+        <para><command>mkbk sss mob xml-en-US</command> validates the SIP Servlet Server User Guide, and creates the all-SIP_Servlets_Server_User_Guide.xml  file used by Maven to publish the community documentation. </para>
+        <note>
+          <para>The <option>jbcp</option> option does not work if you want to create the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file.  You must use the <option>mob</option> option to create this file.</para>
+        </note>
+        <formalpara>
+          <title>Remarks</title>
+          <para>You can use the <command>mkbk <replaceable>[book_name]</replaceable> mob xml-en-US</command> command when your user guide cannot be published using Publican.  This command executes the xmllint tool, which is called with specific settings: include  xi:include references, and  user defined entities; validate  XML;   do not abort when an error is located.  </para>
+        </formalpara>
+        <para>This process creates the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file, which is an amalgameted, single file containing all chapters and sections of your book in one file.  You can  open the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file in <productname>XML Copy Editor</productname> (or another XML Editor with built in validation), and validate the file to determine where the invalid mark-up is within the file.  You can then open the original chapter or section, and correct the structure error.  </para>
+      </section>
+    </section>
   </section>
   <section>
     <title>Maven &amp; JDocBook</title>
     <para/>
     <section>
       <title>Maven Variables</title>
-      <para>Througout the UDS, Maven variables are used to substitute values when Maven builds the documentation.  The values that are substituted into the documentation by Maven include version numbers, installation paths, and product names.  What information is substituted for each variable, largely depends on whether the deliverable is for Mobicents or JBCP.  </para>
+      <para>Throughout the UDS, Maven variables are used to substitute values when Maven builds the documentation.  The values that are substituted into the documentation by Maven include version numbers, installation paths, and product names.  What information is substituted for each variable, largely depends on whether the deliverable is for Mobicents or JBCP.  </para>
       <para><xref linkend="table-SIP_Presence_Service_Maven_Variables"/> lists the Maven variables used within the SIP Presence Service, and explains what each one represents.</para>
       <table frame="all" pgwide="1" id="table-SIP_Presence_Service_Maven_Variables">
         <title>SIP Presence Service Maven Variables</title>
@@ -245,12 +315,7 @@
             </row>
             <row>
               <entry>${version}</entry>
-              <entry>Substitues the product version number for the release. This variable is used to substitute the version numbers in all path names. </entry>
-              <entry/>
-            </row>
-            <row>
-              <entry/>
-              <entry/>
+              <entry>Substitutes the product version number for the release. This variable is used to substitute the version numbers in all path names. </entry>
               <entry/>
             </row>
           </tbody>
@@ -259,6 +324,14 @@
 <!--SSDP: Adding caveat about the early stages of the Single Source Docs not being fully implemented.-->      <note>
         <para>At this stage, not all book have been &quot;Mavenized&quot;.  The Single Source Docs Project is in the early stages, and further testing must be undertaken before the strategy is fully realized.</para>
       </note>
+    </section>
+    <section>
+      <title>Test Publishing Community Documentation </title>
+      <para>If you want to view how the latest <filename>all-[user_guide_name].xml</filename> looks when published to Hudson, you can run Maven locally and produce the HTML Single file on demand.</para>
+      <para>You must have Maven installed and configured.  If you have not yet configured Maven locally, you can find basic instructions in the Publican-JDocBook User Guide, available from the  <ulink url="https://svn.devel.redhat.com/repos/ecs/Staff/1.0/dhensley/Publican-JDocBook_User_Guide">Red Hat SVN</ulink>.</para>
+      <para>The Maven command to publish books to HTML Single is listed below for reference.  </para>
+      <screen>mvn compile -Denv.DOCNAME=&quot;<replaceable>[user_guide_name]</replaceable>&quot; -Phtml-single</screen>
+      <para>The [user_guide_name] is the same as the book names called by the mkbk script.  The command is also provided as a comment in the mkbk script.  For more information regarding the mkbk script, refer to <xref linkend="sfp-Script_for_Publishing"/>.</para>
     </section>
   </section>
 </chapter>

@@ -424,7 +424,7 @@
             <varlistentry>
               <term>Is a Diagram or Screenshot Really Needed?</term>
               <listitem>
-                <para>Diagrams should be present only if the information contained within them is essential for the reader to grasp a concept, or user interface.   Well written procedures generally don&apos;t require supporting screen shots if the procedure describes the fields a user must complete.  Excluding unnecessary screenshots increases the  maintainability of the UDS.</para>
+                <para>Diagrams should be present only if the information contained within them is essential for the reader to grasp a concept, or understand a user interface.   Well written procedures generally don&apos;t require supporting screen shots if the procedure describes the fields a user must complete.  Excluding unnecessary screenshots increases the  maintainability of the UDS.</para>
               </listitem>
             </varlistentry>
           </variablelist>
@@ -470,7 +470,7 @@
             </listitem>
           </itemizedlist>
           <note>
-            <title>Re-review, or Straight to Editing?</title>
+            <title>Re-review, or straight to editing?</title>
             <para>Generally, a re-review is required when large changes are suggested by the reviewer.   It is important to verify that the content author has understood what you meant in your review comments, and has appropriately incorporated your suggestions.</para>
             <para>For smaller changes, you can recommend that the content author make the suggested changes, and forward the enhancement onto Editing.</para>
           </note>
