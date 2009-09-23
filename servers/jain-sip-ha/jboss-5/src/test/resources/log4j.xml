@@ -174,6 +174,10 @@
       <priority value="WARN"/>
    </category>
    
+   <category name="org.jboss.cache">
+      <priority value="INFO"/>
+   </category>
+   
    <!-- Limit the org.quartz category to INFO as its DEBUG is verbose -->
    <category name="org.quartz">
       <priority value="INFO"/>

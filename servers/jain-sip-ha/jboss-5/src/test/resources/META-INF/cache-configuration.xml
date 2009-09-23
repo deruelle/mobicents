@@ -51,12 +51,12 @@
 	<!--
 		serialization related configuration, used for replication and cache
 		loading
-	
+	-->	
 	<serialization objectInputStreamPoolSize="12"
 		objectOutputStreamPoolSize="14" version="3.0.0"
-		marshallerClass="org.jboss.cache.marshall.VersionAwareMarshaller"
+		marshallerClass="org.jboss.cache.marshall.CacheMarshaller300"
 		useLazyDeserialization="false" useRegionBasedMarshalling="false" />
--->
+
 	<!--
 		This element specifies that the cache is clustered. modes supported:
 		replication (r) or invalidation (i).
@@ -96,9 +96,9 @@
 			classpath or filesystem. udp.xml ships with jgroups.jar and will be
 			picked up by the class loader.
 		-->
-		<jgroupsConfig >
+		<jgroupsConfig configFile="udp.xml">
 			<!--
-				<PING timeout="2000"
+				uncomment to define a JGroups stack here <PING timeout="2000"
 				num_initial_members="3"/> <MERGE2 max_interval="30000"
 				min_interval="10000"/> <FD_SOCK/> <FD timeout="10000" max_tries="5"
 				shun="true"/> <VERIFY_SUSPECT timeout="1500"/> <pbcast.NAKACK
@@ -120,31 +120,6 @@
 			-->
 		</jgroupsConfig>
 	</clustering>
-
-	<!--
-		Eviction configuration. WakeupInterval defines how often the eviction
-		thread runs, in milliseconds. 0 means the eviction thread will never
-		run.
-	-->
-	<eviction wakeUpInterval="500">
-		<default algorithmClass="org.jboss.cache.eviction.LRUAlgorithm"
-			eventQueueSize="200000">
-
-			<property name="maxNodes" value="5000" />
-			<property name="timeToLive" value="1000" />
-		</default>
-
-		<region name="/org/jboss/data1">
-			<property name="timeToLive" value="2000" />
-		</region>
-
-		<region name="/org/jboss/data2" algorithmClass="org.jboss.cache.eviction.FIFOAlgorithm"
-			eventQueueSize="100000">
-			<property name="maxNodes" value="3000" />
-			<property name="minTimeToLive" value="4000" />
-		</region>
-	</eviction>
-
 	
 	<!--
 		Define custom interceptors. All custom interceptors need to extend

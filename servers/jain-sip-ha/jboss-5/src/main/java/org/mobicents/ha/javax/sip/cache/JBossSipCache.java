@@ -22,7 +22,9 @@
 package org.mobicents.ha.javax.sip.cache;
 
 import gov.nist.core.StackLogger;
+import gov.nist.javax.sip.stack.SIPClientTransaction;
 import gov.nist.javax.sip.stack.SIPDialog;
+import gov.nist.javax.sip.stack.SIPServerTransaction;
 
 import java.util.Properties;
 
@@ -33,13 +35,15 @@ import javax.transaction.UserTransaction;
 import org.jboss.cache.Cache;
 import org.jboss.cache.CacheException;
 import org.jboss.cache.DefaultCacheFactory;
+import org.jboss.cache.Fqn;
+import org.jboss.cache.Node;
 import org.mobicents.ha.javax.sip.ClusteredSipStack;
 import org.mobicents.ha.javax.sip.SipStackImpl;
 
 /**
- * Implementation of the SipCache interface, backed by a JBoss Cache 1.4.1 Tree Cache.
+ * Implementation of the SipCache interface, backed by a JBoss Cache 3.X Cache.
  * The configuration of JBoss Cache can be set throught the following Mobicents SIP Stack property :
- * <b>org.mobicents.ha.javax.sip.TREE_CACHE_CONFIG_PATH</b>
+ * <b>org.mobicents.ha.javax.sip.JBOSS_CACHE_CONFIG_PATH</b>
  * 
  * @author jean.deruelle@gmail.com
  *
@@ -51,8 +55,12 @@ public class JBossSipCache implements SipCache {
 	ClusteredSipStack clusteredSipStack = null;
 	Properties configProperties = null;	
 	
-	protected Cache<String, SIPDialog> cache;
+	protected Cache cache;
 	protected JBossSipCacheListener cacheListener;
+	
+	protected Node<String, SIPDialog> dialogRootNode = null;
+	protected Node<String, SIPClientTransaction> clientTxRootNode = null;
+	protected Node<String, SIPServerTransaction> serverTxRootNode = null;
 	
 	/**
 	 * 
@@ -64,7 +72,12 @@ public class JBossSipCache implements SipCache {
 	 */
 	public SIPDialog getDialog(String dialogId) throws SipCacheException {		
 		try {
-			return (SIPDialog) cache.get(SipStackImpl.DIALOG_ROOT, dialogId);
+			Node dialogNode = ((Node) dialogRootNode.getChild(Fqn.fromString(dialogId)));
+			if(dialogNode != null) {
+				return (SIPDialog) dialogNode.get(dialogId);
+			} else {
+				return null;
+			}
 		} catch (CacheException e) {
 			throw new SipCacheException("A problem occured while retrieving the following dialog " + dialogId + " from JBoss Cache", e);
 		}
@@ -82,7 +95,8 @@ public class JBossSipCache implements SipCache {
 			if(tx != null) {
 				tx.begin();
 			}
-			cache.put(SipStackImpl.DIALOG_ROOT, dialog.getDialogId(), dialog);
+			Node dialogNode = dialogRootNode.addChild(Fqn.fromString(dialog.getDialogId()));
+			dialogNode.put(dialog.getDialogId(), dialog);
 			if(tx != null) {
 				tx.commit();
 			}
@@ -98,9 +112,22 @@ public class JBossSipCache implements SipCache {
 	 * @see org.mobicents.ha.javax.sip.cache.SipCache#removeDialog(java.lang.String)
 	 */
 	public void removeDialog(String dialogId) throws SipCacheException {
+		UserTransaction tx = null;
 		try {
-			cache.remove(SipStackImpl.DIALOG_ROOT, dialogId);
-		} catch (CacheException e) {
+			Properties prop = new Properties();
+			prop.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.cache.transaction.DummyContextFactory");
+			tx = (UserTransaction) new InitialContext(prop).lookup("UserTransaction");
+			if(tx != null) {
+				tx.begin();
+			}
+			dialogRootNode.removeChild(Fqn.fromString(dialogId));
+			if(tx != null) {
+				tx.commit();
+			}
+		} catch (Exception e) {
+			if(tx != null) {
+				try { tx.rollback(); } catch(Throwable t) {}
+			}
 			throw new SipCacheException("A problem occured while removing the following dialog " + dialogId + " from JBoss Cache", e);
 		}
 	}
@@ -137,11 +164,14 @@ public class JBossSipCache implements SipCache {
 
 	public void start() throws SipCacheException {
 		try {
-			cache.start();
+			cache.start();			
 		} catch (Exception e) {
 			throw new SipCacheException("Couldn't start JBoss Cache", e);
 		}
-		
+		dialogRootNode = cache.getRoot().getChild(Fqn.fromString(SipStackImpl.DIALOG_ROOT));
+		if(dialogRootNode == null) {
+			dialogRootNode = cache.getRoot().addChild(Fqn.fromString(SipStackImpl.DIALOG_ROOT));	
+		}
 	}
 
 	public void stop() throws SipCacheException {

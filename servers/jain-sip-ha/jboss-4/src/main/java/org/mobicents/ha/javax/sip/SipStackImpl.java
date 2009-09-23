@@ -26,15 +26,7 @@ import java.util.Properties;
 import javax.sip.PeerUnavailableException;
 
 /**
- * This class extends the regular NIST SIP Stack Implementation to cache Dialogs in a replicated cache 
- * and make use of Fault Tolerant Timers so that the NIST SIP Stack can be distributed in a cluster 
- * and calls can be failed over 
- * 
- * This class will instantiate an instance of a class implementing the org.mobicents.ha.javax.sip.cache.SipCache interface to be able to set/get dialogs and txs into/from it.
- * The cache class name is retrieved through the Properties given to the Sip Stack upon creation under the following property name : <b>org.mobicents.ha.javax.sip.CACHE_CLASS_NAME</b>
- * 
- * It will override all the calls to get/remove/put Dialogs and Txs so that we can fetch/remove/put them from/into the Cache 
- * and populate the local datastructure of the NIST SIP Stack
+ * This class extends the ClusteredSipStack to provide an implementation backed by JBoss Cache 1.4.X
  * 
  * @author jean.deruelle@gmail.com
  *

@@ -23,15 +23,11 @@ package org.mobicents.ha.javax.sip.cache;
 
 import gov.nist.core.StackLogger;
 
-import org.jboss.cache.Fqn;
 import org.jboss.cache.notifications.annotation.CacheStarted;
 import org.jboss.cache.notifications.annotation.CacheStopped;
 import org.jboss.cache.notifications.annotation.NodeCreated;
-import org.jboss.cache.notifications.annotation.NodeEvicted;
-import org.jboss.cache.notifications.annotation.NodeLoaded;
 import org.jboss.cache.notifications.annotation.NodeModified;
 import org.jboss.cache.notifications.annotation.NodeRemoved;
-import org.jboss.cache.notifications.annotation.NodeVisited;
 import org.jboss.cache.notifications.annotation.ViewChanged;
 import org.jboss.cache.notifications.event.CacheStartedEvent;
 import org.jboss.cache.notifications.event.CacheStoppedEvent;
@@ -78,8 +74,8 @@ public class JBossSipCacheListener {
 	}
 	
 	@NodeCreated
-	public void nodeCreated(NodeCreatedEvent nodeCreatedEvent) {
-		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
+	public void nodeCreated(NodeCreatedEvent nodeCreatedEvent) {		
+		if (!nodeCreatedEvent.isOriginLocal() && clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
 			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
 					" Node created : " + nodeCreatedEvent.getFqn());
 		}
@@ -87,7 +83,7 @@ public class JBossSipCacheListener {
 
 	@NodeModified
 	public void nodeModified(NodeModifiedEvent nodeModifiedEvent) {
-		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
+		if (!nodeModifiedEvent.isOriginLocal() && clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
 			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
 					" Node modified : " + nodeModifiedEvent.getFqn());
 		}
@@ -96,7 +92,7 @@ public class JBossSipCacheListener {
 
 	@NodeRemoved
 	public void nodeRemoved(NodeRemovedEvent nodeRemovedEvent) {
-		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
+		if (!nodeRemovedEvent.isOriginLocal() && clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
 			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
 					" Node removed : " + nodeRemovedEvent.getFqn());
 		}		
