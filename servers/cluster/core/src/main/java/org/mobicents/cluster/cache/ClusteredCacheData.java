@@ -33,11 +33,16 @@ public class ClusteredCacheData extends CacheData {
 	 * @see org.mobicents.slee.runtime.cache.CacheData#create()
 	 */
 	@Override
-	public void create() {
-		super.create();
-		// store local address if we are not running in local mode
-		if (!getMobicentsCache().isLocalMode()) {
-			setClusterNodeAddress(getMobicentsCache().getJBossCache().getLocalAddress());
+	public boolean create() {
+		if (super.create()) {
+			// store local address if we are not running in local mode
+			if (!getMobicentsCache().isLocalMode()) {
+				setClusterNodeAddress(getMobicentsCache().getJBossCache().getLocalAddress());
+			}
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	

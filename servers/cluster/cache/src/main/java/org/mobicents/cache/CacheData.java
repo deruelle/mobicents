@@ -39,12 +39,16 @@ public class CacheData {
 	/**
 	 * Creates node to hold data in cache
 	 */
-	public void create() {
+	public boolean create() {
 		if (!exists()) {
 			node = mobicentsCache.getJBossCache().getRoot().addChild(nodeFqn);
 			if (logger.isDebugEnabled()) {
 				logger.debug("created cache node "+nodeFqn);
 			}
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	

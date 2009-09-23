@@ -1,6 +1,7 @@
 package org.mobicents.cluster;
 
 import org.jboss.cache.Fqn;
+import org.jgroups.Address;
 import org.mobicents.cluster.cache.ClusteredCacheData;
 
 /**
@@ -26,6 +27,12 @@ public interface ClientLocalListener {
 	 * @return
 	 */
 	public byte getPriority();
+
+	/**
+	 * Indicates that it will do fail over the cluster node with the specified {@link Address}.
+	 * @param address
+	 */
+	public void failOverClusterMember(Address address);
 	
 	/**
 	 * Notifies the local client that it now owns the specified {@link ClusteredCacheData}. 

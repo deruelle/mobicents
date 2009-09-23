@@ -1,7 +1,6 @@
 package org.mobicents.timers;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +12,7 @@ import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Logger;
 import org.jboss.cache.Fqn;
+import org.jgroups.Address;
 import org.mobicents.cluster.MobicentsCluster;
 import org.mobicents.cluster.cache.ClusteredCacheData;
 import org.mobicents.timers.cache.FaultTolerantSchedulerCacheData;
@@ -171,20 +171,13 @@ public class FaultTolerantScheduler {
 	
 	// logic 
 	
-	public void schedule(TimerTask task) {
-		this.schedule(task, true);
-	}
-	
 	/**
 	 * Schedules the specified task.
 	 * 
 	 * @param task
 	 */
-	 private void schedule(TimerTask task,boolean updateStorage) {
-		 if(logger.isDebugEnabled())
-		 {
-			 logger.debug("schedule() : "+task+" - "+updateStorage);
-		 }
+	public void schedule(TimerTask task) {
+		
 		final TimerTaskData taskData = task.getData(); 
 		final Serializable taskID = taskData.getTaskID();
 		
@@ -192,10 +185,10 @@ public class FaultTolerantScheduler {
 			logger.debug("Scheduling task with id "+taskID);
 		}
 		localRunningTasks.put(taskID, task);
+		
 		// store the task and data
-		if(updateStorage) {
-			TimerTaskCacheData timerTaskCacheData = new TimerTaskCacheData(taskID, baseFqn, cluster);
-			timerTaskCacheData.create();
+		TimerTaskCacheData timerTaskCacheData = new TimerTaskCacheData(taskID, baseFqn, cluster);
+		if (timerTaskCacheData.create()) {
 			timerTaskCacheData.setTaskData(taskData);
 		}
 				
@@ -297,7 +290,7 @@ public class FaultTolerantScheduler {
 			logger.debug("Recovering task with id "+taskData.getTaskID());
 		}
 		task.beforeRecover();
-		schedule(task,false);
+		schedule(task);
 	}
 
 	public void shutdownNow() {
@@ -351,10 +344,16 @@ public class FaultTolerantScheduler {
 		}
 
 		/* (non-Javadoc)
+		 * @see org.mobicents.cluster.ClientLocalListener#failOverClusterMember(org.jgroups.Address)
+		 */
+		public void failOverClusterMember(Address address) {
+			
+		}
+		
+		/* (non-Javadoc)
 		 * @see org.mobicents.ftf.FTFListener#lostOwnership(org.mobicents.slee.runtime.cache.ClusteredCacheData)
 		 */
 		public void lostOwnership(ClusteredCacheData clusteredCacheData) {
-			// TODO Auto-generated method stub
 			
 		}
 

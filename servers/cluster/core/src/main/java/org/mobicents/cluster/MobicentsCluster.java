@@ -1,5 +1,8 @@
 package org.mobicents.cluster;
 
+import java.util.List;
+
+import org.jgroups.Address;
 import org.mobicents.cache.MobicentsCache;
 import org.mobicents.cluster.cache.ClusteredCacheData;
 import org.mobicents.cluster.cache.ClusteredCacheDataIndexingHandler;
@@ -23,6 +26,24 @@ public interface MobicentsCluster {
 	 * @return
 	 */
 	public boolean removeLocalListener(ClientLocalListener localListener);
+	
+	/**
+	 * Retrieves the local address of the cluster node.
+	 * @return
+	 */
+	public Address getLocalAddress();
+	
+	/**
+	 * Retrieves the members of the cluster.
+	 * @return
+	 */
+	public List<Address> getClusterMembers();
+	
+	/**
+	 * Indicates if the local node is the master/head of the cluster.
+	 * @return
+	 */
+	public boolean isHeadMember();
 	
 	/**
 	 *  

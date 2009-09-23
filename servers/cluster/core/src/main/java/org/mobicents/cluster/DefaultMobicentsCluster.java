@@ -64,6 +64,47 @@ public class DefaultMobicentsCluster implements MobicentsCluster {
 		this.clusteredCacheDataIndexingHandler = new DefaultClusteredCacheDataIndexingHandler();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.cluster.MobicentsCluster#getLocalAddress()
+	 */
+	public Address getLocalAddress() {
+		return mobicentsCache.getJBossCache().getLocalAddress();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.cluster.MobicentsCluster#getClusterMembers()
+	 */
+	public List<Address> getClusterMembers() {
+		if (currentView != null) {
+			return Collections.unmodifiableList(currentView);
+		}
+		else {
+			Address localAddress = getLocalAddress();
+			if (localAddress == null) {
+				return Collections.emptyList();
+			}
+			else {
+				List<Address> list = new ArrayList<Address>();
+				list.add(localAddress);
+				return Collections.unmodifiableList(list);
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.mobicents.cluster.MobicentsCluster#isHeadMember()
+	 */
+	public boolean isHeadMember() {
+		final Address localAddress = getLocalAddress();
+		if (localAddress != null) {
+			final List<Address> clusterMembers = getClusterMembers();
+			return !clusterMembers.isEmpty() && clusterMembers.get(0).equals(localAddress);
+		}
+		else {
+			return true;
+		}
+	}
+	
 	/**
 	 * Method handle a change on the cluster members set
 	 * @param event
@@ -77,7 +118,7 @@ public class DefaultMobicentsCluster implements MobicentsCluster {
 				
 		final List<Address> oldView = currentView;
 		currentView = new ArrayList<Address>(event.getNewView().getMembers());
-		final Address localAddress = mobicentsCache.getJBossCache().getLocalAddress();
+		final Address localAddress = getLocalAddress();
 		
 		// recover stuff from lost members
 		Runnable runnable = new Runnable() {
@@ -124,6 +165,8 @@ public class DefaultMobicentsCluster implements MobicentsCluster {
 					txMgr.begin();
 					createdTx = true;
 				}
+											
+				localListener.failOverClusterMember(lostMember);
 				
 				for (Object childName : jbossCache.getChildrenNames(rootFqnOfChanges)) {
 					// Here in values we store data and... inet node., we must match
@@ -132,9 +175,10 @@ public class DefaultMobicentsCluster implements MobicentsCluster {
 					if (clusteredCacheData.exists()) {
 						Address address = clusteredCacheData.getClusterNodeAddress();
 						if (address != null && address.equals(lostMember)) {
-							// change ownership
-							clusteredCacheData.setClusterNodeAddress(localAddress);
+							// call back the listener
 							localListener.wonOwnership(clusteredCacheData);
+							// change ownership
+							clusteredCacheData.setClusterNodeAddress(localAddress);							
 						}					
 					}
 				}

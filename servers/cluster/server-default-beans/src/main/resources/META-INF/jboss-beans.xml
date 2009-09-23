@@ -18,12 +18,14 @@
       <property name="lockAcquisitionTimeout">15000</property>
       <property name="concurrencyLevel">10000</property>
       
+      <demand>RealTransactionManager</demand>
    </bean>
    
 	<bean name="Mobicents.Cache" class="org.mobicents.cache.MobicentsCache">
 		<constructor>
           <parameter class="org.jboss.cache.config.Configuration"><inject bean="Mobicents.CacheConfig"/></parameter> 
-     	</constructor>			
+     	</constructor>		
+     	<demand>Mobicents.CacheConfig</demand>	
 	</bean>
 
 	<bean name="MobicentsJBossCacheJmxWrapper" class="org.jboss.cache.jmx.CacheJmxWrapper">
@@ -31,6 +33,7 @@
       <constructor>
           <parameter><value-factory bean="Mobicents.Cache" method="getJBossCache"/></parameter>
       </constructor>
+      <demand>Mobicents.Cache</demand>	      
    </bean>
    
    	<!-- cluster control -->
@@ -40,7 +43,9 @@
 			<parameter><inject bean="Mobicents.Cache"/></parameter>
 			<parameter><inject bean="RealTransactionManager"/></parameter>
 			<parameter><null/></parameter>
-		</constructor>				
+		</constructor>	
+		<demand>Mobicents.Cache</demand>
+		<demand>RealTransactionManager</demand>					
 	</bean>
 		
 	   	
