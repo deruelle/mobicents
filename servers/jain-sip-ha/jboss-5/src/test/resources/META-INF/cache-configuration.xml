@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jbosscache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:jboss:jbosscache-core:config:3.0">
+
+	<!--
+		isolation levels supported: READ_COMMITTED and REPEATABLE_READ
+		nodeLockingSchemes: mvcc, pessimistic (deprecated), optimistic
+		(deprecated)
+	-->
+	<locking isolationLevel="REPEATABLE_READ"
+		lockParentForChildInsertRemove="false" lockAcquisitionTimeout="20000"
+		nodeLockingScheme="mvcc" writeSkewCheck="false" concurrencyLevel="500" />
+
+	<!--
+		Used to register a transaction manager and participate in ongoing
+		transactions.
+	-->
+	<transaction
+		transactionManagerLookupClass="org.jboss.cache.transaction.DummyTransactionManagerLookup"
+		syncRollbackPhase="false" syncCommitPhase="false" />
+
+	<!--
+		Used to register JMX statistics in any available MBean server
+	-->
+	<jmxStatistics enabled="false" />
+
+	<!--
+		If region based marshalling is used, defines whether new regions are
+		inactive on startup.
+	-->
+	<startup regionsInactiveOnStartup="true" />
+
+	<!--
+		Used to register JVM shutdown hooks. hookBehavior: DEFAULT, REGISTER,
+		DONT_REGISTER
+	-->
+	<shutdown hookBehavior="DEFAULT" />
+
+	<!--
+		Used to define async listener notification thread pool size
+	-->
+	<listeners asyncPoolSize="1" asyncQueueSize="100000" />
+
+	<!--
+		Used to enable invocation batching and allow the use of
+		Cache.startBatch()/endBatch() methods.
+	-->
+	<invocationBatching enabled="false" />
+
+	<!--
+		serialization related configuration, used for replication and cache
+		loading
+	
+	<serialization objectInputStreamPoolSize="12"
+		objectOutputStreamPoolSize="14" version="3.0.0"
+		marshallerClass="org.jboss.cache.marshall.VersionAwareMarshaller"
+		useLazyDeserialization="false" useRegionBasedMarshalling="false" />
+-->
+	<!--
+		This element specifies that the cache is clustered. modes supported:
+		replication (r) or invalidation (i).
+	-->
+	<clustering mode="replication" clusterName="JBossCache-cluster">
+
+		<!--
+         Defines whether to retrieve state on startup
+      -->
+		<stateRetrieval timeout="20000" fetchInMemoryState="false" />
+
+		<!--
+         Network calls are synchronous.
+      -->
+		<sync replTimeout="20000" />
+		<!--
+         Uncomment this for async replication.
+      -->
+		<!--
+			<async useReplQueue="true" replQueueInterval="10000"
+			replQueueMaxElements="500" serializationExecutorPoolSize="20"
+			serializationExecutorQueueSize="5000000"/>
+		-->
+
+		<!-- Uncomment to use Buddy Replication -->
+		<!--
+			<buddy enabled="true" poolName="myBuddyPoolReplicationGroup"
+			communicationTimeout="2000"> <dataGravitation auto="true"
+			removeOnFind="true" searchBackupTrees="true"/> <locator
+			class="org.jboss.cache.buddyreplication.NextMemberBuddyLocator">
+			<properties> numBuddies = 1 ignoreColocatedBuddies = true
+			</properties> </locator> </buddy>
+		-->
+
+		<!--
+			Configures the JGroups channel. Looks up a JGroups config file on the
+			classpath or filesystem. udp.xml ships with jgroups.jar and will be
+			picked up by the class loader.
+		-->
+		<jgroupsConfig >
+			<!--
+				<PING timeout="2000"
+				num_initial_members="3"/> <MERGE2 max_interval="30000"
+				min_interval="10000"/> <FD_SOCK/> <FD timeout="10000" max_tries="5"
+				shun="true"/> <VERIFY_SUSPECT timeout="1500"/> <pbcast.NAKACK
+				use_mcast_xmit="false" gc_lag="0"
+
+				retransmit_timeout="300,600,1200,2400,4800"
+
+				discard_delivered_msgs="true"/> <UNICAST
+				timeout="300,600,1200,2400,3600"/> <pbcast.STABLE
+				stability_delay="1000" desired_avg_gossip="50000"
+
+				max_bytes="400000"/> <pbcast.GMS print_local_addr="true"
+				join_timeout="5000" shun="false" view_bundling="true"
+				view_ack_collection_timeout="5000"/> <FRAG2 frag_size="60000"/>
+
+				<pbcast.STREAMING_STATE_TRANSFER use_reading_thread="true"/>
+
+				<pbcast.FLUSH timeout="0"/>
+			-->
+		</jgroupsConfig>
+	</clustering>
+
+	<!--
+		Eviction configuration. WakeupInterval defines how often the eviction
+		thread runs, in milliseconds. 0 means the eviction thread will never
+		run.
+	-->
+	<eviction wakeUpInterval="500">
+		<default algorithmClass="org.jboss.cache.eviction.LRUAlgorithm"
+			eventQueueSize="200000">
+
+			<property name="maxNodes" value="5000" />
+			<property name="timeToLive" value="1000" />
+		</default>
+
+		<region name="/org/jboss/data1">
+			<property name="timeToLive" value="2000" />
+		</region>
+
+		<region name="/org/jboss/data2" algorithmClass="org.jboss.cache.eviction.FIFOAlgorithm"
+			eventQueueSize="100000">
+			<property name="maxNodes" value="3000" />
+			<property name="minTimeToLive" value="4000" />
+		</region>
+	</eviction>
+
+	
+	<!--
+		Define custom interceptors. All custom interceptors need to extend
+		org.jboss.cache.interceptors.base.CommandInterceptor
+	-->
+
+	<!--
+		<customInterceptors> <interceptor position="first"
+		class="org.jboss.cache.config.parsing.custominterceptors.AaaCustomInterceptor">
+		<property name="attrOne" value="value1" /> <property name="attrTwo"
+		value="value2" /> </interceptor> <interceptor position="last"
+		class="org.jboss.cache.config.parsing.custominterceptors.BbbCustomInterceptor"/>
+		<interceptor index="3"
+		class="org.jboss.cache.config.parsing.custominterceptors.AaaCustomInterceptor"/>
+		<interceptor before="org.jboss.cache.interceptors.CallInterceptor"
+		class="org.jboss.cache.config.parsing.custominterceptors.BbbCustomInterceptor"/>
+		<interceptor after="org.jboss.cache.interceptors.CallInterceptor"
+		class="org.jboss.cache.config.parsing.custominterceptors.AaaCustomInterceptor"/>
+		</customInterceptors>
+	-->
+</jbosscache>

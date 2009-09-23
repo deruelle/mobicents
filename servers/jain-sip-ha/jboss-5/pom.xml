@@ -12,11 +12,47 @@
 	
 	<packaging>jar</packaging>		
 	
+	<properties>
+		<jboss.version>5.1.0.GA</jboss.version>
+	</properties>
+	
 	<dependencies>	
+	
 		<dependency>
 			<groupId>org.mobicents.ha.javax.sip</groupId>
 			<artifactId>mobicents-jain-sip-ha-core</artifactId>
 			<version>${version}</version>
+		</dependency>
+	
+		<!-- test deps -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.jbossas</groupId>
+			<artifactId>jboss-as-component-matrix</artifactId>
+			<version>${jboss.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging-log4j</artifactId>
+			<version>2.1.0.GA</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- clustering deps -->
+		<dependency>
+			<groupId>org.jboss.cache</groupId>
+			<artifactId>jbosscache-core</artifactId>
+			<version>3.0.3.GA</version>
+			<scope>provided</scope>
 		</dependency>	
 	</dependencies>
 
