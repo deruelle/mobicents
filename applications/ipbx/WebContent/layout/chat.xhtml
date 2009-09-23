@@ -1,0 +1,34 @@
+<a4j:region xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich" rendered="#{identity.loggedIn}">
+	<br/>
+	<div class="history">
+	<div class="roundcont">
+	
+	<a4j:form rendered="#{currentWorkspaceState.anythingGoingOn()}" >
+			
+			<div style="padding:4px;margin:2px;border:0px">
+			<s:label><b>Conference Chat</b></s:label><rich:spacer width="50"></rich:spacer>
+			<h:inputText id="chatText" value="#{chatAction.text}" size="50"/><rich:spacer width="10"/>
+			<a4j:commandButton type="submit" style="color:#eee" value="Send" action="#{chatAction.addText}" id="sendChat"/></div>
+			<a4j:outputPanel keepTransient="false">
+			<hr/>
+			<a4j:repeat value="#{currentWorkspaceState.conference.chat}" var="message"
+				rows="5">
+				<rich:spacer width="10"/>
+				<b><h:outputText value="#{message.author}> " /></b>
+				<h:outputText value="#{message.text}" /><br/>
+			</a4j:repeat>
+			</a4j:outputPanel>
+	</a4j:form><br/></div>
+	   <div class="roundbottom">
+	 <img src="bl.gif" alt="" 
+	 width="15" height="15" class="corner" 
+	 style="display: none" />
+   </div>
+</div>	
+</a4j:region>

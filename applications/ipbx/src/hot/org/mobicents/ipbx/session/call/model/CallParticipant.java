@@ -1,14 +1,11 @@
 package org.mobicents.ipbx.session.call.model;
 
-import java.util.HashSet;
-
 import javax.servlet.sip.SipServletRequest;
 import javax.servlet.sip.SipSession;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
 import org.mobicents.ipbx.entity.Binding;
 import org.mobicents.ipbx.entity.CallState;
 import org.mobicents.ipbx.entity.PstnGatewayAccount;
@@ -123,6 +120,9 @@ public class CallParticipant {
 
 	public void setMuted(boolean muted) {
 		this.muted = muted;
+		for(CallParticipant cp:conference.getParticipants()) {
+			WorkspaceStateManager.instance().getWorkspace(cp.getName()).makeStatusDirty();
+		}
 	}
 
 	public PstnGatewayAccount getPstnGatewayAccount() {

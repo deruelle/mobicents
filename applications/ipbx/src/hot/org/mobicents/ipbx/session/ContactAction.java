@@ -1,6 +1,5 @@
 package org.mobicents.ipbx.session;
 
-import java.io.IOException;
 import java.util.HashSet;
 
 import javax.faces.application.FacesMessage;
@@ -10,11 +9,9 @@ import javax.persistence.EntityManager;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Transactional;
 import org.mobicents.ipbx.entity.Contact;
-import org.mobicents.ipbx.entity.Registration;
 import org.mobicents.ipbx.entity.User;
 
 @Name("contactAction")

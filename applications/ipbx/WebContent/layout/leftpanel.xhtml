@@ -11,7 +11,7 @@
 		<a4j:form>
 			<rich:dataTable id="registrationsid"
 				value="#{dataLoader.loadRegistrations()}" 
-				var="registration"
+				var="registration" 
 				rows="10" 
 				rowClasses="leftpanelcolumn"
 				onRowMouseOver="this.style.backgroundColor='#F9F9F9'"
@@ -75,7 +75,10 @@
 
 			<rich:toolTip for="regHelp" layout="block">
 				<div style="width: 350px;">You can add SIP URIs and PSTN Phone
-				numbers for your account in this panel. Later you can register
+				numbers for your account in this panel from the text field blow or
+				by registering a phone against the server. Any registeration will 
+				be accepted automatically, the table will be updated immediately 
+				and your new phone will be ready to use. Later you can register
 				against the SIP URIs from SIP phones and the registration bindings
 				will appear in this panel. When initiation calls from this UI only
 				the phones you have selected with <b>Ring</b> will be called.</div>

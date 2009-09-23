@@ -1,5 +1,6 @@
 package org.mobicents.ipbx.session.call.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -11,6 +12,7 @@ public class Conference {
 	private static final String CONFERENCE_ENDPOINT_NAME = "media/trunk/Conference/$";
 	private String id;
 	private String name;
+	private ArrayList<Message> chat = new ArrayList<Message>();
 	private MsEndpoint endpoint;
 	private HashSet<CallParticipant> participants =
 		new HashSet<CallParticipant>();
@@ -86,6 +88,17 @@ public class Conference {
 		return "sip:conference-" + this.getId() + "@" + PbxConfiguration.getProperty("pbx.hostname");
 	}
 	
+	public ArrayList<Message> getChat() {
+		return chat;
+	}
+
+	public synchronized void addChat(String author, String text) {
+		chat.add(0, new Message(author, text));
+		for(CallParticipant cp : getParticipants(CallState.INCALL)) {
+			WorkspaceStateManager.instance().getWorkspace(cp.getName()).makeChatDirty();
+		}
+	}
+
 	public String toString() {
 		return getId() + " " + getEndpointName();
 	}

@@ -1,19 +1,13 @@
 package org.mobicents.ipbx.session;
 
-import java.util.Timer;
-
-import javax.servlet.sip.SipServletRequest;
 import javax.servlet.sip.SipSession;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
-import org.mobicents.mscontrol.MsConnection;
-import org.mobicents.mscontrol.MsConnectionEvent;
 
 @Name("callActionConnectionHandler")
 @Scope(ScopeType.STATELESS)

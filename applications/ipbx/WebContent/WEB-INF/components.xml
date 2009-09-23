@@ -16,7 +16,7 @@
                  http://jboss.com/products/seam/mail http://jboss.com/products/seam/mail-2.1.xsd
                  http://jboss.com/products/seam/components http://jboss.com/products/seam/components-2.1.xsd">
 
-   <core:init debug="false" jndi-pattern="\#{ejbName}/local"/>
+   <core:init debug="true" jndi-pattern="\#{ejbName}/local"/>
      
    <core:manager concurrent-request-timeout="500" 
                  conversation-timeout="120000" 

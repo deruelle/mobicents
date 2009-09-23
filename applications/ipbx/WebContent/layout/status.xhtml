@@ -60,10 +60,10 @@
 					<rich:column width="40">
 						<h:commandLink rendered="#{currentWorkspaceState.hasOngoingCalls()}"
 							action="#{currentWorkspaceState.join(incoming)}">Accept</h:commandLink>
-					</rich:column>
+					</rich:column><!-- 
 					<rich:column width="140">
 					Forward to <rich:comboBox ></rich:comboBox>
-					</rich:column>
+					</rich:column> -->
 				</rich:dataTable>
 				<rich:dataTable id="outgoingCall"
 					rendered="#{currentWorkspaceState.hasOutgoingCalls()}"
@@ -81,6 +81,7 @@
 				</rich:dataTable>
 
 			</rich:panel>
+			<ui:include src="/layout/chat.xhtml" /> 
 			<ui:include src="/layout/history.xhtml" /> 
 		</a4j:form></div>
 		</a4j:region>

@@ -1,6 +1,5 @@
 package org.mobicents.ipbx.session;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Timer;
@@ -23,7 +22,6 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
-import org.mobicents.ipbx.entity.Binding;
 import org.mobicents.ipbx.entity.CallState;
 import org.mobicents.ipbx.entity.PstnGatewayAccount;
 import org.mobicents.ipbx.entity.Registration;
@@ -36,11 +34,6 @@ import org.mobicents.ipbx.session.call.model.CurrentWorkspaceState;
 import org.mobicents.ipbx.session.call.model.WorkspaceStateManager;
 import org.mobicents.ipbx.session.configuration.PbxConfiguration;
 import org.mobicents.ipbx.session.security.SimpleSipAuthenticator;
-import org.mobicents.mscontrol.MsConnection;
-import org.mobicents.mscontrol.MsSession;
-import org.mobicents.servlet.sip.seam.entrypoint.media.MediaController;
-import org.mobicents.servlet.sip.seam.entrypoint.media.MediaControllerManager;
-import org.mobicents.servlet.sip.seam.media.framework.IVRHelperManager;
 
 @Name("callAction")
 @Scope(ScopeType.STATELESS)
@@ -122,9 +115,28 @@ public class CallAction {
 	 * @param toUri
 	 */
 	public void establishCallByUser(String toUri) {
+		User detectedUser = null;
+		if(!toUri.startsWith("sip:")) {
+			boolean charDetected = false;
+			for(int q=0; q<toUri.length(); q++) {
+				if(toUri.charAt(q)>'A' && toUri.charAt(q)<'z') {
+					charDetected = true;
+				}
+			}
+			if(charDetected) {
+				detectedUser = (User) entityManager.createQuery(
+					"SELECT user FROM User user where user.name=:username")
+					.setParameter("username", toUri).getSingleResult();
+			}
+		}
 		LinkedList<CallParticipant> fromParticipants = new LinkedList<CallParticipant>();
 		
-		Registration toRegistration = sipAuthenticator.findRegistration(toUri);
+		Registration toRegistration = null; 
+		
+		if(detectedUser == null){
+			toRegistration = sipAuthenticator.findRegistration(toUri);
+		}
+		
 		User fromUser = entityManager.find(User.class, this.user.getId());
 		
 		Conference conf = null;
@@ -169,95 +181,24 @@ public class CallAction {
 		String[] toCallableUris = null;
 		if(toRegistration != null) {
 			toCallableUris = toRegistration.getUser().getCallableUris();
-			
+		}
+		
+		if(detectedUser != null) {
+			toCallableUris = detectedUser.getCallableUris();
 		}
 		if(toCallableUris == null || toCallableUris.length == 0) {
 			toCallableUris = new String[] {toUri};
-		}
-		for(String uri : toCallableUris) {
-			CallParticipant toParticipant = CallParticipantManager.instance().getCallParticipant(uri);
-			toParticipant.setConference(conf);
-			String remoteUserName = "Unknown user";
-			if(toRegistration != null) remoteUserName = toRegistration.getUser().getName();
-			toParticipant.setName(remoteUserName);
-			dialParticipant(toParticipant);
-		}
-		
-		
-		// Call my phones if there is no ongoing call
-		if(!alreadyInCall) {
-			Iterator<CallParticipant> iterator = fromParticipants.iterator();
-			while(iterator.hasNext())  {
-				CallParticipant next = iterator.next();
-				next.setName(fromUser.getName());
-				dialParticipant(next);
-			}
-		}
-		
-	}
-	
-	/**
-	 * Establish call with all uris  registered for the user under the supplied uri
-	 * 
-	 * @param toUri
-	 */
-	public void establishCallByRegistration(String toUri) {
-		LinkedList<CallParticipant> fromParticipants = new LinkedList<CallParticipant>();
-		
-		Registration toRegistration = sipAuthenticator.findRegistration(toUri);
-		User fromUser = entityManager.find(User.class, this.user.getId());
-		
-		Conference conf = null;
-		boolean alreadyInCall = false;
-		
-		// Determine if we are in any calls right now. If yes, take a conference 
-		// endpoint to join the outgoing call
-		String[] callableUris = fromUser.getCallableUris();
-		for(String uri : callableUris) {
-			CallParticipant p = CallParticipantManager.instance().getExistingCallParticipant(uri);
-			if(p != null) {
-				if(p.getConference() != null && p.getCallState().equals(CallState.INCALL)) {
-					alreadyInCall = true;
-					conf = p.getConference();
-					fromParticipants.add(p);
-				}
-			}
-		}
-		// If there are no active calls just create a new conference where the 
-		// conversation will take place
-		if(conf == null) {			
-			conf = ConferenceManager.instance().getNewConference();
-			
-			//Add the participants selected in the My Phones panel 
-			for(String uri : fromUser.getCallableUris()) {
-				CallParticipant fromParticipant = CallParticipantManager.instance().getCallParticipant(uri);
-				fromParticipant.setConference(conf);
-				fromParticipants.add(fromParticipant);
-			}
-			
-		}
-		
-		// Some error checking - if no active phones, don't call and remind the user to select a phone
-		if(fromParticipants.size()==0) {
 			try {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("No phone selected", "You must register a phone and select it from the menu"));
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("The remote user has no active phones. Trying to call directly...",
+						"The remote user has no active phones. Trying to call directly..."));
 			} catch (Exception e) {}
-			return;
-		}
-		// Call the guy on all possible phones
-		String[] toCallableUris = null;
-		if(toRegistration != null) {
-			toCallableUris = toRegistration.getUser().getCallableUris();
-			
-		}
-		if(toCallableUris == null || toCallableUris.length == 0) {
-			toCallableUris = new String[] {toUri};
 		}
 		for(String uri : toCallableUris) {
 			CallParticipant toParticipant = CallParticipantManager.instance().getCallParticipant(uri);
 			toParticipant.setConference(conf);
 			String remoteUserName = "Unknown user";
 			if(toRegistration != null) remoteUserName = toRegistration.getUser().getName();
+			if(detectedUser != null) remoteUserName = detectedUser.getName();
 			toParticipant.setName(remoteUserName);
 			dialParticipant(toParticipant);
 		}
@@ -271,6 +212,12 @@ public class CallAction {
 				next.setName(fromUser.getName());
 				dialParticipant(next);
 			}
+		} else {
+			try {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+						"The remote user is already in a call. He will be asked to take you in the call.",
+						"The remote user is already in a call. He will be asked to take you in the call."));
+			} catch (Exception e) {}
 		}
 		
 	}

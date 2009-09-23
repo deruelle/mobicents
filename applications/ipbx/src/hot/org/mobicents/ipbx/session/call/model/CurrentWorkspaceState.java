@@ -8,22 +8,22 @@ import java.util.Set;
 import org.ajax4jsf.event.PushEventListener;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.*;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Unwrap;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.log.Log;
 import org.mobicents.ipbx.entity.CallState;
 import org.mobicents.ipbx.entity.User;
-import org.mobicents.servlet.sip.seam.entrypoint.media.MediaController;
-import org.mobicents.servlet.sip.seam.entrypoint.media.MediaControllerManager;
-import org.mobicents.servlet.sip.seam.media.framework.IVRHelper;
-import org.mobicents.servlet.sip.seam.media.framework.IVRHelperManager;
 import org.mobicents.ipbx.session.configuration.PbxConfiguration;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkMode;
+import org.mobicents.servlet.sip.seam.entrypoint.media.MediaController;
+import org.mobicents.servlet.sip.seam.entrypoint.media.MediaControllerManager;
+import org.mobicents.servlet.sip.seam.media.framework.IVRHelperManager;
 
 @Name("currentWorkspaceState")
 @Scope(ScopeType.STATELESS)
@@ -32,7 +32,7 @@ public class CurrentWorkspaceState {
 	@Logger 
 	private static Log log;
 	
-	@In User user;
+	@In(required=false) User user;
 	
 	private Conference conference;
 	private Set<Conference> conferences;
@@ -58,6 +58,9 @@ public class CurrentWorkspaceState {
 	
 	@Unwrap
 	public CurrentWorkspaceState getState() {
+		if(user == null) {
+			return null;
+		}
 		CurrentWorkspaceState cus = WorkspaceStateManager.instance().getWorkspace(user.getName());
 		return cus;
 	}
@@ -127,7 +130,6 @@ public class CurrentWorkspaceState {
 	public void mute(CallParticipant participant) {
 		participant.setMuted(true);
 		participant.getMsLink().setMode(MsLinkMode.HALF_DUPLEX);
-		makeStatusDirty();
 		String ann = PbxConfiguration.getProperty("pbx.default.muted.announcement");
 		IVRHelperManager.instance().getIVRHelper(participant.getSipSession()).playAnnouncementWithDtmf(ann);
 	}
@@ -136,7 +138,6 @@ public class CurrentWorkspaceState {
 	public void unmute(CallParticipant participant) {
 		participant.setMuted(false);
 		participant.getMsLink().setMode(MsLinkMode.FULL_DUPLEX);
-		makeStatusDirty();
 		String ann = PbxConfiguration.getProperty("pbx.default.unmuted.announcement");
 		IVRHelperManager.instance().getIVRHelper(participant.getSipSession()).playAnnouncementWithDtmf(ann);
 	}
@@ -280,5 +281,12 @@ public class CurrentWorkspaceState {
 		this.conference = conference;
 	}
 	
-
+	public void makeChatDirty() {
+		for(final PushEventListener globalListener : this.globalListeners) {
+			new Thread() { public void run() { 
+				// Why new thread? Coz this thread will propage the current identity to all other users in the call LOL.
+				globalListener.onEvent(new EventObject(this));
+			}}.start();
+		}
+	}
 }
