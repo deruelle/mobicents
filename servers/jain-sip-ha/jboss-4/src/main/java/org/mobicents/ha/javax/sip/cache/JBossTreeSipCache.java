@@ -28,7 +28,6 @@ import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.cache.CacheException;
@@ -99,9 +98,22 @@ public class JBossTreeSipCache implements SipCache {
 	 * @see org.mobicents.ha.javax.sip.cache.SipCache#removeDialog(java.lang.String)
 	 */
 	public void removeDialog(String dialogId) throws SipCacheException {
+		UserTransaction tx = null;
 		try {
+			Properties prop = new Properties();
+			prop.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.cache.transaction.DummyContextFactory");
+			tx = (UserTransaction) new InitialContext(prop).lookup("UserTransaction");
+			if(tx != null) {
+				tx.begin();
+			}
 			treeCache.remove(SipStackImpl.DIALOG_ROOT, dialogId);
-		} catch (CacheException e) {
+			if(tx != null) {
+				tx.commit();
+			}
+		} catch (Exception e) {
+			if(tx != null) {
+				try { tx.rollback(); } catch(Throwable t) {}
+			}
 			throw new SipCacheException("A problem occured while removing the following dialog " + dialogId + " from the TreeCache", e);
 		}
 	}
@@ -133,7 +145,6 @@ public class JBossTreeSipCache implements SipCache {
 			treeCache.addTreeCacheListener(treeCacheListener);
 			PropertyConfigurator config = new PropertyConfigurator(); // configure tree cache.
 			config.configure(treeCache, pojoConfigurationPath);
-			treeCache.start();
 		} catch (Exception e) {
 			throw new SipCacheException("Couldn't init the TreeCache", e);
 		}
