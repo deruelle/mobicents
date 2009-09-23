@@ -30,7 +30,7 @@ import org.jgroups.View;
 import org.mobicents.ha.javax.sip.ClusteredSipStack;
 
 /**
- * 
+ * Listener on the cache to be notified and update the local stack accordingly
  * 
  * @author jean.deruelle@gmail.com
  *
@@ -74,8 +74,8 @@ public class JBossTreeSipCacheListener implements TreeCacheListener {
 	 */
 	public void nodeCreated(Fqn fqn) {
 		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			clusteredSipStack.getStackLogger().logDebug(
-					"Node created : " + fqn);
+			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
+					" Node created : " + fqn);
 		}
 	}
 
@@ -84,8 +84,8 @@ public class JBossTreeSipCacheListener implements TreeCacheListener {
 	 */
 	public void nodeEvicted(Fqn fqn) {
 		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			clusteredSipStack.getStackLogger().logDebug(
-					"Node evicted : " + fqn);
+			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
+					" Node evicted : " + fqn);
 		}
 	}
 
@@ -94,8 +94,8 @@ public class JBossTreeSipCacheListener implements TreeCacheListener {
 	 */
 	public void nodeLoaded(Fqn fqn) {
 		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			clusteredSipStack.getStackLogger().logDebug(
-					"Node loaded : " + fqn);
+			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
+					" Node loaded : " + fqn);
 		}
 	}
 
@@ -104,9 +104,10 @@ public class JBossTreeSipCacheListener implements TreeCacheListener {
 	 */
 	public void nodeModified(Fqn fqn) {
 		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			clusteredSipStack.getStackLogger().logDebug(
-					"Node modified : " + fqn);
+			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
+					" Node modified : " + fqn);
 		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -114,9 +115,9 @@ public class JBossTreeSipCacheListener implements TreeCacheListener {
 	 */
 	public void nodeRemoved(Fqn fqn) {
 		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			clusteredSipStack.getStackLogger().logDebug(
-					"Node removed : " + fqn);
-		}
+			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
+					" Node removed : " + fqn);
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -124,8 +125,8 @@ public class JBossTreeSipCacheListener implements TreeCacheListener {
 	 */
 	public void nodeVisited(Fqn fqn) {
 		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			clusteredSipStack.getStackLogger().logDebug(
-					"Node visited : " + fqn);
+			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
+					" Node visited : " + fqn);
 		}
 	}
 
@@ -134,8 +135,8 @@ public class JBossTreeSipCacheListener implements TreeCacheListener {
 	 */
 	public void viewChange(View view) {
 		if (clusteredSipStack.getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			clusteredSipStack.getStackLogger().logDebug(
-					"View changed : " + view.getVid());
+			clusteredSipStack.getStackLogger().logDebug("sipStack " + clusteredSipStack + 
+					" View changed : " + view.getVid());
 		}
 	}
 

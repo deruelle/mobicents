@@ -37,6 +37,7 @@ import javax.sip.ProviderDoesNotExistException;
 import javax.sip.SipException;
 
 import org.mobicents.ha.javax.sip.cache.SipCache;
+import org.mobicents.ha.javax.sip.cache.SipCacheException;
 import org.mobicents.ha.javax.sip.cache.SipCacheFactory;
 
 /**
@@ -69,13 +70,13 @@ public abstract class ClusteredSipStack extends gov.nist.javax.sip.SipStackImpl 
 	}
 	
 	@Override
-	public void start() throws ProviderDoesNotExistException, SipException {	
-		super.start();
+	public void start() throws ProviderDoesNotExistException, SipException {
 		try {
 			sipCache.start();
 		} catch (Exception e) {
 			throw new SipException("Unable to start the SipCache", e);
 		}
+		super.start();		
 	}
 	
 	@Override
@@ -174,10 +175,15 @@ public abstract class ClusteredSipStack extends gov.nist.javax.sip.SipStackImpl 
 	 */
 	protected  SIPDialog getDialogFromDistributedCache(String dialogId) {
 		if(getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			getStackLogger().logDebug("checking if the dialog " + dialogId + " is present in the distributed cache");
+			getStackLogger().logDebug("sipStack " + this + " checking if the dialog " + dialogId + " is present in the distributed cache");
 		}	
 		// fetch the corresponding dialog from the cache instance
-		SIPDialog sipDialog = sipCache.getDialog(dialogId);
+		SIPDialog sipDialog = null;
+		try {
+			sipDialog = sipCache.getDialog(dialogId);
+		} catch (SipCacheException e) {
+			getStackLogger().logError("sipStack " + this + " problem getting dialog " + dialogId + " from the distributed cache", e);
+		}
 		if(sipDialog != null) {			
 			((HASipDialog)sipDialog).initAfterLoad(this);
 		}
@@ -190,10 +196,14 @@ public abstract class ClusteredSipStack extends gov.nist.javax.sip.SipStackImpl 
 	protected  void putDialogIntoDistributedCache(SIPDialog dialog) {
 		String dialogId = dialog.getDialogId();	
 		if(getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			getStackLogger().logDebug("storing the dialog " + dialogId + " in the distributed cache");
+			getStackLogger().logDebug("sipStack " + this + " storing the dialog " + dialogId + " in the distributed cache");
 		}
 		// put the corresponding dialog into the cache instance
-		sipCache.putDialog(dialog);
+		try {
+			sipCache.putDialog(dialog);
+		} catch (SipCacheException e) {
+			getStackLogger().logError("sipStack " + this + " problem storing the dialog " + dialogId + " into the distributed cache", e);
+		}
 	}
 	/**
 	 * Remove the dialog from the distributed cache
@@ -201,11 +211,15 @@ public abstract class ClusteredSipStack extends gov.nist.javax.sip.SipStackImpl 
 	 */
 	protected  void removeDialogFromDistributedCache(String dialogId) {
 		if(getStackLogger().isLoggingEnabled(StackLogger.TRACE_DEBUG)) {
-			getStackLogger().logDebug("removing the dialog " + dialogId + " from the distributed cache");
+			getStackLogger().logDebug("sipStack " + this + " removing the dialog " + dialogId + " from the distributed cache");
 		}
 		// remove the corresponding dialog from the cache instance
 		// put the corresponding dialog into the cache instance
-		sipCache.removeDialog(dialogId);
+		try {
+			sipCache.removeDialog(dialogId);
+		} catch (SipCacheException e) {
+			getStackLogger().logError("sipStack " + this + " problem removing dialog " + dialogId + " from the distributed cache", e);
+		}
 	}
 
 	/**

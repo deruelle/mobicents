@@ -50,35 +50,35 @@ public interface SipCache {
 	 * Initializes the cache
 	 * @throws Exception if anything goes wrong
 	 */
-	void init() throws Exception;
+	void init() throws SipCacheException;
 	
 	/**
 	 * Start the cache
 	 * @throws Exception if anything goes wrong
 	 */
-	void start() throws Exception;
+	void start() throws SipCacheException;
 	
 	/**
 	 * Stop the cache
 	 * @throws Exception if anything goes wrong
 	 */
-	void stop() throws Exception;
+	void stop() throws SipCacheException;
 	
 	/**
 	 * Retrieve the dialog with the passed dialogId from the cache
 	 * @param dialogId id of the dialog to retrieve from the cache 
 	 * @return the dialog with the passed dialogId from the cache, null if not found
 	 */
-	SIPDialog getDialog(String dialogId);
+	SIPDialog getDialog(String dialogId) throws SipCacheException;
 	/**
 	 * Store the dialog into the cache
 	 * @param dialog the dialog to store
 	 */
-	void putDialog(SIPDialog dialog);
+	void putDialog(SIPDialog dialog) throws SipCacheException;
 	/**
 	 * Remove the dialog from the cache
 	 * @param dialogId the id of the dialog to remove
 	 */
-	void removeDialog(String dialogId);
+	void removeDialog(String dialogId) throws SipCacheException;
 
 }

@@ -25,6 +25,7 @@ import gov.nist.javax.sip.SipProviderImpl;
 import gov.nist.javax.sip.message.SIPResponse;
 
 import org.mobicents.ha.javax.sip.ClusteredSipStack;
+import org.mobicents.ha.javax.sip.cache.SipCacheException;
 
 /**
  * Extends the standard NIST SIP Stack Dialog so that it gets replicated every time there is a State change
@@ -57,10 +58,14 @@ public class HASipDialog extends SIPDialog {
 		setStack(sipStackImpl);
 	}		
 
-	@Override
-	public void setState(int state) {
-		super.setState(state);
-		//replicate the dialog when its state has been updated
-		((ClusteredSipStack)getStack()).getSipCache().putDialog(this);
-	}
+//	@Override
+//	public void setState(int state) {
+//		super.setState(state);
+//		//replicate the dialog when its state has been updated
+//		try {
+//			((ClusteredSipStack)getStack()).getSipCache().putDialog(this);
+//		} catch (SipCacheException e) {
+//			getStack().getStackLogger().logError("problem storing dialog " + getDialogId() + " into the distributed cache", e);
+//		}
+//	}
 }

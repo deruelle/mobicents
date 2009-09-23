@@ -1,22 +1,80 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>org.mobicents.ha.javax.sip</groupId>
 		<artifactId>mobicents-jain-sip-ha-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<groupId>org.mobicents.ha.javax.sip</groupId>
 	<artifactId>mobicents-jain-sip-jboss4</artifactId>
-	
-	<packaging>jar</packaging>		
-	
-	<dependencies>		
+
+	<packaging>jar</packaging>
+
+	<dependencies>
 		<dependency>
 			<groupId>org.mobicents.ha.javax.sip</groupId>
 			<artifactId>mobicents-jain-sip-ha-core</artifactId>
 			<version>${version}</version>
+		</dependency>
+	
+		<!-- test deps -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-logging-spi</artifactId>
+			<version>2.0.2.GA</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+			<version>${concurrent.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jboss.aop</groupId>
+			<artifactId>jboss-aop-jdk50</artifactId>
+			<version>1.5.6.GA</version>
+			<scope>provided</scope>
+		</dependency>				
+		
+		<dependency>
+		    <groupId>jboss</groupId>
+		    <artifactId>jbossall-client</artifactId>
+		    <version>3.2.3</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>jboss</groupId>
+		    <artifactId>jboss-serialization</artifactId>
+		    <version>1.0.3.GA</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>trove</groupId>
+		    <artifactId>trove</artifactId>
+		    <version>2.1.1</version>
+		    <scope>provided</scope>
 		</dependency>
 		
 		<!-- clustering deps -->
@@ -26,28 +84,28 @@
 			<version>${jboss.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-system</artifactId>
-			<version>4.2.3.GA</version>
-			<scope>provided</scope>			
+			<version>${jboss.version}</version>
+			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-cache</artifactId>
-			<version>1.4.1.SP5</version>	
-			<scope>provided</scope>		
+			<version>1.4.1.SP5</version>
+			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>jgroups</groupId>
 			<artifactId>jgroups</artifactId>
 			<version>2.4.1</version>
-			<scope>provided</scope>			
+			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.transaction</groupId>
 			<artifactId>jta</artifactId>
@@ -60,24 +118,27 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
-   				<groupId>org.mobicents.tools</groupId>
-    			<version>${mobicents.tools.mavenplugin.eclipse.version}</version>
+				<groupId>org.mobicents.tools</groupId>
+				<version>${mobicents.tools.mavenplugin.eclipse.version}</version>
 				<inherited>true</inherited>
 				<executions />
 				<configuration>
 					<excludePoms />
 					<classpathExcludes>
 						<exclude>xml-apis:xml-apis</exclude>
-						<exclude>jtidy:jtidy</exclude>																							
+						<exclude>jtidy:jtidy</exclude>
 					</classpathExcludes>
 					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
 					<eclipseProjectName>jain-sip-ha-jboss4</eclipseProjectName>
 				</configuration>
 			</plugin>
-		</plugins>		
+		</plugins>
 	</build>
 
-	<!-- dupe info from parent, but it's only way to retrieve the parent without checkout -->
+	<!--
+		dupe info from parent, but it's only way to retrieve the parent
+		without checkout
+	-->
 
 	<repositories>
 		<repository>

@@ -31,7 +31,7 @@ import javax.sip.PeerUnavailableException;
  * and calls can be failed over 
  * 
  * This class will instantiate an instance of a class implementing the org.mobicents.ha.javax.sip.cache.SipCache interface to be able to set/get dialogs and txs into/from it.
- * The cache class name is retrieved through the Properties given to the Sip Stack upon creation under the following property name : org.mobicents.ha.javax.sip.CACHE_CLASS_NAME
+ * The cache class name is retrieved through the Properties given to the Sip Stack upon creation under the following property name : <b>org.mobicents.ha.javax.sip.CACHE_CLASS_NAME</b>
  * 
  * It will override all the calls to get/remove/put Dialogs and Txs so that we can fetch/remove/put them from/into the Cache 
  * and populate the local datastructure of the NIST SIP Stack
@@ -41,14 +41,18 @@ import javax.sip.PeerUnavailableException;
  */
 public class SipStackImpl extends ClusteredSipStack {
 	
-	public static final String SIP_CACHE_CLASS_NAME = "org.mobicents.ha.javax.sip.cache.JBossPojoSipCache";
+	public static final String SIP_DEFAULT_CACHE_CLASS_NAME = "org.mobicents.ha.javax.sip.cache.JBossTreeSipCache";
+	
+	public static final String DIALOG_ROOT = "Dialogs/";
+	public static final String SERVER_TX_ROOT = "ServerTransactions/";
+	public static final String CLIENT_TX_ROOT = "ClientTransactions/";
 	
 	public SipStackImpl(Properties configurationProperties) throws PeerUnavailableException {		
 		super(updateConfigProperties(configurationProperties));		
 	}
 	
 	private static final Properties updateConfigProperties(Properties configurationProperties) {
-		configurationProperties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY, SIP_CACHE_CLASS_NAME);
+		configurationProperties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY, SIP_DEFAULT_CACHE_CLASS_NAME);
 		return configurationProperties;
 	}
 }
