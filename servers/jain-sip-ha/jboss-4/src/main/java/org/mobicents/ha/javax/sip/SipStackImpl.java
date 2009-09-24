@@ -44,7 +44,9 @@ public class SipStackImpl extends ClusteredSipStackImpl {
 	}
 	
 	private static final Properties updateConfigProperties(Properties configurationProperties) {
-		configurationProperties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY, SIP_DEFAULT_CACHE_CLASS_NAME);
+		if(configurationProperties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY) == null) {
+			configurationProperties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY, SIP_DEFAULT_CACHE_CLASS_NAME);
+		}
 		return configurationProperties;
 	}
 }
