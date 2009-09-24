@@ -7,15 +7,15 @@
     <revhistory>
       <revision>
         <revnumber>1.0</revnumber>
-        <date/>
+        <date>24 Sep 2009</date>
         <author>
           <firstname>Jared</firstname>
-          <surname>Morgan</surname>
+           <surname>Morgan</surname>
           <email>jmorgan@redhat.com</email>
         </author>
         <revdescription>
           <simplelist>
-            <member/>
+            <member>First Version of Mobicents Community Documentation User Guide </member>
           </simplelist>
         </revdescription>
       </revision>

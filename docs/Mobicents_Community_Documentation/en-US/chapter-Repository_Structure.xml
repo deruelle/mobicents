@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="rs-Repository_Structure">
@@ -26,7 +26,7 @@
       <para><ulink url="http://code.google.com/p/mobicents/source/browse/#svn/trunk/servers/sip-servlets/sip-servlets-docs">SIP Servlets Server</ulink></para>
     </listitem>
   </itemizedlist>
-  <para>In all docs directories, there is an en-US folder.  This folder contains all the XML files that are required for the User Guide.  </para>
+  <para>In all docs directories, there is an en-US folder.  This folder contains all the XML files that are required for the User Guide.  For more information regarding the files contained in this directory, refer to <xref linkend="section-XML_Book_Components"/></para>
 <!--SSDP: This information about the all-*.xml file may also become redundant when the Single Source Project is implemented.-->  <para>The exception to this is the single XML file prefixed with <filename>all-</filename>.  For example, in the sip-servlets-docs repository, the file is named <filename>all-SIP_Servlets_Server_User_Guide.xml</filename>.  This file is used by Maven JDocBook to produce the documentation that is hosted on the Hudson Build Server.  </para>
   <para>For the SIP Presence Service, this file is not required.  In future, all server streams will not require this file, because the Maven build process will automatically build the documents from the latest SVN snapshot. Until this process has been implemented, the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file is required.</para>
   <important>
@@ -34,4 +34,17 @@
     <para>Never incorporate changes directly into the <filename>all-<replaceable>[user_guide_name]</replaceable>.xml</filename> file.  Updating this file with documentation changes will result in lost work.  </para>
     <para>Update the individual XML files that comprise the User Guide.  Changes made in individual files are merged into the all-*.xml file as part of the Authoring process.</para>
   </important>
+  <section>
+    <title>Documentation Hosting</title>
+    <para>Documentation for  Mobicents and  JBCP are hosted on publically accessible sites.  This provides the community an opportunity to review and comment on the documentation, and can help with discovering bugs within the documentation.</para>
+    <formalpara>
+      <title>Mobicents Platform Documentation</title>
+      <para>The Mobicents Platform docs are built and hosted on the JBoss.org Hudson build server.  </para>
+    </formalpara>
+    <para>Currently an automated publishing job named &quot;MobicentsBooks&quot; generates the community documentation daily.  All HTML single user guides can be accessed from the job directly  at <ulink url="http://hudson.jboss.org/hudson/job/MobicentsBooks/lastSuccessfulBuild/artifact/">http://hudson.jboss.org/hudson/job/MobicentsBooks/lastSuccessfulBuild/artifact/</ulink>.</para>
+    <formalpara>
+      <title>JBCP Platform Documentation</title>
+      <para>The JBoss Communication Platform user documentation is hosted on  <ulink url="http://www.redhat.com/docs/en-US/JBoss_Communications_Platform/index.html">redhat.com/docs</ulink>.  A JBCP homepage is available that lists all server guides that have been released over the lifespan of the product.</para>
+    </formalpara>
+  </section>
 </chapter>

@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!-- This document was created with Syntext Serna Free. --><!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="Introduction">
@@ -76,7 +76,7 @@
           <row>
             <entry>Oleg Kulikov</entry>
             <entry>Volgograd, Russian Federation</entry>
-            <entry>Media Server Developer</entry>
+            <entry>Media Server Lead</entry>
             <entry>
               <email>okulikov@redhat.com</email>
               <email>oleg.kulikoff@gmail.com</email>
@@ -85,7 +85,7 @@
           <row>
             <entry>Amit Bhayani</entry>
             <entry>Pune, India</entry>
-            <entry>Media Server Lead</entry>
+            <entry>Media Server Developer</entry>
             <entry>
               <email>abhayani@redhat.com</email>
               <email>amit.bhayani@gmail.com</email>
@@ -103,7 +103,7 @@
           <row>
             <entry>Alexandre Mendonça</entry>
             <entry>Lisbon, Portugal</entry>
-            <entry>Diameter Lead</entry>
+            <entry>Diameter Lead, JAIN SLEE Server Developer</entry>
             <entry>
               <email>amendonc@redhat.com</email>
               <email>brainslog@gmail.com</email>
@@ -112,7 +112,7 @@
           <row>
             <entry>Bartosz Baranowski</entry>
             <entry>Warsaw, Poland</entry>
-            <entry>Media Server Developer, Diameter Developer</entry>
+            <entry>Media Server Developer, Diameter Developer, JAIN SLEE Server Developer</entry>
             <entry>
               <email>baranowb@gmail.com</email>
               <email>bbaranow@redhat.com</email>
@@ -137,7 +137,7 @@
           <row>
             <entry> Mr Vicky Kak</entry>
             <entry>India</entry>
-            <entry>JBCP Product Support</entry>
+            <entry>JBCP GSS Product Support</entry>
             <entry>
               <email>vkak@redhat.com</email>
             </entry>

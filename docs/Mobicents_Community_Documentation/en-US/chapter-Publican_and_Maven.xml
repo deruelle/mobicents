@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter id="pam-Publican_and_Maven">
@@ -76,7 +76,7 @@
         </varlistentry>
       </variablelist>
     </section>
-    <section>
+    <section id="section-XML_Book_Components">
       <title>XML Book Components</title>
       <para>Each book in the UDS is constructed using a standardized structure, to maintain consistency throughout the project.  The structure present as of September 2009 follows the Publican Toolchain directory structure.  <xref linkend="table-Book-Structure"/> describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide. </para>
       <table frame="all" pgwide="1" id="table-Book-Structure">
@@ -325,7 +325,7 @@
         <para>At this stage, not all book have been &quot;Mavenized&quot;.  The Single Source Docs Project is in the early stages, and further testing must be undertaken before the strategy is fully realized.</para>
       </note>
     </section>
-    <section>
+    <section id="section-Test_Publishing_Community_Documentation">
       <title>Test Publishing Community Documentation </title>
       <para>If you want to view how the latest <filename>all-[user_guide_name].xml</filename> looks when published to Hudson, you can run Maven locally and produce the HTML Single file on demand.</para>
       <para>You must have Maven installed and configured.  If you have not yet configured Maven locally, you can find basic instructions in the Publican-JDocBook User Guide, available from the  <ulink url="https://svn.devel.redhat.com/repos/ecs/Staff/1.0/dhensley/Publican-JDocBook_User_Guide">Red Hat SVN</ulink>.</para>

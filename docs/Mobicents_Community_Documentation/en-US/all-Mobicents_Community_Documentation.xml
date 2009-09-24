@@ -227,6 +227,12 @@ public class ExClient
 		If you have a suggestion for improving the documentation, try to be as specific as possible when describing it. If you have found an error, please include the section number and some of the surrounding text so we can find it easily.
 	</para>
 </section>
+	<section id="sasa-Share_and_Share_Alike" lang="en-US" xml:base="fallback_content/section-Share_and_Share_Alike.xml">
+	<!--  This document was created with Syntext Serna Free.  --><title>Creative Commons</title>
+	<para>
+		This document is licenced under the Creative Commons <ulink url="http://creativecommons.org/about/license/">CC-BY-SA licence</ulink>. You are welcome to utilise any content contained in this user guide according to the terms of this licence.
+	</para>
+</section>
 </preface>
 	<chapter id="Introduction" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Introduction</title>
@@ -361,7 +367,7 @@ public class ExClient
 							Volgograd, Russian Federation
 						</entry>
 						<entry>
-							Media Server Developer
+							Media Server Lead
 						</entry>
 						<entry>
 							<email>okulikov@redhat.com</email>
@@ -376,7 +382,7 @@ public class ExClient
 							Pune, India
 						</entry>
 						<entry>
-							Media Server Lead
+							Media Server Developer
 						</entry>
 						<entry>
 							<email>abhayani@redhat.com</email>
@@ -406,7 +412,7 @@ public class ExClient
 							Lisbon, Portugal
 						</entry>
 						<entry>
-							Diameter Lead
+							Diameter Lead, JAIN SLEE Server Developer
 						</entry>
 						<entry>
 							<email>amendonc@redhat.com</email>
@@ -421,7 +427,7 @@ public class ExClient
 							Warsaw, Poland
 						</entry>
 						<entry>
-							Media Server Developer, Diameter Developer
+							Media Server Developer, Diameter Developer, JAIN SLEE Server Developer
 						</entry>
 						<entry>
 							<email>baranowb@gmail.com</email>
@@ -464,7 +470,7 @@ public class ExClient
 							India
 						</entry>
 						<entry>
-							JBCP Product Support
+							JBCP GSS Product Support
 						</entry>
 						<entry>
 							<email>vkak@redhat.com</email>
@@ -646,7 +652,7 @@ public class ExClient
 		</listitem>
 	</itemizedlist>
 	<para>
-		In all docs directories, there is an en-US folder. This folder contains all the XML files that are required for the User Guide.
+		In all docs directories, there is an en-US folder. This folder contains all the XML files that are required for the User Guide. For more information regarding the files contained in this directory, refer to <xref linkend="section-XML_Book_Components"/>
 	</para>
 	<!-- SSDP: This information about the all-*.xml file may also become redundant when the Single Source Project is implemented. --> <para>
 		The exception to this is the single XML file prefixed with <filename>all-</filename>. For example, in the sip-servlets-docs repository, the file is named <filename>all-SIP_Servlets_Server_User_Guide.xml</filename>. This file is used by Maven JDocBook to produce the documentation that is hosted on the Hudson Build Server.
@@ -663,6 +669,28 @@ public class ExClient
 			Update the individual XML files that comprise the User Guide. Changes made in individual files are merged into the all-*.xml file as part of the Authoring process.
 		</para>
 	</important>
+	<section>
+		<title>Documentation Hosting</title>
+		<para>
+			Documentation for Mobicents and JBCP are hosted on publically accessible sites. This provides the community an opportunity to review and comment on the documentation, and can help with discovering bugs within the documentation.
+		</para>
+		<formalpara>
+			<title>Mobicents Platform Documentation</title>
+			<para>
+				The Mobicents Platform docs are built and hosted on the JBoss.org Hudson build server.
+			</para>
+		</formalpara>
+		<para>
+			Currently an automated publishing job named "MobicentsBooks" generates the community documentation daily. All HTML single user guides can be accessed from the job directly at <ulink url="http://hudson.jboss.org/hudson/job/MobicentsBooks/lastSuccessfulBuild/artifact/">http://hudson.jboss.org/hudson/job/MobicentsBooks/lastSuccessfulBuild/artifact/</ulink>.
+		</para>
+		<formalpara>
+			<title>JBCP Platform Documentation</title>
+			<para>
+				The JBoss Communication Platform user documentation is hosted on <ulink url="http://www.redhat.com/docs/en-US/JBoss_Communications_Platform/index.html">redhat.com/docs</ulink>. A JBCP homepage is available that lists all server guides that have been released over the lifespan of the product.
+			</para>
+		</formalpara>
+	</section>
+
 </chapter>
 	<chapter id="chapter-Language_Guidelines" lang="en-US">
 	<!--  This document was created with Syntext Serna Free.  --><title>Language Guidelines</title>
@@ -964,7 +992,7 @@ public class ExClient
 			</variablelist>
 		</section>
 		
-		<section>
+		<section id="section-XML_Book_Components">
 			<title>XML Book Components</title>
 			<para>
 				Each book in the UDS is constructed using a standardized structure, to maintain consistency throughout the project. The structure present as of September 2009 follows the Publican Toolchain directory structure. <xref linkend="table-Book-Structure"/> describes the mandatory files that must be present, including a description of the file contents, and where the XML file is embedded into the finished user guide.
@@ -1374,7 +1402,7 @@ public class ExClient
 			</note>
 		</section>
 		
-		<section>
+		<section id="section-Test_Publishing_Community_Documentation">
 			<title>Test Publishing Community Documentation </title>
 			<para>
 				If you want to view how the latest <filename>all-[user_guide_name].xml</filename> looks when published to Hudson, you can run Maven locally and produce the HTML Single file on demand.
@@ -1437,15 +1465,69 @@ public class ExClient
 			XML Copy Editor contains a DocBook XML Parser, which will validate your XML. What it can't do is open all the xi:includes and resolve internal &lt;xref&gt; declarations that are not in the same file. This will result in a lot of validation errors, that may mask the real issue.
 		</para>
 		<para>
-			The advantage that XML Copy Editor offers is the ability to edit the XML structure in a basic text interface. This can be very useful when you are trying to debug your XML documentation. You can use a program such as xmllint to output a full XML file, and then re-validate it using XML Copy Editor. For more information about this technique, refer to
+			The advantage that XML Copy Editor offers is the ability to edit the XML structure in a basic text interface. This can be very useful when you are trying to debug your XML documentation. You can use a program such as xmllint to output a full XML file, and then re-validate it using XML Copy Editor. For more information about this technique, refer to <xref linkend="section-Test_Publishing_Community_Documentation"/>
 		</para>
 	</section>
 	
 	<section>
-		<title id="xst-XML_Structure_Tips">XML Structure Tips</title>
+		<title id="section-XML_Structure_Tips">XML Structure Tips</title>
 		<para>
-			In DocBook, the content that is being documented often benefits from advanced XML tagging. There are certain additions to structure that can be useful to help the reader in quickly grasping information. The following sections are grouped into common areas that you will use regularly in XML authoring.
+			In DocBook, the way some content appears when published relies on a consistently applied XML structure. There are certain additions to structure that can be useful to help the reader in quickly grasping information. The following sections are grouped into common areas that you will use regularly in XML authoring.
 		</para>
+		<para>
+			To keep book structure consistent, the guidelines in this section must be adhered to when creating XML structure in the Mobicents and JBCP documentation suite.
+		</para>
+		<section>
+			<title>Chapters and Sections</title>
+			<para>
+				Chapters and Sections form the underlying skeleton for each guide. Therefore, strucuting these important elements consistently is important.
+			</para>
+			<formalpara>
+				<title>New Chapter or Section</title>
+				<para>
+					Over the life of a product, user guides often require content to be reorganized. Having sections directly included in a chapter, can make reordering book structure difficult. For this reason, when adding a &lt;chapter&gt; or &lt;section&gt; to an existing user guide, each &lt;chapter&gt; and &lt;section&gt; must be a separate XML file.
+				</para>
+			</formalpara>
+			<para>
+				The file must be included in the book using a xi:include reference.
+			</para>
+			<note>
+				<para>
+					You can find the correct xi:include syntax by opening up the chapter element of this user guide in a text editor.
+				</para>
+			</note>
+			<formalpara>
+				<title>Naming Chapter or Section XMLFiles</title>
+				<para>
+					If you look at any of the product user guides for Mobicents, you will see that the structure is made up of a number of XML files. Each file included in the book is logically, and consistently, named so it is easy to include a file where it is required in the book's structure.
+				</para>
+			</formalpara>
+			<para>
+				For information about the naming conventions used for chapter and section XML files, refer to <xref linkend="section-XML_Book_Components"/>
+			</para>
+			<formalpara>
+				<title>ID Attributes for Chapter or Section XML Files</title>
+				<para>
+					To allow cross-referencing within the book, the <literal>id</literal> attribute must be set for each chapter or section. The format for the chapter or section ID is explicit, to ensure cross-referencing within each user guide is consistent.
+				</para>
+			</formalpara>
+			<para>
+				The id attribute is applied to the &lt;chapter&gt; or &lt;section&gt; element, and uses the following format:
+			</para>
+			<para>
+				&lt;chapter id="[title_initialism]-[title_separated_by_underscores]"&gt;
+			</para>
+			<para>
+				&lt;section id="[title_initialism]-[title_separated_by_underscores]"&gt;
+			</para>
+			<para>
+				For example, if a &lt;section&gt; was entitled "Creating Awesome Community and Product Documentation", the XML ID would be:
+			</para>
+			<para>
+				&lt;section id="cacapd-Creating_Awesome_Community_and_Product_Documentation"&gt;
+			</para>
+		</section>
+		
 		<section>
 			<title>Lists - Bulleted and Numbered</title>
 			<para>
@@ -1500,7 +1582,7 @@ public class ExClient
 			<important>
 				<title>Lead-in Sentence is Mandatory</title>
 				<para>
-					A list must have an introductory sentence; it must not be a sentence fragment. Sentence fragments are very hard to translate.
+					A list must have an introductory sentence, and it <emphasis>must not</emphasis> be a sentence fragment. Sentence fragments are very hard to translate.
 				</para>
 			</important>
 			<para>
@@ -1524,7 +1606,7 @@ public class ExClient
 				</listitem>
 			</itemizedlist>
 			<para>
-				You can further enhance the &lt;itemizedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;itemizedlist&gt; element. A title might assist the reader with understanding what a large list contains. It might be useful if The XML structure looks like this when published:
+				You can further enhance the &lt;itemizedlist&gt; by adding in a &lt;title&gt; tag after the opening &lt;itemizedlist&gt; element. A title might assist the reader with understanding what a large list contains. The XML structure looks like this when published:
 			</para>
 			<itemizedlist>
 				<title>&lt;itemizedlist&gt; Title</title>
@@ -1575,7 +1657,7 @@ public class ExClient
 			<important>
 				<title>Lead-in Sentence is Mandatory</title>
 				<para>
-					A list must have an introductory sentence; it must not be a sentence fragment. Sentence fragments are very hard to translate.
+					A list must have an introductory sentence, and it <emphasis>must not</emphasis> be a sentence fragment. Sentence fragments are very hard to translate.
 				</para>
 			</important>
 			<para>
@@ -1735,7 +1817,8 @@ public class ExClient
   &lt;title&gt;Mobicents Icon&lt;/title&gt;
   &lt;mediaobject&gt;
     &lt;imageobject&gt;
-      &lt;imagedata fileref="images/mcd-mobicents_icon_64x64.png"/&gt;
+      &lt;imagedata fileref="images/mcd-mobicents_icon_64x64.png"
+       format="PNG"/&gt;
     &lt;/imageobject&gt;
   &lt;/mediaobject&gt;
 &lt;/figure&gt;
@@ -2178,6 +2261,9 @@ public class ExClient
 		</para>
 		<para>
 			If you are using a Linux distribution such as Fedora or Red Hat Enterprise Linux, you can use the mkbk bash script to create the all-*.xml file. The mkbk script is capable of publishing this user guide, and selected community documentation guides that haven't been fully Mavenized.
+		</para>
+		<para>
+			For more information regarding the mkbk script, refer to <xref linkend="section-Test_Publishing_Community_Documentation"/>
 		</para>
 	</section>
 
@@ -3411,7 +3497,7 @@ public class ExClient
 		<revhistory>
 			<revision>
 				<revnumber>1.0</revnumber>
-				<date/>
+				<date>24 Sep 2009</date>
 				<author>
 					<firstname>Jared</firstname>
 					<surname>Morgan</surname>
@@ -3419,7 +3505,7 @@ public class ExClient
 				</author>
 				<revdescription>
 					<simplelist>
-						<member/>
+						<member>First Version of Mobicents Community Documentation User Guide </member>
 					</simplelist>
 				</revdescription>
 			</revision>
