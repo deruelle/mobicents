@@ -30,6 +30,13 @@ public class MobicentsCache {
 		startCache();	
 	}
 
+	@SuppressWarnings("unchecked")
+	public MobicentsCache(String cacheConfigurationLocation) {
+		this.jBossCache = new DefaultCacheFactory().createCache(cacheConfigurationLocation,false);
+		this.managedCache = false;
+		startCache();	
+	}
+
 	public MobicentsCache(CacheManager haCacheManager, String cacheName) throws Exception {
 		this.jBossCache = haCacheManager.getCache(cacheName, true);
 		this.jBossCache.create();
