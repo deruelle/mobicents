@@ -15,7 +15,10 @@
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jboss-common-core/2.2.10.GA/jboss-common-core-2.2.10.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging-log4j/2.1.0.GA/jboss-logging-log4j-2.1.0.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging-spi/2.1.0.GA/jboss-logging-spi-2.1.0.GA.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/cluster/cache/1.0.0BETA1-SNAPSHOT/cache-1.0.0BETA1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/cluster/core/1.0.0BETA1-SNAPSHOT/core-1.0.0BETA1-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jain-sip-ha-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
+ 

@@ -55,17 +55,17 @@ public class HASipDialog extends SIPDialog {
 	 */
 	public void initAfterLoad(ClusteredSipStack sipStackImpl) {
 		setSipProvider((SipProviderImpl) sipStackImpl.getSipProviders().next());
-		setStack(sipStackImpl);
+		setStack((SIPTransactionStack)sipStackImpl);
 	}		
 
-//	@Override
-//	public void setState(int state) {
-//		super.setState(state);
-//		//replicate the dialog when its state has been updated
-//		try {
-//			((ClusteredSipStack)getStack()).getSipCache().putDialog(this);
-//		} catch (SipCacheException e) {
-//			getStack().getStackLogger().logError("problem storing dialog " + getDialogId() + " into the distributed cache", e);
-//		}
-//	}
+	@Override
+	public void setState(int state) {
+		super.setState(state);
+		//replicate the dialog when its state has been updated
+		try {
+			((ClusteredSipStack)getStack()).getSipCache().putDialog(this);
+		} catch (SipCacheException e) {
+			getStack().getStackLogger().logError("problem storing dialog " + getDialogId() + " into the distributed cache", e);
+		}
+	}
 }
