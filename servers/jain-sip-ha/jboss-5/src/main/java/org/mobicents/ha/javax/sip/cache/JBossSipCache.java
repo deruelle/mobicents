@@ -56,7 +56,7 @@ public class JBossSipCache implements SipCache {
 	Properties configProperties = null;	
 	
 	protected Cache cache;
-	protected JBossSipCacheListener cacheListener;
+	protected JBossJainSipCacheListener cacheListener;
 	
 	protected Node<String, SIPDialog> dialogRootNode = null;
 	protected Node<String, SIPClientTransaction> clientTxRootNode = null;
@@ -155,7 +155,7 @@ public class JBossSipCache implements SipCache {
 		try {
 			cache = new DefaultCacheFactory<String, SIPDialog>().createCache(pojoConfigurationPath);
 			cache.create();
-			cacheListener = new JBossSipCacheListener(clusteredSipStack);
+			cacheListener = new JBossJainSipCacheListener(clusteredSipStack);
 			cache.addCacheListener(cacheListener);			
 		} catch (Exception e) {
 			throw new SipCacheException("Couldn't init JBoss Cache", e);

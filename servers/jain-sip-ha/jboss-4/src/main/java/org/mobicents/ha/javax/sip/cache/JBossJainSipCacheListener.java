@@ -35,7 +35,7 @@ import org.mobicents.ha.javax.sip.ClusteredSipStack;
  * @author jean.deruelle@gmail.com
  *
  */
-public class JBossTreeSipCacheListener implements TreeCacheListener {
+public class JBossJainSipCacheListener implements TreeCacheListener {
 
 	private ClusteredSipStack clusteredSipStack;
 
@@ -43,7 +43,7 @@ public class JBossTreeSipCacheListener implements TreeCacheListener {
 	 * @param clusteredSipStack 
 	 * 
 	 */
-	public JBossTreeSipCacheListener(ClusteredSipStack clusteredSipStack) {
+	public JBossJainSipCacheListener(ClusteredSipStack clusteredSipStack) {
 		this.clusteredSipStack = clusteredSipStack;
 	}
 

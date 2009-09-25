@@ -43,7 +43,7 @@ import org.mobicents.ha.javax.sip.ClusteredSipStack;
  *
  */
 @org.jboss.cache.notifications.annotation.CacheListener
-public class JBossSipCacheListener {
+public class JBossJainSipCacheListener {
 
 	private ClusteredSipStack clusteredSipStack;
 
@@ -51,7 +51,7 @@ public class JBossSipCacheListener {
 	 * @param clusteredSipStack 
 	 * 
 	 */
-	public JBossSipCacheListener(ClusteredSipStack clusteredSipStack) {
+	public JBossJainSipCacheListener(ClusteredSipStack clusteredSipStack) {
 		this.clusteredSipStack = clusteredSipStack;
 	}
 

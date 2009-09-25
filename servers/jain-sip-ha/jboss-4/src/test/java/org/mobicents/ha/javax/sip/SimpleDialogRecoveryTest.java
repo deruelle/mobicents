@@ -508,6 +508,7 @@ public class SimpleDialogRecoveryTest extends TestCase {
             sipFactory = SipFactory.getInstance();
             sipFactory.setPathName("org.mobicents.ha");
             Properties properties = new Properties();
+            properties.setProperty("org.mobicents.ha.javax.sip.CACHE_CLASS_NAME", "org.mobicents.ha.javax.sip.cache.JBossTreeSipCache");
             properties.setProperty("javax.sip.STACK_NAME", stackName);
             //properties.setProperty("javax.sip.OUTBOUND_PROXY", Integer
             //                .toString(BALANCER_PORT));

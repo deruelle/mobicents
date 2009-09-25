@@ -51,7 +51,7 @@ public class MobicentsSipCache implements SipCache {
 	Properties configProperties = null;	
 	
 	protected MobicentsCache cache;
-	protected JBossSipCacheListener cacheListener;
+	protected JBossJainSipCacheListener cacheListener;
 	
 	protected Node<String, SIPDialog> dialogRootNode = null;
 	protected Node<String, SIPClientTransaction> clientTxRootNode = null;
@@ -113,7 +113,7 @@ public class MobicentsSipCache implements SipCache {
 		}
 		try {			
 			cache = new MobicentsCache(pojoConfigurationPath);						
-			cacheListener = new JBossSipCacheListener(clusteredSipStack);
+			cacheListener = new JBossJainSipCacheListener(clusteredSipStack);
 			cache.getJBossCache().addCacheListener(cacheListener);			
 		} catch (Exception e) {
 			throw new SipCacheException("Couldn't init Mobicents Cache", e);

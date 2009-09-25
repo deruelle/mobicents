@@ -33,7 +33,7 @@ import javax.sip.PeerUnavailableException;
  */
 public class SipStackImpl extends ClusteredSipStackImpl {
 	
-	public static final String SIP_DEFAULT_CACHE_CLASS_NAME = "org.mobicents.ha.javax.sip.cache.JBossTreeSipCache";
+	public static final String SIP_DEFAULT_CACHE_CLASS_NAME = "org.mobicents.ha.javax.sip.cache.JBossASSipCache";
 	
 	public static final String DIALOG_ROOT = "Dialogs/";
 	public static final String SERVER_TX_ROOT = "ServerTransactions/";
