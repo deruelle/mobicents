@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.ha.javax.sip;
+package org.mobicents.ha.javax.sip.header;
 
 /**
  * Just delegates to the NIST SIP Stack Header Factory, SipFactory will instantiates ours due to the pathname provided when creating the sipfactory

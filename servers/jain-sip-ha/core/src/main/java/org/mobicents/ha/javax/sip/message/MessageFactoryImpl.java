@@ -19,15 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.ha.javax.sip;
+package org.mobicents.ha.javax.sip.message;
 
 /**
- * Just delegates to the NIST SIP Stack Address Factory, SipFactory will instantiates ours due to the pathname provided when creating the sipfactory
+ * 
+ * Just delegates to the NIST SIP Stack Message Factory, SipFactory will instantiates ours due to the pathname provided when creating the sipfactory
  * 
  * @author jean.deruelle@gmail.com
  *
  */
-public class AddressFactoryImpl extends
-		gov.nist.javax.sip.address.AddressFactoryImpl {
+public class MessageFactoryImpl extends
+		gov.nist.javax.sip.message.MessageFactoryImpl {
+
+	/**
+	 * 
+	 */
+	public MessageFactoryImpl() {
+		// TODO Auto-generated constructor stub
+	}
 
 }
