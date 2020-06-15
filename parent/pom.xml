@@ -69,7 +69,7 @@
 		<hibernate-common-annotations.version>3.0.0.ga</hibernate-common-annotations.version>
 		<hibernate-entitymanager.version>3.3.1.ga</hibernate-entitymanager.version>
 		<hibernate-search.version>3.0.1.GA</hibernate-search.version>	
-		<hibernate-validator.version>3.0.0.ga</hibernate-validator.version>	
+		<hibernate-validator.version>5.3.5.Final</hibernate-validator.version>	
 		<commons-logging.version>1.0.4</commons-logging.version>
 		<asm.version>1.5.3</asm.version>		
 		<cglib.version>2.1_3</cglib.version>
