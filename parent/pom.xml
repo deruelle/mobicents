@@ -35,7 +35,7 @@
 		<jgroups.version>2.4.1</jgroups.version>
 		<jain-slee.version>1.1.draft</jain-slee.version>
 		<log4j.version>1.2.14</log4j.version>
-		<junit.version>4.1</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<gwt-user.version>1.4.62</gwt-user.version>
 		<commons-fileupload.version>1.1</commons-fileupload.version>
 		<jain-sip-api.version>1.2</jain-sip-api.version>
