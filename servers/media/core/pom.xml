@@ -28,7 +28,7 @@
 		<version.jboss.microcontainer>
 			2.0.4.GA
 		</version.jboss.microcontainer>
-		<version.junit>4.4</version.junit>
+		<version.junit>4.13.1</version.junit>
 		<version.javassist>3.9.0.GA</version.javassist>
 		<version.xerces>2.9.1</version.xerces>
 	</properties>
