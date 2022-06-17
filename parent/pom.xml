@@ -53,7 +53,7 @@
 		<jzlib.version>1.0.7</jzlib.version>
 		<rome.version>0.9</rome.version>		
 		<jdom.version>1.0</jdom.version>
-		<drools.version>3.0.5</drools.version>
+		<drools.version>7.60.0.Final</drools.version>
 		<antlr.stringtemplate.version>2.3b6</antlr.stringtemplate.version>		
 		<jxl.version>2.4.2</jxl.version>
 		<eclipse-jdt.core.version>3.2.0.666</eclipse-jdt.core.version>
